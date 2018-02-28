@@ -64,3 +64,5 @@ gem 'devise-guests', '~> 0.6'
 group :development, :test do
   gem 'fcrepo_wrapper'
 end
+
+gem 'simple_form', '3.5.0'
