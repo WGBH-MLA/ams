@@ -21,6 +21,7 @@ require 'capybara/rails'
 require 'database_cleaner'
 # Require support files
 Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each { |f| require f }
+require_relative 'support/controller_macros'
 
 ActiveRecord::Migration.maintain_test_schema!
 
@@ -69,4 +70,12 @@ RSpec.configure do |config|
       mocks.verify_partial_doubles = example.metadata.fetch(:verify_partial_doubles, true)
     end
   end
+
+  # Filter lines from Rails gems in backtraces.
+  config.filter_rails_from_backtrace!
+  # arbitrary gems may also be filtered via:
+  # config.filter_gems_from_backtrace("gem name")
+
+  # For Devise >= 4.1.0
+  config.extend ControllerMacros, :type => :controller
 end
