@@ -1,5 +1,12 @@
 require 'rails_helper'
 
 RSpec.describe User, type: :model do
-  pending "add some examples to (or delete) #{__FILE__}"
+  describe 'factory with default values' do
+    let(:user) { create(:user) }
+    it 'creates a User object with default values' do
+      expect(user).to be_a User
+      expect(user.email).to_not be_nil
+      expect(user.guest).to be true
+    end
+  end
 end
