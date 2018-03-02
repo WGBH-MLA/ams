@@ -66,3 +66,5 @@ group :development, :test do
 end
 
 gem 'simple_form', '3.5.0'
+
+gem 'mysql2', '~> 0.4.10'
