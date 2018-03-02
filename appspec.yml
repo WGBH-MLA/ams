@@ -5,5 +5,5 @@ files:
     destination: /var/www/ams
 hooks:
   AfterInstall:
-    - location: rails db:migrate
-      timeout: 180
+    - location: /var/www/ams/bin/install.sh
+      timeout: 300
