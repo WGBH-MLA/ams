@@ -3,3 +3,11 @@ cache: bundler
 rvm:
   - 2.4.1
   - 2.5
+deploy:
+      - provider: codedeploy
+        revision_type: github
+        access_key_id: "AKIAJODP6VPR5EKCIJCQ"
+        secret_access_key: "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"
+        application: "TestHyrax36"
+        deployment_group: "TestHyrax36-DG"
+        region: "us-east-1"
