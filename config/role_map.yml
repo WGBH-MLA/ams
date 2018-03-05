@@ -1,7 +1,10 @@
 development:
   archivist:
     - archivist1@example.com
-
+  admin:
+    - adeel@weareavp.com
+    - jason_corum@wgbh.org
+    - andrew_myers@wgbh.org
 test:
   archivist:
     - archivist1@example.com
