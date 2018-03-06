@@ -1,5 +1,27 @@
 language: ruby
 cache: bundler
 rvm:
-  - 2.4.1
-  - 2.5
+- 2.4.1
+- 2.5
+deploy:
+  provider: codedeploy
+  access_key_id: AKIAJODP6VPR5EKCIJCQ
+  secret_access_key:
+    secure: dZNrJTvtl4+MS6Sa7lRgV3RCTDL/jZXu3Y6vpHp+HNaB2qO4NPT/ohDhuNt6NxBAUmQrbTSaoWKZZ90y6m+DIVCf2t6Vwfjbw548D/675b+hc2n47R9Pu/yzD/itlWasIjMxTMed5in01EQjDRiMKiez096fN3/X/0fJPCRaIW9QIeIbGnHZBYhwYSgdkGHzGCQlNY5adUrVskz+ilX7AvOVBLRJjSAnbvJlE4kKdhgh75LD5cSQBPmY3Mb41juW+VoZFf4FroReL2Ac5AiPhDXCFkXU3CAQ7HI0aqnAtpsgj9eoGUqJxHnRe0FZOX3vTXbUprzcWpR2Tokev1ZtEY30WlguvL1f4RC1UcmW5icQSGmzNGSTwKvgOvCx6xWwLQX30+GBTIy2UoI7wf6AO92FSPlWhuKyUqWg3pbeWusSpDwCza4tG0zrh1sRODkCDWHbMFUtvwQY2lSgvghjOfvvIPHqqly4D5q8mjdj6bixxdySkujeF1XTkJP9tBDEFGvl5mDUTUVSa8NTcdpEB44axcGpz8YpcLzjWVs23RSf0ItUOKM1wgIEj+/B7tW9NtrdkwLPbeUJnFCwDd3FooJXXLH86GG9St01LcIXmohbPEqrB8ktZKxp123DORpQfJAMVVjYJ/gRmSkCaJ9AiC6AFYWfSls5IzmWt4+KoBw=
+  revision_type: github
+  application: "TestHyrax36"
+  deployment_group: "TestHyrax36-DG"
+  region: "us-east-1"
+  on:
+    branch: develop
+deploy:
+  provider: codedeploy
+  access_key_id: AKIAJODP6VPR5EKCIJCQ
+  secret_access_key:
+    secure: dZNrJTvtl4+MS6Sa7lRgV3RCTDL/jZXu3Y6vpHp+HNaB2qO4NPT/ohDhuNt6NxBAUmQrbTSaoWKZZ90y6m+DIVCf2t6Vwfjbw548D/675b+hc2n47R9Pu/yzD/itlWasIjMxTMed5in01EQjDRiMKiez096fN3/X/0fJPCRaIW9QIeIbGnHZBYhwYSgdkGHzGCQlNY5adUrVskz+ilX7AvOVBLRJjSAnbvJlE4kKdhgh75LD5cSQBPmY3Mb41juW+VoZFf4FroReL2Ac5AiPhDXCFkXU3CAQ7HI0aqnAtpsgj9eoGUqJxHnRe0FZOX3vTXbUprzcWpR2Tokev1ZtEY30WlguvL1f4RC1UcmW5icQSGmzNGSTwKvgOvCx6xWwLQX30+GBTIy2UoI7wf6AO92FSPlWhuKyUqWg3pbeWusSpDwCza4tG0zrh1sRODkCDWHbMFUtvwQY2lSgvghjOfvvIPHqqly4D5q8mjdj6bixxdySkujeF1XTkJP9tBDEFGvl5mDUTUVSa8NTcdpEB44axcGpz8YpcLzjWVs23RSf0ItUOKM1wgIEj+/B7tW9NtrdkwLPbeUJnFCwDd3FooJXXLH86GG9St01LcIXmohbPEqrB8ktZKxp123DORpQfJAMVVjYJ/gRmSkCaJ9AiC6AFYWfSls5IzmWt4+KoBw=
+  revision_type: github
+  application: "AMS2Staging"
+  deployment_group: "AMS2Staging-DG"
+  region: "us-east-1"
+  on:
+    branch: master
