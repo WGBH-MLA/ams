@@ -2,8 +2,8 @@ version: 0.0
 os: linux
 files:
   - source: .
-    destination: /home/ec2-user/ams
+    destination: /var/www/ams
 hooks:
   AfterInstall:
-    - location: rails db:migrate
-      timeout: 180
+    - location: bin/install.sh
+      timeout: 300
