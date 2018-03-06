@@ -450,6 +450,7 @@ GEM
     multi_json (1.13.1)
     multi_xml (0.6.0)
     multipart-post (2.0.0)
+    mysql2 (0.4.10)
     nest (2.1.0)
       redic
     net-http-persistent (3.0.0)
@@ -492,6 +493,8 @@ GEM
       rails (~> 5.0)
       rdf
     rack (2.0.4)
+    rack-protection (2.0.1)
+      rack
     rack-test (0.8.3)
       rack (>= 1.0, < 3)
     rails (5.1.5)
@@ -640,6 +643,11 @@ GEM
       rdf-xsd (>= 2.2, < 4.0)
       sparql (>= 2.2, < 4.0)
       sxp (~> 1.0)
+    sidekiq (5.1.1)
+      concurrent-ruby (~> 1.0)
+      connection_pool (~> 2.2, >= 2.2.0)
+      rack-protection (>= 1.5.0)
+      redis (>= 3.3.5, < 5)
     signet (0.8.1)
       addressable (~> 2.3)
       faraday (~> 0.9)
@@ -734,12 +742,15 @@ DEPENDENCIES
   jbuilder (~> 2.5)
   jquery-rails
   listen (>= 3.0.5, < 3.2)
+  mysql2 (~> 0.4.10)
   pry-byebug
   puma (~> 3.7)
   rails (~> 5.1.5)
+  redis (~> 4.0)
   rsolr (>= 1.0)
   rspec-rails (~> 3.7)
   sass-rails (~> 5.0)
+  sidekiq
   simple_form (= 3.5.0)
   solr_wrapper (>= 0.3)
   spring
