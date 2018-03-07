@@ -16,6 +16,7 @@ require 'active_fedora/noid/rspec'
 require 'rspec/matchers'
 require 'active_fedora/cleaner'
 require 'capybara/rspec'
+require 'capybara-screenshot/rspec'
 require 'capybara/rails'
 require 'database_cleaner'
 # Require support files
@@ -41,6 +42,7 @@ RSpec.configure do |config|
   end
 
   config.before :each do
+    # Note (Mike Coutermarsh): Make browser huge so that no content is hidden during tests
     DatabaseCleaner.strategy = :truncation
     DatabaseCleaner.start
   end

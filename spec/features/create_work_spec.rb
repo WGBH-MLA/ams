@@ -1,13 +1,14 @@
 # Generated via
 #  `rails generate hyrax:work Work`
 require 'rails_helper'
+
 include Warden::Test::Helpers
 
 # NOTE: If you generated more than one work, you have to set "js: true"
 RSpec.feature 'Create a Work', js: false do
   context 'a logged in user' do
     let(:user_attributes) do
-      { email: 'test@example.com' }
+      { email: 'archivist1@example.com' }
     end
     let(:user) do
       User.new(user_attributes) { |u| u.save(validate: false) }
@@ -21,7 +22,9 @@ RSpec.feature 'Create a Work', js: false do
     scenario do
       visit '/dashboard'
       click_link "Works"
-      click_link "Add new work"
+      #click_link "Add new work"
+
+      visit '/concern/works/new'
 
       # If you generate more than one work uncomment these lines
       # choose "payload_concern", option: "Work"
