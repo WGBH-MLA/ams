@@ -86,6 +86,10 @@ Rails.application.configure do
     config.logger    = ActiveSupport::TaggedLogging.new(logger)
   end
 
+  #Config background Jobs to run via sidekiq in production
+  config.active_job.queue_adapter = :sidekiq
+
+
   # Do not dump schema after migrations.
   config.active_record.dump_schema_after_migration = false
 end
