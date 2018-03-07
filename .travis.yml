@@ -37,7 +37,6 @@ deploy:
   region: "us-east-1"
   on:
     branch: develop
-deploy:
   provider: codedeploy
   access_key_id: AKIAJODP6VPR5EKCIJCQ
   secret_access_key:
