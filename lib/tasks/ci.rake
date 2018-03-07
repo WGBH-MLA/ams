@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 unless Rails.env.production?
   APP_ROOT = File.dirname(__FILE__)
   require "solr_wrapper"
@@ -10,28 +8,22 @@ unless Rails.env.production?
   task :ci do
     ENV["environment"] = "test"
     solr_params = {
-        port: 8985,
-        verbose: true,
-        managed: true
+      config: 'config/solr_wrapper_test.yml'
     }
     fcrepo_params = {
-        port: 8986,
-        verbose: true,
-        managed: true,
-        enable_jms: false,
-        fcrepo_home_dir: 'tmp/fcrepo4-test-data'
+      config: 'config/fcrepo_wrapper_test.yml'
     }
+
     SolrWrapper.wrap(solr_params) do |solr|
       solr.with_collection(
-          name: "hydra-test",
-          persist: false,
-          dir: Rails.root.join("solr", "config")
+        name: "hydra-test",
+        persist: false,
+        dir: Rails.root.join("solr", "config")
       ) do
         FcrepoWrapper.wrap(fcrepo_params) do
           Rake::Task["spec"].invoke
         end
       end
     end
-    # Rake::Task["doc"].invoke
   end
 end
