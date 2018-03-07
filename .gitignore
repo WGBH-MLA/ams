@@ -24,3 +24,6 @@
 
 # Ignore RubyMine Files
 .idea/*
+
+# Upload directories
+/public/system/avatars
