@@ -792,7 +792,7 @@ PLATFORMS
 
 DEPENDENCIES
   bixby
-  capybara
+  capybara (~> 2.18)
   capybara-screenshot
   chromedriver-helper
   coffee-rails (~> 4.2)
