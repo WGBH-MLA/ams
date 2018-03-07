@@ -1,8 +1,12 @@
 development:
   archivist:
     - archivist1@example.com
+  admin:
+    - wgbh_admin@wgbh-mla.org
 
 test:
+  admin:
+    - wgbh_admin@wgbh-mla.org
   archivist:
     - archivist1@example.com
     - archivist2@example.com
