@@ -6,6 +6,8 @@ development:
     - jason_corum@wgbh.org
     - andrew_myers@wgbh.org
 test:
+  admin:
+    - wgbh_admin@wgbh.org
   archivist:
     - archivist1@example.com
     - archivist2@example.com
