@@ -4,7 +4,9 @@ port: 8985
 instance_dir: tmp/solr-test
 verbose: true
 managed: true
+download_dir: dep_cache
 collection:
     persist: false
     dir: solr/config
     name: hydra-test
+

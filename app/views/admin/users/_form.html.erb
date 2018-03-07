@@ -1,0 +1,18 @@
+<%= simple_form_for @user, :url => {:action => "savenew"} do |f| %>
+
+  <div class="field">
+    <%= f.input :email %>
+  </div>
+
+  <div class="field">
+    <%= f.input :password, autocomplete: "off" %>
+  </div>
+
+  <div class="field">
+    <%= f.input :password_confirmation, autocomplete: "off" %>
+  </div>
+
+  <div class="actions">
+    <%= f.submit "Create", class: "btn btn-default" %>
+  </div>
+<% end %>
