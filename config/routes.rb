@@ -16,7 +16,6 @@ Rails.application.routes.draw do
   mount Hydra::RoleManagement::Engine => '/'
 
   devise_for :users
-
   namespace :admin do
     resources :users, only: [:new]
     # Post route for creating new Users
