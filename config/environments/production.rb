@@ -1,4 +1,10 @@
 Rails.application.configure do
+
+  # Method for using environment variables for Booleans
+  def truthy_env_var?(val)
+    ['yes', 'true', '1'].include? val.downcase.strip
+  end
+
   # Settings specified here will take precedence over those in config/application.rb.
 
   # Code is not reloaded between requests.
@@ -68,6 +74,22 @@ Rails.application.configure do
 
   # Setting host for Devise Mailer
   config.action_mailer.default_url_options = { :host => ENV['PRODUCTION_HOST'] }
+  # Settings for emails through Amazon SES
+  # Replace with environment variable
+
+  config.action_mailer.delivery_method = :smtp
+  config.action_mailer.perform_deliveries = true
+  config.action_mailer.raise_delivery_errors = false
+  config.action_mailer.default :charset => "utf-8"
+
+  config.action_mailer.smtp_settings = {
+    address: ENV["SMTP_ADDRESS"],
+    port: ENV["SMTP_PORT"].to_i,
+    user_name: ENV["SMTP_USERNAME"],
+    password: ENV["SMTP_PASSWORD"],
+    authentication: ENV["SMTP_AUTHENTICATION"].to_sym,
+    enable_starttls_auto: truthy_env_var?(ENV["SMTP_ENABLE_STARTTLS"])
+  }
 
   # Enable locale fallbacks for I18n (makes lookups for any locale fall back to
   # the I18n.default_locale when a translation cannot be found).
