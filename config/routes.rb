@@ -6,7 +6,7 @@ Rails.application.routes.draw do
   end
 
   mount Blacklight::Engine => '/'
-  
+
     concern :searchable, Blacklight::Routes::Searchable.new
 
   resource :catalog, only: [:index], as: 'catalog', path: '/catalog', controller: 'catalog' do
@@ -14,6 +14,12 @@ Rails.application.routes.draw do
   end
 
   devise_for :users
+  namespace :admin do
+    resources :users, only: [:new]
+    # Post route for creating new Users
+    post 'savenew', to: 'users#savenew'
+  end
+
   mount Qa::Engine => '/authorities'
   mount Hyrax::Engine, at: '/'
   resources :welcome, only: 'index'

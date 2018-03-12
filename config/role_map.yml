@@ -25,4 +25,10 @@ test:
     - leland_himself@example.com
 
 production:
-  # Add roles for users here.
+  admin:
+    - wgbh_admin@wgbh-mla.org
+    - adeel@weareavp.com
+  archivist:
+    - archivist1@example.com
+    - archivist2@example.com
+    - leland_himself@example.com

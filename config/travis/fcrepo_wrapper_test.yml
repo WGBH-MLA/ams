@@ -4,3 +4,4 @@ verbose: true
 managed: true
 enable_jms: false
 fcrepo_home_dir: 'tmp/fcrepo4-test-data'
+download_dir: dep_cache
