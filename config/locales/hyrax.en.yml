@@ -55,6 +55,25 @@ en:
     footer:
       copyright_html: "<strong>Copyright &copy; 2017 Samvera</strong> Licensed under the Apache License, Version 2.0"
       service_html: A service of <a href="http://samvera.org/" class="navbar-link" target="_blank">Samvera</a>.
+    admin:
+      sidebar:
+        manage_roles:        'Manage Roles'
+    dashboard:
+      manage_role:
+        create_role: 'New Role'
+        role_total_users: 'Total Users'
+        actions: 'Actions'
+        role_name: 'Role Name'
+        name: 'Name'
+        add: 'Add'
+        add_user: 'Add User'
+        select_user: 'Select a user...'
+        cancel: 'Cancel'
+        confirm: 'Are you sure you want to delete?'
+        role_not_avilable: 'No roles have been created.'
+      admin_sets:
+        title_unique_validation: 'already exist try another one'
+        title_cant_blank_validation: 'You must provide a title'
   ams:
     toolbar:
       profile:
