@@ -11,4 +11,6 @@
 puts "======================"
 puts "Creating default admin user: wgbh_admin@wgbh-mla.org"
 User.create(email: "wgbh_admin@wgbh-mla.org", password: "pa$$w0rd")
+Role.create(name:'admin',users: [User.last])
 puts "======================"
+
