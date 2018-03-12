@@ -18,6 +18,11 @@ RSpec.feature 'AdminCreateUser.', js: false do
       expect(page).to have_field('Email')
       expect(page).to have_field('Password')
     end
+
+    after do
+      logout(scope: :user)
+    end
+
   end
 
 
@@ -35,6 +40,11 @@ RSpec.feature 'AdminCreateUser.', js: false do
       expect(current_path).to eq(root_path)
       expect(page).to have_content('Not authorized to create users.')
     end
+
+    after do
+      logout(scope: :user)
+    end
+
   end
 
 
