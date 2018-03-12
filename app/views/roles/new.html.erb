@@ -1,0 +1,21 @@
+
+<% provide :page_header do %>
+  <h1><span class="fa fa-edit"></span> <%= t('hyrax.dashboard.manage_role.create_role') %></h1>
+<% end %>
+
+<div class="row">
+  <div class="col-md-12">
+    <div class="panel panel-default labels">
+      <%= bootstrap_form_for @role, :url=>role_management.roles_path do |f| %>
+        <div class="panel-body">
+          <%= f.text_field :name, :label=> t('hyrax.dashboard.manage_role.role_name') %>
+        </div>
+
+        <div class="panel-footer">
+          <%= link_to t('hyrax.dashboard.manage_role.cancel'), role_management.roles_path, class: 'btn btn-default pull-right' %>
+          <%= f.submit t('hyrax.dashboard.manage_role.add'), class: 'btn btn-primary pull-right' %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

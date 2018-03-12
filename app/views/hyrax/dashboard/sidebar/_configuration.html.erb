@@ -23,10 +23,14 @@
       <% end %>
     <% end %>
   </li>
-
   <% if can? :index, User %>
     <%= menu.nav_link(hyrax.admin_users_path) do %>
       <span class="fa fa-user"></span> <span class="sidebar-action-text"><%= t('hyrax.admin.sidebar.users') %></span>
+    <% end %>
+  <% end %>
+  <% if can? :index, Role %>
+    <%= menu.nav_link(role_management.roles_path) do %>
+      <span class="fa fa-sitemap"></span> <span class="sidebar-action-text"><%= t('hyrax.admin.sidebar.manage_role') %></span>
     <% end %>
   <% end %>
   <% if can?(:manage, Sipity::WorkflowResponsibility) %>
