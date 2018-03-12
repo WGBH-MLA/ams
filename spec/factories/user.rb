@@ -1,4 +1,3 @@
-
 FactoryBot.define do
   factory :user do
     sequence(:email) { |n| "user#{n}@example.com" }
@@ -22,8 +21,13 @@ FactoryBot.define do
       ::RSpec::Mocks.allow_message(user.class.group_service, :fetch_groups).with(user: user).and_return(Array.wrap(evaluator.groups))
     end
 
+
     factory :admin_user do
       groups ['admin']
+      after(:create) do |admin_user|
+        create(:role, name:"admin", users: [admin_user])
+      end
+
     end
 
     factory :user_with_mail do
@@ -50,6 +54,7 @@ FactoryBot.define do
     guest true
   end
 end
+
 
 class MockFile
   attr_accessor :to_s, :id

@@ -18,6 +18,7 @@ class Ability
 
     if current_user.admin?
       can [:create, :show, :add_user, :remove_user, :index, :edit, :update, :destroy], Role
+      can [:create, :savenew, :new, :index, :edit, :update, :destroy], User
     end
 
     # Limits creating new objects to a specific group

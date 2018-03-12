@@ -504,6 +504,8 @@ ActiveRecord::Schema.define(version: 20180307161802) do
     t.binary "zotero_token"
     t.string "zotero_userid"
     t.string "preferred_locale"
+    t.datetime "deleted_at"
+    t.boolean "deleted", default: false
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end

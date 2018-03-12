@@ -17,7 +17,7 @@ Rails.application.routes.draw do
 
   devise_for :users
   namespace :admin do
-    resources :users, only: [:new]
+    resources :users, only: [:new, :index, :destroy]
     # Post route for creating new Users
     post 'savenew', to: 'users#savenew'
   end

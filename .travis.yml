@@ -1,14 +1,14 @@
 sudo: required
 dist: trusty
 language: ruby
-sudo: false
+sudo: true
 services:
   - redis-server
 jdk:
   - oraclejdk8
 rvm:
   - 2.4.1
-  - 2.5
+  - 2.3.4
 addons:
   chrome: stable
 cache:
@@ -16,13 +16,17 @@ cache:
   directories:
       - "dep_cache"
 before_install:
-  - google-chrome-stable --headless --disable-gpu --no-sandbox --remote-debugging-port=9222 http://localhost &
+  - "google-chrome-stable --headless --disable-gpu --no-sandbox --remote-debugging-port=9222 http://localhost &"
   - "mkdir -p dep_cache"
   - "ls -l dep_cache"
   - "cp config/travis/solr_wrapper_test.yml config/solr_wrapper_test.yml"
   - "cp config/travis/fcrepo_wrapper_test.yml config/fcrepo_wrapper_test.yml"
 before_script:
+  - "export DISPLAY=:99.0"
+  - "sh -e /etc/init.d/xvfb start"
+  - sleep 3 # give xvfb some time to start
   - bundle exec rake db:create
+  - RAILS_ENV=test bundle exec rake db:migrate --trace
 script:
   - bundle exec rake ci
 
