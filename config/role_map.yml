@@ -1,0 +1,35 @@
+development:
+  archivist:
+    - archivist1@example.com
+  admin:
+    - adeel@weareavp.com
+    - jason_corum@wgbh.org
+    - andrew_myers@wgbh.org
+test:
+  admin:
+    - wgbh_admin@wgbh-mla.org
+    - adeel@weareavp.com
+  archivist:
+    - archivist1@example.com
+    - archivist2@example.com
+    - leland_himself@example.com
+  admin_policy_object_editor:
+    - archivist1@example.com
+  donor:
+    - donor1@example.com
+    - leland_himself@example.com
+  researcher:
+    - archivist1@example.com
+    - researcher1@example.com
+  patron:
+    - patron1@example.com
+    - leland_himself@example.com
+
+production:
+  admin:
+    - wgbh_admin@wgbh-mla.org
+    - adeel@weareavp.com
+  archivist:
+    - archivist1@example.com
+    - archivist2@example.com
+    - leland_himself@example.com

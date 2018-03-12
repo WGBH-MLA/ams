@@ -1,0 +1,80 @@
+en:
+  blacklight:
+    search:
+      fields:
+        facet:
+          based_near_label_sim: Location
+          creator_sim: Creator
+          file_format_sim: Format
+          generic_type_sim: Type
+          keyword_sim: Keyword
+          language_sim: Language
+          publisher_sim: Publisher
+          subject_sim: Subject
+        index:
+          based_near_tesim: Location
+          contributor_tesim: Contributor
+          creator_tesim: Creator
+          date_created_tesim: Date Created
+          date_modified_dtsi: Date Modified
+          date_uploaded_dtsi: Date Uploaded
+          description_tesim: Description
+          file_format_tesim: File Format
+          identifier_tesim: Identifier
+          keyword_tesim: Keyword
+          language_tesim: Language
+          license_tesim: License
+          publisher_tesim: Publisher
+          rights_statement_tesim: Rights Statement
+          subject_tesim: Subject
+        show:
+          based_near_tesim: Location
+          contributor_tesim: Contributor
+          creator_tesim: Creator
+          date_created_tesim: Date Created
+          date_modified_dtsi: Date Modified
+          date_uploaded_dtsi: Date Uploaded
+          description_tesim: Description
+          file_format_tesim: File Format
+          identifier_tesim: Identifier
+          keyword_tesim: Keyword
+          language_tesim: Language
+          license_tesim: License
+          publisher_tesim: Publisher
+          rights_statement_tesim: Rights Statement
+          subject_tesim: Subject
+          title_tesim: Title
+  hyrax:
+    product_name:           "Hyrax"
+    product_twitter_handle: "@SamveraRepo"
+    institution_name:       "Institution"
+    institution_name_full:  "The Institution Name"
+    account_name:           "My Institution Account Id"
+    directory:
+      suffix:               "@example.org"
+    footer:
+      copyright_html: "<strong>Copyright &copy; 2017 Samvera</strong> Licensed under the Apache License, Version 2.0"
+      service_html: A service of <a href="http://samvera.org/" class="navbar-link" target="_blank">Samvera</a>.
+    admin:
+      sidebar:
+        manage_roles:        'Manage Roles'
+    dashboard:
+      manage_role:
+        create_role: 'New Role'
+        role_total_users: 'Total Users'
+        actions: 'Actions'
+        role_name: 'Role Name'
+        name: 'Name'
+        add: 'Add'
+        add_user: 'Add User'
+        select_user: 'Select a user...'
+        cancel: 'Cancel'
+        confirm: 'Are you sure you want to delete?'
+        role_not_avilable: 'No roles have been created.'
+      admin_sets:
+        title_unique_validation: 'already exist try another one'
+        title_cant_blank_validation: 'You must provide a title'
+  ams:
+    toolbar:
+      profile:
+        edit_registration: 'Change password'
