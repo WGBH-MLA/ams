@@ -36,8 +36,21 @@ gem 'jbuilder', '~> 2.5'
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'pry-byebug', platforms: [:mri, :mingw, :x64_mingw]
-  gem 'rspec-rails', '~> 3.7'
+  gem 'capybara-screenshot'
+  gem 'database_cleaner'
+  gem 'rspec', "~> 3.7"
+  gem 'rspec-rails', "~> 3.7"
+  gem 'rspec-activemodel-mocks'
+  gem 'rspec-its'
   gem 'factory_bot_rails', '~> 4.0'
+  gem 'shoulda-matchers'
+  gem 'bixby' # bixby == the hydra community's rubocop rules
+  gem 'selenium-webdriver'
+  gem 'chromedriver-helper'
+  gem 'capybara', '~> 2.18'
+  gem 'database_cleaner'
+  gem 'fcrepo_wrapper'
+  gem 'solr_wrapper', '>= 0.3'
 end
 
 group :development do
@@ -53,19 +66,9 @@ end
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 
 gem 'hyrax', '~> 2.0'
-
-group :development, :test do
-  gem 'solr_wrapper', '>= 0.3'
-end
-
 gem 'rsolr', '>= 1.0'
 gem 'jquery-rails'
 gem 'devise'
 gem 'devise-guests', '~> 0.6'
-group :development, :test do
-  gem 'fcrepo_wrapper'
-end
-
 gem 'simple_form', '3.5.0'
-
 gem 'mysql2', '~> 0.4.10'
