@@ -8,6 +8,7 @@ development:
 test:
   admin:
     - wgbh_admin@wgbh-mla.org
+    - adeel@weareavp.com
   archivist:
     - archivist1@example.com
     - archivist2@example.com

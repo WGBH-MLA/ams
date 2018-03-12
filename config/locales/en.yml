@@ -31,3 +31,25 @@
 
 en:
   hello: "Hello world"
+  admin:
+    users:
+      index:
+        email: "Email"
+        groups: "Roles"
+        last_accessed: "Last Accessed"
+        status: "Status"
+        actions: "Actions"
+        active: "Active"
+        not_active: "Not Active"
+        enable: "Enable"
+        disable: "Disable"
+        enabled: "Enabled"
+        disabled: "Disabled"
+        went_wrong: "Something Went wrong Please Try Again"
+        not_authorized: "Not authorized to create users."
+        delete:
+          confirm: "Are you sure you want to perform this action?"
+  devise:
+    sessions:
+      user:
+        account_deactivated: "Your account is disabled."
