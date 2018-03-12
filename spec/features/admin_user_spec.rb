@@ -1,6 +1,9 @@
 require 'rails_helper'
+include Warden::Test::Helpers
 
-describe 'AdminUser', js: false do
+RSpec.feature 'AdminCreateUser.', js: false do
+
+
   context 'an admin user' do
     let(:admin_user) { create :admin_user }
 
@@ -16,6 +19,7 @@ describe 'AdminUser', js: false do
       expect(page).to have_field('Password')
     end
   end
+
 
   context 'an authenticated user' do
     let(:user) { create :user }
