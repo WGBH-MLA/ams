@@ -8,7 +8,7 @@ RSpec.feature 'AdminAddUserroleAsAdminserManager.', js: true do
     let(:admin_user) { create :admin_user }
     let!(:user) { create :user }
     let!(:user_with_role) { create :user_with_role }
-    let!(:admin_set) { create :admin_set }
+    let!(:admin_set) { create :admin_set, title: ["Test Admin Set"] }
 
     before do
       login_as(admin_user)
@@ -21,7 +21,7 @@ RSpec.feature 'AdminAddUserroleAsAdminserManager.', js: true do
       expect(page).to have_content admin_set.title[0]
 
       # Open AdminSet and edit
-      find('td a').click
+      find('td a', text: "Test Admin Set").click
       click_on('Edit')
       expect(page).to have_content 'Edit Administrative Set'
 
@@ -41,7 +41,7 @@ RSpec.feature 'AdminAddUserroleAsAdminserManager.', js: true do
       expect(page).to have_content admin_set.title[0]
 
       # Open AdminSet and edit
-      find('td a').click
+      find('td a', text: "Test Admin Set").click
       click_on('Edit')
       expect(page).to have_content 'Edit Administrative Set'
 
