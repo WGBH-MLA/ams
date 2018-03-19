@@ -7,6 +7,7 @@ FactoryBot.define do
       # Allow for custom groups when a user is instantiated.
       # @example FactoryBot.create(:user, groups: 'avacado')
       groups []
+      role_name ""
     end
 
     # TODO: Register the groups for the given user key such that we can remove the following from other specs:
@@ -21,13 +22,18 @@ FactoryBot.define do
       ::RSpec::Mocks.allow_message(user.class.group_service, :fetch_groups).with(user: user).and_return(Array.wrap(evaluator.groups))
     end
 
-
     factory :admin_user do
       groups ['admin']
       after(:create) do |admin_user|
         create(:role, name:"admin", users: [admin_user])
       end
+    end
 
+    factory :user_with_role do
+      groups ['user']
+      after(:create) do |user_with_role, evaluator|
+        create(:role, name:evaluator.role_name, users: [user_with_role])
+      end
     end
 
     factory :user_with_mail do
