@@ -14,10 +14,14 @@ RSpec.feature 'AssignMultipleRolesAsViewer.', js: true do
     let!(:work_2) { create :public_work, title: ['Second work'] }
 
     let!(:permission_template_1) { Hyrax::PermissionTemplate.find_or_create_by!(admin_set_id: admin_set_1.id) }
-    let!(:workflow) { Sipity::Workflow.create!(active: true, name: 'test-workflow', permission_template: permission_template_1) }
-
     let!(:permission_template_2) { Hyrax::PermissionTemplate.find_or_create_by!(admin_set_id: admin_set_2.id) }
-    let!(:workflow) { Sipity::Workflow.create!(active: true, name: 'test-workflow', permission_template: permission_template_2) }
+
+    before do
+      # For each test permission template, create a test workflow
+      [permission_template_1, permission_template_2].each do |permission_template|
+        Sipity::Workflow.create!(active: true, name: 'test-workflow', permission_template: permission_template)
+      end
+    end
 
     scenario 'Assign set of user (role) as Viewer to AdminSet' do
       work_1.admin_set_id = admin_set_1.id
