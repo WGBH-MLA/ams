@@ -7,5 +7,3 @@ hooks:
   AfterInstall:
     - location: bin/deploy/install.sh
       timeout: 300
-    - location: bin/deploy/create_deployment_details_page.rb
-      timeout: 300
