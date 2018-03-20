@@ -9,4 +9,5 @@ if [ -z $SECRET_KEY_BASE ]; then
 echo "export SECRET_KEY_BASE=`rails secret`" >> /etc/profile
 source /etc/profile
 fi
+bin/deploy/create_deployment_details_page.rb
 service httpd restart
