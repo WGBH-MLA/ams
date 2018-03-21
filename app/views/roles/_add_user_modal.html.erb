@@ -11,7 +11,7 @@
             <ul class="errors"></ul>
             <div class="form-Role">
               <%= f.select :user_key,
-                           options_from_collection_for_select(@users, 'email', 'email'),
+                           options_from_collection_for_select(@users, 'email', lambda { |user| "#{user.email} (#{user.deleted == false ? t('admin.users.index.active') : t('admin.users.index.not_active')})"}),
                            { prompt: "#{t('hyrax.dashboard.manage_role.select_user')}" },
                            class: 'form-control' %>
             </div>
