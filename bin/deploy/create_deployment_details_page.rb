@@ -41,14 +41,14 @@ class DeploymentDetails
     def deployment_details_html
       # TODO: use ERB if the HTML gets more complex.
       html = "<strong>Current revision:</strong> <a href=\"#{github_commit_url}\" title=\"Current revision: #{git_commit}\">#{git_commit}</a>"
-      html += "<br /><strong>Deployed:</strong> " + (response.deployment_info.complete_time - 6.hours).strftime("%D %H:%M:%S") + " Eastern Time"
+      html += "<br /><strong>Deployed:</strong> " + (response.deployment_info.create_time - 6.hours).strftime("%D %H:%M:%S") + " Eastern Time"
     end
 end
 
 
 # Create the page. Catch any errors, print them, and continue.
 begin
-  DeploymentDetails.new(deployment_id: ENV['DEPLOYMENT_ID']).create_page File.expand_path('../../public/deployment_details.html', __FILE__)
+  DeploymentDetails.new(deployment_id: ENV['DEPLOYMENT_ID'].to_str).create_page File.expand_path('../../../public/deployment_details.html', __FILE__)
 rescue => e
   backtrace = e.backtrace.reverse.join("\n")
   puts "\n\nError creating deployment information page. #{e.message}\n\n#{backtrace}\n\n"
