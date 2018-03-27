@@ -15,7 +15,7 @@
 <div class="panel panel-default users-listing">
   <div class="panel-heading">
     <div class="modal-div pull-right">
-      <a href="#newRoleModal" role="button" class="btn btn-primary fright vmiddle" data-toggle="modal"><%= t('hyrax.admin.users.index.add_user') %> <i class="glyphicon glyphicon-plus small-icon"></i></a>
+      <a href="#newRoleModal" role="button" class="btn btn-primary fright vmiddle" data-toggle="modal"><%= t('hyrax.dashboard.manage_role.add_user') %> <i class="glyphicon glyphicon-plus small-icon"></i></a>
       <%= render 'roles/add_user_modal'%>
     </div>
   </div>
@@ -27,6 +27,7 @@
         <tr>
           <th></th>
           <th class="hidden"></th>
+          <th>Status</th>
           <th class="text-center"><%= t('.actions') %></th>
         </tr>
         </thead>
@@ -34,6 +35,7 @@
         <% @role.users.each do |user| %>
           <tr>
             <td><%= user.user_key %></td>
+            <td><%= user.deleted == false ? t('admin.users.index.active') : t('admin.users.index.not_active') %></td>
             <td class="text-center">
               <% if can? :remove_user, Role %>
                 <%= button_to t('role-management.edit.remove'), role_management.role_user_path(@role, user.id), :method=>:delete, data: { confirm: t('hyrax.dashboard.manage_role.confirm')}, class:'btn btn-xs btn-danger' %>
