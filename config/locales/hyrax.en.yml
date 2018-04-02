@@ -11,7 +11,15 @@ en:
           language_sim: Language
           publisher_sim: Publisher
           subject_sim: Subject
+          broadcast_sim: Broadcast
+          created_sim: Created
+          copyright_date_sim: Copyright Date
+          episode_number_sim: Episode Number
         index:
+          broadcast_tesim: Broadcast
+          created_tesim: Created
+          copyright_date_tesim: Copyright Date
+          episode_number_tesim: Episode Number
           based_near_tesim: Location
           contributor_tesim: Contributor
           creator_tesim: Creator
@@ -78,3 +86,10 @@ en:
     toolbar:
       profile:
         edit_registration: 'Change password'
+  simple_form:
+      hints:
+        defaults:
+          description: "Some Basic Details to identifying a work."
+      labels:
+        defaults:
+          description:               "Description"

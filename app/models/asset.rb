@@ -1,0 +1,65 @@
+# Generated via
+#  `rails generate hyrax:work Asset`
+class Asset < ActiveFedora::Base
+  include ::Hyrax::WorkBehavior
+
+  self.indexer = AssetIndexer
+  # Change this to restrict which works can be added as a child.
+  # self.valid_child_concerns = []
+  validates :title, presence: { message: 'Your asset must have a title.' }
+  validates :description, presence: { message: 'Your asset must have a description.' }
+
+  self.human_readable_type = 'Asset'
+
+  property :broadcast, predicate: ::RDF::URI.new("http://www.ebu.ch/metadata/ontologies/ebucore/ebucore#dateBroadcast"), multiple: true do |index|
+    index.as :stored_searchable, :facetable
+  end
+
+  property :created, predicate: ::RDF::URI.new("http://purl.org/dc/terms/created"), multiple: true do |index|
+    index.as :stored_searchable, :facetable
+  end
+
+  property :copyright_date, predicate: ::RDF::URI.new("http://id.loc.gov/ontologies/bibframe.html#p_copyrightDate"), multiple: true do |index|
+    index.as :stored_searchable, :facetable
+  end
+
+  property :date, predicate: ::RDF::URI.new("http://purl.org/dc/terms/date"), multiple: true do |index|
+    index.as :stored_searchable, :facetable
+  end
+
+  property :episode_number, predicate: ::RDF::URI.new("http://www.ebu.ch/metadata/ontologies/ebucore/ebucore#episodeNumber"), multiple: true do |index|
+    index.as :stored_searchable
+  end
+
+  property :spatial_coverage, predicate: ::RDF::Vocab::DC.coverage, multiple: true do |index|
+    index.as :stored_searchable
+  end
+
+  property :temporal_coverage, predicate: ::RDF::URI.new("http://id.loc.gov/ontologies/bibframe.html#p_temporalCoverage"), multiple: true do |index|
+    index.as :stored_searchable
+  end
+
+  property :audience_level, predicate: ::RDF::URI.new("http://www.ebu.ch/metadata/ontologies/ebucore/ebucore#hasTargetAudience"), multiple: true do |index|
+    index.as :stored_searchable
+  end
+
+  property :audience_rating, predicate: ::RDF::URI.new("https://www.ebu.ch/metadata/ontologies/ebucore/index.html#Type"), multiple: true do |index|
+    index.as :stored_searchable
+  end
+
+  property :annotiation, predicate: ::RDF::URI.new("http://www.w3.org/2004/02/skos/core#note"), multiple: true do |index|
+    index.as :stored_searchable
+  end
+
+  property :rights_summary, predicate: ::RDF::URI.new("http://purl.org/dc/elements/1.1/rights"), multiple: true do |index|
+    index.as :stored_searchable
+  end
+
+  property :rights_link, predicate: ::RDF::URI.new("http://www.europeana.eu/rights"), multiple: true do |index|
+    index.as :stored_searchable
+  end
+
+  # This must be included at the end, because it finalizes the metadata if you have any further properties define above in current model
+  include ::Hyrax::BasicMetadata
+
+end
