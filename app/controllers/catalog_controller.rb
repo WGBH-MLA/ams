@@ -97,7 +97,7 @@ class CatalogController < ApplicationController
 
     config.add_index_field solr_name("broadcast", :stored_searchable), itemprop: 'broadcast', helper_method: :iconify_auto_link
     config.add_index_field solr_name("created", :stored_searchable), itemprop: 'created', helper_method: :iconify_auto_link
-    config.add_index_field solr_name("date", :stored_searchable), itemprop: 'date', helper_method: :iconify_auto_link
+    config.add_index_field solr_name("date", :stored_searchable), itemprop: 'date', helper_method: :iconify_auto_link, label:'Date'
     config.add_index_field solr_name("copyright_date", :stored_searchable), itemprop: 'copyright_date', helper_method: :iconify_auto_link
     config.add_index_field solr_name("episode_number", :stored_searchable), itemprop: 'episode_number', helper_method: :iconify_auto_link
 
