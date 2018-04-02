@@ -61,5 +61,4 @@ class Asset < ActiveFedora::Base
 
   # This must be included at the end, because it finalizes the metadata if you have any further properties define above in current model
   include ::Hyrax::BasicMetadata
-
 end
