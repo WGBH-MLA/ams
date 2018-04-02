@@ -128,7 +128,7 @@ class CatalogController < ApplicationController
 
     config.add_show_field solr_name("broadcast", :stored_searchable)
     config.add_show_field solr_name("created", :stored_searchable)
-    config.add_show_field solr_name("date", :stored_searchable)
+    config.add_show_field solr_name("date", :stored_searchable,label: "Date")
     config.add_show_field solr_name("copyright_date", :stored_searchable)
     config.add_show_field solr_name("episode_number", :stored_searchable)
 
@@ -360,24 +360,19 @@ class CatalogController < ApplicationController
     config.add_sort_field "#{uploaded_field} asc", label: "date uploaded \u25B2"
     config.add_sort_field "#{modified_field} desc", label: "date modified \u25BC"
     config.add_sort_field "#{modified_field} asc", label: "date modified \u25B2"
-
-    config.add_sort_field "#{broadcast} asc", label: "broadcast \u25B2"
     config.add_sort_field "#{broadcast} dsc", label: "broadcast \u25BC"
-
-    config.add_sort_field "#{created} asc", label: "created  \u25B2"
+    config.add_sort_field "#{broadcast} asc", label: "broadcast \u25B2"
     config.add_sort_field "#{created} dsc", label: "created  \u25BC"
-
-    config.add_sort_field "#{copyright_date} asc", label: "copyright date  \u25B2"
+    config.add_sort_field "#{created} asc", label: "created  \u25B2"
     config.add_sort_field "#{copyright_date} dsc", label: "copyright date  \u25BC"
-
-    config.add_sort_field "#{date} asc", label: "date  \u25B2"
+    config.add_sort_field "#{copyright_date} asc", label: "copyright date  \u25B2"
     config.add_sort_field "#{date} dsc", label: "date  \u25BC"
-
-    config.add_sort_field "#{title} asc", label: "title  \u25B2"
+    config.add_sort_field "#{date} asc", label: "date  \u25B2"
     config.add_sort_field "#{title} dsc", label: "title  \u25BC"
-
-    config.add_sort_field "#{episode_number} asc", label: "Episode Number  \u25B2"
+    config.add_sort_field "#{title} asc", label: "title  \u25B2"
     config.add_sort_field "#{episode_number} dsc", label: "Episode Number  \u25BC"
+    config.add_sort_field "#{episode_number} asc", label: "Episode Number  \u25B2"
+
 
     # If there are more than this many search results, no spelling ("did you
     # mean") suggestion is offered.
