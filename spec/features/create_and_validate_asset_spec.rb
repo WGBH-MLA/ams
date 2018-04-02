@@ -71,7 +71,7 @@ RSpec.feature 'Create and Validate Asset', js: true do
 
       # set it public
       find('body').click
-      choose('work_visibility_open')
+      choose('asset_visibility_open')
       expect(page).to have_content('Please note, making something visible to the world (i.e. marking this as Public) may be viewed as publishing which could impact your ability to')
 
       click_on('Save')
