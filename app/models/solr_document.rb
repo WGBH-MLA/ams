@@ -25,4 +25,57 @@ class SolrDocument
   # Do content negotiation for AF models. 
 
   use_extension( Hydra::ContentNegotiation )
+
+  def broadcast
+    self[Solrizer.solr_name('broadcast')]
+  end
+
+  def date
+    self[Solrizer.solr_name('date')]
+  end
+
+  def created
+    self[Solrizer.solr_name('created')]
+  end
+
+  def copyright_date
+    self[Solrizer.solr_name('copyright_date')]
+  end
+
+  def episode_number
+    self[Solrizer.solr_name('episode_number')]
+  end
+
+  def description
+    self[Solrizer.solr_name('description')]
+  end
+
+  def spatial_coverage
+    self[Solrizer.solr_name('spatial_coverage')]
+  end
+
+  def temporal_coverage
+    self[Solrizer.solr_name('temporal_coverage')]
+  end
+
+  def audience_level
+    self[Solrizer.solr_name('audience_level')]
+  end
+
+  def audience_rating
+    self[Solrizer.solr_name('audience_rating')]
+  end
+
+  def annotiation
+    self[Solrizer.solr_name('annotiation')]
+  end
+
+  def rights_summary
+    self[Solrizer.solr_name('rights_summary')]
+  end
+
+  def rights_link
+    self[Solrizer.solr_name('rights_link')]
+  end
+
 end

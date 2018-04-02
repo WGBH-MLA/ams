@@ -1,6 +1,8 @@
 Hyrax.config do |config|
   # Injected via `rails g hyrax:work Work`
   config.register_curation_concern :work
+  # Injected via `rails g hyrax:work Asset`
+  config.register_curation_concern :asset
   # Register roles that are expected by your implementation.
   # @see Hyrax::RoleRegistry for additional details.
   # @note there are magical roles as defined in Hyrax::RoleRegistry::MAGIC_ROLES
@@ -106,12 +108,12 @@ Hyrax.config do |config|
   # Should the acceptance of the licence agreement be active (checkbox), or
   # implied when the save button is pressed? Set to true for active
   # The default is true.
-  # config.active_deposit_agreement_acceptance = true
+  config.active_deposit_agreement_acceptance = false
 
   # Should work creation require file upload, or can a work be created first
   # and a file added at a later time?
   # The default is true.
-  # config.work_requires_files = true
+  config.work_requires_files = false
 
   # Should a button with "Share my work" show on the front page to all users (even those not logged in)?
   # config.display_share_button_when_not_logged_in = true
