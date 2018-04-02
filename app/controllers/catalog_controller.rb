@@ -128,7 +128,7 @@ class CatalogController < ApplicationController
 
     config.add_show_field solr_name("broadcast", :stored_searchable)
     config.add_show_field solr_name("created", :stored_searchable)
-    config.add_show_field solr_name("date", :stored_searchable,label: "Date")
+    config.add_show_field solr_name("date", :stored_searchable),:label => 'Date'
     config.add_show_field solr_name("copyright_date", :stored_searchable)
     config.add_show_field solr_name("episode_number", :stored_searchable)
 
