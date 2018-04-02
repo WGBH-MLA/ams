@@ -11,9 +11,9 @@ RSpec.feature 'Create and Validate Asset', js: true do
     let!(:workflow) { Sipity::Workflow.create!(active: true, name: 'test-workflow', permission_template: permission_template) }
 
     let(:asset_attributes) do
-      { title: "My Test Title", description:"My Test Description", broadcast:"My Test Broadcast", created:'My Test Created', date:'My Test Date', copyright_date:'My Test Copyright Date',
-        episode_number:'My Test Episode number', spatial_coverage:'My Test Spatial coverage', temporal_coverage:'My Test Temporal coverage', audience_level:'My Test Audience level',
-        audience_rating:'My Test Audience rating', annotiation:'My Test Annotiation', rights_summary:'My Test Rights summary', rights_link:'My Test Rights link'
+      { title: "My Test Title", description:"My Test Description", broadcast:"04/02/2018", created:'04/02/2018', date:'04/02/2018', copyright_date:'04/02/2018',
+        episode_number:'EP#11', spatial_coverage:'My Test Spatial coverage', temporal_coverage:'My Test Temporal coverage', audience_level:'My Test Audience level',
+        audience_rating:'My Test Audience rating', annotiation:'My Test Annotiation', rights_summary:'My Test Rights summary', rights_link:'http://somerightslink.com/testlink'
       }
     end
 
@@ -40,15 +40,6 @@ RSpec.feature 'Create and Validate Asset', js: true do
       expect(page).to have_content "Add files"
       expect(page).to have_content "Add folder"
 
-      # validate files with errors
-      page.find("#required-files")[:class].include?("incomplete")
-      within('span#addfiles') do
-        attach_file("files[]", "#{Hyrax::Engine.root}/spec/fixtures/image.jp2", visible: false)
-        attach_file("files[]", "#{Hyrax::Engine.root}/spec/fixtures/jp2_fits.xml", visible: false)
-      end
-
-      # validated files without errors
-      page.find("#required-files")[:class].include?("complete")
 
       # validate metadata with errors
       page.find("#required-metadata")[:class].include?("incomplete")
@@ -79,18 +70,12 @@ RSpec.feature 'Create and Validate Asset', js: true do
       find("#asset_admin_set_id option[value='#{admin_set.id}']").select_option
 
       # set it public
-      page.choose('asset_visibility_open')
-
-      # validate agreement with errors
-      page.find("#required-agreement")[:class].include?("incomplete")
-
-      # sign agreement
-      page.check('agreement')
-
-      # validated agreement without errors
-      page.find("#required-agreement")[:class].include?("complete")
+      find('body').click
+      choose('work_visibility_open')
+      expect(page).to have_content('Please note, making something visible to the world (i.e. marking this as Public) may be viewed as publishing which could impact your ability to')
 
       click_on('Save')
+      sleep(30)
 
       visit '/'
       find("#search-submit-header").click
