@@ -11,19 +11,18 @@ RSpec.feature 'Create and Validate Asset', js: true do
     let!(:workflow) { Sipity::Workflow.create!(active: true, name: 'test-workflow', permission_template: permission_template) }
 
     let(:asset_attributes) do
-      { title: "My Test Title", description:"My Test Description", broadcast:"04/02/2018", created:'04/02/2018', date:'04/02/2018', copyright_date:'04/02/2018',
-        episode_number:'EP#11', spatial_coverage:'My Test Spatial coverage', temporal_coverage:'My Test Temporal coverage', audience_level:'My Test Audience level',
-        audience_rating:'My Test Audience rating', annotiation:'My Test Annotiation', rights_summary:'My Test Rights summary', rights_link:'http://somerightslink.com/testlink'
-      }
+      { title: "My Test Title", description: "My Test Description", broadcast: "04/02/2018", created: '04/02/2018', date: '04/02/2018', copyright_date: '04/02/2018',
+        episode_number: 'EP#11', spatial_coverage: 'My Test Spatial coverage', temporal_coverage: 'My Test Temporal coverage', audience_level: 'My Test Audience level',
+        audience_rating: 'My Test Audience rating', annotiation: 'My Test Annotiation', rights_summary: 'My Test Rights summary', rights_link: 'http://somerightslink.com/testlink' }
     end
 
     scenario 'Create and Validate Asset, Search asset' do
       Sipity::WorkflowAction.create!(name: 'submit', workflow: workflow)
       Hyrax::PermissionTemplateAccess.create!(
-          permission_template_id: permission_template.id,
-          agent_type: 'group',
-          agent_id: 'user',
-          access: 'deposit'
+        permission_template_id: permission_template.id,
+        agent_type: 'group',
+        agent_id: 'user',
+        access: 'deposit'
       )
       # Login role user to create asset
       login_as(user_with_role)
@@ -39,7 +38,6 @@ RSpec.feature 'Create and Validate Asset', js: true do
       click_link "Files" # switch tab
       expect(page).to have_content "Add files"
       expect(page).to have_content "Add folder"
-
 
       # validate metadata with errors
       page.find("#required-metadata")[:class].include?("incomplete")
@@ -80,7 +78,7 @@ RSpec.feature 'Create and Validate Asset', js: true do
       visit '/'
       find("#search-submit-header").click
 
-      #expect assets is showing up
+      # expect assets is showing up
       expect(page).to have_content asset_attributes[:title]
       expect(page).to have_content asset_attributes[:broadcast]
       expect(page).to have_content asset_attributes[:created]
@@ -105,5 +103,4 @@ RSpec.feature 'Create and Validate Asset', js: true do
       exit
     end
   end
-
 end

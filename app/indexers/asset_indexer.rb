@@ -9,7 +9,6 @@ class AssetIndexer < Hyrax::WorkIndexer
   # this behavior
   include Hyrax::IndexesLinkedMetadata
 
-
   # Uncomment this block if you want to add custom indexing behavior:
   # def generate_solr_document
   #  super.tap do |solr_doc|
