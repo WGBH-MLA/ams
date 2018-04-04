@@ -13,11 +13,34 @@ class CatalogController < ApplicationController
     solr_name('system_modified', :stored_sortable, type: :date)
   end
 
+  def self.broadcast
+    solr_name('broadcast', :stored_sortable)
+  end
+
+  def self.created
+    solr_name('created', :stored_sortable, type: :date)
+  end
+
+  def self.copyright_date
+    solr_name('copyright_date', :stored_sortable, type: :date)
+  end
+
+  def self.date
+    solr_name('date', :stored_sortable, type: :date)
+  end
+
+  def self.title
+    solr_name('title', :stored_sortable)
+  end
+
+  def self.episode_number
+    solr_name('episode_number', :stored_sortable)
+  end
+
   configure_blacklight do |config|
     config.view.gallery.partials = [:index_header, :index]
     config.view.masonry.partials = [:index]
     config.view.slideshow.partials = [:index]
-
 
     config.show.tile_source_field = :content_metadata_image_iiif_info_ssm
     config.show.partials.insert(1, :openseadragon)
@@ -42,6 +65,10 @@ class CatalogController < ApplicationController
     # solr fields that will be treated as facets by the blacklight application
     #   The ordering of the field names is the order of the display
     config.add_facet_field solr_name("human_readable_type", :facetable), label: "Type", limit: 5
+    config.add_facet_field solr_name("broadcast", :facetable), label: "Broadcast", limit: 5
+    config.add_facet_field solr_name("created", :facetable), label: "Created", limit: 5
+    config.add_facet_field solr_name("copyright_date", :facetable), label: "Copyright Date", limit: 5
+    config.add_facet_field solr_name("date", :facetable), label: "Date", limit: 5
     config.add_facet_field solr_name("resource_type", :facetable), label: "Resource Type", limit: 5
     config.add_facet_field solr_name("creator", :facetable), limit: 5
     config.add_facet_field solr_name("contributor", :facetable), label: "Contributor", limit: 5
@@ -66,6 +93,13 @@ class CatalogController < ApplicationController
     #   The ordering of the field names is the order of the display
     config.add_index_field solr_name("title", :stored_searchable), label: "Title", itemprop: 'name', if: false
     config.add_index_field solr_name("description", :stored_searchable), itemprop: 'description', helper_method: :iconify_auto_link
+
+    config.add_index_field solr_name("broadcast", :stored_searchable), itemprop: 'broadcast', helper_method: :iconify_auto_link
+    config.add_index_field solr_name("created", :stored_searchable), itemprop: 'created', helper_method: :iconify_auto_link
+    config.add_index_field solr_name("date", :stored_searchable), itemprop: 'date', helper_method: :iconify_auto_link, label: 'Date'
+    config.add_index_field solr_name("copyright_date", :stored_searchable), itemprop: 'copyright_date', helper_method: :iconify_auto_link
+    config.add_index_field solr_name("episode_number", :stored_searchable), itemprop: 'episode_number', helper_method: :iconify_auto_link
+
     config.add_index_field solr_name("keyword", :stored_searchable), itemprop: 'keywords', link_to_search: solr_name("keyword", :facetable)
     config.add_index_field solr_name("subject", :stored_searchable), itemprop: 'about', link_to_search: solr_name("subject", :facetable)
     config.add_index_field solr_name("creator", :stored_searchable), itemprop: 'creator', link_to_search: solr_name("creator", :facetable)
@@ -90,6 +124,13 @@ class CatalogController < ApplicationController
     #   The ordering of the field names is the order of the display
     config.add_show_field solr_name("title", :stored_searchable)
     config.add_show_field solr_name("description", :stored_searchable)
+
+    config.add_show_field solr_name("broadcast", :stored_searchable)
+    config.add_show_field solr_name("created", :stored_searchable)
+    config.add_show_field solr_name("date", :stored_searchable), label: "Date"
+    config.add_show_field solr_name("copyright_date", :stored_searchable)
+    config.add_show_field solr_name("episode_number", :stored_searchable)
+
     config.add_show_field solr_name("keyword", :stored_searchable)
     config.add_show_field solr_name("subject", :stored_searchable)
     config.add_show_field solr_name("creator", :stored_searchable)
@@ -272,6 +313,41 @@ class CatalogController < ApplicationController
         pf: solr_name
       }
     end
+    config.add_search_field('broadcast') do |field|
+      solr_name = solr_name("broadcast", :stored_searchable)
+      field.solr_local_parameters = {
+        qf: solr_name,
+        pf: solr_name
+      }
+    end
+    config.add_search_field('created') do |field|
+      solr_name = solr_name("created", :stored_searchable)
+      field.solr_local_parameters = {
+        qf: solr_name,
+        pf: solr_name
+      }
+    end
+    config.add_search_field('date') do |field|
+      solr_name = solr_name("date", :stored_searchable)
+      field.solr_local_parameters = {
+        qf: solr_name,
+        pf: solr_name
+      }
+    end
+    config.add_search_field('copyright_date') do |field|
+      solr_name = solr_name("copyright_date", :stored_searchable)
+      field.solr_local_parameters = {
+        qf: solr_name,
+        pf: solr_name
+      }
+    end
+    config.add_search_field('episode_number') do |field|
+      solr_name = solr_name("episode_number", :stored_searchable)
+      field.solr_local_parameters = {
+        qf: solr_name,
+        pf: solr_name
+      }
+    end
 
     # "sort results by" select (pulldown)
     # label in pulldown is followed by the name of the SOLR field to sort by and
@@ -283,6 +359,18 @@ class CatalogController < ApplicationController
     config.add_sort_field "#{uploaded_field} asc", label: "date uploaded \u25B2"
     config.add_sort_field "#{modified_field} desc", label: "date modified \u25BC"
     config.add_sort_field "#{modified_field} asc", label: "date modified \u25B2"
+    config.add_sort_field "#{broadcast} dsc", label: "broadcast \u25BC"
+    config.add_sort_field "#{broadcast} asc", label: "broadcast \u25B2"
+    config.add_sort_field "#{created} dsc", label: "created  \u25BC"
+    config.add_sort_field "#{created} asc", label: "created  \u25B2"
+    config.add_sort_field "#{copyright_date} dsc", label: "copyright date  \u25BC"
+    config.add_sort_field "#{copyright_date} asc", label: "copyright date  \u25B2"
+    config.add_sort_field "#{date} dsc", label: "date  \u25BC"
+    config.add_sort_field "#{date} asc", label: "date  \u25B2"
+    config.add_sort_field "#{title} dsc", label: "title  \u25BC"
+    config.add_sort_field "#{title} asc", label: "title  \u25B2"
+    config.add_sort_field "#{episode_number} dsc", label: "Episode Number  \u25BC"
+    config.add_sort_field "#{episode_number} asc", label: "Episode Number  \u25B2"
 
     # If there are more than this many search results, no spelling ("did you
     # mean") suggestion is offered.

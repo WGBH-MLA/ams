@@ -6,7 +6,6 @@ class SolrDocument
   # Adds Hyrax behaviors to the SolrDocument.
   include Hyrax::SolrDocumentBehavior
 
-
   # self.unique_key = 'id'
 
   # Email uses the semantic field mappings below to generate the body of an email.
@@ -22,7 +21,59 @@ class SolrDocument
   # Recommendation: Use field names from Dublin Core
   use_extension(Blacklight::Document::DublinCore)
 
-  # Do content negotiation for AF models. 
+  # Do content negotiation for AF models.
 
-  use_extension( Hydra::ContentNegotiation )
+  use_extension(Hydra::ContentNegotiation)
+
+  def broadcast
+    self[Solrizer.solr_name('broadcast')]
+  end
+
+  def date
+    self[Solrizer.solr_name('date')]
+  end
+
+  def created
+    self[Solrizer.solr_name('created')]
+  end
+
+  def copyright_date
+    self[Solrizer.solr_name('copyright_date')]
+  end
+
+  def episode_number
+    self[Solrizer.solr_name('episode_number')]
+  end
+
+  def description
+    self[Solrizer.solr_name('description')]
+  end
+
+  def spatial_coverage
+    self[Solrizer.solr_name('spatial_coverage')]
+  end
+
+  def temporal_coverage
+    self[Solrizer.solr_name('temporal_coverage')]
+  end
+
+  def audience_level
+    self[Solrizer.solr_name('audience_level')]
+  end
+
+  def audience_rating
+    self[Solrizer.solr_name('audience_rating')]
+  end
+
+  def annotiation
+    self[Solrizer.solr_name('annotiation')]
+  end
+
+  def rights_summary
+    self[Solrizer.solr_name('rights_summary')]
+  end
+
+  def rights_link
+    self[Solrizer.solr_name('rights_link')]
+  end
 end
