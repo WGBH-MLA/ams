@@ -10,6 +10,7 @@ class Ability
     # hydra-role-management gem in long run.
     can [:create], Work
     can [:create], Asset
+    can [:create], Series
 
     # Limits deleting objects to a the admin user
     #

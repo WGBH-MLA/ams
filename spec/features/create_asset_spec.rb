@@ -10,10 +10,13 @@ RSpec.feature 'Create and Validate Asset', js: true do
     let!(:permission_template) { Hyrax::PermissionTemplate.find_or_create_by!(admin_set_id: admin_set.id) }
     let!(:workflow) { Sipity::Workflow.create!(active: true, name: 'test-workflow', permission_template: permission_template) }
 
+    let(:input_date_format) { '%m/%d/%Y' }
+    let(:output_date_format) { '%F' }
+
     let(:asset_attributes) do
-      { title: "My Test Title", description: "My Test Description", broadcast: "04/02/2018", created: '04/02/2018', date: '04/02/2018', copyright_date: '04/02/2018',
+      { title: "My Test Title", description: "My Test Description", broadcast: rand_date_time, created: rand_date_time, date: rand_date_time, copyright_date: rand_date_time,
         episode_number: 'EP#11', spatial_coverage: 'My Test Spatial coverage', temporal_coverage: 'My Test Temporal coverage', audience_level: 'My Test Audience level',
-        audience_rating: 'My Test Audience rating', annotiation: 'My Test Annotiation', rights_summary: 'My Test Rights summary', rights_link: 'http://somerightslink.com/testlink' }
+        audience_rating: 'My Test Audience rating', annotation: 'My Test Annotation', rights_summary: 'My Test Rights summary', rights_link: 'http://somerightslink.com/testlink' }
     end
 
     scenario 'Create and Validate Asset, Search asset' do
@@ -51,16 +54,16 @@ RSpec.feature 'Create and Validate Asset', js: true do
 
       click_link "Additional fields" # additional metadata
 
-      fill_in('Broadcast', with: asset_attributes[:broadcast])
-      fill_in('Created', with: asset_attributes[:created])
-      fill_in('Date', with: asset_attributes[:date])
-      fill_in('Copyright date', with: asset_attributes[:copyright_date])
+      fill_in('Broadcast', with: asset_attributes[:broadcast].strftime(input_date_format))
+      fill_in('Created', with: asset_attributes[:created].strftime(input_date_format))
+      fill_in('Date', with: asset_attributes[:date].strftime(input_date_format))
+      fill_in('Copyright date', with: asset_attributes[:copyright_date].strftime(input_date_format))
       fill_in('Episode number', with: asset_attributes[:episode_number])
       fill_in('Spatial coverage', with: asset_attributes[:spatial_coverage])
       fill_in('Temporal coverage', with: asset_attributes[:temporal_coverage])
       fill_in('Audience level', with: asset_attributes[:audience_level])
       fill_in('Audience rating', with: asset_attributes[:audience_rating])
-      fill_in('Annotiation', with: asset_attributes[:annotiation])
+      fill_in('Annotation', with: asset_attributes[:annotation])
       fill_in('Rights summary', with: asset_attributes[:rights_summary])
       fill_in('Rights link', with: asset_attributes[:rights_link])
 
@@ -80,23 +83,23 @@ RSpec.feature 'Create and Validate Asset', js: true do
 
       # expect assets is showing up
       expect(page).to have_content asset_attributes[:title]
-      expect(page).to have_content asset_attributes[:broadcast]
-      expect(page).to have_content asset_attributes[:created]
-      expect(page).to have_content asset_attributes[:copyright_date]
+      expect(page).to have_content asset_attributes[:broadcast].strftime(output_date_format)
+      expect(page).to have_content asset_attributes[:created].strftime(output_date_format)
+      expect(page).to have_content asset_attributes[:copyright_date].strftime(output_date_format)
       expect(page).to have_content asset_attributes[:episode_number]
 
       # open asset with detail show
       click_on(asset_attributes[:title])
-      expect(page).to have_content asset_attributes[:broadcast]
-      expect(page).to have_content asset_attributes[:created]
-      expect(page).to have_content asset_attributes[:date]
-      expect(page).to have_content asset_attributes[:copyright_date]
+      expect(page).to have_content asset_attributes[:broadcast].strftime(output_date_format)
+      expect(page).to have_content asset_attributes[:created].strftime(output_date_format)
+      expect(page).to have_content asset_attributes[:date].strftime(output_date_format)
+      expect(page).to have_content asset_attributes[:copyright_date].strftime(output_date_format)
       expect(page).to have_content asset_attributes[:episode_number]
       expect(page).to have_content asset_attributes[:spatial_coverage]
       expect(page).to have_content asset_attributes[:temporal_coverage]
       expect(page).to have_content asset_attributes[:audience_level]
       expect(page).to have_content asset_attributes[:audience_rating]
-      expect(page).to have_content asset_attributes[:annotiation]
+      expect(page).to have_content asset_attributes[:annotation]
       expect(page).to have_content asset_attributes[:rights_summary]
       expect(page).to have_content asset_attributes[:rights_link]
 
