@@ -69,8 +69,8 @@ class SolrDocument
     self[Solrizer.solr_name('audience_rating')]
   end
 
-  def annotiation
-    self[Solrizer.solr_name('annotiation')]
+  def annotation
+    self[Solrizer.solr_name('annotation')]
   end
 
   def rights_summary
