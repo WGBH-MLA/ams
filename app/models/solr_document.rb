@@ -25,6 +25,10 @@ class SolrDocument
 
   use_extension(Hydra::ContentNegotiation)
 
+  def genre
+    self[Solrizer.solr_name('genre')]
+  end
+
   def broadcast
     self[Solrizer.solr_name('broadcast')]
   end
