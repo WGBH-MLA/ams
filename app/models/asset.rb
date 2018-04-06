@@ -15,6 +15,10 @@ class Asset < ActiveFedora::Base
     index.as :stored_searchable, :facetable
   end
 
+  property :genre, predicate: ::RDF::URI.new("http://www.ebu.ch/metadata/ontologies/ebucore/ebucore#hasGenre"), multiple: true do |index|
+    index.as :stored_searchable, :facetable
+  end
+
   property :broadcast, predicate: ::RDF::URI.new("http://www.ebu.ch/metadata/ontologies/ebucore/ebucore#dateBroadcast"), multiple: true do |index|
     index.as :stored_searchable, :facetable
   end
@@ -51,7 +55,7 @@ class Asset < ActiveFedora::Base
     index.as :stored_searchable
   end
 
-  property :annotiation, predicate: ::RDF::URI.new("http://www.w3.org/2004/02/skos/core#note"), multiple: true do |index|
+  property :annotation, predicate: ::RDF::URI.new("http://www.w3.org/2004/02/skos/core#note"), multiple: true do |index|
     index.as :stored_searchable
   end
 

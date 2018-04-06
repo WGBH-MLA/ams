@@ -28,6 +28,10 @@ class SolrDocument
   def asset_types
     self[Solrizer.solr_name('asset_types')]
   end
+  
+  def genre
+    self[Solrizer.solr_name('genre')]
+  end
 
   def broadcast
     self[Solrizer.solr_name('broadcast')]
@@ -69,8 +73,8 @@ class SolrDocument
     self[Solrizer.solr_name('audience_rating')]
   end
 
-  def annotiation
-    self[Solrizer.solr_name('annotiation')]
+  def annotation
+    self[Solrizer.solr_name('annotation')]
   end
 
   def rights_summary
