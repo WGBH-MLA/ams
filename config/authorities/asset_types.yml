@@ -1,0 +1,17 @@
+terms:
+  - id: Album
+    term: Album
+  - id: Clip
+    term: Clip
+  - id: Compilation
+    term: Compilation
+  - id: Episode
+    term: Episode
+  - id: Program
+    term: Program
+  - id: Promo
+    term: Promo
+  - id: RawFootage
+    term: Raw Footage
+  - id: Segment
+    term: Segmen
