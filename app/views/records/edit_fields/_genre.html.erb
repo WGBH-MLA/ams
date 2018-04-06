@@ -1,0 +1,5 @@
+<%= f.input :genre, as: :select,
+            collection: GenreService.select_all_options,
+            include_blank: true,
+            input_html: { class: 'form-control' , multiple: true}
+%>
