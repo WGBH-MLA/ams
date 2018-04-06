@@ -11,6 +11,10 @@ class Asset < ActiveFedora::Base
 
   self.human_readable_type = 'Asset'
 
+  property :asset_types, predicate: ::RDF::URI.new("http://www.ebu.ch/metadata/ontologies/ebucore/ebucore#hasType"), multiple: true do |index|
+    index.as :stored_searchable, :facetable
+  end
+
   property :broadcast, predicate: ::RDF::URI.new("http://www.ebu.ch/metadata/ontologies/ebucore/ebucore#dateBroadcast"), multiple: true do |index|
     index.as :stored_searchable, :facetable
   end

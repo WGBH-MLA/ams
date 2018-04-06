@@ -1,0 +1,5 @@
+<%= f.input :asset_types, as: :select,
+            collection: AssetTypesService.select_all_options,
+            include_blank: true,
+            input_html: { class: 'form-control' , multiple: true}
+%>
