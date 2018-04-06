@@ -1,0 +1,55 @@
+terms:
+  - id: Call-in
+    term: Call-in
+  - id: Children's
+    term: Children's
+  - id: Debate
+    term: Debate
+  - id: Documentary
+    term: Documentary
+  - id: Drama
+    term: Drama
+  - id: Educational
+    term: Educational
+  - id: EventCoverage
+    term: Event Coverage
+  - id: Fundraiser
+    term: Fundraiser
+  - id: GameShow
+    term: Game Show
+  - id: Instructional
+    term: Instructional
+  - id: Interview
+    term: Interview
+  - id: Magazine
+    term: Magazine
+  - id: Miniseries
+    term: Miniseries
+  - id: NewsReport
+    term: News Report
+  - id: PerformanceinaStudio
+    term: Performance in a Studio
+  - id: PerformanceforaLiveAudience
+    term: Performance for a Live Audience
+  - id: Performance
+    term: Performance
+  - id: Promo
+    term: Promo
+  - id: PublicServiceAnnouncement
+    term: Public Service Announcement
+  - id: RadioTheater
+    term: Radio Theater
+  - id: RecordedMusic
+    term: Recorded Music
+  - id: Special
+    term: Special
+  - id: Standup
+    term: Stand-up
+  - id: RadioTheater
+    term: RadioTheater
+  - id: TalkShow
+    term: Talk Show
+  - id: TownHallMeeting
+    term: Town Hall Meeting
+  - id: Unedited
+    term: Unedited

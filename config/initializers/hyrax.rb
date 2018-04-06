@@ -3,6 +3,8 @@ Hyrax.config do |config|
   config.register_curation_concern :work
   # Injected via `rails g hyrax:work Asset`
   config.register_curation_concern :asset
+  # Injected via `rails g hyrax:work Series`
+  config.register_curation_concern :series
   # Register roles that are expected by your implementation.
   # @see Hyrax::RoleRegistry for additional details.
   # @note there are magical roles as defined in Hyrax::RoleRegistry::MAGIC_ROLES
