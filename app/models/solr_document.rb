@@ -25,6 +25,10 @@ class SolrDocument
 
   use_extension(Hydra::ContentNegotiation)
 
+  def asset_types
+    self[Solrizer.solr_name('asset_types')]
+  end
+  
   def genre
     self[Solrizer.solr_name('genre')]
   end
