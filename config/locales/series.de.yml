@@ -1,0 +1,8 @@
+de:
+  hyrax:
+    icons:
+      series:     'fa fa-file-text-o'
+    select_type:
+      series:
+        name:               "Series"
+        description:        "Series Werke"

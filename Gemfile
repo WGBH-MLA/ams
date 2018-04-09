@@ -37,6 +37,7 @@ gem 'hydra-role-management'
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'pry-byebug', platforms: [:mri, :mingw, :x64_mingw]
+  gem 'pry-rails'
   gem 'capybara-screenshot'
   gem 'database_cleaner'
   gem 'rspec', "~> 3.7"
@@ -73,3 +74,4 @@ gem 'devise'
 gem 'devise-guests', '~> 0.6'
 gem 'simple_form', '3.5.0'
 gem 'mysql2', '~> 0.4.10'
+gem 'aws-sdk-codedeploy'
