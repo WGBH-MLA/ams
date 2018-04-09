@@ -18,17 +18,16 @@ RSpec.feature 'Create a Work', js: false do
     let(:permission_template) { Hyrax::PermissionTemplate.find_or_create_by!(admin_set_id: admin_set_id) }
     let(:workflow) { Sipity::Workflow.create!(active: true, name: 'test-workflow', permission_template: permission_template) }
 
-
     before do
       # Create a single action that can be taken
       Sipity::WorkflowAction.create!(name: 'submit', workflow: workflow)
 
       # Grant the user access to deposit into the admin set.
       Hyrax::PermissionTemplateAccess.create!(
-          permission_template_id: permission_template.id,
-          agent_type: 'user',
-          agent_id: user.user_key,
-          access: 'deposit'
+        permission_template_id: permission_template.id,
+        agent_type: 'user',
+        agent_id: user.user_key,
+        access: 'deposit'
       )
       login_as user
     end
@@ -38,10 +37,9 @@ RSpec.feature 'Create a Work', js: false do
       click_link "Works"
       click_link "Add new work"
 
-
       # If you generate more than one work uncomment these lines
-      # choose "payload_concern", option: "Work"
-      # click_button "Create work"
+      choose "payload_concern", option: "Work"
+      click_button "Create work"
       expect(page).to have_content "Add New Work"
       click_link "Files" # switch tab
       expect(page).to have_content "Add files"
@@ -62,7 +60,6 @@ RSpec.feature 'Create a Work', js: false do
       find('body').click
       choose('work_visibility_open')
       expect(page).to have_content('Please note, making something visible to the world (i.e. marking this as Public) may be viewed as publishing which could impact your ability to')
-      check('agreement')
 
       click_on('Save')
       expect(page).to have_content('My Test Work')
