@@ -84,4 +84,49 @@ class SolrDocument
   def rights_link
     self[Solrizer.solr_name('rights_link')]
   end
+
+  def digitization_date
+    self[Solrizer.solr_name('digitization_date')]
+  end
+
+  def dimensions
+    self[Solrizer.solr_name('dimensions')]
+  end
+
+  def format
+    self[Solrizer.solr_name('format')]
+  end
+
+  def standard
+    self[Solrizer.solr_name('standard')]
+  end
+
+  def location
+    self[Solrizer.solr_name('location')]
+  end
+
+  def media_type
+    self[Solrizer.solr_name('media_type')]
+  end
+
+  def generations
+    self[Solrizer.solr_name('generations')]
+  end
+
+  def time_start
+    self[Solrizer.solr_name('time_start')]
+  end
+
+  def duration
+    self[Solrizer.solr_name('duration')]
+  end
+
+  def colors
+    self[Solrizer.solr_name('colors')]
+  end
+
+  def language
+    self[Solrizer.solr_name('language')]
+  end
+
 end

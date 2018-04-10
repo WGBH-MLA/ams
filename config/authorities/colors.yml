@@ -1,0 +1,15 @@
+terms:
+  - id: B&W
+    term: B&W
+  - id: CMYK
+    term: CMYK
+  - id: Color
+    term: Color
+  - id: Grayscale
+    term: Grayscale
+  - id: RGB
+    term: RGB
+  - id: Tinted-Toned
+    term: Tinted, Toned
+  - id: YUV
+    term: YUV
