@@ -1,0 +1,5 @@
+<%= f.input :colors, as: :select,
+            collection: ColorsService.select_all_options,
+            include_blank: true,
+            input_html: { class: 'form-control'}
+%>
