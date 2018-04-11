@@ -10,5 +10,11 @@ module Hyrax
 
     # Use this line if you want to use a custom presenter
     self.show_presenter = Hyrax::SeriesPresenter
+
+    def update
+      # TODO: where should this really go?
+      Hyrax::CurationConcern.actor_factory.swap Hyrax::Actors::AttachMembersActor, Hyrax::Actors::AddAssetsToSeriesActor
+      super
+    end
   end
 end

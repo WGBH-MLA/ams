@@ -3,6 +3,8 @@
 class Asset < ActiveFedora::Base
   include ::Hyrax::WorkBehavior
 
+  has_and_belongs_to_many :series, predicate: ::RDF::URI.new('http://example.org#TODO-find-appropriate-predicate'), class_name: Series, inverse_of: :assets
+
   self.indexer = AssetIndexer
   # Change this to restrict which works can be added as a child.
   # self.valid_child_concerns = []
