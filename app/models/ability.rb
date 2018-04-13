@@ -11,6 +11,7 @@ class Ability
     can [:create], Work
     can [:create], Asset
     can [:create], Series
+    can [:create], PhysicalInstantiation
 
     # Limits deleting objects to a the admin user
     #

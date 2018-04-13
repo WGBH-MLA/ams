@@ -5,6 +5,8 @@ Hyrax.config do |config|
   config.register_curation_concern :asset
   # Injected via `rails g hyrax:work Series`
   config.register_curation_concern :series
+  # Injected via `rails g hyrax:work PhysicalInstantiation`
+  config.register_curation_concern :physical_instantiation
   # Register roles that are expected by your implementation.
   # @see Hyrax::RoleRegistry for additional details.
   # @note there are magical roles as defined in Hyrax::RoleRegistry::MAGIC_ROLES
