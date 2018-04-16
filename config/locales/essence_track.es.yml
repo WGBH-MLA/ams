@@ -1,0 +1,10 @@
+es:
+  hyrax:
+    icons:
+      essence_track:     'fa fa-file-text-o'
+    select_type:
+      essence_track:
+        # TODO: translate `human_name` into Spanish
+        name:               "Essence Track"
+        # TODO: translate `human_name` into Spanish
+        description:        "Essence track trabajos"
