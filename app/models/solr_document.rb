@@ -28,7 +28,7 @@ class SolrDocument
   def asset_types
     self[Solrizer.solr_name('asset_types')]
   end
-  
+
   def genre
     self[Solrizer.solr_name('genre')]
   end
@@ -129,4 +129,11 @@ class SolrDocument
     self[Solrizer.solr_name('language')]
   end
 
+  def file_size
+    self[Solrizer.solr_name('file_size')]
+  end
+
+  def data_rate
+    self[Solrizer.solr_name('data_rate')]
+  end
 end

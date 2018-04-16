@@ -1,0 +1,8 @@
+pt-BR:
+  hyrax:
+    icons:
+      essence_track:     'fa fa-file-text-o'
+    select_type:
+      essence_track:
+        name:               "Essence Track"
+        description:        "Essence track trabalhos"
