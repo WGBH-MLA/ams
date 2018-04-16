@@ -129,4 +129,11 @@ class SolrDocument
     self[Solrizer.solr_name('language')]
   end
 
+  def file_size
+    self[Solrizer.solr_name('file_size')]
+  end
+
+  def data_rate
+    self[Solrizer.solr_name('data_rate')]
+  end
 end
