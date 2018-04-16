@@ -7,7 +7,7 @@ class DigitalInstantiation < ActiveFedora::Base
   # Change this to restrict which works can be added as a child.
   # self.valid_child_concerns = []
   validates :title, presence: { message: 'Your work must have a Title.' }
-  validates :format, presence: { message: 'Your work must have a Format.' }
+  validates :digital_format, presence: { message: 'Your work must have a Digital Format.' }
   validates :location, presence: { message: 'Your work must have a Location.' }
   validates :media_type, presence: { message: 'Your work must have a Media Type.' }
   self.human_readable_type = 'Digital Instantiation'
@@ -20,7 +20,7 @@ class DigitalInstantiation < ActiveFedora::Base
     index.as :stored_searchable
   end
 
-  property :format, predicate: ::RDF::URI.new("http://www.ebu.ch/metadata/ontologies/ebucore/ebucore#hasFormat"), multiple: false do |index|
+  property :digital_format, predicate: ::RDF::URI.new("http://www.ebu.ch/metadata/ontologies/ebucore/ebucore#hasFormat"), multiple: false do |index|
     index.as :stored_searchable
   end
 
