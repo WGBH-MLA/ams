@@ -1,0 +1,10 @@
+zh:
+  hyrax:
+    icons:
+      essence_track:     'fa fa-file-text-o'
+    select_type:
+      essence_track:
+        # TODO: translate `human_name` into Chinese
+        name:               "Essence Track"
+        # TODO: translate `human_name` into Chinese
+        description:        "Essence track 作品"
