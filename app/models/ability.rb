@@ -11,6 +11,7 @@ class Ability
     can [:create], Work
     can [:create], Asset
     can [:create], Series
+    can [:create], EssenceTrack
     can [:create], PhysicalInstantiation
     can [:create], DigitalInstantiation
 
