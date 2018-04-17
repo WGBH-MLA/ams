@@ -1,0 +1,10 @@
+zh:
+  hyrax:
+    icons:
+      digital_instantiation:     'fa fa-file-text-o'
+    select_type:
+      digital_instantiation:
+        # TODO: translate `human_name` into Chinese
+        name:               "Digital Instantiation"
+        # TODO: translate `human_name` into Chinese
+        description:        "Digital instantiation 作品"

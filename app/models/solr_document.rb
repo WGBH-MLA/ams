@@ -136,4 +136,8 @@ class SolrDocument
   def data_rate
     self[Solrizer.solr_name('data_rate')]
   end
+
+  def digital_format
+    self[Solrizer.solr_name('digital_format')]
+  end
 end
