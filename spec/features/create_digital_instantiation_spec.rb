@@ -5,9 +5,9 @@ RSpec.feature 'Create and Validate Digital Instantiation', js: true do
   context 'Create adminset, create DigitalInstantiation' do
     let(:admin_user) { create :admin_user }
     let!(:user_with_role) { create :user_with_role, role_name: 'user' }
-    let!(:admin_set) { create :admin_set, title: ["Test Admin Set"] }
+    let(:admin_set_id) { AdminSet.find_or_create_default_admin_set_id }
 
-    let!(:permission_template) { Hyrax::PermissionTemplate.find_or_create_by!(admin_set_id: admin_set.id) }
+    let!(:permission_template) { Hyrax::PermissionTemplate.find_or_create_by!(admin_set_id: admin_set_id) }
     let!(:workflow) { Sipity::Workflow.create!(active: true, name: 'test-workflow', permission_template: permission_template) }
 
     let(:input_date_format) { '%m/%d/%Y' }
@@ -67,7 +67,7 @@ RSpec.feature 'Create and Validate Digital Instantiation', js: true do
       fill_in('Rights link', with: digital_instantiation_attributes[:rights_link])
 
       click_link "Relationships" # define adminset relation
-      find("#digital_instantiation_admin_set_id option[value='#{admin_set.id}']").select_option
+      find("#digital_instantiation_admin_set_id option[value='#{admin_set_id}']").select_option
 
       # set it public
       find('body').click

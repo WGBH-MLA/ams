@@ -8,7 +8,6 @@ class Ability
   def custom_permissions
     # Probbly too permissive in the long run. Replace and augment with
     # hydra-role-management gem in long run.
-    can [:create], Work
     can [:create], Asset
     can [:create], Series
     can [:create], EssenceTrack
