@@ -87,7 +87,7 @@ RSpec.feature 'Create and Validate Series', js: true do
       expect(page).to have_content series_attributes[:annotation]
       expect(page).to have_content series_attributes[:rights_summary]
       expect(page).to have_content series_attributes[:rights_link]
-      exit
+      expect(page).to have_current_path(guid_regex)
     end
   end
 end

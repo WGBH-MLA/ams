@@ -98,7 +98,7 @@ RSpec.feature 'Create and Validate Physical Instantiation', js: true do
       expect(page).to have_content physical_instantiation_attributes[:digitization_date].strftime(output_date_format)
       expect(page).to have_content physical_instantiation_attributes[:rights_summary]
       expect(page).to have_content physical_instantiation_attributes[:rights_link]
-      exit
+      expect(page).to have_current_path(guid_regex)
     end
   end
 end
