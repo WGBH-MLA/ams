@@ -9,6 +9,7 @@ Hyrax.config do |config|
   config.register_curation_concern :digital_instantiation
   # Injected via `rails g hyrax:work EssenceTrack`
   config.register_curation_concern :essence_track
+  
   # Register roles that are expected by your implementation.
   # @see Hyrax::RoleRegistry for additional details.
   # @note there are magical roles as defined in Hyrax::RoleRegistry::MAGIC_ROLES

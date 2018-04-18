@@ -185,4 +185,3 @@ class SolrDocument
     self[Solrizer.solr_name('digital_format')]
   end
 end
-

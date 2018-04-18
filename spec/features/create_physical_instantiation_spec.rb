@@ -33,6 +33,7 @@ RSpec.feature 'Create and Validate Physical Instantiation', js: true do
           agent_id: 'user',
           access: 'deposit'
       )
+
       # Login role user to create physical instantiation
       login_as(user_with_role)
 
