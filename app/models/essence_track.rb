@@ -6,42 +6,60 @@ class EssenceTrack < ActiveFedora::Base
   self.indexer = EssenceTrackIndexer
   # Change this to restrict which works can be added as a child.
   # self.valid_child_concerns = []
-  validates :title, presence: { message: 'Your work must have a Title.' }
-  validates :format, presence: { message: 'Your work must have a Format.' }
-  validates :location, presence: { message: 'Your work must have a Location.' }
-  validates :media_type, presence: { message: 'Your work must have a Media Type.' }
+  validates :track_type, presence: { message: 'Your work must have track type.' }
+  validates :track_id, presence: { message: 'Your work must have track ID.' }
 
   self.human_readable_type = 'Essence Track'
 
-  property :date, predicate: ::RDF::URI.new("http://purl.org/dc/terms/date"), multiple: true do |index|
-    index.as :stored_searchable, :facetable
-  end
-
-  property :dimensions, predicate: ::RDF::URI.new("http://www.ebu.ch/metadata/ontologies/ebucore/ebucore#dimensions"), multiple: true do |index|
+  property :track_type, predicate: ::RDF::URI.new("http://www.ebu.ch/metadata/ontologies/ebucore/ebucore#trackType"), multiple: false do |index|
     index.as :stored_searchable
   end
 
-  property :format, predicate: ::RDF::URI.new("http://www.ebu.ch/metadata/ontologies/ebucore/ebucore#hasFormat"), multiple: false do |index|
+  property :track_id, predicate: ::RDF::URI.new("http://www.ebu.ch/metadata/ontologies/ebucore/ebucore#trackName"), multiple: true do |index|
     index.as :stored_searchable
   end
 
-  property :standard, predicate: ::RDF::URI.new("http://www.ebu.ch/metadata/ontologies/ebucore/ebucore#hasStandard"), multiple: true do |index|
+  property :standard, predicate: ::RDF::URI.new("http://www.ebu.ch/metadata/ontologies/ebucore/ebucore#hasStandard"), multiple: false do |index|
     index.as :stored_searchable
   end
 
-  property :location, predicate: ::RDF::URI.new("http://www.ebu.ch/metadata/ontologies/ebucore/ebucore#locator"), multiple: false do |index|
+  property :encoding, predicate: ::RDF::URI.new("http://www.ebu.ch/metadata/ontologies/ebucore/ebucore#hasEncodingFormat"), multiple: false do |index|
     index.as :stored_searchable
   end
 
-  property :media_type, predicate: ::RDF::URI.new("http://purl.org/dc/terms/type"), multiple: false do |index|
-    index.as :stored_searchable, :facetable
+  property :data_rate, predicate: ::RDF::URI.new("http://www.ebu.ch/metadata/ontologies/ebucore/ebucore#bitRate"), multiple: false do |index|
+    index.as :stored_searchable
   end
 
-  property :generations, predicate: ::RDF::URI.new("http://www.ebu.ch/metadata/ontologies/ebucore/ebucore#hasGeneration"), multiple: true do |index|
-    index.as :stored_searchable, :facetable
+  property :frame_rate, predicate: ::RDF::URI.new("http://www.ebu.ch/metadata/ontologies/ebucore/ebucore#frameRate"), multiple: false do |index|
+    index.as :stored_searchable
   end
 
-  property :file_size, predicate: ::RDF::URI.new("http://www.ebu.ch/metadata/ontologies/ebucore/ebucore#fileSize"), multiple: false do |index|
+  property :playback_inch_per_sec, predicate: ::RDF::URI.new("http://www.ebu.ch/metadata/ontologies/ebucore/ebucore#inchesPerSecond"), multiple: false do |index|
+    index.as :stored_searchable
+  end
+
+  property :playback_frame_per_sec, predicate: ::RDF::URI.new("http://www.ebu.ch/metadata/ontologies/ebucore/ebucore#framesPerSecond"), multiple: false do |index|
+    index.as :stored_searchable
+  end
+
+  property :sample_rate, predicate: ::RDF::URI.new("http://www.ebu.ch/metadata/ontologies/ebucore/ebucore#sampleRate"), multiple: false do |index|
+    index.as :stored_searchable
+  end
+
+  property :bit_depth, predicate: ::RDF::URI.new("http://www.ebu.ch/metadata/ontologies/ebucore/ebucore#bitDepth"), multiple: false do |index|
+    index.as :stored_searchable
+  end
+
+  property :frame_width, predicate: ::RDF::URI.new("http://www.ebu.ch/metadata/ontologies/ebucore/ebucore#frameWidth"), multiple: false do |index|
+    index.as :stored_searchable
+  end
+
+  property :frame_height, predicate: ::RDF::URI.new("http://www.ebu.ch/metadata/ontologies/ebucore/ebucore#frameHeight"), multiple: false do |index|
+    index.as :stored_searchable
+  end
+
+  property :aspect_ratio, predicate: ::RDF::URI.new("http://www.ebu.ch/metadata/ontologies/ebucore/ebucore#aspectRatio"), multiple: true do |index|
     index.as :stored_searchable
   end
 
@@ -50,26 +68,6 @@ class EssenceTrack < ActiveFedora::Base
   end
 
   property :duration, predicate: ::RDF::URI.new("http://www.ebu.ch/metadata/ontologies/ebucore/ebucore#duration"), multiple: false do |index|
-    index.as :stored_searchable
-  end
-
-  property :data_rate, predicate: ::RDF::URI.new("http://www.ebu.ch/metadata/ontologies/ebucore/ebucore#bitRate"), multiple: false do |index|
-    index.as :stored_searchable
-  end
-
-  property :colors, predicate: ::RDF::URI.new("http://id.loc.gov/ontologies/bibframe.html#c_ColorContent"), multiple: false do |index|
-    index.as :stored_searchable
-  end
-
-  property :language, predicate: ::RDF::URI.new("http://purl.org/dc/elements/1.1/language"), multiple: true do |index|
-    index.as :stored_searchable
-  end
-
-  property :rights_summary, predicate: ::RDF::URI.new("http://purl.org/dc/elements/1.1/rights"), multiple: true do |index|
-    index.as :stored_searchable
-  end
-
-  property :rights_link, predicate: ::RDF::URI.new("http://www.europeana.eu/rights"), multiple: true do |index|
     index.as :stored_searchable
   end
 
