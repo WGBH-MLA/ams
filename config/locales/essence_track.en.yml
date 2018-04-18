@@ -6,3 +6,18 @@ en:
       essence_track:
         name:               "Essence Track"
         description:        "Essence track works"
+  simple_form:
+    labels:
+      essence_track:
+        track_type: 'Track Type'
+        track_id: 'Track ID'
+        data_rate: 'Data Rate (in bytes/second)'
+        frame_rate: 'Frame Rate (in frames/second)'
+        playback_inch_per_sec: 'Playback Speed (inches/second)'
+        playback_frame_per_sec: 'Playback Speed (frames/second)'
+        sample_rate: 'Sampling Rate (in kHz)'
+        bit_depth: 'Bit Depth'
+        frame_width: 'Frame Width (in pixels)'
+        frame_height: 'Frame Height (in pixels)'
+
+

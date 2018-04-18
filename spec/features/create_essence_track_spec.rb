@@ -12,18 +12,26 @@ RSpec.feature 'Create and Validate Essence Track', js: true do
     let!(:permission_template) { Hyrax::PermissionTemplate.find_or_create_by!(admin_set_id: admin_set.id) }
     let!(:workflow) { Sipity::Workflow.create!(active: true, name: 'test-workflow', permission_template: permission_template) }
 
-    let(:input_date_format) { '%m/%d/%Y' }
-    let(:output_date_format) { '%F' }
-
     let(:essence_track_attributes) do
       {
           title: "My Test Essence Track",
-          media_type: "Moving Image",
-          format: 'DVD',
-          location: 'Test Location',
-          date: rand_date_time,
-          rights_summary: 'My Test Rights summary',
-          rights_link: 'http://somerightslink.com/testlink'
+          track_type: "My Test Essence Track Type",
+          standard: "Test Stadndard",
+          track_id: "TEST12",
+          encoding: 'TEST',
+          data_rate: '6400',
+          frame_rate: '1200',
+          playback_inch_per_sec: '12',
+          playback_frame_per_sec: '20',
+          sample_rate: '5000',
+          bit_depth: '2',
+          frame_width: '1100',
+          frame_height: '12',
+          time_start: '0:11:00',
+          duration: '220',
+          language: 'English',
+          annotation: 'Test Annotation'
+
       }
     end
 
@@ -48,25 +56,35 @@ RSpec.feature 'Create and Validate Essence Track', js: true do
 
       click_link "Descriptions" # switch tab
       fill_in('Title', with: essence_track_attributes[:title])
+      fill_in('Track Type', with: essence_track_attributes[:track_type])
+      fill_in('Track ID', with: essence_track_attributes[:track_id])
 
-      # Select Format
-      select = page.find('select#essence_track_format')
-      select.select essence_track_attributes[:format]
 
-      # Select Media Type
-      select = page.find('select#essence_track_media_type')
-      select.select essence_track_attributes[:media_type]
-
-      fill_in('Location', with: essence_track_attributes[:location])
 
       # Expect the required metadata indicator to indicate 'complete'
       expect(page.find("#required-metadata")[:class]).to include "complete"
 
       click_link "Additional fields" # additional metadata
 
-      fill_in('Date', with: essence_track_attributes[:date].strftime(input_date_format))
-      fill_in('Rights summary', with: essence_track_attributes[:rights_summary])
-      fill_in('Rights link', with: essence_track_attributes[:rights_link])
+      # Select asset type
+      select = page.find('select#essence_track_language')
+      select.select essence_track_attributes[:language]
+
+
+      fill_in('Standard', with: essence_track_attributes[:standard])
+      fill_in('Encoding', with: essence_track_attributes[:encoding])
+      fill_in('Data Rate (in bytes/second)', with: essence_track_attributes[:data_rate])
+      fill_in('Frame Rate (in frames/second)', with: essence_track_attributes[:frame_rate])
+      fill_in('Playback Speed (inches/second)', with: essence_track_attributes[:playback_inch_per_sec])
+      fill_in('Playback Speed (frames/second)', with: essence_track_attributes[:playback_frame_per_sec])
+      fill_in('Sampling Rate (in kHz)', with: essence_track_attributes[:sample_rate])
+      fill_in('Bit Depth', with: essence_track_attributes[:bit_depth])
+      fill_in('Frame Width (in pixels)', with: essence_track_attributes[:frame_width])
+      fill_in('Frame Height (in pixels)', with: essence_track_attributes[:frame_height])
+      fill_in('Time start', with: essence_track_attributes[:time_start])
+      fill_in('Duration', with: essence_track_attributes[:duration])
+      fill_in('Annotation', with: essence_track_attributes[:annotation])
+
 
       click_link "Relationships" # define adminset relation
       find("#essence_track_admin_set_id option[value='#{admin_set.id}']").select_option
@@ -84,18 +102,25 @@ RSpec.feature 'Create and Validate Essence Track', js: true do
 
       # expect essence track is showing up
       expect(page).to have_content essence_track_attributes[:title]
-      expect(page).to have_content essence_track_attributes[:date].strftime(output_date_format)
+
 
       # open essence track with detail show
       click_on(essence_track_attributes[:title])
       expect(page).to have_content essence_track_attributes[:title]
-      expect(page).to have_content essence_track_attributes[:media_type]
-      expect(page).to have_content essence_track_attributes[:format]
-      expect(page).to have_content essence_track_attributes[:location]
-      expect(page).to have_content essence_track_attributes[:date].strftime(output_date_format)
-      expect(page).to have_content essence_track_attributes[:rights_summary]
-      expect(page).to have_content essence_track_attributes[:rights_link]
-      exit
+      expect(page).to have_content essence_track_attributes[:track_type]
+      expect(page).to have_content essence_track_attributes[:track_id]
+      expect(page).to have_content essence_track_attributes[:encoding]
+      expect(page).to have_content essence_track_attributes[:data_rate]
+      expect(page).to have_content essence_track_attributes[:frame_rate]
+      expect(page).to have_content essence_track_attributes[:playback_inch_per_sec]
+      expect(page).to have_content essence_track_attributes[:playback_frame_per_sec]
+      expect(page).to have_content essence_track_attributes[:sample_rate]
+      expect(page).to have_content essence_track_attributes[:frame_width]
+      expect(page).to have_content essence_track_attributes[:frame_height]
+      expect(page).to have_content essence_track_attributes[:time_start]
+      expect(page).to have_content essence_track_attributes[:duration]
+      expect(page).to have_content essence_track_attributes[:annotation]
+      expect(page).to have_content essence_track_attributes[:language]
     end
   end
 end
