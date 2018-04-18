@@ -1,6 +1,4 @@
 Hyrax.config do |config|
-  # Injected via `rails g hyrax:work Work`
-  config.register_curation_concern :work
   # Injected via `rails g hyrax:work Asset`
   config.register_curation_concern :asset
   # Injected via `rails g hyrax:work Series`
