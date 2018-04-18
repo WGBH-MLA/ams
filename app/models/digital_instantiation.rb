@@ -60,10 +60,6 @@ class DigitalInstantiation < ActiveFedora::Base
     index.as :stored_searchable
   end
 
-  property :language, predicate: ::RDF::URI.new("http://purl.org/dc/elements/1.1/language"), multiple: true do |index|
-    index.as :stored_searchable
-  end
-
   property :rights_summary, predicate: ::RDF::URI.new("http://purl.org/dc/elements/1.1/rights"), multiple: true do |index|
     index.as :stored_searchable
   end
