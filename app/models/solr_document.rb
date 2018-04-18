@@ -28,7 +28,7 @@ class SolrDocument
   def asset_types
     self[Solrizer.solr_name('asset_types')]
   end
-  
+
   def genre
     self[Solrizer.solr_name('genre')]
   end
@@ -129,4 +129,59 @@ class SolrDocument
     self[Solrizer.solr_name('language')]
   end
 
+  def file_size
+    self[Solrizer.solr_name('file_size')]
+  end
+
+  def data_rate
+    self[Solrizer.solr_name('data_rate')]
+  end
+  
+  def track_type
+    self[Solrizer.solr_name('track_type')]
+  end
+
+  def track_id
+    self[Solrizer.solr_name('track_id')]
+  end
+
+  def encoding
+    self[Solrizer.solr_name('encoding')]
+  end
+
+  def frame_rate
+    self[Solrizer.solr_name('frame_rate')]
+  end
+
+  def playback_inch_per_sec
+    self[Solrizer.solr_name('playback_inch_per_sec')]
+  end
+
+  def playback_frame_per_sec
+    self[Solrizer.solr_name('playback_frame_per_sec')]
+  end
+
+  def sample_rate
+    self[Solrizer.solr_name('sample_rate')]
+  end
+
+  def bit_depth
+    self[Solrizer.solr_name('bit_depth')]
+  end
+
+  def frame_width
+    self[Solrizer.solr_name('frame_width')]
+  end
+
+  def frame_height
+    self[Solrizer.solr_name('frame_hight')]
+  end
+
+  def aspect_ratio
+    self[Solrizer.solr_name('aspect_ratio')]
+  end
+  
+  def digital_format
+    self[Solrizer.solr_name('digital_format')]
+  end
 end

@@ -1,13 +1,12 @@
 require 'rails_helper'
 include Warden::Test::Helpers
 
-RSpec.feature 'Create and Validate Series', js: true do
-  context 'Create adminset, create series' do
+RSpec.feature 'Create and Validate Physical Instantiation', js: true do
+  context 'Create adminset, create physical instantiation' do
     let(:admin_user) { create :admin_user }
     let!(:user_with_role) { create :user_with_role, role_name: 'user' }
-    let!(:admin_set) { create :admin_set, title: ["Test Admin Set"] }
-
-    let!(:permission_template) { Hyrax::PermissionTemplate.find_or_create_by!(admin_set_id: admin_set.id) }
+    let(:admin_set_id) { AdminSet.find_or_create_default_admin_set_id }
+    let(:permission_template) { Hyrax::PermissionTemplate.find_or_create_by!(admin_set_id: admin_set_id) }
     let!(:workflow) { Sipity::Workflow.create!(active: true, name: 'test-workflow', permission_template: permission_template) }
 
     let(:input_date_format) { '%m/%d/%Y' }
@@ -34,7 +33,8 @@ RSpec.feature 'Create and Validate Series', js: true do
           agent_id: 'user',
           access: 'deposit'
       )
-      # Login role user to create series
+
+      # Login role user to create physical instantiation
       login_as(user_with_role)
 
       # create physical instantiation
@@ -70,7 +70,7 @@ RSpec.feature 'Create and Validate Series', js: true do
       fill_in('Rights link', with: physical_instantiation_attributes[:rights_link])
 
       click_link "Relationships" # define adminset relation
-      find("#physical_instantiation_admin_set_id option[value='#{admin_set.id}']").select_option
+      find("#physical_instantiation_admin_set_id option[value='#{admin_set_id}']").select_option
 
       # set it public
       find('body').click
