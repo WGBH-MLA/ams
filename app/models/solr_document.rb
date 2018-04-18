@@ -136,7 +136,7 @@ class SolrDocument
   def data_rate
     self[Solrizer.solr_name('data_rate')]
   end
-
+  
   def track_type
     self[Solrizer.solr_name('track_type')]
   end
@@ -180,5 +180,9 @@ class SolrDocument
   def aspect_ratio
     self[Solrizer.solr_name('aspect_ratio')]
   end
-
+  
+  def digital_format
+    self[Solrizer.solr_name('digital_format')]
+  end
 end
+

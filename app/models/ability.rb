@@ -13,6 +13,7 @@ class Ability
     can [:create], Series
     can [:create], EssenceTrack
     can [:create], PhysicalInstantiation
+    can [:create], DigitalInstantiation
 
     # Limits deleting objects to a the admin user
     #
