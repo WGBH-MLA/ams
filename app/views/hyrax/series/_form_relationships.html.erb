@@ -1,0 +1,13 @@
+<% if Flipflop.assign_admin_set? %>
+  <%# TODO: consider `Hyrax::AdminSetOptionsPresenter.select_options_for(controller: controller)` instead %>
+  <%= f.input :admin_set_id, as: :select,
+      include_blank: false,
+      collection: Hyrax::AdminSetOptionsPresenter.new(Hyrax::AdminSetService.new(controller)).select_options,
+      input_html: { class: 'form-control' } %>
+<% end %>
+
+<%= render 'form_in_works', f: f %>
+
+<% if f.object.persisted? %>
+  <%= render 'form_child_asset_relationships', f: f  %>
+<% end %>

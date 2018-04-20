@@ -1,0 +1,10 @@
+<%= text_field_tag "find_#{name}",
+                   '',
+                   placeholder: t('.placeholder', default: "Search for a #{Asset.human_readable_type}"),
+                   autocomplete: 'on',
+                   style: "width: 100%",
+                   data: {
+                     autocomplete: 'work',
+                     'autocomplete-url' => Rails.application.routes.url_helpers.qa_path + '/search/find_assets',
+                     'exclude-work': id # exclude this item from the result set.
+                   } %>
