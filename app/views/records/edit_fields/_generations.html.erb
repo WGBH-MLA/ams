@@ -1,0 +1,5 @@
+<%= f.input :generations, as: :select,
+            collection: GenerationsService.select_all_options,
+            include_blank: true,
+            input_html: { class: 'form-control' , multiple: true}
+%>

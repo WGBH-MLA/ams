@@ -1,0 +1,8 @@
+de:
+  hyrax:
+    icons:
+      physical_instantiation:     'fa fa-file-text-o'
+    select_type:
+      physical_instantiation:
+        name:               "Physical Instantiation"
+        description:        "Physical instantiation Werke"

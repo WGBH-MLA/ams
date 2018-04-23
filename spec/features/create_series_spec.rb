@@ -5,9 +5,8 @@ RSpec.feature 'Create and Validate Series', js: true do
   context 'Create adminset, create series' do
     let(:admin_user) { create :admin_user }
     let!(:user_with_role) { create :user_with_role, role_name: 'user' }
-    let!(:admin_set) { create :admin_set, title: ["Test Admin Set"] }
-
-    let!(:permission_template) { Hyrax::PermissionTemplate.find_or_create_by!(admin_set_id: admin_set.id) }
+    let(:admin_set_id) { AdminSet.find_or_create_default_admin_set_id }
+    let(:permission_template) { Hyrax::PermissionTemplate.find_or_create_by!(admin_set_id: admin_set_id) }
     let!(:workflow) { Sipity::Workflow.create!(active: true, name: 'test-workflow', permission_template: permission_template) }
 
     let(:series_attributes) do
@@ -62,7 +61,7 @@ RSpec.feature 'Create and Validate Series', js: true do
       fill_in('Rights link', with: series_attributes[:rights_link])
 
       click_link "Relationships" # define adminset relation
-      find("#series_admin_set_id option[value='#{admin_set.id}']").select_option
+      find("#series_admin_set_id option[value='#{admin_set_id}']").select_option
 
       # set it public
       find('body').click
@@ -88,7 +87,7 @@ RSpec.feature 'Create and Validate Series', js: true do
       expect(page).to have_content series_attributes[:annotation]
       expect(page).to have_content series_attributes[:rights_summary]
       expect(page).to have_content series_attributes[:rights_link]
-      exit
+      expect(page).to have_current_path(guid_regex)
     end
   end
 end
