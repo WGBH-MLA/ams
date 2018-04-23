@@ -1,0 +1,10 @@
+es:
+  hyrax:
+    icons:
+      digital_instantiation:     'fa fa-file-text-o'
+    select_type:
+      digital_instantiation:
+        # TODO: translate `human_name` into Spanish
+        name:               "Digital Instantiation"
+        # TODO: translate `human_name` into Spanish
+        description:        "Digital instantiation trabajos"

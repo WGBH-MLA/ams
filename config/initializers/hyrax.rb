@@ -1,10 +1,15 @@
 Hyrax.config do |config|
-  # Injected via `rails g hyrax:work Work`
-  config.register_curation_concern :work
   # Injected via `rails g hyrax:work Asset`
   config.register_curation_concern :asset
   # Injected via `rails g hyrax:work Series`
   config.register_curation_concern :series
+  # Injected via `rails g hyrax:work PhysicalInstantiation`
+  config.register_curation_concern :physical_instantiation
+  # Injected via `rails g hyrax:work DigitalInstantiation`
+  config.register_curation_concern :digital_instantiation
+  # Injected via `rails g hyrax:work EssenceTrack`
+  config.register_curation_concern :essence_track
+  
   # Register roles that are expected by your implementation.
   # @see Hyrax::RoleRegistry for additional details.
   # @note there are magical roles as defined in Hyrax::RoleRegistry::MAGIC_ROLES
@@ -69,10 +74,10 @@ Hyrax.config do |config|
 
   # Hyrax uses NOIDs for files and collections instead of Fedora UUIDs
   # where NOID = 10-character string and UUID = 32-character string w/ hyphens
-  # config.enable_noids = true
+  config.enable_noids = true
 
   # Template for your repository's NOID IDs
-  # config.noid_template = ".reeddeeddk"
+  config.noid_template = "cpb-aacip_600-.reedeedeedk"
 
   # Use the database-backed minter class
   # config.noid_minter_class = ActiveFedora::Noid::Minter::Db
