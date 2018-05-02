@@ -16,5 +16,13 @@ module Hyrax
       end
       clean_params
     end
+
+    def primary_terms
+      if self.agreement_accepted
+        return self.required_fields -= [:digital_instantiation_pbcore_xml]
+      end
+      self.required_fields
+    end
+
   end
 end
