@@ -1,16 +1,33 @@
 # Generated via
 #  `rails generate hyrax:work DigitalInstantiation`
+require 'carrierwave/validations/active_model'
 class DigitalInstantiation < ActiveFedora::Base
   include ::Hyrax::WorkBehavior
+  extend CarrierWave::Mount
+
+  validates_with CarrierWave::Validations::ActiveModel::IntegrityValidator,
+                 attributes: %i(digital_instantiation_pbcore_xml)
 
   self.indexer = DigitalInstantiationIndexer
   # Change this to restrict which works can be added as a child.
   # self.valid_child_concerns = []
+  #
+  mount_uploader :digital_instantiation_pbcore_xml, PbCoreInstantiationXmlUploader
+
+  validates_presence_of :digital_instantiation_pbcore_xml
+  validate :pbcore_validate_instantiation_xsd
+
   validates :title, presence: { message: 'Your work must have a Title.' }
-  validates :digital_format, presence: { message: 'Your work must have a Digital Format.' }
   validates :location, presence: { message: 'Your work must have a Location.' }
-  validates :media_type, presence: { message: 'Your work must have a Media Type.' }
   self.human_readable_type = 'Digital Instantiation'
+
+  def pbcore_validate_instantiation_xsd
+    schema = Nokogiri::XML::Schema(File.read(Rails.root.join('spec', 'fixtures', 'pbcore-2.1.xsd')))
+    document = Nokogiri::XML(File.read(digital_instantiation_pbcore_xml.file.file))
+    schema.validate(document).each do |error|
+      errors.add(:digital_instantiation_pbcore_xml, error.message)
+    end
+  end
 
   property :date, predicate: ::RDF::URI.new("http://purl.org/dc/terms/date"), multiple: true do |index|
     index.as :stored_searchable, :facetable

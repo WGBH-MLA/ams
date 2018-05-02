@@ -121,6 +121,7 @@ RSpec.feature 'Create and Validate Essence Track', js: true do
       expect(page).to have_content essence_track_attributes[:duration]
       expect(page).to have_content essence_track_attributes[:annotation]
       expect(page).to have_content essence_track_attributes[:language]
+      expect(page).to have_current_path(guid_regex)
     end
   end
 end
