@@ -93,7 +93,7 @@ RSpec.feature 'Create and Validate Digital Instantiation', js: true do
       expect(page).to have_content digital_instantiation_attributes[:date].strftime(output_date_format)
       expect(page).to have_content digital_instantiation_attributes[:rights_summary]
       expect(page).to have_content digital_instantiation_attributes[:rights_link]
-      exit
+      expect(page).to have_current_path(guid_regex)
     end
   end
 end

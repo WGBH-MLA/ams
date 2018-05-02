@@ -1,5 +1,4 @@
 require 'rails_helper'
-require 'securerandom'
 include Warden::Test::Helpers
 
 RSpec.feature 'Create and Validate Asset', js: true do
@@ -76,7 +75,6 @@ RSpec.feature 'Create and Validate Asset', js: true do
       expect(page).to have_content('Please note, making something visible to the world (i.e. marking this as Public) may be viewed as publishing which could impact your ability to')
 
       click_on('Save')
-      sleep(30)
 
       visit '/'
       find("#search-submit-header").click
@@ -102,8 +100,7 @@ RSpec.feature 'Create and Validate Asset', js: true do
       expect(page).to have_content asset_attributes[:annotation]
       expect(page).to have_content asset_attributes[:rights_summary]
       expect(page).to have_content asset_attributes[:rights_link]
-
-      exit
+      expect(page).to have_current_path(guid_regex)
     end
   end
 end
