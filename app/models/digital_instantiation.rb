@@ -14,7 +14,7 @@ class DigitalInstantiation < ActiveFedora::Base
   #
   mount_uploader :digital_instantiation_pbcore_xml, PbCoreInstantiationXmlUploader
 
-  validates_presence_of :digital_instantiation_pbcore_xml
+  #validates_presence_of :digital_instantiation_pbcore_xml
   validate :pbcore_validate_instantiation_xsd
 
   validates :title, presence: { message: 'Your work must have a Title.' }
@@ -22,10 +22,14 @@ class DigitalInstantiation < ActiveFedora::Base
   self.human_readable_type = 'Digital Instantiation'
 
   def pbcore_validate_instantiation_xsd
-    schema = Nokogiri::XML::Schema(File.read(Rails.root.join('spec', 'fixtures', 'pbcore-2.1.xsd')))
-    document = Nokogiri::XML(File.read(digital_instantiation_pbcore_xml.file.file))
-    schema.validate(document).each do |error|
-      errors.add(:digital_instantiation_pbcore_xml, error.message)
+    if digital_instantiation_pbcore_xml.file
+      schema = Nokogiri::XML::Schema(File.read(Rails.root.join('spec', 'fixtures', 'pbcore-2.1.xsd')))
+      document = Nokogiri::XML(File.read(digital_instantiation_pbcore_xml.file.file))
+      schema.validate(document).each do |error|
+        errors.add(:digital_instantiation_pbcore_xml, error.message)
+      end
+    elsif self.new_record?
+      errors.add(:digital_instantiation_pbcore_xml,"Please select pbcore xml document")
     end
   end
 
