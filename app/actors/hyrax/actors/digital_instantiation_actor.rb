@@ -42,6 +42,7 @@ module Hyrax
             e.aspect_ratio << track.aspect_ratio.value if track.aspect_ratio
             e.duration = track.duration if track.duration
             e.annotation << track.annotation.value if track.annotation
+            e.admin_set_id = env.curation_concern.admin_set_id
             e.save
             #add essence track as child work to digital instantiation
             env.curation_concern.ordered_members << e
