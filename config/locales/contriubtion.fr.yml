@@ -1,0 +1,8 @@
+fr:
+  hyrax:
+    icons:
+      contriubtion:     'fa fa-file-text-o'
+    select_type:
+      contriubtion:
+        name:               "Contriubtion"
+        description:        "Contriubtion œuvres"

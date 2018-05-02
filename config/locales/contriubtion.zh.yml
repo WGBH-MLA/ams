@@ -1,0 +1,10 @@
+zh:
+  hyrax:
+    icons:
+      contriubtion:     'fa fa-file-text-o'
+    select_type:
+      contriubtion:
+        # TODO: translate `human_name` into Chinese
+        name:               "Contriubtion"
+        # TODO: translate `human_name` into Chinese
+        description:        "Contriubtion 作品"
