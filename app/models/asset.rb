@@ -67,6 +67,26 @@ class Asset < ActiveFedora::Base
     index.as :stored_searchable
   end
 
+  property :local_identifier, predicate: ::RDF::URI.new("http://id.loc.gov/vocabulary/identifiers/local"), multiple: true do |index|
+    index.as :stored_searchable
+  end
+
+  property :pbs_nola_code, predicate: ::RDF::URI.new("http://id.loc.gov/ontologies/bibframe.html#p_code"), multiple: true do |index|
+    index.as :stored_searchable
+  end
+
+  property :eidr_id, predicate: ::RDF::URI.new("https://www.w3.org/2002/07/owl#sameAs"), multiple: true do |index|
+    index.as :stored_searchable
+  end
+
+  property :topics, predicate: ::RDF::URI.new("http://www.ebu.ch/metadata/ontologies/ebucore/ebucore#hasKeyword"), multiple: true do |index|
+    index.as :stored_searchable
+  end
+
+  property :subject, predicate: ::RDF::URI.new("http://purl.org/dc/elements/1.1/subject"), multiple: true do |index|
+    index.as :stored_searchable
+  end
+
   # This must be included at the end, because it finalizes the metadata if you have any further properties define above in current model
   include ::Hyrax::BasicMetadata
 end
