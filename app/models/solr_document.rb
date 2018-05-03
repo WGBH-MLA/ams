@@ -204,4 +204,20 @@ class SolrDocument
   def subject
     self[Solrizer.solr_name('subject')]
   end
+
+  def local_instantiation_identifer
+    self[Solrizer.solr_name('local_instantiation_identifer')]
+  end
+
+  def tracks
+    self[Solrizer.solr_name('tracks')]
+  end
+
+  def channel_configuration
+    self[Solrizer.solr_name('channel_configuration')]
+  end
+
+  def alternative_modes
+    self[Solrizer.solr_name('alternative_modes')]
+  end
 end
