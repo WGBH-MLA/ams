@@ -1,7 +1,7 @@
 require 'rails_helper'
 include Warden::Test::Helpers
 
-RSpec.feature 'Create Asset with Asset Type', js: true do
+RSpec.feature 'Create Asset with Asset Type', js: true, include: :asset_form_helpers do
   context 'Create adminset, create asset' do
     let(:admin_user) { create :admin_user }
     let!(:user_with_role) { create :user_with_role, role_name: 'user' }
@@ -45,7 +45,7 @@ RSpec.feature 'Create Asset with Asset Type', js: true do
       page.find("#required-metadata")[:class].include?("incomplete")
 
       click_link "Descriptions" # switch tab
-      fill_in('Title', with: asset_attributes[:title])
+      fill_in_title asset_attributes[:title] # see AssetFormHelpers#fill_in_title
       fill_in('Description', with: asset_attributes[:description])
 
       # validated metadata without errors

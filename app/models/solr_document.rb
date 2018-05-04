@@ -220,4 +220,24 @@ class SolrDocument
   def alternative_modes
     self[Solrizer.solr_name('alternative_modes')]
   end
+
+  def episode_title
+    self[Solrizer.solr_name('episode_title')]
+  end
+
+  def segment_title
+    self[Solrizer.solr_name('segment_title')]
+  end
+
+  def raw_footage_title
+    self[Solrizer.solr_name('raw_footage_title')]
+  end
+
+  def promo_title
+    self[Solrizer.solr_name('promo_title')]
+  end
+
+  def clip_title
+    self[Solrizer.solr_name('clip_title')]
+  end
 end
