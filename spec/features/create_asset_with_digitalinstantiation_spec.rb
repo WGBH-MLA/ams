@@ -1,7 +1,7 @@
 require 'rails_helper'
 include Warden::Test::Helpers
 
-RSpec.feature 'Create and Validate Asset,Digital Instantiation, EssenseTrack', js: true do
+RSpec.feature 'Create and Validate Asset,Digital Instantiation, EssenseTrack', js: true, include: :asset_form_helpers do
   context 'Create adminset, create asset, import pbcore xml for digital instantiation and essensetrack' do
     let(:admin_user) { create :admin_user }
     let!(:user_with_role) { create :user_with_role, role_name: 'user' }
@@ -33,7 +33,6 @@ RSpec.feature 'Create and Validate Asset,Digital Instantiation, EssenseTrack', j
 
     let(:pbcore_xml_doc) {PBCore::V2::InstantiationDocument.parse(File.read("#{Rails.root}/spec/fixtures/sample_instantiation_valid.xml"))}
 
-
     scenario 'Create and Validate Asset, Search asset' do
       Sipity::WorkflowAction.create!(name: 'submit', workflow: workflow)
       Hyrax::PermissionTemplateAccess.create!(
@@ -61,7 +60,9 @@ RSpec.feature 'Create and Validate Asset,Digital Instantiation, EssenseTrack', j
       page.find("#required-metadata")[:class].include?("incomplete")
 
       click_link "Descriptions" # switch tab
-      fill_in('Title', with: asset_attributes[:title])
+
+      # See AssetFormHelpers#fill_in_title
+      fill_in_title asset_attributes[:title]
       fill_in('Description', with: asset_attributes[:description])
 
       # validated metadata without errors
@@ -95,7 +96,7 @@ RSpec.feature 'Create and Validate Asset,Digital Instantiation, EssenseTrack', j
       visit '/'
       find("#search-submit-header").click
 
-      # expect assets is showing up
+      # Expect metadata for Asset to be displayed on the search results page.
       expect(page).to have_content asset_attributes[:title]
       expect(page).to have_content asset_attributes[:broadcast].strftime(output_date_format)
       expect(page).to have_content asset_attributes[:created].strftime(output_date_format)
@@ -103,7 +104,7 @@ RSpec.feature 'Create and Validate Asset,Digital Instantiation, EssenseTrack', j
       expect(page).to have_content asset_attributes[:episode_number]
 
       # open asset with detail show
-      click_on(asset_attributes[:title])
+      click_on asset_attributes[:title]
       expect(page).to have_content asset_attributes[:broadcast].strftime(output_date_format)
       expect(page).to have_content asset_attributes[:created].strftime(output_date_format)
       expect(page).to have_content asset_attributes[:date].strftime(output_date_format)
@@ -120,24 +121,26 @@ RSpec.feature 'Create and Validate Asset,Digital Instantiation, EssenseTrack', j
 
       click_on('Add Digital Instantiation')
 
-      fill_in('Title', with: digital_instantiation_attributes[:title])
+      within 'form#new_digital_instantiation' do
+        fill_in('Title', with: digital_instantiation_attributes[:title])
 
 
-      fill_in('Location', with: digital_instantiation_attributes[:location])
+        fill_in('Location', with: digital_instantiation_attributes[:location])
 
-      attach_file('Digital instantiation pbcore xml', File.absolute_path(digital_instantiation_attributes[:pbcore_xml_doc]))
+        attach_file('Digital instantiation pbcore xml', File.absolute_path(digital_instantiation_attributes[:pbcore_xml_doc]))
 
 
-      # Expect the required metadata indicator to indicate 'complete'
-      expect(page.find("#required-metadata")[:class]).to include "complete"
+        # Expect the required metadata indicator to indicate 'complete'
+        expect(page.find("#required-metadata")[:class]).to include "complete"
 
-      click_link "Additional fields" # additional metadata
+        click_link "Additional fields" # additional metadata
 
-      fill_in('Rights summary', with: digital_instantiation_attributes[:rights_summary])
-      fill_in('Rights link', with: digital_instantiation_attributes[:rights_link])
+        fill_in('Rights summary', with: digital_instantiation_attributes[:rights_summary])
+        fill_in('Rights link', with: digital_instantiation_attributes[:rights_link])
 
-      click_link "Relationships" # define adminset relation
-      find("#digital_instantiation_admin_set_id option[value='#{admin_set_id}']").select_option
+        click_link "Relationships" # define adminset relation
+        find("#digital_instantiation_admin_set_id option[value='#{admin_set_id}']").select_option
+      end
 
       # set it public
       find('body').click
