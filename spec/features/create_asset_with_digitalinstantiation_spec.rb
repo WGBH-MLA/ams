@@ -40,7 +40,7 @@ RSpec.feature 'Create and Validate Asset,Digital Instantiation, EssenseTrack', j
         permission_template_id: permission_template.id,
         agent_type: 'group',
         agent_id: 'user',
-        access: 'deposit'
+        access: 'manage'
       )
       # Login role user to create asset
       login_as(user_with_role)
@@ -120,7 +120,6 @@ RSpec.feature 'Create and Validate Asset,Digital Instantiation, EssenseTrack', j
 
       click_on('Add Digital Instantiation')
 
-      click_link "Descriptions" # switch tab
       fill_in('Title', with: digital_instantiation_attributes[:title])
 
 
