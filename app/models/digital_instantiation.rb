@@ -93,6 +93,22 @@ class DigitalInstantiation < ActiveFedora::Base
     index.as :stored_searchable
   end
 
+  property :local_instantiation_identifer, predicate: ::RDF::URI.new("http://pbcore.org#localInstantiationIdentifier"), multiple: true do |index|
+    index.as :stored_searchable
+  end
+
+  property :tracks, predicate: ::RDF::URI.new("http://pbcore.org#hasTracks"), multiple: false do |index|
+    index.as :stored_searchable
+  end
+
+  property :channel_configuration, predicate: ::RDF::URI.new("http://pbcore.org#hasChannelConfiguration"), multiple: false do |index|
+    index.as :stored_searchable
+  end
+
+  property :alternative_modes, predicate: ::RDF::URI.new("http://pbcore.org#hasAlternativeModes"), multiple: true do |index|
+    index.as :stored_searchable
+  end
+
   # This must be included at the end, because it finalizes the metadata if you have any further properties define above in current model
   include ::Hyrax::BasicMetadata
 end

@@ -15,7 +15,7 @@ RSpec.feature 'Create and Validate Asset', js: true do
     let(:asset_attributes) do
       { title: "My Test Title", description: "My Test Description", broadcast: rand_date_time, created: rand_date_time, date: rand_date_time, copyright_date: rand_date_time,
         episode_number: 'EP#11', spatial_coverage: 'My Test Spatial coverage', temporal_coverage: 'My Test Temporal coverage', audience_level: 'My Test Audience level',
-        audience_rating: 'My Test Audience rating', annotation: 'My Test Annotation', rights_summary: 'My Test Rights summary', rights_link: 'http://somerightslink.com/testlink' }
+        audience_rating: 'My Test Audience rating', annotation: 'My Test Annotation', rights_summary: 'My Test Rights summary', rights_link: 'http://somerightslink.com/testlink', local_identifier: 'localID1234', pbs_nola_code: 'nolaCode1234', eidr_id: 'http://someeidrlink.com/testlink', topics: ['Biography', 'Women'], subject: 'Danger' }
     end
 
     scenario 'Create and Validate Asset, Search asset' do
@@ -53,6 +53,7 @@ RSpec.feature 'Create and Validate Asset', js: true do
 
       click_link "Additional fields" # additional metadata
 
+      fill_in('Subject', with: asset_attributes[:subject])
       fill_in('Broadcast', with: asset_attributes[:broadcast].strftime(input_date_format))
       fill_in('Created', with: asset_attributes[:created].strftime(input_date_format))
       fill_in('Date', with: asset_attributes[:date].strftime(input_date_format))
@@ -65,6 +66,13 @@ RSpec.feature 'Create and Validate Asset', js: true do
       fill_in('Annotation', with: asset_attributes[:annotation])
       fill_in('Rights summary', with: asset_attributes[:rights_summary])
       fill_in('Rights link', with: asset_attributes[:rights_link])
+      fill_in('Local identifier', with: asset_attributes[:local_identifier])
+      fill_in('Pbs nola code', with: asset_attributes[:pbs_nola_code])
+      fill_in('Eidr', with: asset_attributes[:eidr_id])
+
+      asset_attributes[:topics].each do |topic|
+        page.select topic, from: 'Topics'
+      end
 
       click_link "Relationships" # define adminset relation
       find("#asset_admin_set_id option[value='#{admin_set_id}']").select_option
@@ -100,6 +108,13 @@ RSpec.feature 'Create and Validate Asset', js: true do
       expect(page).to have_content asset_attributes[:annotation]
       expect(page).to have_content asset_attributes[:rights_summary]
       expect(page).to have_content asset_attributes[:rights_link]
+      expect(page).to have_content asset_attributes[:local_identifier]
+      expect(page).to have_content asset_attributes[:pbs_nola_code]
+      expect(page).to have_content asset_attributes[:eidr_id]
+
+      asset_attributes[:topics].each do |topic|
+        expect(page).to have_content topic
+      end
       expect(page).to have_current_path(guid_regex)
     end
   end

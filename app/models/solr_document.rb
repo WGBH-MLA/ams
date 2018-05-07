@@ -136,7 +136,7 @@ class SolrDocument
   def data_rate
     self[Solrizer.solr_name('data_rate')]
   end
-  
+
   def track_type
     self[Solrizer.solr_name('track_type')]
   end
@@ -180,8 +180,44 @@ class SolrDocument
   def aspect_ratio
     self[Solrizer.solr_name('aspect_ratio')]
   end
-  
+
   def digital_format
     self[Solrizer.solr_name('digital_format')]
+  end
+
+  def local_identifier
+    self[Solrizer.solr_name('local_identifier')]
+  end
+
+  def pbs_nola_code
+    self[Solrizer.solr_name('pbs_nola_code')]
+  end
+
+  def eidr_id
+    self[Solrizer.solr_name('eidr_id')]
+  end
+
+  def topics
+    self[Solrizer.solr_name('topics')]
+  end
+
+  def subject
+    self[Solrizer.solr_name('subject')]
+  end
+
+  def local_instantiation_identifer
+    self[Solrizer.solr_name('local_instantiation_identifer')]
+  end
+
+  def tracks
+    self[Solrizer.solr_name('tracks')]
+  end
+
+  def channel_configuration
+    self[Solrizer.solr_name('channel_configuration')]
+  end
+
+  def alternative_modes
+    self[Solrizer.solr_name('alternative_modes')]
   end
 end
