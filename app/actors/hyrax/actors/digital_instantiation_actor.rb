@@ -20,11 +20,21 @@ module Hyrax
           env.attributes[:media_type] = pbcore_doc.media_type.value  if pbcore_doc.media_type && env.attributes[:media_type].blank?
           env.attributes[:generations] = pbcore_doc.generations.map {|generation| generation.value}  if pbcore_doc.generations && env.attributes[:generations].blank?
           env.attributes[:file_size] = pbcore_doc.file_size.value  if pbcore_doc.file_size && env.attributes[:file_size].blank?
-          env.attributes[:time_start] = pbcore_doc.time_start.value if pbcore_doc.time_start  if pbcore_doc.time_start && env.attributes[:time_start].blank?
+          env.attributes[:time_start] = pbcore_doc.time_start.value if pbcore_doc.time_start && env.attributes[:time_start].blank?
           env.attributes[:duration] = pbcore_doc.duration  if pbcore_doc.duration && env.attributes[:duration].blank?
           env.attributes[:data_rate] = pbcore_doc.data_rate.value  if pbcore_doc.data_rate && env.attributes[:data_rate].blank?
-          env.attributes[:colors] = pbcore_doc.colors.value if pbcore_doc.colors  if pbcore_doc.colors && env.attributes[:colors].blank?
+          env.attributes[:colors] = pbcore_doc.colors.value  if pbcore_doc.colors && env.attributes[:colors].blank?
           env.attributes[:language] = pbcore_doc.language.map {|lang| lang.value} if pbcore_doc.language && env.attributes[:language].blank?
+          env.attributes[:tracks] = pbcore_doc.tracks if pbcore_doc.tracks  && env.attributes[:tracks].blank?
+          env.attributes[:alternative_modes] = pbcore_doc.alternative_modes if pbcore_doc.alternative_modes  && env.attributes[:alternative_modes].blank?
+          env.attributes[:channel_configuration] = pbcore_doc.channel_configuration if pbcore_doc.channel_configuration  && env.attributes[:channel_configuration].blank?
+          if pbcore_doc.identifiers
+            pbcore_doc.identifiers.map do |id|
+              if id.source == "AMS"
+                env.attributes[:local_instantiation_identifer] << id.value
+              end
+            end
+          end
           env
         end
 
