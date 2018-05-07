@@ -1,0 +1,10 @@
+es:
+  hyrax:
+    icons:
+      contribution:     'fa fa-file-text-o'
+    select_type:
+      contribution:
+        # TODO: translate `human_name` into Spanish
+        name:               "Contribution"
+        # TODO: translate `human_name` into Spanish
+        description:        "Contribution trabajos"

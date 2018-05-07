@@ -27,3 +27,4 @@
 
 # Upload directories
 /public/system/avatars
+/public/uploads/*
