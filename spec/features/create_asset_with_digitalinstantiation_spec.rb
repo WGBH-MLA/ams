@@ -160,6 +160,7 @@ RSpec.feature 'Create and Validate Asset,Digital Instantiation, EssenseTrack', j
       expect(page).to have_content digital_instantiation_attributes[:rights_summary]
       expect(page).to have_content digital_instantiation_attributes[:rights_link]
       expect(page).to have_current_path(guid_regex)
+
     end
   end
 end
