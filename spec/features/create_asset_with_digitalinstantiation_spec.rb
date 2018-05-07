@@ -1,8 +1,8 @@
 require 'rails_helper'
 include Warden::Test::Helpers
 
-RSpec.feature 'Create and Validate Asset', js: true do
-  context 'Create adminset, create asset' do
+RSpec.feature 'Create and Validate Asset,Digital Instantiation, EssenseTrack', js: true do
+  context 'Create adminset, create asset, import pbcore xml for digital instantiation and essensetrack' do
     let(:admin_user) { create :admin_user }
     let!(:user_with_role) { create :user_with_role, role_name: 'user' }
     let(:admin_set_id) { AdminSet.find_or_create_default_admin_set_id }
@@ -15,8 +15,24 @@ RSpec.feature 'Create and Validate Asset', js: true do
     let(:asset_attributes) do
       { title: "My Test Title", description: "My Test Description", broadcast: rand_date_time, created: rand_date_time, date: rand_date_time, copyright_date: rand_date_time,
         episode_number: 'EP#11', spatial_coverage: 'My Test Spatial coverage', temporal_coverage: 'My Test Temporal coverage', audience_level: 'My Test Audience level',
-        audience_rating: 'My Test Audience rating', annotation: 'My Test Annotation', rights_summary: 'My Test Rights summary', rights_link: 'http://somerightslink.com/testlink', local_identifier: 'localID1234', pbs_nola_code: 'nolaCode1234', eidr_id: 'http://someeidrlink.com/testlink', topics: ['Biography', 'Women'], subject: 'Danger' }
+        audience_rating: 'My Test Audience rating', annotation: 'My Test Annotation', rights_summary: 'My Test Rights summary', rights_link: 'http://somerightslink.com/testlink' }
     end
+
+    let(:digital_instantiation_attributes) do
+      {
+          title: "My Test Digital Instantiation",
+          media_type: "Moving Image",
+          format: 'DVD',
+          location: 'Test Location',
+          date: rand_date_time,
+          rights_summary: 'My Test Rights summary',
+          rights_link: 'http://somerightslink.com/testlink',
+          pbcore_xml_doc: "#{Rails.root}/spec/fixtures/sample_instantiation_valid.xml"
+      }
+    end
+
+    let(:pbcore_xml_doc) {PBCore::V2::InstantiationDocument.parse(File.read("#{Rails.root}/spec/fixtures/sample_instantiation_valid.xml"))}
+
 
     scenario 'Create and Validate Asset, Search asset' do
       Sipity::WorkflowAction.create!(name: 'submit', workflow: workflow)
@@ -24,7 +40,7 @@ RSpec.feature 'Create and Validate Asset', js: true do
         permission_template_id: permission_template.id,
         agent_type: 'group',
         agent_id: 'user',
-        access: 'deposit'
+        access: 'manage'
       )
       # Login role user to create asset
       login_as(user_with_role)
@@ -53,7 +69,6 @@ RSpec.feature 'Create and Validate Asset', js: true do
 
       click_link "Additional fields" # additional metadata
 
-      fill_in('Subject', with: asset_attributes[:subject])
       fill_in('Broadcast', with: asset_attributes[:broadcast].strftime(input_date_format))
       fill_in('Created', with: asset_attributes[:created].strftime(input_date_format))
       fill_in('Date', with: asset_attributes[:date].strftime(input_date_format))
@@ -66,13 +81,6 @@ RSpec.feature 'Create and Validate Asset', js: true do
       fill_in('Annotation', with: asset_attributes[:annotation])
       fill_in('Rights summary', with: asset_attributes[:rights_summary])
       fill_in('Rights link', with: asset_attributes[:rights_link])
-      fill_in('Local identifier', with: asset_attributes[:local_identifier])
-      fill_in('Pbs nola code', with: asset_attributes[:pbs_nola_code])
-      fill_in('Eidr', with: asset_attributes[:eidr_id])
-
-      asset_attributes[:topics].each do |topic|
-        page.select topic, from: 'Topics'
-      end
 
       click_link "Relationships" # define adminset relation
       find("#asset_admin_set_id option[value='#{admin_set_id}']").select_option
@@ -108,14 +116,51 @@ RSpec.feature 'Create and Validate Asset', js: true do
       expect(page).to have_content asset_attributes[:annotation]
       expect(page).to have_content asset_attributes[:rights_summary]
       expect(page).to have_content asset_attributes[:rights_link]
-      expect(page).to have_content asset_attributes[:local_identifier]
-      expect(page).to have_content asset_attributes[:pbs_nola_code]
-      expect(page).to have_content asset_attributes[:eidr_id]
-
-      asset_attributes[:topics].each do |topic|
-        expect(page).to have_content topic
-      end
       expect(page).to have_current_path(guid_regex)
+
+      click_on('Add Digital Instantiation')
+
+      fill_in('Title', with: digital_instantiation_attributes[:title])
+
+
+      fill_in('Location', with: digital_instantiation_attributes[:location])
+
+      attach_file('Digital instantiation pbcore xml', File.absolute_path(digital_instantiation_attributes[:pbcore_xml_doc]))
+
+
+      # Expect the required metadata indicator to indicate 'complete'
+      expect(page.find("#required-metadata")[:class]).to include "complete"
+
+      click_link "Additional fields" # additional metadata
+
+      fill_in('Rights summary', with: digital_instantiation_attributes[:rights_summary])
+      fill_in('Rights link', with: digital_instantiation_attributes[:rights_link])
+
+      click_link "Relationships" # define adminset relation
+      find("#digital_instantiation_admin_set_id option[value='#{admin_set_id}']").select_option
+
+      # set it public
+      find('body').click
+      choose('digital_instantiation_visibility_open')
+      expect(page).to have_content('Please note, making something visible to the world (i.e. marking this as Public) may be viewed as publishing which could impact your ability to')
+      click_on('Save')
+
+      wait_for(10) { DigitalInstantiation.where(title: digital_instantiation_attributes[:title]).first }
+
+      visit '/'
+      find("#search-submit-header").click
+
+      # expect digital instantiation is showing up
+      expect(page).to have_content digital_instantiation_attributes[:title]
+
+      # open digital instantiation with detail show
+      click_on(digital_instantiation_attributes[:title])
+      expect(page).to have_content digital_instantiation_attributes[:title]
+      expect(page).to have_content digital_instantiation_attributes[:location]
+      expect(page).to have_content digital_instantiation_attributes[:rights_summary]
+      expect(page).to have_content digital_instantiation_attributes[:rights_link]
+      expect(page).to have_current_path(guid_regex)
+
     end
   end
 end
