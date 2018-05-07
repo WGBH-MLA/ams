@@ -109,7 +109,6 @@ RSpec.feature 'Create and Validate Physical Instantiation', js: true do
       expect(page).to have_content physical_instantiation_attributes[:tracks]
       expect(page).to have_content physical_instantiation_attributes[:channel_configuration]
       expect(page).to have_content physical_instantiation_attributes[:alternative_modes]
-
       expect(page).to have_current_path(guid_regex)
     end
   end
