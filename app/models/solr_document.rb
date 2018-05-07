@@ -180,8 +180,12 @@ class SolrDocument
   def aspect_ratio
     self[Solrizer.solr_name('aspect_ratio')]
   end
-  
-  def digital_format
-    self[Solrizer.solr_name('digital_format')]
+
+  def contributor_role
+    self[Solrizer.solr_name('contributor_role')]
+  end
+
+  def portrayal
+    self[Solrizer.solr_name('portrayal')]
   end
 end
