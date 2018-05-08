@@ -1,11 +1,13 @@
 terms:
-  - id: Episode
+  - id: main
+    term: Main
+  - id: episode
     term: Episode
-  - id: Segment
+  - id: segment
     term: Segment
-  - id: RawFootage
+  - id: raw_footage
     term: Raw Footage
-  - id: Promo
+  - id: promo
     term: Promo
-  - id: Clip
+  - id: clip
     term: Clip
