@@ -52,7 +52,6 @@ module Hyrax
       descriptions_with_types += model.clip_description.map { |description| ['clip', description] }
       descriptions_with_types
     end
-
     # Augment the list of permmitted params to accept our fields that have
     # types associated with them, e.g. title + title type
     # NOTE: `super` in this case is HyraxEditor::Form.permitted_params

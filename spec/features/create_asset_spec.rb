@@ -70,6 +70,7 @@ RSpec.feature 'Create and Validate Asset', js: true, asset_form_helpers: true do
       fill_in_titles_with_types(titles_with_types)              # see AssetFormHelper#fill_in_titles_with_types
       fill_in_descriptions_with_types(descriptions_with_types)   # see AssetFormHelper#fill_in_descriptions_with_types
 
+
       # validated metadata without errors
       page.find("#required-metadata")[:class].include?("complete")
 
