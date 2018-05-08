@@ -1,0 +1,107 @@
+terms:
+  - id: Agriculture
+    term: Agriculture
+  - id: Animals
+    term: Animals
+  - id: AntiquesandCollectibles
+    term: Antiques and Collectibles
+  - id: Architecture
+    term: Architecture
+  - id: Biography
+    term: Biography
+  - id: Business
+    term: Business
+  - id: ConsumerAffairsandAdvocacy
+    term: Consumer Affairs and Advocacy
+  - id: Crafts
+    term: Crafts
+  - id: Dance
+    term: Dance
+  - id: Economics
+    term: Economics
+  - id: Education
+    term: Education
+  - id: Employment
+    term: Employment
+  - id: Exercise
+    term: Exercise
+  - id: Fine Arts
+    term: Fine Arts
+  - id: FilmandTelevision
+    term: Film and Television
+  - id: FoodandCooking
+    term: Food and Cooking
+  - id: Gardening
+    term: Gardening
+  - id: Geography
+    term: Geography
+  - id: GlobalAffairs
+    term: Global Affairs
+  - id: Health
+    term: Health
+  - id: History
+    term: History
+  - id: Holiday
+    term: Holiday
+  - id: HomeImprovement
+    term: Home Improvement
+  - id: Humor
+    term: Humor
+  - id: Journalism
+    term: Journalism
+  - id: LawEnforcementandCrime
+    term: Law Enforcement and Crime
+  - id: LGBTQ
+    term: LGBTQ
+  - id: Literature
+    term: Literature
+  - id: LocalCommunities
+    term: Local Communities
+  - id: Medicine
+    term: Medicine
+  - id: MilitaryForcesandArmaments
+    term: Military Forces and Armaments
+  - id: Music
+    term: Music
+  - id: Nature
+    term: Nature
+  - id: News
+    term: News
+  - id: Parenting
+    term: Parenting
+  - id: PerfomingArts
+    term: Perfoming Arts
+  - id: Philosophy
+    term: Philosophy
+  - id: PoliticsandGovernment
+    term: Politics and Government
+  - id: Psychology
+    term: Psychology
+  - id: PublicAffairs
+    term: Public Affairs
+  - id: RaceandEthnicity
+    term: Race and Ethnicity
+  - id: Religion
+    term: Religion
+  - id: Science
+    term: Science
+  - id: SocialIssues
+    term: Social Issues
+  - id: SpanishLanguage
+    term: Spanish Language
+  - id: Sports
+    term: Sports
+  - id: Technology
+    term: Technology
+  - id: Theater
+    term: Theater
+  - id: Transportation
+    term: Transportation
+  - id: Travel
+    term: Travel
+  - id: WarandConflict
+    term: War and Conflict
+  - id: Weather
+    term: Weather
+  - id: Women
+    term: Women

@@ -136,7 +136,7 @@ class SolrDocument
   def data_rate
     self[Solrizer.solr_name('data_rate')]
   end
-  
+
   def track_type
     self[Solrizer.solr_name('track_type')]
   end
@@ -176,12 +176,95 @@ class SolrDocument
   def frame_height
     self[Solrizer.solr_name('frame_hight')]
   end
-
+  
   def aspect_ratio
     self[Solrizer.solr_name('aspect_ratio')]
   end
-  
+
+  def contributor_role
+    self[Solrizer.solr_name('contributor_role')]
+  end
+
+  def portrayal
+    self[Solrizer.solr_name('portrayal')]
+  end
+
   def digital_format
     self[Solrizer.solr_name('digital_format')]
+  end
+
+  def local_identifier
+    self[Solrizer.solr_name('local_identifier')]
+  end
+
+  def pbs_nola_code
+    self[Solrizer.solr_name('pbs_nola_code')]
+  end
+
+  def eidr_id
+    self[Solrizer.solr_name('eidr_id')]
+  end
+
+  def topics
+    self[Solrizer.solr_name('topics')]
+  end
+
+  def subject
+    self[Solrizer.solr_name('subject')]
+  end
+
+  def local_instantiation_identifer
+    self[Solrizer.solr_name('local_instantiation_identifer')]
+  end
+
+  def tracks
+    self[Solrizer.solr_name('tracks')]
+  end
+
+  def channel_configuration
+    self[Solrizer.solr_name('channel_configuration')]
+  end
+
+  def alternative_modes
+    self[Solrizer.solr_name('alternative_modes')]
+  end
+
+  def episode_title
+    self[Solrizer.solr_name('episode_title')]
+  end
+
+  def segment_title
+    self[Solrizer.solr_name('segment_title')]
+  end
+
+  def raw_footage_title
+    self[Solrizer.solr_name('raw_footage_title')]
+  end
+
+  def promo_title
+    self[Solrizer.solr_name('promo_title')]
+  end
+
+  def clip_title
+    self[Solrizer.solr_name('clip_title')]
+  end
+  def episode_description
+    self[Solrizer.solr_name('episode_description')]
+  end
+
+  def segment_description
+    self[Solrizer.solr_name('segment_description')]
+  end
+
+  def raw_footage_description
+    self[Solrizer.solr_name('raw_footage_description')]
+  end
+
+  def promo_description
+    self[Solrizer.solr_name('promo_description')]
+  end
+
+  def clip_description
+    self[Solrizer.solr_name('clip_description')]
   end
 end

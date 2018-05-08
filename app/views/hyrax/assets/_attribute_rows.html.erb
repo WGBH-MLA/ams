@@ -1,3 +1,13 @@
+<%= presenter.attribute_to_html(:episode_title, render_as: :faceted) %>
+<%= presenter.attribute_to_html(:episode_description, render_as: :faceted) %>
+<%= presenter.attribute_to_html(:segment_title, render_as: :faceted) %>
+<%= presenter.attribute_to_html(:segment_description, render_as: :faceted) %>
+<%= presenter.attribute_to_html(:raw_footage_title, render_as: :faceted) %>
+<%= presenter.attribute_to_html(:raw_footage_description, render_as: :faceted) %>
+<%= presenter.attribute_to_html(:promo_title, render_as: :faceted) %>
+<%= presenter.attribute_to_html(:promo_description, render_as: :faceted) %>
+<%= presenter.attribute_to_html(:clip_title, render_as: :faceted) %>
+<%= presenter.attribute_to_html(:clip_description, render_as: :faceted) %>
 <%= presenter.attribute_to_html(:asset_types, render_as: :faceted) %>
 <%= presenter.attribute_to_html(:genre, render_as: :faceted) %>
 <%= presenter.attribute_to_html(:broadcast, render_as: :faceted) %>
@@ -12,3 +22,7 @@
 <%= presenter.attribute_to_html(:annotation) %>
 <%= presenter.attribute_to_html(:rights_summary) %>
 <%= presenter.attribute_to_html(:rights_link) %>
+<%= presenter.attribute_to_html(:local_identifier) %>
+<%= presenter.attribute_to_html(:pbs_nola_code) %>
+<%= presenter.attribute_to_html(:eidr_id) %>
+<%= presenter.attribute_to_html(:topics) %>

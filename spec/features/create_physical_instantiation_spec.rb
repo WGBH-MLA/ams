@@ -21,7 +21,11 @@ RSpec.feature 'Create and Validate Physical Instantiation', js: true do
           digitization_date: rand_date_time,
           date: rand_date_time,
           rights_summary: 'My Test Rights summary',
-          rights_link: 'http://somerightslink.com/testlink'
+          rights_link: 'http://somerightslink.com/testlink',
+          local_instantiation_identifer: 'localId1234',
+          tracks: '1234',
+          channel_configuration: 'Configured!',
+          alternative_modes: 'This mode is so alternative'
       }
     end
 
@@ -68,7 +72,10 @@ RSpec.feature 'Create and Validate Physical Instantiation', js: true do
       fill_in('Date', with: physical_instantiation_attributes[:date].strftime(input_date_format))
       fill_in('Rights summary', with: physical_instantiation_attributes[:rights_summary])
       fill_in('Rights link', with: physical_instantiation_attributes[:rights_link])
-
+      fill_in('Local instantiation identifer', with: physical_instantiation_attributes[:local_instantiation_identifer])
+      fill_in('Tracks', with: physical_instantiation_attributes[:tracks])
+      fill_in('Channel configuration', with: physical_instantiation_attributes[:channel_configuration])
+      fill_in('Alternative modes', with: physical_instantiation_attributes[:alternative_modes])
       click_link "Relationships" # define adminset relation
       find("#physical_instantiation_admin_set_id option[value='#{admin_set_id}']").select_option
 
@@ -98,6 +105,10 @@ RSpec.feature 'Create and Validate Physical Instantiation', js: true do
       expect(page).to have_content physical_instantiation_attributes[:digitization_date].strftime(output_date_format)
       expect(page).to have_content physical_instantiation_attributes[:rights_summary]
       expect(page).to have_content physical_instantiation_attributes[:rights_link]
+      expect(page).to have_content physical_instantiation_attributes[:local_instantiation_identifer]
+      expect(page).to have_content physical_instantiation_attributes[:tracks]
+      expect(page).to have_content physical_instantiation_attributes[:channel_configuration]
+      expect(page).to have_content physical_instantiation_attributes[:alternative_modes]
       expect(page).to have_current_path(guid_regex)
     end
   end
