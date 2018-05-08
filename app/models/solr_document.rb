@@ -176,9 +176,17 @@ class SolrDocument
   def frame_height
     self[Solrizer.solr_name('frame_hight')]
   end
-
+  
   def aspect_ratio
     self[Solrizer.solr_name('aspect_ratio')]
+  end
+
+  def contributor_role
+    self[Solrizer.solr_name('contributor_role')]
+  end
+
+  def portrayal
+    self[Solrizer.solr_name('portrayal')]
   end
 
   def digital_format

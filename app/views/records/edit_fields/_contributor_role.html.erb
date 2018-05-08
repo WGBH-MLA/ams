@@ -1,0 +1,5 @@
+<%= f.input :contributor_role, as: :select,
+            collection: ContributorRoleService.select_all_options,
+            include_blank: true,
+            input_html: { class: 'form-control' , multiple: false}
+%>
