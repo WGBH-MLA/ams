@@ -71,7 +71,6 @@ module AssetFormHelpers
     select_elements[index]
   end
 
-
   # Fills in a description, and optionally selects a description type.
   # @param description [String] The description to enter.
   # @param type [String] The description type to select.

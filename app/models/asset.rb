@@ -106,7 +106,6 @@ class Asset < ActiveFedora::Base
   property :clip_title, predicate: ::RDF::URI.new('http://pbcore.org#hasClipTitle'), multiple: :true do |index|
     index.as :stored_searchable
   end
-
   property :episode_description, predicate: ::RDF::URI.new('http://pbcore.org#hasEpisodeDescription'), multiple: :true do |index|
     index.as :stored_searchable
   end
@@ -126,7 +125,6 @@ class Asset < ActiveFedora::Base
   property :clip_description, predicate: ::RDF::URI.new('http://pbcore.org#hasClipDescription'), multiple: :true do |index|
     index.as :stored_searchable
   end
-
 
   # This must be included at the end, because it finalizes the metadata if you have any further properties define above in current model
   include ::Hyrax::BasicMetadata

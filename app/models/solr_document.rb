@@ -240,7 +240,6 @@ class SolrDocument
   def clip_title
     self[Solrizer.solr_name('clip_title')]
   end
-
   def episode_description
     self[Solrizer.solr_name('episode_description')]
   end
