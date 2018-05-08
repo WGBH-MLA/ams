@@ -1,7 +1,7 @@
 
 # This module contains helper methods for use in Capybara specs that deal with
 # entering data into the Asset create and edit forms.
-# To use in your specs, add the metadata `include: :asset_form_helpers` to
+# To use in your specs, add the metadata `asset_form_helpers: true` to
 # your context or scenario.
 module AssetFormHelpers
 
@@ -70,11 +70,77 @@ module AssetFormHelpers
     index ||= select_elements.count - 1
     select_elements[index]
   end
+
+  # Fills in a description, and optionally selects a description type.
+  # @param description [String] The description to enter.
+  # @param type [String] The description type to select.
+  # @param index [Integer] If there are multiple description/description_type pairs, use
+  #  `index` to specify which pair you want to set.
+  def fill_in_description_with_type(description, type: nil, index: nil)
+    select_description_type(type, index: index) if type
+    fill_in_description(description, index: index)
+  end
+
+
+  # Fills in multiple descriptions with their types.
+  # @param Array descriptions_with_types An array where each element is a 2-element
+  #  array containing the description and the description type.
+  def fill_in_descriptions_with_types(descriptions_with_types)
+    raise ArgumentError, "First argument must be enumerable, but #{descriptions_with_types.class} was given" unless descriptions_with_types.respond_to?(:each)
+    descriptions_with_types.each_with_index do |description_with_type, index|
+      raise ArgumentError, "Each element of first argument must be an array of 2 elements, but #{description_with_type} was given" unless (description_with_type.is_a?(Array) && description_with_type.count == 2)
+      description, description_type = description_with_type
+      fill_in_description_with_type(description, type: description_type)
+      click_button 'Add another Description' unless (index+1 == descriptions_with_types.count)
+    end
+  end
+
+  # Fills in a description.
+  # @param description [String] The description.
+  # @param index [Integer] If there are multiple descriptions, use
+  #  `index` to specify which description you want to set. If no index is given
+  #  it will set the last one found.
+  def fill_in_description(description, index: nil)
+    description_value_input(index).set description
+  end
+
+  # Selects a description type.
+  # @param description_type [String] The description type option you want to select.
+  # @param index [Integer] If there are multiple description types, use
+  #  `index` to specify which description type you want to set. If no index is given
+  #  it will set the last one found.
+  def select_description_type(description_type, index: nil)
+    description_type_select(index).select description_type
+  end
+
+  # Returns an input for entering a description.
+  # @param index [Integer] If there are multiple descriptions, use
+  #  `index` to specify which description you want to set. If no index is given
+  #  it will set the last one found.
+  def description_value_input(index=nil)
+    # Get all inputs for entering descriptions.
+    input_elements = page.all(:css, 'textarea[name="asset[description_value][]"]')
+    # If no specific index was passed, return the last one found.
+    index ||= input_elements.count - 1
+    input_elements[index]
+  end
+
+  # Returns an element for selecting a description type.
+  # @param index [Integer] If there are multiple description types, use
+  #  `index` to specify which description type you want to set. If no index is given
+  #  it will set the last one found.
+  def description_type_select(index=nil)
+    # Get all elements for selecting description types.
+    select_elements = page.all(:css, 'select[name="asset[description_type][]"]')
+    # If no specific index was passed, return the last one found.
+    index ||= select_elements.count - 1
+    select_elements[index]
+  end
 end
 
 
 # Include helper methods for all specs that are tagged with
 # `include: :asset_form_helpers`
 RSpec.configure do |config|
-  config.include AssetFormHelpers, include: :asset_form_helpers
+  config.include AssetFormHelpers, asset_form_helpers: true
 end

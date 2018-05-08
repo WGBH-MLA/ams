@@ -1,8 +1,13 @@
 <%= presenter.attribute_to_html(:episode_title, render_as: :faceted) %>
+<%= presenter.attribute_to_html(:episode_description, render_as: :faceted) %>
 <%= presenter.attribute_to_html(:segment_title, render_as: :faceted) %>
+<%= presenter.attribute_to_html(:segment_description, render_as: :faceted) %>
 <%= presenter.attribute_to_html(:raw_footage_title, render_as: :faceted) %>
+<%= presenter.attribute_to_html(:raw_footage_description, render_as: :faceted) %>
 <%= presenter.attribute_to_html(:promo_title, render_as: :faceted) %>
+<%= presenter.attribute_to_html(:promo_description, render_as: :faceted) %>
 <%= presenter.attribute_to_html(:clip_title, render_as: :faceted) %>
+<%= presenter.attribute_to_html(:clip_description, render_as: :faceted) %>
 <%= presenter.attribute_to_html(:asset_types, render_as: :faceted) %>
 <%= presenter.attribute_to_html(:genre, render_as: :faceted) %>
 <%= presenter.attribute_to_html(:broadcast, render_as: :faceted) %>
