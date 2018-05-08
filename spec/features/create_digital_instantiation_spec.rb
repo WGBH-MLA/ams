@@ -21,9 +21,12 @@ RSpec.feature 'Create and Validate Digital Instantiation', js: true do
           location: 'Test Location',
           date: rand_date_time,
           rights_summary: 'My Test Rights summary',
-          rights_link: 'http://somerightslink.com/testlink'
+          rights_link: 'http://somerightslink.com/testlink',
+          pbcore_xml_doc: "#{Rails.root}/spec/fixtures/sample_instantiation_valid.xml"
       }
     end
+
+    let(:pbcore_xml_doc) {PBCore::V2::InstantiationDocument.parse(File.read("#{Rails.root}/spec/fixtures/sample_instantiation_valid.xml"))}
 
     scenario 'Create and Validate Digital Instantiation, Search Digital Instantiation' do
       Sipity::WorkflowAction.create!(name: 'submit', workflow: workflow)
@@ -47,22 +50,17 @@ RSpec.feature 'Create and Validate Digital Instantiation', js: true do
       click_link "Descriptions" # switch tab
       fill_in('Title', with: digital_instantiation_attributes[:title])
 
-      # Select Format
-      select = page.find('select#digital_instantiation_format')
-      select.select digital_instantiation_attributes[:format]
-
-      # Select Media Type
-      select = page.find('select#digital_instantiation_media_type')
-      select.select digital_instantiation_attributes[:media_type]
 
       fill_in('Location', with: digital_instantiation_attributes[:location])
+
+      attach_file('Digital instantiation pbcore xml', File.absolute_path(digital_instantiation_attributes[:pbcore_xml_doc]))
+
 
       # Expect the required metadata indicator to indicate 'complete'
       expect(page.find("#required-metadata")[:class]).to include "complete"
 
       click_link "Additional fields" # additional metadata
 
-      fill_in('Date', with: digital_instantiation_attributes[:date].strftime(input_date_format))
       fill_in('Rights summary', with: digital_instantiation_attributes[:rights_summary])
       fill_in('Rights link', with: digital_instantiation_attributes[:rights_link])
 
@@ -82,15 +80,11 @@ RSpec.feature 'Create and Validate Digital Instantiation', js: true do
 
       # expect digital instantiation is showing up
       expect(page).to have_content digital_instantiation_attributes[:title]
-      expect(page).to have_content digital_instantiation_attributes[:date].strftime(output_date_format)
 
       # open digital instantiation with detail show
       click_on(digital_instantiation_attributes[:title])
       expect(page).to have_content digital_instantiation_attributes[:title]
-      expect(page).to have_content digital_instantiation_attributes[:media_type]
-      expect(page).to have_content digital_instantiation_attributes[:format]
       expect(page).to have_content digital_instantiation_attributes[:location]
-      expect(page).to have_content digital_instantiation_attributes[:date].strftime(output_date_format)
       expect(page).to have_content digital_instantiation_attributes[:rights_summary]
       expect(page).to have_content digital_instantiation_attributes[:rights_link]
       expect(page).to have_current_path(guid_regex)

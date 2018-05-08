@@ -6,8 +6,8 @@ class Asset < ActiveFedora::Base
   self.indexer = AssetIndexer
   # Change this to restrict which works can be added as a child.
   # self.valid_child_concerns = []
-  validates :title, presence: { message: 'Your asset must have a title.' }
-  validates :description, presence: { message: 'Your asset must have a description.' }
+  # validates :title, presence: { message: 'Your asset must have a title.' }
+  # validates :description, presence: { message: 'Your asset must have a description.' }
 
   self.human_readable_type = 'Asset'
 
@@ -64,6 +64,65 @@ class Asset < ActiveFedora::Base
   end
 
   property :rights_link, predicate: ::RDF::URI.new("http://www.europeana.eu/rights"), multiple: true do |index|
+    index.as :stored_searchable
+  end
+
+  property :local_identifier, predicate: ::RDF::URI.new("http://id.loc.gov/vocabulary/identifiers/local"), multiple: true do |index|
+    index.as :stored_searchable
+  end
+
+  property :pbs_nola_code, predicate: ::RDF::URI.new("http://id.loc.gov/ontologies/bibframe.html#p_code"), multiple: true do |index|
+    index.as :stored_searchable
+  end
+
+  property :eidr_id, predicate: ::RDF::URI.new("https://www.w3.org/2002/07/owl#sameAs"), multiple: true do |index|
+    index.as :stored_searchable
+  end
+
+  property :topics, predicate: ::RDF::URI.new("http://www.ebu.ch/metadata/ontologies/ebucore/ebucore#hasKeyword"), multiple: true do |index|
+    index.as :stored_searchable
+  end
+
+  property :subject, predicate: ::RDF::URI.new("http://purl.org/dc/elements/1.1/subject"), multiple: true do |index|
+    index.as :stored_searchable
+  end
+
+  property :episode_title, predicate: ::RDF::URI.new('http://pbcore.org#hasEpisodeTitle'), multiple: :true do |index|
+    index.as :stored_searchable
+  end
+
+  property :segment_title, predicate: ::RDF::URI.new('http://pbcore.org#hasSegmentTitle'), multiple: :true do |index|
+    index.as :stored_searchable
+  end
+
+  property :raw_footage_title, predicate: ::RDF::URI.new('http://pbcore.org#hasRawFootageTitle'), multiple: :true do |index|
+    index.as :stored_searchable
+  end
+
+  property :promo_title, predicate: ::RDF::URI.new('http://pbcore.org#hasPromoTitle'), multiple: :true do |index|
+    index.as :stored_searchable
+  end
+
+  property :clip_title, predicate: ::RDF::URI.new('http://pbcore.org#hasClipTitle'), multiple: :true do |index|
+    index.as :stored_searchable
+  end
+  property :episode_description, predicate: ::RDF::URI.new('http://pbcore.org#hasEpisodeDescription'), multiple: :true do |index|
+    index.as :stored_searchable
+  end
+
+  property :segment_description, predicate: ::RDF::URI.new('http://pbcore.org#hasSegmentDescription'), multiple: :true do |index|
+    index.as :stored_searchable
+  end
+
+  property :raw_footage_description, predicate: ::RDF::URI.new('http://pbcore.org#hasRawFootageDescription'), multiple: :true do |index|
+    index.as :stored_searchable
+  end
+
+  property :promo_description, predicate: ::RDF::URI.new('http://pbcore.org#hasPromoDescription'), multiple: :true do |index|
+    index.as :stored_searchable
+  end
+
+  property :clip_description, predicate: ::RDF::URI.new('http://pbcore.org#hasClipDescription'), multiple: :true do |index|
     index.as :stored_searchable
   end
 

@@ -1,0 +1,105 @@
+terms:
+  - id: Actor
+    term: Actor
+  - id: Artist
+    term: Artist
+  - id: Artistic Director
+    term: Artistic Director
+  - id: Associate Producer
+    term: Associate Producer
+  - id: Author
+    term: Author
+  - id: Broadcast Engineer
+    term: Broadcast Engineer
+  - id: Camera Operator
+    term: Camera Operator
+  - id: Caption Writer
+    term: Caption Writer
+  - id: Casting Director
+    term: Casting Director
+  - id: Choreographer
+    term: Choreographer
+  - id: Cinematographer
+    term: Cinematographer
+  - id: Co-Producer
+    term: Co-Producer
+  - id: Commentator
+    term: Commentator
+  - id: Composer
+    term: Composer
+  - id: Concept Artist
+    term: Concept Artist
+  - id: Conductor
+    term: Conductor
+  - id: Costume Designer
+    term: Costume Designer
+  - id: Describer
+    term: Describer
+  - id: Director
+    term: Director
+  - id: Director of Photographer
+    term: Director of Photographer
+  - id: Editor
+    term: Editor
+  - id: Executive Producer
+    term: Executive Producer
+  - id: Filmmaker
+    term: Filmmaker
+  - id: Foley Artist
+    term: Foley Artist
+  - id: Graphic Designer
+    term: Graphic Designer
+  - id: Graphic Editor
+    term: Graphic Editor
+  - id: Guest
+    term: Guest
+  - id: Host
+    term: Host
+  - id: Interviewee
+    term: Interviewee
+  - id: Interviewer
+    term: Interviewer
+  - id: Lighting Technician
+    term: Lighting Technician
+  - id: Make-Up Artist
+    term: Make-Up Artist
+  - id: Moderator
+    term: Moderator
+  - id: Music Supervisor
+    term: Music Supervisor
+  - id: Musician
+    term: Musician
+  - id: Narrator
+    term: Narrator
+  - id: Panelist
+    term: Panelist
+  - id: Performer
+    term: Performer
+  - id: Performing Group
+    term: Performing Group
+  - id: Photographer
+    term: Photographer
+  - id: Producer
+    term: Producer
+  - id: Production Unit
+    term: Production Unit
+  - id: Recoding Engineer
+    term: Recoding Engineer
+  - id: Reporter
+    term: Reporter
+  - id: Set Designer
+    term: Set Designer
+  - id: Sound Editor
+    term: Sound Editor
+  - id: Speaker
+    term: Speaker
+  - id: Technical Director
+    term: Technical Director
+  - id: Video Engineer
+    term: Video Engineer
+  - id: Vocalist
+    term: Vocalist
+  - id: Voiceover Artist
+    term: Voiceover Artist
+  - id: Writer
+    term: Writer
