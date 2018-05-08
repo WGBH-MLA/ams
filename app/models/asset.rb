@@ -6,7 +6,7 @@ class Asset < ActiveFedora::Base
   self.indexer = AssetIndexer
   # Change this to restrict which works can be added as a child.
   # self.valid_child_concerns = []
-  validates :title, presence: { message: 'Your asset must have a title.' }
+  # validates :title, presence: { message: 'Your asset must have a title.' }
   validates :description, presence: { message: 'Your asset must have a description.' }
 
   self.human_readable_type = 'Asset'
@@ -84,6 +84,26 @@ class Asset < ActiveFedora::Base
   end
 
   property :subject, predicate: ::RDF::URI.new("http://purl.org/dc/elements/1.1/subject"), multiple: true do |index|
+    index.as :stored_searchable
+  end
+
+  property :episode_title, predicate: ::RDF::URI.new('http://pbcore.org#hasEpisodeTitle'), multiple: :true do |index|
+    index.as :stored_searchable
+  end
+
+  property :segment_title, predicate: ::RDF::URI.new('http://pbcore.org#hasSegmentTitle'), multiple: :true do |index|
+    index.as :stored_searchable
+  end
+
+  property :raw_footage_title, predicate: ::RDF::URI.new('http://pbcore.org#hasRawFootageTitle'), multiple: :true do |index|
+    index.as :stored_searchable
+  end
+
+  property :promo_title, predicate: ::RDF::URI.new('http://pbcore.org#hasPromoTitle'), multiple: :true do |index|
+    index.as :stored_searchable
+  end
+
+  property :clip_title, predicate: ::RDF::URI.new('http://pbcore.org#hasClipTitle'), multiple: :true do |index|
     index.as :stored_searchable
   end
 

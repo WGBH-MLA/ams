@@ -1,0 +1,11 @@
+terms:
+  - id: Episode
+    term: Episode
+  - id: Segment
+    term: Segment
+  - id: RawFootage
+    term: Raw Footage
+  - id: Promo
+    term: Promo
+  - id: Clip
+    term: Clip

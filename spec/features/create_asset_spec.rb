@@ -1,5 +1,8 @@
 require 'rails_helper'
+require_relative '../../app/services/title_and_description_types_service'
 include Warden::Test::Helpers
+
+RSpec.configure { |config| config.include AssetFormHelpers }
 
 RSpec.feature 'Create and Validate Asset', js: true do
   context 'Create adminset, create asset' do
@@ -13,10 +16,22 @@ RSpec.feature 'Create and Validate Asset', js: true do
     let(:output_date_format) { '%F' }
 
     let(:asset_attributes) do
-      { title: "My Test Title", description: "My Test Description", broadcast: rand_date_time, created: rand_date_time, date: rand_date_time, copyright_date: rand_date_time,
+      { description: "My Test Description", broadcast: rand_date_time, created: rand_date_time, date: rand_date_time, copyright_date: rand_date_time,
         episode_number: 'EP#11', spatial_coverage: 'My Test Spatial coverage', temporal_coverage: 'My Test Temporal coverage', audience_level: 'My Test Audience level',
         audience_rating: 'My Test Audience rating', annotation: 'My Test Annotation', rights_summary: 'My Test Rights summary', rights_link: 'http://somerightslink.com/testlink', local_identifier: 'localID1234', pbs_nola_code: 'nolaCode1234', eidr_id: 'http://someeidrlink.com/testlink', topics: ['Biography', 'Women'], subject: 'Danger' }
     end
+
+    # Use contolled vocab to retrieve all title types.
+    let(:title_types) { TitleAndDescriptionTypesService.all_terms }
+
+    # Make an array title, title_type pairs.
+    # Prepend a "main" title (as if user didn't select a specific title type)
+    # Ensure there are 2 titles for every title type.
+    let(:titles_with_types) do
+      (title_types * 2).each_with_index.map { |title_type, i| ["Test #{title_type} Title #{i+1}", title_type] }.unshift( [ 'Test Main Title', '' ] )
+    end
+
+    let(:main_title) { titles_with_types.first.first }
 
     scenario 'Create and Validate Asset, Search asset' do
       Sipity::WorkflowAction.create!(name: 'submit', workflow: workflow)
@@ -45,7 +60,10 @@ RSpec.feature 'Create and Validate Asset', js: true do
       page.find("#required-metadata")[:class].include?("incomplete")
 
       click_link "Descriptions" # switch tab
-      fill_in('Title', with: asset_attributes[:title])
+
+      fill_in_titles_with_types(titles_with_types)
+
+      # fill_in('Title', with: asset_attributes[:title])
       fill_in('Description', with: asset_attributes[:description])
 
       # validated metadata without errors
@@ -88,14 +106,14 @@ RSpec.feature 'Create and Validate Asset', js: true do
       find("#search-submit-header").click
 
       # expect assets is showing up
-      expect(page).to have_content asset_attributes[:title]
+      expect(page).to have_content main_title
       expect(page).to have_content asset_attributes[:broadcast].strftime(output_date_format)
       expect(page).to have_content asset_attributes[:created].strftime(output_date_format)
       expect(page).to have_content asset_attributes[:copyright_date].strftime(output_date_format)
       expect(page).to have_content asset_attributes[:episode_number]
 
       # open asset with detail show
-      click_on(asset_attributes[:title])
+      click_on main_title
       expect(page).to have_content asset_attributes[:broadcast].strftime(output_date_format)
       expect(page).to have_content asset_attributes[:created].strftime(output_date_format)
       expect(page).to have_content asset_attributes[:date].strftime(output_date_format)
