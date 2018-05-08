@@ -187,6 +187,7 @@ class SolrDocument
 
   def portrayal
     self[Solrizer.solr_name('portrayal')]
+  end
 
   def digital_format
     self[Solrizer.solr_name('digital_format')]
