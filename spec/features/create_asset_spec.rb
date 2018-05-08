@@ -2,9 +2,7 @@ require 'rails_helper'
 require_relative '../../app/services/title_and_description_types_service'
 include Warden::Test::Helpers
 
-RSpec.configure { |config| config.include AssetFormHelpers }
-
-RSpec.feature 'Create and Validate Asset', js: true do
+RSpec.feature 'Create and Validate Asset', js: true, asset_form_helpers: true do
   context 'Create adminset, create asset' do
     let(:admin_user) { create :admin_user }
     let!(:user_with_role) { create :user_with_role, role_name: 'user' }
@@ -22,16 +20,25 @@ RSpec.feature 'Create and Validate Asset', js: true do
     end
 
     # Use contolled vocab to retrieve all title types.
-    let(:title_types) { TitleAndDescriptionTypesService.all_terms }
+    let(:title_and_description_types) { TitleAndDescriptionTypesService.all_terms }
 
-    # Make an array title, title_type pairs.
-    # Prepend a "main" title (as if user didn't select a specific title type)
+    # Make an array of [title, title_type] pairs.
     # Ensure there are 2 titles for every title type.
     let(:titles_with_types) do
-      (title_types * 2).each_with_index.map { |title_type, i| ["Test #{title_type} Title #{i+1}", title_type] }.unshift( [ 'Test Main Title', '' ] )
+      (title_and_description_types * 2).each_with_index.map { |title_type, i| ["Test #{title_type} Title #{i+1}", title_type] }
     end
 
+    # Specify a main title.
     let(:main_title) { titles_with_types.first.first }
+
+    # Make an array of [description, description_type] pairs.
+    # Ensure there are 2 descriptions for every description type.
+    let(:descriptions_with_types) do
+      (title_and_description_types * 2).each_with_index.map { |description_type, i| ["Test #{description_type} Description #{i+1}", description_type] }
+    end
+
+    # Specify a main description.
+    let(:main_description) { descriptions_with_types.first.first }
 
     scenario 'Create and Validate Asset, Search asset' do
       Sipity::WorkflowAction.create!(name: 'submit', workflow: workflow)
@@ -60,11 +67,8 @@ RSpec.feature 'Create and Validate Asset', js: true do
       page.find("#required-metadata")[:class].include?("incomplete")
 
       click_link "Descriptions" # switch tab
-
-      fill_in_titles_with_types(titles_with_types)
-
-      # fill_in('Title', with: asset_attributes[:title])
-      fill_in('Description', with: asset_attributes[:description])
+      fill_in_titles_with_types(titles_with_types)              # see AssetFormHelper#fill_in_titles_with_types
+      fill_in_descriptions_with_types(descriptions_with_types)   # see AssetFormHelper#fill_in_descriptions_with_types
 
       # validated metadata without errors
       page.find("#required-metadata")[:class].include?("complete")
@@ -107,6 +111,7 @@ RSpec.feature 'Create and Validate Asset', js: true do
 
       # expect assets is showing up
       expect(page).to have_content main_title
+      expect(page).to have_content main_description
       expect(page).to have_content asset_attributes[:broadcast].strftime(output_date_format)
       expect(page).to have_content asset_attributes[:created].strftime(output_date_format)
       expect(page).to have_content asset_attributes[:copyright_date].strftime(output_date_format)

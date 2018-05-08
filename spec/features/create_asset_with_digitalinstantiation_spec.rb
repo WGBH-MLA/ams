@@ -1,7 +1,7 @@
 require 'rails_helper'
 include Warden::Test::Helpers
 
-RSpec.feature 'Create and Validate Asset,Digital Instantiation, EssenseTrack', js: true, include: :asset_form_helpers do
+RSpec.feature 'Create and Validate Asset,Digital Instantiation, EssenseTrack', js: true, asset_form_helpers: true do
   context 'Create adminset, create asset, import pbcore xml for digital instantiation and essensetrack' do
     let(:admin_user) { create :admin_user }
     let!(:user_with_role) { create :user_with_role, role_name: 'user' }
@@ -61,9 +61,8 @@ RSpec.feature 'Create and Validate Asset,Digital Instantiation, EssenseTrack', j
 
       click_link "Descriptions" # switch tab
 
-      # See AssetFormHelpers#fill_in_title
-      fill_in_title asset_attributes[:title]
-      fill_in('Description', with: asset_attributes[:description])
+      fill_in_title asset_attributes[:title]                  # see AssetFormHelpers#fill_in_title
+      fill_in_description asset_attributes[:description]      # see AssetFormHelpers#fill_in_description
 
       # validated metadata without errors
       page.find("#required-metadata")[:class].include?("complete")

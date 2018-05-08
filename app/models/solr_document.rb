@@ -240,4 +240,24 @@ class SolrDocument
   def clip_title
     self[Solrizer.solr_name('clip_title')]
   end
+
+  def episode_description
+    self[Solrizer.solr_name('episode_description')]
+  end
+
+  def segment_description
+    self[Solrizer.solr_name('segment_description')]
+  end
+
+  def raw_footage_description
+    self[Solrizer.solr_name('raw_footage_description')]
+  end
+
+  def promo_description
+    self[Solrizer.solr_name('promo_description')]
+  end
+
+  def clip_description
+    self[Solrizer.solr_name('clip_description')]
+  end
 end

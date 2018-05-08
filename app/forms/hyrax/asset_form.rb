@@ -19,35 +19,38 @@ module Hyrax
                    :promo_title, :clip_title]
 
     # Add fields that we want to be required
-    self.required_fields += [:titles_with_types, :description]
+    self.required_fields += [:titles_with_types, :descriptions_with_types]
 
     # Remove fields tha we don't want to be required.
-    self.required_fields -= [:creator, :keyword, :rights_statement, :title]
+    self.required_fields -= [:creator, :keyword, :rights_statement, :title, :description]
 
 
-    def title_type
-      # This is a fucking pointless no-op method that is stupidly required
-      # by form builder object, because we can't use form builder object to build
-      # forms containing arbitrary form inputs, no we can't. We absolutely must have
-      # a corresponding method in the form object that was passed to the form builder
-      # or else we get fatal errors. So here's a method that does nothing in order to
-      # make the machinery work. Yay.
-      # TODO: Is this really necessary? C'mon.
-    end
-
-    def title_value
-      # See #title_type method.
-    end
+    # These methods are necessary to prevent the form builder from blowing up.
+    def title_type; end
+    def title_value; end
+    def description_type; end
+    def description_value; end
 
     def titles_with_types
       titles_with_types = []
-      titles_with_types += model.title.map { |title| [:default, title] }
-      titles_with_types += model.episode_title.map { |title| [:episode, title] }
-      titles_with_types += model.segment_title.map { |title| [:segment, title] }
-      titles_with_types += model.raw_footage_title.map { |title| [:raw_footage, title] }
-      titles_with_types += model.promo_title.map { |title| [:promo, title] }
-      titles_with_types += model.clip_title.map { |title| [:clip, title] }
+      titles_with_types += model.title.map { |title| ['main', title] }
+      titles_with_types += model.episode_title.map { |title| ['episode', title] }
+      titles_with_types += model.segment_title.map { |title| ['segment', title] }
+      titles_with_types += model.raw_footage_title.map { |title| ['raw_footage', title] }
+      titles_with_types += model.promo_title.map { |title| ['promo', title] }
+      titles_with_types += model.clip_title.map { |title| ['clip', title] }
       titles_with_types
+    end
+
+    def descriptions_with_types
+      descriptions_with_types = []
+      descriptions_with_types += model.description.map { |description| ['main', description] }
+      descriptions_with_types += model.episode_description.map { |description| ['episode', description] }
+      descriptions_with_types += model.segment_description.map { |description| ['segment', description] }
+      descriptions_with_types += model.raw_footage_description.map { |description| ['raw_footage', description] }
+      descriptions_with_types += model.promo_description.map { |description| ['promo', description] }
+      descriptions_with_types += model.clip_description.map { |description| ['clip', description] }
+      descriptions_with_types
     end
 
     # Augment the list of permmitted params to accept our fields that have
@@ -57,6 +60,8 @@ module Hyrax
       super.tap do |permitted_params|
         permitted_params << { title_type: [] }
         permitted_params << { title_value: [] }
+        permitted_params << { description_type: [] }
+        permitted_params << { description_value: [] }
       end
     end
   end
