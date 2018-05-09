@@ -1,6 +1,8 @@
 terms:
   - id: main
     term: Main
+  - id: program
+    term: Program
   - id: episode
     term: Episode
   - id: segment

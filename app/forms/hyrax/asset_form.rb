@@ -6,7 +6,7 @@ module Hyrax
     self.model_class = ::Asset
     # Add terms tha we want to be a part of the "Additional Fields" section
     self.terms += [:genre, :asset_types, :resource_type, :broadcast, :created, :date, :copyright_date,
-                   :episode_number, :description, :spatial_coverage, :temporal_coverage, :audience_level,
+                   :episode_number, :spatial_coverage, :temporal_coverage, :audience_level,
                    :audience_rating, :annotation, :rights_summary, :rights_link, :local_identifier, :pbs_nola_code,
                    :eidr_id, :topics]
 
@@ -15,8 +15,7 @@ module Hyrax
                    :creator, :contributor, :keyword, :license,
                    :rights_statement, :publisher, :language, :identifier,
                    :based_near, :related_url, :bibliographic_citation, :source,
-                   :episode_title, :segment_title, :raw_footage_title,
-                   :promo_title, :clip_title]
+                   :title, :description]
 
     # Add fields that we want to be required
     self.required_fields += [:titles_with_types, :descriptions_with_types]
@@ -34,6 +33,7 @@ module Hyrax
     def titles_with_types
       titles_with_types = []
       titles_with_types += model.title.map { |title| ['main', title] }
+      titles_with_types += model.program_title.map { |title| ['program', title] }
       titles_with_types += model.episode_title.map { |title| ['episode', title] }
       titles_with_types += model.segment_title.map { |title| ['segment', title] }
       titles_with_types += model.raw_footage_title.map { |title| ['raw_footage', title] }
