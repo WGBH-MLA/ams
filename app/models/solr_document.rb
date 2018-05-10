@@ -229,6 +229,10 @@ class SolrDocument
     self[Solrizer.solr_name('alternative_modes')]
   end
 
+  def program_title
+    self[Solrizer.solr_name('program_title')]
+  end
+
   def episode_title
     self[Solrizer.solr_name('episode_title')]
   end
@@ -248,6 +252,11 @@ class SolrDocument
   def clip_title
     self[Solrizer.solr_name('clip_title')]
   end
+
+  def program_description
+    self[Solrizer.solr_name('program_description')]
+  end
+
   def episode_description
     self[Solrizer.solr_name('episode_description')]
   end

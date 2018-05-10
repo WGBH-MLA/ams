@@ -19,6 +19,7 @@ module Hyrax
 
         def add_title_types(env)
           env.attributes[:title] = get_titles_by_type('main', env.attributes)
+          env.attributes[:program_title] = get_titles_by_type('program', env.attributes)
           env.attributes[:episode_title] = get_titles_by_type('episode', env.attributes)
           env.attributes[:segment_title] = get_titles_by_type('segment', env.attributes)
           env.attributes[:raw_footage_title] = get_titles_by_type('raw_footage', env.attributes)
@@ -33,6 +34,7 @@ module Hyrax
 
         def add_description_types(env)
           env.attributes[:description] = get_descriptions_by_type('main', env.attributes)
+          env.attributes[:program_description] = get_descriptions_by_type('program', env.attributes)
           env.attributes[:episode_description] = get_descriptions_by_type('episode', env.attributes)
           env.attributes[:segment_description] = get_descriptions_by_type('segment', env.attributes)
           env.attributes[:raw_footage_description] = get_descriptions_by_type('raw_footage', env.attributes)
