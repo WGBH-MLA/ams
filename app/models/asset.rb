@@ -9,8 +9,6 @@ class Asset < ActiveFedora::Base
   # validates :title, presence: { message: 'Your asset must have a title.' }
   # validates :description, presence: { message: 'Your asset must have a description.' }
 
-  self.human_readable_type = 'Asset'
-
   property :asset_types, predicate: ::RDF::URI.new("http://www.ebu.ch/metadata/ontologies/ebucore/ebucore#hasType"), multiple: true do |index|
     index.as :stored_searchable, :facetable
   end
