@@ -156,6 +156,10 @@ RSpec.feature 'Create and Validate Asset,Digital Instantiation, EssenseTrack', j
       # expect digital instantiation is showing up
       expect(page).to have_content digital_instantiation_attributes[:title]
 
+      #Filter resources types
+      click_on('Type')
+      click_on('Digital Instantiation')
+
       # open digital instantiation with detail show
       click_on(digital_instantiation_attributes[:title])
       expect(page).to have_content digital_instantiation_attributes[:title]
