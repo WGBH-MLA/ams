@@ -9,7 +9,7 @@ RSpec.feature 'Create and Validate Essence Track', js: true do
     let!(:user_with_role) { create :user_with_role, role_name: 'user' }
     let!(:admin_set) { create :admin_set, title: ["Test Admin Set"] }
 
-    let!(:permission_template) { Hyrax::PermissionTemplate.find_or_create_by!(admin_set_id: admin_set.id) }
+    let!(:permission_template) { Hyrax::PermissionTemplate.find_or_create_by!(source_id: admin_set.id) }
     let!(:workflow) { Sipity::Workflow.create!(active: true, name: 'test-workflow', permission_template: permission_template) }
 
     let(:essence_track_attributes) do
