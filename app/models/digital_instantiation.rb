@@ -19,7 +19,6 @@ class DigitalInstantiation < ActiveFedora::Base
 
   validates :title, presence: { message: 'Your work must have a Title.' }
   validates :location, presence: { message: 'Your work must have a Location.' }
-  self.human_readable_type = 'Digital Instantiation'
 
   def pbcore_validate_instantiation_xsd
     if digital_instantiation_pbcore_xml.file
