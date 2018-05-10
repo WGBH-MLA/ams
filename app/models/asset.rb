@@ -87,6 +87,10 @@ class Asset < ActiveFedora::Base
     index.as :stored_searchable
   end
 
+  property :program_title, predicate: ::RDF::URI.new('http://pbcore.org#hasProgramTitle'), multiple: :true do |index|
+    index.as :stored_searchable
+  end
+
   property :episode_title, predicate: ::RDF::URI.new('http://pbcore.org#hasEpisodeTitle'), multiple: :true do |index|
     index.as :stored_searchable
   end
@@ -106,6 +110,11 @@ class Asset < ActiveFedora::Base
   property :clip_title, predicate: ::RDF::URI.new('http://pbcore.org#hasClipTitle'), multiple: :true do |index|
     index.as :stored_searchable
   end
+
+  property :program_description, predicate: ::RDF::URI.new('http://pbcore.org#hasProgramDescription'), multiple: :true do |index|
+    index.as :stored_searchable
+  end
+
   property :episode_description, predicate: ::RDF::URI.new('http://pbcore.org#hasEpisodeDescription'), multiple: :true do |index|
     index.as :stored_searchable
   end
