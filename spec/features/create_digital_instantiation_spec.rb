@@ -7,7 +7,7 @@ RSpec.feature 'Create and Validate Digital Instantiation', js: true do
     let!(:user_with_role) { create :user_with_role, role_name: 'user' }
     let(:admin_set_id) { AdminSet.find_or_create_default_admin_set_id }
 
-    let!(:permission_template) { Hyrax::PermissionTemplate.find_or_create_by!(admin_set_id: admin_set_id) }
+    let!(:permission_template) { Hyrax::PermissionTemplate.find_or_create_by!(source_id: admin_set_id) }
     let!(:workflow) { Sipity::Workflow.create!(active: true, name: 'test-workflow', permission_template: permission_template) }
 
     let(:input_date_format) { '%m/%d/%Y' }
@@ -80,6 +80,10 @@ RSpec.feature 'Create and Validate Digital Instantiation', js: true do
 
       # expect digital instantiation is showing up
       expect(page).to have_content digital_instantiation_attributes[:title]
+
+      #Filter resources types
+      click_on('Type')
+      click_on('Digital Instantiation')
 
       # open digital instantiation with detail show
       click_on(digital_instantiation_attributes[:title])

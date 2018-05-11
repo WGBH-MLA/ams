@@ -11,7 +11,6 @@ class PhysicalInstantiation < ActiveFedora::Base
   validates :location, presence: { message: 'Your work must have a Location.' }
   validates :media_type, presence: { message: 'Your work must have a Media Type.' }
 
-  self.human_readable_type = 'Physical Instantiation'
 
   property :date, predicate: ::RDF::URI.new("http://purl.org/dc/terms/date"), multiple: true do |index|
     index.as :stored_searchable, :facetable

@@ -53,6 +53,10 @@ module Hyrax
             e.duration = track.duration if track.duration
             e.annotation << track.annotation.value if track.annotation
             e.admin_set_id = env.curation_concern.admin_set_id
+            e.depositor = env.curation_concern.depositor
+            e.date_uploaded = env.curation_concern.date_uploaded
+            e.date_modified = env.curation_concern.date_modified
+            e.access_control_id = env.curation_concern.access_control_id
             e.save
             #add essence track as child work to digital instantiation
             env.curation_concern.ordered_members << e

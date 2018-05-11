@@ -8,7 +8,7 @@ module Hyrax
     self.terms += [:genre, :asset_types, :resource_type, :broadcast, :created, :date, :copyright_date,
                    :episode_number, :spatial_coverage, :temporal_coverage, :audience_level,
                    :audience_rating, :annotation, :rights_summary, :rights_link, :local_identifier, :pbs_nola_code,
-                   :eidr_id, :topics]
+                   :eidr_id, :topics, :titles_with_types, :descriptions_with_types]
 
     # Remove terms that we don't want to be a part of the form.
     self.terms -= [:relative_path, :import_url, :date_created, :resource_type,

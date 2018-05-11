@@ -9,8 +9,6 @@ class EssenceTrack < ActiveFedora::Base
   validates :track_type, presence: { message: 'Your work must have track type.' }
   validates :track_id, presence: { message: 'Your work must have track ID.' }
 
-  self.human_readable_type = 'Essence Track'
-
   property :track_type, predicate: ::RDF::URI.new("http://www.ebu.ch/metadata/ontologies/ebucore/ebucore#trackType"), multiple: false do |index|
     index.as :stored_searchable
   end
