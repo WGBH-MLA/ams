@@ -7,7 +7,7 @@ RSpec.feature 'Create Asset with Asset Type', js: true, asset_form_helpers: true
     let!(:user_with_role) { create :user_with_role, role_name: 'user' }
 
     let(:admin_set_id) { AdminSet.find_or_create_default_admin_set_id }
-    let(:permission_template) { Hyrax::PermissionTemplate.find_or_create_by!(admin_set_id: admin_set_id) }
+    let(:permission_template) { Hyrax::PermissionTemplate.find_or_create_by!(source_id: admin_set_id) }
     let(:workflow) { Sipity::Workflow.create!(active: true, name: 'test-workflow', permission_template: permission_template) }
 
     let(:asset_attributes) do
