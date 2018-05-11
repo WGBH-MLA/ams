@@ -1,5 +1,6 @@
 require 'rails_helper'
 require_relative '../../app/services/title_and_description_types_service'
+require_relative '../../app/services/date_types_service'
 include Warden::Test::Helpers
 
 RSpec.feature 'Create and Validate Asset', js: true, asset_form_helpers: true do
@@ -14,9 +15,21 @@ RSpec.feature 'Create and Validate Asset', js: true, asset_form_helpers: true do
     let(:output_date_format) { '%F' }
 
     let(:asset_attributes) do
-      { description: "My Test Description", broadcast: rand_date_time, created: rand_date_time, date: rand_date_time, copyright_date: rand_date_time,
-        episode_number: 'EP#11', spatial_coverage: 'My Test Spatial coverage', temporal_coverage: 'My Test Temporal coverage', audience_level: 'My Test Audience level',
-        audience_rating: 'My Test Audience rating', annotation: 'My Test Annotation', rights_summary: 'My Test Rights summary', rights_link: 'http://somerightslink.com/testlink', local_identifier: 'localID1234', pbs_nola_code: 'nolaCode1234', eidr_id: 'http://someeidrlink.com/testlink', topics: ['Biography', 'Women'], subject: 'Danger' }
+      {
+        episode_number:       'EP#11',
+        spatial_coverage:     'My Test Spatial coverage',
+        temporal_coverage:    'My Test Temporal coverage',
+        audience_level:       'My Test Audience level',
+        audience_rating:      'My Test Audience rating',
+        annotation:           'My Test Annotation',
+        rights_summary:       'My Test Rights summary',
+        rights_link:          'http://somerightslink.com/testlink',
+        local_identifier:     'localID1234',
+        pbs_nola_code:        'nolaCode1234',
+        eidr_id:              'http://someeidrlink.com/testlink',
+        topics:               ['Biography', 'Women'],
+        subject:              'Danger',
+      }
     end
 
     # Use contolled vocab to retrieve all title types.
@@ -39,6 +52,12 @@ RSpec.feature 'Create and Validate Asset', js: true, asset_form_helpers: true do
 
     # Specify a main description.
     let(:main_description) { descriptions_with_types.first.first }
+
+    # Make an array of [date, date_type] pairs.
+    # Ensure there are 2 date for every date type.
+    let(:dates_with_types) do
+      (DateTypesService.all_terms * 2).each_with_index.map { |date_type, i| [rand_date_time.strftime(output_date_format), date_type] }
+    end
 
     scenario 'Create and Validate Asset, Search asset' do
       Sipity::WorkflowAction.create!(name: 'submit', workflow: workflow)
@@ -67,8 +86,8 @@ RSpec.feature 'Create and Validate Asset', js: true, asset_form_helpers: true do
       page.find("#required-metadata")[:class].include?("incomplete")
 
       click_link "Descriptions" # switch tab
-      fill_in_titles_with_types(titles_with_types)              # see AssetFormHelper#fill_in_titles_with_types
-      fill_in_descriptions_with_types(descriptions_with_types)   # see AssetFormHelper#fill_in_descriptions_with_types
+      fill_in_titles_with_types(titles_with_types)                                # see AssetFormHelper#fill_in_titles_with_types
+      fill_in_descriptions_with_types(descriptions_with_types)                    # see AssetFormHelper#fill_in_descriptions_with_types
 
 
       # validated metadata without errors
@@ -77,10 +96,7 @@ RSpec.feature 'Create and Validate Asset', js: true, asset_form_helpers: true do
       click_link "Additional fields" # additional metadata
 
       fill_in('Subject', with: asset_attributes[:subject])
-      fill_in('Broadcast', with: asset_attributes[:broadcast].strftime(input_date_format))
-      fill_in('Created', with: asset_attributes[:created].strftime(input_date_format))
-      fill_in('Date', with: asset_attributes[:date].strftime(input_date_format))
-      fill_in('Copyright date', with: asset_attributes[:copyright_date].strftime(input_date_format))
+      fill_in_dates_with_types(dates_with_types)                                  # see AssetFormHelper#fill_in_dates_with_types
       fill_in('Episode number', with: asset_attributes[:episode_number])
       fill_in('Spatial coverage', with: asset_attributes[:spatial_coverage])
       fill_in('Temporal coverage', with: asset_attributes[:temporal_coverage])
@@ -113,17 +129,14 @@ RSpec.feature 'Create and Validate Asset', js: true, asset_form_helpers: true do
       # expect assets is showing up
       expect(page).to have_content main_title
       expect(page).to have_content main_description
-      expect(page).to have_content asset_attributes[:broadcast].strftime(output_date_format)
-      expect(page).to have_content asset_attributes[:created].strftime(output_date_format)
-      expect(page).to have_content asset_attributes[:copyright_date].strftime(output_date_format)
+
       expect(page).to have_content asset_attributes[:episode_number]
 
       # open asset with detail show
+
+      # TODO: check for specific title, description, and date types after we
+      # know what to display on the #show view
       click_on main_title
-      expect(page).to have_content asset_attributes[:broadcast].strftime(output_date_format)
-      expect(page).to have_content asset_attributes[:created].strftime(output_date_format)
-      expect(page).to have_content asset_attributes[:date].strftime(output_date_format)
-      expect(page).to have_content asset_attributes[:copyright_date].strftime(output_date_format)
       expect(page).to have_content asset_attributes[:episode_number]
       expect(page).to have_content asset_attributes[:spatial_coverage]
       expect(page).to have_content asset_attributes[:temporal_coverage]
