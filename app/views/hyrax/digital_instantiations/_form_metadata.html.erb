@@ -1,0 +1,69 @@
+<div class="base-terms">
+  <% f.object.primary_terms.each do |term| %>
+    <%= render_edit_field_partial(term, f: f) %>
+  <% end %>
+</div>
+
+  <div class="panel-group" id="accordion">
+
+  <% if f.object.technical_info.any? %>
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h4 class="panel-title">
+          <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapse-technical-info">
+            <%= t('form.technical_information') %>
+          </a>
+        </h4>
+      </div>
+      <div id="collapse-technical-info" class="panel-collapse collapse in">
+        <div class="panel-body">
+          <% f.object.technical_info.each do |term| %>
+            <%= render_edit_field_partial(term, f: f) %>
+          <% end %>
+
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <% if f.object.identifying_info.any? %>
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h4 class="panel-title">
+          <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapse-identifying-info">
+            <%= t('form.identifying_info') %>
+          </a>
+        </h4>
+      </div>
+      <div id="collapse-identifying-info" class="panel-collapse collapse in">
+        <div class="panel-body">
+          <% f.object.identifying_info.each do |term| %>
+            <%= render_edit_field_partial(term, f: f) %>
+          <% end %>
+
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <% if f.object.rights.any? %>
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h4 class="panel-title">
+          <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapse-rights">
+            <%= t('form.rights') %>
+          </a>
+        </h4>
+      </div>
+      <div id="collapse-rights" class="panel-collapse collapse in">
+        <div class="panel-body">
+          <% f.object.rights.each do |term| %>
+            <%= render_edit_field_partial(term, f: f) %>
+          <% end %>
+
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  </div>
