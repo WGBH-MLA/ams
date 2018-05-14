@@ -6,10 +6,6 @@ class PhysicalInstantiation < ActiveFedora::Base
   self.indexer = PhysicalInstantiationIndexer
   # Change this to restrict which works can be added as a child.
   # self.valid_child_concerns = []
-  validates :title, presence: { message: 'Your work must have a Title.' }
-  validates :format, presence: { message: 'Your work must have a Format.' }
-  validates :location, presence: { message: 'Your work must have a Location.' }
-  validates :media_type, presence: { message: 'Your work must have a Media Type.' }
 
 
   property :date, predicate: ::RDF::URI.new("http://purl.org/dc/terms/date"), multiple: true do |index|
