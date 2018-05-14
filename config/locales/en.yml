@@ -35,6 +35,10 @@ en:
           carrierwave_processing_error: failed to be processed
           carrierwave_integrity_error: is not an allowed file type
   hello: "Hello world"
+  form:
+    technical_information: 'Technical Information'
+    identifying_info: 'Identifying Information'
+    rights: 'Rights'
   admin:
     users:
       index:
