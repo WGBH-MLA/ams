@@ -28,3 +28,6 @@
 # Upload directories
 /public/system/avatars
 /public/uploads/*
+
+# Redis dumps
+dump.rdb

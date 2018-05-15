@@ -17,20 +17,20 @@ class Asset < ActiveFedora::Base
     index.as :stored_searchable, :facetable
   end
 
-  property :broadcast, predicate: ::RDF::URI.new("http://www.ebu.ch/metadata/ontologies/ebucore/ebucore#dateBroadcast"), multiple: true do |index|
-    index.as :stored_searchable, :facetable
-  end
-
-  property :created, predicate: ::RDF::URI.new("http://purl.org/dc/terms/created"), multiple: true do |index|
-    index.as :stored_searchable, :facetable
-  end
-
-  property :copyright_date, predicate: ::RDF::URI.new("http://id.loc.gov/ontologies/bibframe.html#p_copyrightDate"), multiple: true do |index|
-    index.as :stored_searchable, :facetable
-  end
-
   property :date, predicate: ::RDF::URI.new("http://purl.org/dc/terms/date"), multiple: true do |index|
     index.as :stored_searchable, :facetable
+  end
+
+  property :broadcast_date, predicate: ::RDF::URI.new('http://pbcore.org#hasBroadcastDate'), multiple: :true do |index|
+    index.as :stored_searchable
+  end
+
+  property :created_date, predicate: ::RDF::URI.new('http://pbcore.org#hasCreatedDate'), multiple: :true do |index|
+    index.as :stored_searchable
+  end
+
+  property :copyright_date, predicate: ::RDF::URI.new('http://pbcore.org#hasCopyrightDate'), multiple: :true do |index|
+    index.as :stored_searchable
   end
 
   property :episode_number, predicate: ::RDF::URI.new("http://www.ebu.ch/metadata/ontologies/ebucore/ebucore#episodeNumber"), multiple: true do |index|

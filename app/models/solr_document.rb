@@ -33,21 +33,7 @@ class SolrDocument
     self[Solrizer.solr_name('genre')]
   end
 
-  def broadcast
-    self[Solrizer.solr_name('broadcast')]
-  end
 
-  def date
-    self[Solrizer.solr_name('date')]
-  end
-
-  def created
-    self[Solrizer.solr_name('created')]
-  end
-
-  def copyright_date
-    self[Solrizer.solr_name('copyright_date')]
-  end
 
   def episode_number
     self[Solrizer.solr_name('episode_number')]
@@ -275,5 +261,21 @@ class SolrDocument
 
   def clip_description
     self[Solrizer.solr_name('clip_description')]
+  end
+
+  def date
+    self[Solrizer.solr_name('date')]
+  end
+  
+  def broadcast_date
+    self[Solrizer.solr_name('broadcast_date')]
+  end
+
+  def created_date
+    self[Solrizer.solr_name('created_date')]
+  end
+
+  def copyright_date
+    self[Solrizer.solr_name('copyright_date')]
   end
 end
