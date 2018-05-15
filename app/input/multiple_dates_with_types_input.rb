@@ -3,11 +3,17 @@ class MultipleDatesWithTypesInput < MultiValueInput
   def build_field(value, index)
     date_type_choices = DateTypesService.select_all_options
 
-    select_input_html_options = { name: "#{@builder.object_name}[date_type][]"}
-    date_input_html_options = { name: "#{@builder.object_name}[date_value][]", value: value[1] }
+    select_input_html_options = input_html_options.merge({
+      name: "#{@builder.object_name}[date_type][]"
+    })
 
-    output = @builder.select(:date_type, date_type_choices, { selected: value[0] }, select_input_html_options)
-    output += @builder.date_field(:date_value, date_input_html_options)
+    date_input_html_options = input_html_options.merge({
+      name: "#{@builder.object_name}[date_value][]",
+      value: value[1]
+    })
+
+    output = @builder.date_field(:date_value, date_input_html_options)
+    output += @builder.select(:date_type, date_type_choices, { selected: value[0] }, select_input_html_options)
     output
   end
 
