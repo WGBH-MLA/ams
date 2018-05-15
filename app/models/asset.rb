@@ -6,8 +6,35 @@ class Asset < ActiveFedora::Base
   self.indexer = AssetIndexer
   # Change this to restrict which works can be added as a child.
   # self.valid_child_concerns = []
-  # validates :title, presence: { message: 'Your asset must have a title.' }
-  # validates :description, presence: { message: 'Your asset must have a description.' }
+
+  # validate :at_least_one_title
+  # validate :at_least_one_description
+
+  def at_least_one_title
+    all_titles = title.to_a
+    all_titles += program_title.to_a
+    all_titles += episode_title.to_a
+    all_titles += segment_title.to_a
+    all_titles += clip_title.to_a
+    all_titles += promo_title.to_a
+    all_titles += raw_footage_title.to_a
+    if all_titles.empty?
+      errors.add :title, "cannot be empty"
+    end
+  end
+
+  def at_least_one_description
+    all_descriptions = description.to_a
+    all_descriptions += program_description.to_a
+    all_descriptions += episode_description.to_a
+    all_descriptions += segment_description.to_a
+    all_descriptions += clip_description.to_a
+    all_descriptions += promo_description.to_a
+    all_descriptions += raw_footage_description.to_a
+    if all_descriptions.empty?
+      errors.add :description, "cannot be empty"
+    end
+  end
 
   property :asset_types, predicate: ::RDF::URI.new("http://www.ebu.ch/metadata/ontologies/ebucore/ebucore#hasType"), multiple: true do |index|
     index.as :stored_searchable, :facetable
