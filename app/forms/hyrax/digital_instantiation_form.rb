@@ -2,6 +2,8 @@
 #  `rails generate hyrax:work DigitalInstantiation`
 module Hyrax
   class DigitalInstantiationForm < Hyrax::Forms::WorkForm
+    include ReadOnlyFields
+
     self.model_class = ::DigitalInstantiation
     self.terms -= [:description, :relative_path, :import_url, :date_created, :resource_type, :creator, :contributor,
                    :keyword, :license, :rights_statement, :publisher, :subject, :identifier, :based_near, :related_url,
@@ -19,6 +21,8 @@ module Hyrax
     }
 
     self.terms += (self.required_fields + field_groups.values.map(&:to_a).flatten).uniq
+
+    self.readonly_fields = self.terms - [:title, :location, :generations, :language, :date, :annotation, :rights_summary]
 
     def primary_terms
       [:digital_instantiation_pbcore_xml]
