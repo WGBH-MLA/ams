@@ -1,5 +1,6 @@
 require 'rails_helper'
 require_relative '../../app/services/title_and_description_types_service'
+require_relative '../../app/services/date_types_service'
 include Warden::Test::Helpers
 
 RSpec.feature 'Create and Validate Asset', js: true, asset_form_helpers: true do
@@ -40,6 +41,12 @@ RSpec.feature 'Create and Validate Asset', js: true, asset_form_helpers: true do
     # Specify a main description.
     let(:main_description) { descriptions_with_types.first.first }
 
+    # Make an array of [date, date_type] pairs.
+    # Ensure there are 2 date for every date type.
+    let(:dates_with_types) do
+      (DateTypesService.all_terms * 2).each_with_index.map { |date_type, i| [rand_date_time.strftime(output_date_format), date_type] }
+    end
+
     scenario 'Create and Validate Asset, Search asset' do
       Sipity::WorkflowAction.create!(name: 'submit', workflow: workflow)
       Hyrax::PermissionTemplateAccess.create!(
@@ -69,12 +76,10 @@ RSpec.feature 'Create and Validate Asset', js: true, asset_form_helpers: true do
       click_link "Descriptions" # switch tab
 
       click_link "Identifying Information" # expand field group
+      wait_for(2) # wait untill all elements are visiable
 
-      # wait untill all elements are visiable
-      wait_for(2)
-
-      fill_in_title asset_attributes[:title]                  # see AssetFormHelpers#fill_in_title
-      fill_in_description asset_attributes[:description]      # see AssetFormHelpers#fill_in_description
+      fill_in_titles_with_types(titles_with_types)                                # see AssetFormHelper#fill_in_titles_with_types
+      fill_in_descriptions_with_types(descriptions_with_types)                    # see AssetFormHelper#fill_in_descriptions_with_types
 
       # validated metadata without errors
       page.find("#required-metadata")[:class].include?("complete")
@@ -89,11 +94,10 @@ RSpec.feature 'Create and Validate Asset', js: true, asset_form_helpers: true do
       fill_in('Audience level', with: asset_attributes[:audience_level])
       fill_in('Audience rating', with: asset_attributes[:audience_rating])
       fill_in('Annotation', with: asset_attributes[:annotation])
-
-      # wait untill all elements are visiable
-      wait_for(2)
-
+      
       click_link "Rights" # expand field group
+      wait_for(2) # wait untill all elements are visiable
+      
       fill_in('Rights summary', with: asset_attributes[:rights_summary])
 
       click_link "Relationships" # define adminset relation
@@ -114,7 +118,6 @@ RSpec.feature 'Create and Validate Asset', js: true, asset_form_helpers: true do
 
       # open asset with detail show
       click_on asset_attributes[:title]
-
       expect(page).to have_content asset_attributes[:spatial_coverage]
       expect(page).to have_content asset_attributes[:temporal_coverage]
       expect(page).to have_content asset_attributes[:audience_level]

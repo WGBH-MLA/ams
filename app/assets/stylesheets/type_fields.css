@@ -1,0 +1,12 @@
+select.multiple_titles_with_types,
+select.multiple_descriptions_with_types,
+select.multiple_dates_with_types {
+  width: 30% !important;
+}
+
+input.multiple_titles_with_types,
+input.multiple_dates_with_types,
+textarea.multiple_descriptions_with_types {
+  width: 65% !important;
+  margin-right: 5px !important;
+}
