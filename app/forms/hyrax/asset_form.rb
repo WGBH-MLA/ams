@@ -2,13 +2,7 @@
 #  `rails generate hyrax:work Asset`
 module Hyrax
   class AssetForm < Hyrax::Forms::WorkForm
-
     self.model_class = ::Asset
-    # Add terms tha we want to be a part of the "Additional Fields" section
-    self.terms += [:genre, :asset_types, :resource_type, :broadcast, :created, :date, :copyright_date,
-                   :episode_number, :spatial_coverage, :temporal_coverage, :audience_level,
-                   :audience_rating, :annotation, :rights_summary, :rights_link, :local_identifier, :pbs_nola_code,
-                   :eidr_id, :topics, :titles_with_types, :descriptions_with_types]
 
     # Remove terms that we don't want to be a part of the form.
     self.terms -= [:relative_path, :import_url, :date_created, :resource_type,
@@ -23,11 +17,23 @@ module Hyrax
     # Remove fields tha we don't want to be required.
     self.required_fields -= [:creator, :keyword, :rights_statement, :title, :description]
 
+    class_attribute :field_groups
+
+    self.field_groups = {
+      identifying_info: [:titles_with_types, :local_identifier, :pbs_nola_code, :eidr_id, :asset_types, :date, :descriptions_with_types],
+      subject_info: [:genre, :topics, :subject, :spatial_coverage, :temporal_coverage, :audience_level, :audience_rating, :annotation],
+      rights: [:rights_summary, :rights_statement]
+    }
+
+    self.terms += self.required_fields + field_groups.values.map(&:to_a).flatten
 
     # These methods are necessary to prevent the form builder from blowing up.
     def title_type; end
+
     def title_value; end
+
     def description_type; end
+
     def description_value; end
 
     def titles_with_types
@@ -52,6 +58,7 @@ module Hyrax
       descriptions_with_types += model.clip_description.map { |description| ['clip', description] }
       descriptions_with_types
     end
+
     # Augment the list of permmitted params to accept our fields that have
     # types associated with them, e.g. title + title type
     # NOTE: `super` in this case is HyraxEditor::Form.permitted_params
