@@ -7,6 +7,11 @@ class PhysicalInstantiation < ActiveFedora::Base
   # Change this to restrict which works can be added as a child.
   # self.valid_child_concerns = []
 
+  validates :title, presence: { message: 'Your work must have a title.' }
+  validates :format, presence: { message: 'Your work must have a format.' }
+  validates :location, presence: { message: 'Your work must have a location.' }
+  validates :media_type, presence: { message: 'Your work must have a media type.' }
+
 
   property :date, predicate: ::RDF::URI.new("http://purl.org/dc/terms/date"), multiple: true do |index|
     index.as :stored_searchable, :facetable
