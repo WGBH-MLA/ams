@@ -17,7 +17,7 @@ module Hyrax
                          :language, :annotiation],
       technical_info: [:dimensions, :standard, :duration, :time_start, :colors, :tracks, :channel_configuration,
                        :alternative_modes],
-      rights: [:rights_summary, :rights_statement]
+      rights: [:rights_summary, :rights_link]
     }
 
     self.terms += (self.required_fields + field_groups.values.map(&:to_a).flatten).uniq

@@ -15,7 +15,7 @@ module Hyrax
       technical_info: [:local_instantiation_identifer, :media_type, :digital_format, :dimensions, :standard, :file_size,
                        :duration, :time_start, :data_rate, :colors, :tracks, :channel_configuration, :alternative_modes],
       identifying_info: [:title, :location, :generations, :language, :date, :annotation],
-      rights: [:rights_summary, :rights_statement]
+      rights: [:rights_summary, :rights_link]
     }
 
     self.terms += (self.required_fields + field_groups.values.map(&:to_a).flatten).uniq
