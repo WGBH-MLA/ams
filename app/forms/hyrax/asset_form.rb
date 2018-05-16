@@ -25,7 +25,15 @@ module Hyrax
       rights: [:rights_summary, :rights_statement]
     }
 
-    self.terms += self.required_fields + field_groups.values.map(&:to_a).flatten
+    self.terms += (self.required_fields + field_groups.values.map(&:to_a).flatten).uniq
+
+    def primary_terms
+      [:digital_instantiation_pbcore_xml]
+    end
+
+    def secondary_terms
+      []
+    end
 
     # These methods are necessary to prevent the form builder from blowing up.
     def title_type; end
@@ -36,9 +44,11 @@ module Hyrax
 
     def description_value; end
 
-    def field_group_empty?(group)
+    def expand_field_group?(group)
+      #Get terms for a certian field group
       field_group_terms(group).each do |term|
-        return true if model.attributes[term.to_s].any?
+        #Expand field group
+        return true if !model.attributes[term.to_s].blank? || model.errors.has_key?(term)
       end
       false
     end
