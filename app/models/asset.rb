@@ -6,8 +6,35 @@ class Asset < ActiveFedora::Base
   self.indexer = AssetIndexer
   # Change this to restrict which works can be added as a child.
   # self.valid_child_concerns = []
-  # validates :title, presence: { message: 'Your asset must have a title.' }
-  # validates :description, presence: { message: 'Your asset must have a description.' }
+
+  # validate :at_least_one_title
+  # validate :at_least_one_description
+
+  def at_least_one_title
+    all_titles = title.to_a
+    all_titles += program_title.to_a
+    all_titles += episode_title.to_a
+    all_titles += segment_title.to_a
+    all_titles += clip_title.to_a
+    all_titles += promo_title.to_a
+    all_titles += raw_footage_title.to_a
+    if all_titles.empty?
+      errors.add :title, "cannot be empty"
+    end
+  end
+
+  def at_least_one_description
+    all_descriptions = description.to_a
+    all_descriptions += program_description.to_a
+    all_descriptions += episode_description.to_a
+    all_descriptions += segment_description.to_a
+    all_descriptions += clip_description.to_a
+    all_descriptions += promo_description.to_a
+    all_descriptions += raw_footage_description.to_a
+    if all_descriptions.empty?
+      errors.add :description, "cannot be empty"
+    end
+  end
 
   property :asset_types, predicate: ::RDF::URI.new("http://www.ebu.ch/metadata/ontologies/ebucore/ebucore#hasType"), multiple: true do |index|
     index.as :stored_searchable, :facetable
@@ -17,20 +44,20 @@ class Asset < ActiveFedora::Base
     index.as :stored_searchable, :facetable
   end
 
-  property :broadcast, predicate: ::RDF::URI.new("http://www.ebu.ch/metadata/ontologies/ebucore/ebucore#dateBroadcast"), multiple: true do |index|
-    index.as :stored_searchable, :facetable
-  end
-
-  property :created, predicate: ::RDF::URI.new("http://purl.org/dc/terms/created"), multiple: true do |index|
-    index.as :stored_searchable, :facetable
-  end
-
-  property :copyright_date, predicate: ::RDF::URI.new("http://id.loc.gov/ontologies/bibframe.html#p_copyrightDate"), multiple: true do |index|
-    index.as :stored_searchable, :facetable
-  end
-
   property :date, predicate: ::RDF::URI.new("http://purl.org/dc/terms/date"), multiple: true do |index|
     index.as :stored_searchable, :facetable
+  end
+
+  property :broadcast_date, predicate: ::RDF::URI.new('http://pbcore.org#hasBroadcastDate'), multiple: :true do |index|
+    index.as :stored_searchable
+  end
+
+  property :created_date, predicate: ::RDF::URI.new('http://pbcore.org#hasCreatedDate'), multiple: :true do |index|
+    index.as :stored_searchable
+  end
+
+  property :copyright_date, predicate: ::RDF::URI.new('http://pbcore.org#hasCopyrightDate'), multiple: :true do |index|
+    index.as :stored_searchable
   end
 
   property :episode_number, predicate: ::RDF::URI.new("http://www.ebu.ch/metadata/ontologies/ebucore/ebucore#episodeNumber"), multiple: true do |index|

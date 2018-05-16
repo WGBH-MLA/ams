@@ -3,7 +3,6 @@
 module Hyrax
   class AssetForm < Hyrax::Forms::WorkForm
     self.model_class = ::Asset
-
     # Remove terms that we don't want to be a part of the form.
     self.terms -= [:relative_path, :import_url, :date_created, :resource_type,
                    :creator, :contributor, :keyword, :license,
@@ -43,6 +42,8 @@ module Hyrax
     def description_type; end
 
     def description_value; end
+    def date_type; end
+    def date_value; end
 
     def expand_field_group?(group)
       #Get terms for a certian field group
@@ -85,6 +86,14 @@ module Hyrax
       descriptions_with_types += model.clip_description.map { |description| ['clip', description] }
       descriptions_with_types
     end
+    
+    def dates_with_types
+      dates_with_types = []
+      dates_with_types += model.broadcast_date.map { |date| ['broadcast', date] }
+      dates_with_types += model.created_date.map { |date| ['created', date] }
+      dates_with_types += model.copyright_date.map { |date| ['copyright', date] }
+      dates_with_types
+    end
 
     # Augment the list of permmitted params to accept our fields that have
     # types associated with them, e.g. title + title type
@@ -95,6 +104,8 @@ module Hyrax
         permitted_params << { title_value: [] }
         permitted_params << { description_type: [] }
         permitted_params << { description_value: [] }
+        permitted_params << { date_type: [] }
+        permitted_params << { date_value: [] }
       end
     end
   end
