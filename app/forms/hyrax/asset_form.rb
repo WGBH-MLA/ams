@@ -25,7 +25,7 @@ module Hyrax
       rights: [:rights_summary, :rights_statement]
     }
 
-    self.terms += self.required_fields + field_groups.values.map(&:to_a).flatten
+    self.terms += self.required_fields + self.field_groups.values.map(&:to_a).flatten
 
     # These methods are necessary to prevent the form builder from blowing up.
     def title_type; end
@@ -35,6 +35,24 @@ module Hyrax
     def description_type; end
 
     def description_value; end
+
+    def field_group_empty?(group)
+      field_group_terms(group).each do |term|
+        return true if model.attributes["#{term.to_s}"].any?
+      end
+      false
+    end
+
+    def field_group_terms(group)
+      local_terms = self.field_groups[group].clone
+      if(group == :identifying_info)
+        local_terms.delete(:titles_with_types)
+        local_terms.delete(:descriptions_with_types)
+        local_terms += [:title, :program_title, :episode_title, :segment_title, :raw_footage_title, :promo_title, :clip_title]
+        local_terms += [:description, :episode_description, :segment_description, :raw_footage_description, :promo_description, :clip_description]
+      end
+      local_terms
+    end
 
     def titles_with_types
       titles_with_types = []
