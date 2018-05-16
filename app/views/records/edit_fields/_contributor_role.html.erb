@@ -1,5 +1,6 @@
 <%= f.input :contributor_role, as: :select,
             collection: ContributorRoleService.select_all_options,
             include_blank: true,
+            disabled:f.object.respond_to?(:readonly?) && f.object.readonly?(key),
             input_html: { class: 'form-control' , multiple: false}
 %>
