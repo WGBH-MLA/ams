@@ -1,8 +1,8 @@
 require 'rails_helper'
 include Warden::Test::Helpers
 
-
-RSpec.feature 'Create and Validate Asset,Digital Instantiation, EssenseTrack', js: true, asset_form_helpers: true do
+RSpec.feature 'Create and Validate Asset,Digital Instantiation, EssenseTrack', js: true, asset_form_helpers: true,
+              disable_animation:true do
   context 'Create adminset, create asset, import pbcore xml for digital instantiation and essensetrack' do
     let(:admin_user) { create :admin_user }
     let!(:user_with_role) { create :user_with_role, role_name: 'user' }
@@ -14,25 +14,23 @@ RSpec.feature 'Create and Validate Asset,Digital Instantiation, EssenseTrack', j
     let(:output_date_format) { '%F' }
 
     let(:asset_attributes) do
-      { title: "My Test Title", description: "My Test Description", broadcast: rand_date_time, created: rand_date_time, date: rand_date_time, copyright_date: rand_date_time,
-        episode_number: 'EP#11', spatial_coverage: 'My Test Spatial coverage', temporal_coverage: 'My Test Temporal coverage', audience_level: 'My Test Audience level',
-        audience_rating: 'My Test Audience rating', annotation: 'My Test Annotation', rights_summary: 'My Test Rights summary', rights_link: 'http://somerightslink.com/testlink' }
+      { title: "My Test Title", description: "My Test Description",spatial_coverage: 'My Test Spatial coverage',
+        temporal_coverage: 'My Test Temporal coverage', audience_level: 'My Test Audience level',
+        audience_rating: 'My Test Audience rating', annotation: 'My Test Annotation', rights_summary: 'My Test Rights summary' }
     end
 
     let(:digital_instantiation_attributes) do
       {
-          title: "My Test Digital Instantiation",
-          media_type: "Moving Image",
-          format: 'DVD',
-          location: 'Test Location',
-          date: rand_date_time,
-          rights_summary: 'My Test Rights summary',
-          rights_link: 'http://somerightslink.com/testlink',
-          pbcore_xml_doc: "#{Rails.root}/spec/fixtures/sample_instantiation_valid.xml"
+        title: "My Test Digital Instantiation",
+        media_type: "Moving Image",
+        digital_format: 'video/mp4',
+        location: 'Test Location',
+        rights_summary: 'My Test Rights summary',
+        pbcore_xml_doc: "#{Rails.root}/spec/fixtures/sample_instantiation_valid.xml"
       }
     end
 
-    let(:pbcore_xml_doc) {PBCore::V2::InstantiationDocument.parse(File.read("#{Rails.root}/spec/fixtures/sample_instantiation_valid.xml"))}
+    let(:pbcore_xml_doc) { PBCore::V2::InstantiationDocument.parse(File.read("#{Rails.root}/spec/fixtures/sample_instantiation_valid.xml")) }
 
     scenario 'Create and Validate Asset, Search asset' do
       Sipity::WorkflowAction.create!(name: 'submit', workflow: workflow)
@@ -47,6 +45,9 @@ RSpec.feature 'Create and Validate Asset,Digital Instantiation, EssenseTrack', j
 
       # create asset
       visit '/'
+
+      disable_js_animation
+
       click_link "Share Your Work"
       choose "payload_concern", option: "Asset"
       click_button "Create work"
@@ -62,26 +63,33 @@ RSpec.feature 'Create and Validate Asset,Digital Instantiation, EssenseTrack', j
 
       click_link "Descriptions" # switch tab
 
+      click_link "Identifying Information" # expand field group
+
+      #wait untill all elements are visiable
+      wait_for(2)
+
       fill_in_title asset_attributes[:title]                  # see AssetFormHelpers#fill_in_title
       fill_in_description asset_attributes[:description]      # see AssetFormHelpers#fill_in_description
 
       # validated metadata without errors
       page.find("#required-metadata")[:class].include?("complete")
 
-      click_link "Additional fields" # additional metadata
+      #wait untill all elements are visiable
+      wait_for(2)
 
-      fill_in('Broadcast', with: asset_attributes[:broadcast].strftime(input_date_format))
-      fill_in('Created', with: asset_attributes[:created].strftime(input_date_format))
-      fill_in('Date', with: asset_attributes[:date].strftime(input_date_format))
-      fill_in('Copyright date', with: asset_attributes[:copyright_date].strftime(input_date_format))
-      fill_in('Episode number', with: asset_attributes[:episode_number])
+      click_link "Subject Information" # expand field group
+
       fill_in('Spatial coverage', with: asset_attributes[:spatial_coverage])
       fill_in('Temporal coverage', with: asset_attributes[:temporal_coverage])
       fill_in('Audience level', with: asset_attributes[:audience_level])
       fill_in('Audience rating', with: asset_attributes[:audience_rating])
       fill_in('Annotation', with: asset_attributes[:annotation])
+
+      #wait untill all elements are visiable
+      wait_for(2)
+
+      click_link "Rights" # expand field group
       fill_in('Rights summary', with: asset_attributes[:rights_summary])
-      fill_in('Rights link', with: asset_attributes[:rights_link])
 
       click_link "Relationships" # define adminset relation
       find("#asset_admin_set_id option[value='#{admin_set_id}']").select_option
@@ -98,48 +106,38 @@ RSpec.feature 'Create and Validate Asset,Digital Instantiation, EssenseTrack', j
 
       # Expect metadata for Asset to be displayed on the search results page.
       expect(page).to have_content asset_attributes[:title]
-      expect(page).to have_content asset_attributes[:broadcast].strftime(output_date_format)
-      expect(page).to have_content asset_attributes[:created].strftime(output_date_format)
-      expect(page).to have_content asset_attributes[:copyright_date].strftime(output_date_format)
-      expect(page).to have_content asset_attributes[:episode_number]
 
       # open asset with detail show
       click_on asset_attributes[:title]
-      expect(page).to have_content asset_attributes[:broadcast].strftime(output_date_format)
-      expect(page).to have_content asset_attributes[:created].strftime(output_date_format)
-      expect(page).to have_content asset_attributes[:date].strftime(output_date_format)
-      expect(page).to have_content asset_attributes[:copyright_date].strftime(output_date_format)
-      expect(page).to have_content asset_attributes[:episode_number]
+
       expect(page).to have_content asset_attributes[:spatial_coverage]
       expect(page).to have_content asset_attributes[:temporal_coverage]
       expect(page).to have_content asset_attributes[:audience_level]
       expect(page).to have_content asset_attributes[:audience_rating]
       expect(page).to have_content asset_attributes[:annotation]
       expect(page).to have_content asset_attributes[:rights_summary]
-      expect(page).to have_content asset_attributes[:rights_link]
       expect(page).to have_current_path(guid_regex)
 
       click_on('Add Digital Instantiation')
 
       within 'form#new_digital_instantiation' do
-        fill_in('Title', with: digital_instantiation_attributes[:title])
+        attach_file('Digital instantiation pbcore xml', File.absolute_path(digital_instantiation_attributes[:pbcore_xml_doc]))
 
+        click_link "Technical Info" # expand technical info field group
+
+        page.select digital_instantiation_attributes[:media_type], from: 'Media type'
+
+        page.select digital_instantiation_attributes[:digital_format], from: 'Digital format'
+
+        click_link "Identifying Information" # expand field group
+
+        fill_in('Title', with: digital_instantiation_attributes[:title])
 
         fill_in('Location', with: digital_instantiation_attributes[:location])
 
-        attach_file('Digital instantiation pbcore xml', File.absolute_path(digital_instantiation_attributes[:pbcore_xml_doc]))
-
-
-        # Expect the required metadata indicator to indicate 'complete'
-        expect(page.find("#required-metadata")[:class]).to include "complete"
-
-        click_link "Additional fields" # additional metadata
+        click_link "Rights" # expand field group
 
         fill_in('Rights summary', with: digital_instantiation_attributes[:rights_summary])
-        fill_in('Rights link', with: digital_instantiation_attributes[:rights_link])
-
-        click_link "Relationships" # define adminset relation
-        find("#digital_instantiation_admin_set_id option[value='#{admin_set_id}']").select_option
       end
 
       # set it public
@@ -156,7 +154,7 @@ RSpec.feature 'Create and Validate Asset,Digital Instantiation, EssenseTrack', j
       # expect digital instantiation is showing up
       expect(page).to have_content digital_instantiation_attributes[:title]
 
-      #Filter resources types
+      # Filter resources types
       click_on('Type')
       click_on('Digital Instantiation')
 
@@ -165,9 +163,9 @@ RSpec.feature 'Create and Validate Asset,Digital Instantiation, EssenseTrack', j
       expect(page).to have_content digital_instantiation_attributes[:title]
       expect(page).to have_content digital_instantiation_attributes[:location]
       expect(page).to have_content digital_instantiation_attributes[:rights_summary]
-      expect(page).to have_content digital_instantiation_attributes[:rights_link]
+      expect(page).to have_content digital_instantiation_attributes[:media_type]
+      expect(page).to have_content digital_instantiation_attributes[:digital_format]
       expect(page).to have_current_path(guid_regex)
-
     end
   end
 end

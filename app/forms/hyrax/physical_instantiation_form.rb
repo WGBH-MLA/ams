@@ -7,8 +7,8 @@ module Hyrax
     self.terms -= [:description, :relative_path, :import_url, :date_created, :resource_type, :creator, :contributor,
                    :keyword, :license, :rights_statement, :publisher, :subject, :identifier, :based_near, :related_url,
                    :bibliographic_citation, :source]
-    self.required_fields -= [:title, :creator, :keyword, :rights_statement]
-    self.required_fields += [:title, :format, :location, :media_type]
+    self.required_fields -= [:creator, :keyword, :rights_statement]
+    self.required_fields += [:format, :location, :media_type]
 
     class_attribute :field_groups
 
@@ -23,7 +23,7 @@ module Hyrax
     self.terms += (self.required_fields + field_groups.values.map(&:to_a).flatten).uniq
 
     def primary_terms
-      [:digital_instantiation_pbcore_xml]
+      []
     end
 
     def secondary_terms

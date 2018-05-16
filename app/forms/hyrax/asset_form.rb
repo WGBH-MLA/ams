@@ -28,7 +28,7 @@ module Hyrax
     self.terms += (self.required_fields + field_groups.values.map(&:to_a).flatten).uniq
 
     def primary_terms
-      [:digital_instantiation_pbcore_xml]
+      []
     end
 
     def secondary_terms
