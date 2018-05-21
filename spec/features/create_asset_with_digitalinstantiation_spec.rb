@@ -37,16 +37,16 @@ RSpec.feature 'Create and Validate Asset,Digital Instantiation, EssenseTrack', j
     # Make an array of [title, title_type] pairs.
     # Ensure there are 2 titles for every title type.
     let(:titles_with_types) do
-      (title_and_description_types * 2).each_with_index.map { |title_type, i| ["Test #{title_type} Title #{i + 1}", title_type] }
+      (title_and_description_types).each_with_index.map { |title_type, i| ["Test #{title_type} Title #{i + 1}", title_type] }
     end
 
     # Specify a main title.
-    let(:main_title) { titles_with_types.first.first }
+    let(:main_title) { titles_with_types.first.first.split.join(" ") }
 
     # Make an array of [description, description_type] pairs.
     # Ensure there are 2 descriptions for every description type.
     let(:descriptions_with_types) do
-      (title_and_description_types * 2).each_with_index.map { |description_type, i| ["Test #{description_type} Description #{i + 1}", description_type] }
+      (title_and_description_types).each_with_index.map { |description_type, i| ["Test #{description_type} Description #{i + 1}", description_type] }
     end
 
     # Specify a main description.
@@ -91,9 +91,7 @@ RSpec.feature 'Create and Validate Asset,Digital Instantiation, EssenseTrack', j
       click_link "Descriptions" # switch tab
 
       click_link "Identifying Information" # expand field group
-
-      #wait untill all elements are visiable
-      wait_for(2)
+      wait_for(2) #wait untill all elements are visiable
 
       fill_in_titles_with_types(titles_with_types)                                # see AssetFormHelper#fill_in_titles_with_types
       fill_in_descriptions_with_types(descriptions_with_types)                    # see AssetFormHelper#fill_in_descriptions_with_types
@@ -101,10 +99,8 @@ RSpec.feature 'Create and Validate Asset,Digital Instantiation, EssenseTrack', j
       # validated metadata without errors
       page.find("#required-metadata")[:class].include?("complete")
 
-      #wait untill all elements are visiable
-      wait_for(2)
-
       click_link "Subject Information" # expand field group
+      wait_for(2) #wait untill all elements are visiable
 
       fill_in('Spatial coverage', with: asset_attributes[:spatial_coverage])
       fill_in('Temporal coverage', with: asset_attributes[:temporal_coverage])
@@ -112,11 +108,9 @@ RSpec.feature 'Create and Validate Asset,Digital Instantiation, EssenseTrack', j
       fill_in('Audience rating', with: asset_attributes[:audience_rating])
       fill_in('Annotation', with: asset_attributes[:annotation])
 
-
-      #wait untill all elements are visiable
-      wait_for(2)
-
       click_link "Rights" # expand field group
+      wait_for(2) #wait untill all elements are visiable
+
       fill_in('Rights summary', with: asset_attributes[:rights_summary])
 
       click_link "Relationships" # define adminset relation
@@ -134,10 +128,10 @@ RSpec.feature 'Create and Validate Asset,Digital Instantiation, EssenseTrack', j
       find("#search-submit-header").click
 
       # Expect metadata for Asset to be displayed on the search results page.
-      expect(page).to have_content asset_attributes[:title]
+      expect(page).to have_content main_title
 
       # open asset with detail show
-      click_on asset_attributes[:title]
+      click_on main_title
 
       expect(page).to have_content asset_attributes[:spatial_coverage]
       expect(page).to have_content asset_attributes[:temporal_coverage]
@@ -179,7 +173,7 @@ RSpec.feature 'Create and Validate Asset,Digital Instantiation, EssenseTrack', j
       find("#search-submit-header").click
 
       # expect digital instantiation is showing up
-      expect(page).to have_content digital_instantiation_attributes[:title]
+      expect(page).to have_content digital_instantiation_attributes[:main_title]
 
       # Filter resources types
       click_on('Type')
