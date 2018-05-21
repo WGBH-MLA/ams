@@ -1,5 +1,6 @@
+<% media_type_service = MediaTypeService.new %>
 <%= f.input :media_type, as: :select,
-            collection: MediaTypeService.select_all_options,
+            collection: media_type_service.select_all_options,
             include_blank: true,
             input_html: { class: 'form-control'}
 %>

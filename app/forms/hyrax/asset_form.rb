@@ -3,13 +3,6 @@
 module Hyrax
   class AssetForm < Hyrax::Forms::WorkForm
     self.model_class = ::Asset
-
-    # Add terms tha we want to be a part of the "Additional Fields" section
-    self.terms += [:genre, :asset_types, :resource_type, :episode_number, :spatial_coverage,
-                   :temporal_coverage, :audience_level, :audience_rating, :annotation,
-                   :rights_summary, :rights_link, :local_identifier, :pbs_nola_code, :eidr_id,
-                   :topics, :dates_with_types, :titles_with_types, :descriptions_with_types]
-
     # Remove terms that we don't want to be a part of the form.
     self.terms -= [:relative_path, :import_url, :date_created, :resource_type,
                    :creator, :contributor, :keyword, :license,
@@ -23,14 +16,53 @@ module Hyrax
     # Remove fields that we don't want to be required.
     self.required_fields -= [:creator, :keyword, :rights_statement, :title, :description]
 
+    class_attribute :field_groups
+
+    self.field_groups = {
+      identifying_info: [:titles_with_types, :episode_number, :local_identifier, :pbs_nola_code, :eidr_id, :asset_types, :dates_with_types, :descriptions_with_types],
+      subject_info: [:genre, :topics, :subject, :spatial_coverage, :temporal_coverage, :audience_level, :audience_rating, :annotation],
+      rights: [:rights_summary, :rights_link]
+    }
+
+    self.terms += (self.required_fields + field_groups.values.map(&:to_a).flatten).uniq
+
+    def primary_terms
+      []
+    end
+
+    def secondary_terms
+      []
+    end
 
     # These methods are necessary to prevent the form builder from blowing up.
     def title_type; end
+
     def title_value; end
+
     def description_type; end
+
     def description_value; end
     def date_type; end
     def date_value; end
+
+    def expand_field_group?(group)
+      #Get terms for a certian field group
+      field_group_terms(group).each do |term|
+        #Expand field group
+        return true if !model.attributes[term.to_s].blank? || model.errors.has_key?(term)
+      end
+      false
+    end
+
+    def field_group_terms(group)
+      group_terms = field_groups[group]
+      if group == :identifying_info
+        group_terms = field_groups[group] - [:titles_with_types, :descriptions_with_types]
+        group_terms += [:title, :program_title, :episode_title, :segment_title, :raw_footage_title, :promo_title, :clip_title]
+        group_terms += [:description, :episode_description, :segment_description, :raw_footage_description, :promo_description, :clip_description]
+      end
+      group_terms
+    end
 
     def titles_with_types
       titles_with_types = []
@@ -54,7 +86,7 @@ module Hyrax
       descriptions_with_types += model.clip_description.map { |description| ['clip', description] }
       descriptions_with_types
     end
-
+    
     def dates_with_types
       dates_with_types = []
       dates_with_types += model.broadcast_date.map { |date| ['broadcast', date] }
