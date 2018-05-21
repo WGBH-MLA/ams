@@ -3,10 +3,43 @@
 module Hyrax
   class DigitalInstantiationForm < Hyrax::Forms::WorkForm
     self.model_class = ::DigitalInstantiation
-    self.terms += [:digital_instantiation_pbcore_xml, :date, :dimensions, :digital_format, :standard, :location, :media_type, :generations,:file_size, :time_start, :duration, :data_rate, :colors, :rights_summary, :rights_link, :annotation, :local_instantiation_identifer, :tracks, :channel_configuration, :alternative_modes]
-    self.terms -= [:description, :relative_path, :import_url, :date_created, :resource_type, :creator, :contributor, :keyword, :license, :rights_statement, :publisher, :subject, :identifier, :based_near, :related_url, :bibliographic_citation, :source]
-    self.required_fields -= [:creator, :keyword, :rights_statement]
-    self.required_fields += [:digital_instantiation_pbcore_xml, :location]
+    self.terms -= [:description, :relative_path, :import_url, :date_created, :resource_type, :creator, :contributor,
+                   :keyword, :license, :rights_statement, :publisher, :subject, :identifier, :based_near, :related_url,
+                   :bibliographic_citation, :source]
+    self.required_fields -= [:title, :creator, :keyword, :rights_statement]
+    self.required_fields += [:title, :digital_instantiation_pbcore_xml, :digital_format, :media_type, :location]
+
+    class_attribute :field_groups
+
+    self.field_groups = {
+      technical_info: [:local_instantiation_identifer, :media_type, :digital_format, :dimensions, :standard, :file_size,
+                       :duration, :time_start, :data_rate, :colors, :tracks, :channel_configuration, :alternative_modes],
+      identifying_info: [:title, :location, :generations, :language, :date, :annotation],
+      rights: [:rights_summary, :rights_link]
+    }
+
+    self.terms += (self.required_fields + field_groups.values.map(&:to_a).flatten).uniq
+
+    def primary_terms
+      [:digital_instantiation_pbcore_xml]
+    end
+
+    def secondary_terms
+      []
+    end
+
+    def expand_field_group?(group)
+      #Get terms for a certian field group
+      field_group_terms(group).each do |term|
+        #Expand field group
+        return true if !model.attributes[term.to_s].blank? || model.errors.has_key?(term)
+      end
+      false
+    end
+
+    def field_group_terms(group)
+      field_groups[group]
+    end
 
     def self.model_attributes(form_params)
       clean_params = sanitize_params(form_params)
@@ -15,13 +48,5 @@ module Hyrax
       end
       clean_params
     end
-
-    def primary_terms
-      if self.agreement_accepted
-        return self.required_fields -= [:digital_instantiation_pbcore_xml]
-      end
-      self.required_fields
-    end
-
   end
 end

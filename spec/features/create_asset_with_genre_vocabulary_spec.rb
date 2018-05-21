@@ -45,13 +45,17 @@ RSpec.feature 'Create Asset with Asset Type', js: true, asset_form_helpers: true
       page.find("#required-metadata")[:class].include?("incomplete")
 
       click_link "Descriptions" # switch tab
+      click_link "Identifying Information" # expand field group
+
+      # wait untill all elements are visiable
+      wait_for(2)
       fill_in_title asset_attributes[:title]              # see AssetFormHelpers#fill_in_title
       fill_in_description asset_attributes[:description]  # see AssetFormHelpers#fill_in_description
 
       # validated metadata without errors
       page.find("#required-metadata")[:class].include?("complete")
 
-      click_link "Additional fields" # additional metadata
+
 
       # Select genre
       select = page.find('select#asset_genre')
