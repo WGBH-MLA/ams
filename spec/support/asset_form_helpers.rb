@@ -136,6 +136,74 @@ module AssetFormHelpers
     index ||= select_elements.count - 1
     select_elements[index]
   end
+
+  # Fills in a date, and optionally selects a date type.
+  # @param date [String] The date to enter.
+  # @param type [String] The date type to select.
+  # @param index [Integer] If there are multiple date/date_type pairs, use
+  #  `index` to specify which pair you want to set.
+  def fill_in_date_with_type(date, type: nil, index: nil)
+    select_date_type(type, index: index) if type
+    fill_in_date(date, index: index)
+  end
+
+
+  # Fills in multiple dates with their types.
+  # @param Array dates_with_types An array where each element is a 2-element
+  #  array containing the date and the date type.
+  def fill_in_dates_with_types(dates_with_types)
+    raise ArgumentError, "First argument must be enumerable, but #{dates_with_types.class} was given" unless dates_with_types.respond_to?(:each)
+    dates_with_types.each_with_index do |date_with_type, index|
+      raise ArgumentError, "Each element of first argument must be an array of 2 elements, but #{date_with_type} was given" unless (date_with_type.is_a?(Array) && date_with_type.count == 2)
+      date, date_type = date_with_type
+      fill_in_date_with_type(date, type: date_type)
+      click_button 'Add another Description' unless (index+1 == dates_with_types.count)
+    end
+  end
+
+  # Fills in a date, but first re-formats it to mm/dd/yyyy, which is the
+  # format the date input accepts.
+  # @param date [String] The date.
+  # @param index [Integer] If there are multiple dates, use
+  #  `index` to specify which date you want to set. If no index is given
+  #  it will set the last one found.
+  def fill_in_date(date, index: nil)
+    mm_dd_yyyy = DateTime.parse(date).strftime("%m/%d/%Y")
+    date_value_input(index).set mm_dd_yyyy
+  end
+
+  # Selects a date type.
+  # @param date_type [String] The date type option you want to select.
+  # @param index [Integer] If there are multiple date types, use
+  #  `index` to specify which date type you want to set. If no index is given
+  #  it will set the last one found.
+  def select_date_type(date_type, index: nil)
+    date_type_select(index).select date_type
+  end
+
+  # Returns an input for entering a date.
+  # @param index [Integer] If there are multiple dates, use
+  #  `index` to specify which date you want to set. If no index is given
+  #  it will set the last one found.
+  def date_value_input(index=nil)
+    # Get all inputs for entering dates.
+    input_elements = page.all(:css, 'input[name="asset[date_value][]"]')
+    # If no specific index was passed, return the last one found.
+    index ||= input_elements.count - 1
+    input_elements[index]
+  end
+
+  # Returns an element for selecting a date type.
+  # @param index [Integer] If there are multiple date types, use
+  #  `index` to specify which date type you want to set. If no index is given
+  #  it will set the last one found.
+  def date_type_select(index=nil)
+    # Get all elements for selecting date types.
+    select_elements = page.all(:css, 'select[name="asset[date_type][]"]')
+    # If no specific index was passed, return the last one found.
+    index ||= select_elements.count - 1
+    select_elements[index]
+  end
 end
 
 

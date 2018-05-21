@@ -1,5 +1,7 @@
+<% generations_service = GenerationsService.new %>
 <%= f.input :generations, as: :select,
-            collection: GenerationsService.select_all_options,
+            collection: generations_service.select_all_options,
             include_blank: true,
+            disabled:f.object.respond_to?(:readonly?) && f.object.readonly?(key),
             input_html: { class: 'form-control' , multiple: true}
 %>

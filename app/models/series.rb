@@ -9,8 +9,6 @@ class Series < ActiveFedora::Base
   validates :title, presence: { message: 'Your series must have a title.' }
   validates :description, presence: { message: 'Your series must have a description.' }
 
-  self.human_readable_type = 'Series'
-
   property :audience_level, predicate: ::RDF::URI.new("http://www.ebu.ch/metadata/ontologies/ebucore/ebucore#hasTargetAudience"), multiple: true do |index|
     index.as :stored_searchable
   end

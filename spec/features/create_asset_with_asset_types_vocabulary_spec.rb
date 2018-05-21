@@ -7,7 +7,7 @@ RSpec.feature 'Create Asset with Asset Type', js: true, asset_form_helpers: true
     let!(:user_with_role) { create :user_with_role, role_name: 'user' }
 
     let(:admin_set_id) { AdminSet.find_or_create_default_admin_set_id }
-    let(:permission_template) { Hyrax::PermissionTemplate.find_or_create_by!(admin_set_id: admin_set_id) }
+    let(:permission_template) { Hyrax::PermissionTemplate.find_or_create_by!(source_id: admin_set_id) }
     let(:workflow) { Sipity::Workflow.create!(active: true, name: 'test-workflow', permission_template: permission_template) }
 
     let(:asset_attributes) do
@@ -45,13 +45,17 @@ RSpec.feature 'Create Asset with Asset Type', js: true, asset_form_helpers: true
       page.find("#required-metadata")[:class].include?("incomplete")
 
       click_link "Descriptions" # switch tab
+
+      click_link "Identifying Information" # expand field group
+
+      # wait untill all elements are visiable
+      wait_for(2)
+
       fill_in_title asset_attributes[:title]                # see AssetFormHelpers#fill_in_title
       fill_in_description asset_attributes[:description]    # see AssetFormHelpers#fill_in_description
 
       # validated metadata without errors
       page.find("#required-metadata")[:class].include?("complete")
-
-      click_link "Additional fields" # additional metadata
 
       # Select asset type
       select = page.find('select#asset_asset_types')

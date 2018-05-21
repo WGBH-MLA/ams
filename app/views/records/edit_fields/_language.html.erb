@@ -1,5 +1,7 @@
+<% language_service = LanguageService.new %>
 <%= f.input :language, as: :select,
-            collection: LanguageService.select_all_options,
+            collection: language_service.select_all_options,
             include_blank: true,
+            disabled:f.object.respond_to?(:readonly?) && f.object.readonly?(key),
             input_html: { class: 'form-control' , multiple: true}
 %>

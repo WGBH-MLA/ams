@@ -7,7 +7,7 @@ RSpec.feature 'Create and Validate Digital Instantiation', js: true do
     let!(:user_with_role) { create :user_with_role, role_name: 'user' }
     let(:admin_set_id) { AdminSet.find_or_create_default_admin_set_id }
 
-    let!(:permission_template) { Hyrax::PermissionTemplate.find_or_create_by!(admin_set_id: admin_set_id) }
+    let!(:permission_template) { Hyrax::PermissionTemplate.find_or_create_by!(source_id: admin_set_id) }
     let!(:workflow) { Sipity::Workflow.create!(active: true, name: 'test-workflow', permission_template: permission_template) }
 
     let(:input_date_format) { '%m/%d/%Y' }
@@ -15,26 +15,23 @@ RSpec.feature 'Create and Validate Digital Instantiation', js: true do
 
     let(:digital_instantiation_attributes) do
       {
-          title: "My Test Digital Instantiation",
-          media_type: "Moving Image",
-          format: 'DVD',
-          location: 'Test Location',
-          date: rand_date_time,
-          rights_summary: 'My Test Rights summary',
-          rights_link: 'http://somerightslink.com/testlink',
-          pbcore_xml_doc: "#{Rails.root}/spec/fixtures/sample_instantiation_valid.xml"
+        title: "My Test Digital Instantiation",
+        location: 'Test Location',
+        rights_summary: 'My Test Rights summary',
+        rights_link: 'Test link',
+        pbcore_xml_doc: "#{Rails.root}/spec/fixtures/sample_instantiation_valid.xml"
       }
     end
 
-    let(:pbcore_xml_doc) {PBCore::V2::InstantiationDocument.parse(File.read("#{Rails.root}/spec/fixtures/sample_instantiation_valid.xml"))}
+    let(:pbcore_xml_doc) { PBCore::V2::InstantiationDocument.parse(File.read("#{Rails.root}/spec/fixtures/sample_instantiation_valid.xml")) }
 
     scenario 'Create and Validate Digital Instantiation, Search Digital Instantiation' do
       Sipity::WorkflowAction.create!(name: 'submit', workflow: workflow)
       Hyrax::PermissionTemplateAccess.create!(
-          permission_template_id: permission_template.id,
-          agent_type: 'group',
-          agent_id: 'user',
-          access: 'deposit'
+        permission_template_id: permission_template.id,
+        agent_type: 'group',
+        agent_id: 'user',
+        access: 'deposit'
       )
       # Login role user to create DigitalInstantiation
       login_as(user_with_role)
@@ -48,21 +45,29 @@ RSpec.feature 'Create and Validate Digital Instantiation', js: true do
       click_link "Files" # switch tab
 
       click_link "Descriptions" # switch tab
-      fill_in('Title', with: digital_instantiation_attributes[:title])
-
-
-      fill_in('Location', with: digital_instantiation_attributes[:location])
 
       attach_file('Digital instantiation pbcore xml', File.absolute_path(digital_instantiation_attributes[:pbcore_xml_doc]))
 
 
-      # Expect the required metadata indicator to indicate 'complete'
-      expect(page.find("#required-metadata")[:class]).to include "complete"
+      click_link "Identifying Information" # expand field group
+      #wait untill all elements are visiable
+      wait_for(2)
+      fill_in('Title', with: digital_instantiation_attributes[:title])
 
-      click_link "Additional fields" # additional metadata
+      fill_in('Location', with: digital_instantiation_attributes[:location])
+
+      click_link "Rights" # expand field group
+
+      #wait untill all elements are visiable
+      wait_for(2)
+
 
       fill_in('Rights summary', with: digital_instantiation_attributes[:rights_summary])
+
       fill_in('Rights link', with: digital_instantiation_attributes[:rights_link])
+
+      # Expect the required metadata indicator to indicate 'complete'
+      expect(page.find("#required-metadata")[:class]).to include "complete"
 
       click_link "Relationships" # define adminset relation
       find("#digital_instantiation_admin_set_id option[value='#{admin_set_id}']").select_option
@@ -81,12 +86,18 @@ RSpec.feature 'Create and Validate Digital Instantiation', js: true do
       # expect digital instantiation is showing up
       expect(page).to have_content digital_instantiation_attributes[:title]
 
+      # Filter resources types
+      click_on('Type')
+      click_on('Digital Instantiation')
+
       # open digital instantiation with detail show
       click_on(digital_instantiation_attributes[:title])
       expect(page).to have_content digital_instantiation_attributes[:title]
       expect(page).to have_content digital_instantiation_attributes[:location]
-      expect(page).to have_content digital_instantiation_attributes[:rights_summary]
+      expect(page).to have_content pbcore_xml_doc.digital.value
+      expect(page).to have_content pbcore_xml_doc.media_type.value
       expect(page).to have_content digital_instantiation_attributes[:rights_link]
+      expect(page).to have_content digital_instantiation_attributes[:rights_summary]
       expect(page).to have_current_path(guid_regex)
     end
   end
