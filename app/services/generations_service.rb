@@ -1,14 +1,5 @@
-module GenerationsService
-  mattr_accessor :authority
-  self.authority = Qa::Authorities::Local.subauthority_for('generations')
-
-  def self.select_all_options
-    authority.all.map do |element|
-      [element[:label], element[:id]]
-    end
-  end
-
-  def self.label(id)
-    authority.find(id).fetch('term')
+class GenerationsService < Hyrax::QaSelectService
+  def initialize
+    super('generations')
   end
 end

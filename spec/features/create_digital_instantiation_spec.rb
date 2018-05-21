@@ -50,11 +50,8 @@ RSpec.feature 'Create and Validate Digital Instantiation', js: true do
 
 
       click_link "Identifying Information" # expand field group
-
       #wait untill all elements are visiable
       wait_for(2)
-
-
       fill_in('Title', with: digital_instantiation_attributes[:title])
 
       fill_in('Location', with: digital_instantiation_attributes[:location])

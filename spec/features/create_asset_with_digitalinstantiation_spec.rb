@@ -31,6 +31,7 @@ RSpec.feature 'Create and Validate Asset,Digital Instantiation, EssenseTrack', j
 
     let(:pbcore_xml_doc) { PBCore::V2::InstantiationDocument.parse(File.read("#{Rails.root}/spec/fixtures/sample_instantiation_valid.xml")) }
 
+
     # Use contolled vocab to retrieve all title types.
     let(:title_and_description_types) { TitleAndDescriptionTypesService.all_terms }
 
@@ -57,7 +58,6 @@ RSpec.feature 'Create and Validate Asset,Digital Instantiation, EssenseTrack', j
     let(:dates_with_types) do
       (DateTypesService.all_terms * 2).each_with_index.map { |date_type, i| [rand_date_time.strftime(output_date_format), date_type] }
     end
-
 
     scenario 'Create and Validate Asset, Search asset' do
       Sipity::WorkflowAction.create!(name: 'submit', workflow: workflow)
@@ -110,7 +110,7 @@ RSpec.feature 'Create and Validate Asset,Digital Instantiation, EssenseTrack', j
 
       click_link "Rights" # expand field group
       wait_for(2) #wait untill all elements are visiable
-
+      
       fill_in('Rights summary', with: asset_attributes[:rights_summary])
 
       click_link "Relationships" # define adminset relation
