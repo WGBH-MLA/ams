@@ -6,11 +6,9 @@ RSpec.feature 'AssignUserroleAsViewerAndManager.', js: true do
   context 'Add permissions to user (Role)' do
     let(:admin_user) { create :admin_user }
     let!(:user) { create :user }
-    let!(:user_with_role) { create :user_with_role, role_name: 'user' }
-
-    let!(:admin_set_1) { create :admin_set, title: ["Test Admin Set 1"] }
-
-    let!(:admin_set_2) { create :admin_set, title: ["Test Admin Set 2"] }
+    let!(:user_with_role) { create :user, role_names: ['user'] }
+    let!(:admin_set_1) { create :admin_set }
+    let!(:admin_set_2) { create :admin_set }
     let!(:work_2) { create :public_work, title: ['Second work'] }
     let!(:permission_template_2) { Hyrax::PermissionTemplate.find_or_create_by!(admin_set_id: admin_set_2.id) }
     let!(:workflow) { Sipity::Workflow.create!(active: true, name: 'test-workflow', permission_template: permission_template_2) }
@@ -56,9 +54,6 @@ RSpec.feature 'AssignUserroleAsViewerAndManager.', js: true do
       # open record in search result check it dont have other records edit permissions
       click_on(work_2.title[0])
       expect(page).not_to have_content 'Edit'
-
-      exit
     end
   end
-
 end

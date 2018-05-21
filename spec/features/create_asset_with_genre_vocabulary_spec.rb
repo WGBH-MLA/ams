@@ -4,7 +4,7 @@ include Warden::Test::Helpers
 RSpec.feature 'Create Asset with Asset Type', js: true, asset_form_helpers: true do
   context 'Create adminset, create asset' do
     let(:admin_user) { create :admin_user }
-    let!(:user_with_role) { create :user_with_role, role_name: 'user' }
+    let!(:user_with_role) { create :user, role_names: ['user'] }
 
     let(:admin_set_id) { AdminSet.find_or_create_default_admin_set_id }
     let(:permission_template) { Hyrax::PermissionTemplate.find_or_create_by!(source_id: admin_set_id) }
@@ -61,6 +61,7 @@ RSpec.feature 'Create Asset with Asset Type', js: true, asset_form_helpers: true
       wait_for(2)
 
       # Select genre
+      click_on 'Subject Information'
       select = page.find('select#asset_genre')
       select.select asset_attributes[:genre]
 
@@ -77,6 +78,7 @@ RSpec.feature 'Create Asset with Asset Type', js: true, asset_form_helpers: true
 
       # open asset with detail show
       click_on(asset_attributes[:title])
+      wait_for(2)
       expect(page).to have_content asset_attributes[:genre]
     end
   end

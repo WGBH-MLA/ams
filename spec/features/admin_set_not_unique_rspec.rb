@@ -15,12 +15,8 @@ RSpec.describe User, type: :model do
       login_as user
     end
 
-    let(:admin_set_1) do
-      create(:admin_set, title: ['Bar'],
-                         description: ['A substantial description'],
-                         edit_users: [user.user_key])
-    end
-    let(:admin_set_2) { AdminSet.new }
+    let(:admin_set_1) { create(:admin_set, edit_users: [user.user_key]) }
+    let(:admin_set_2) { create(:admin_set) }
 
     it 'i am admin ?' do
       expect(user).to be_a User
@@ -29,9 +25,7 @@ RSpec.describe User, type: :model do
     end
 
     it 'i am admin_set_2, Not valid and already exist' do
-      admin_set_2.title = ['Bar']
-      admin_set_2.description = ['A substantial description']
-      admin_set_2.edit_users = [user.user_key]
+      admin_set_2.title = admin_set_1.title
       expect(admin_set_2).to_not be_valid
     end
   end

@@ -6,8 +6,8 @@ RSpec.feature 'AssignRoleViewer.', js: true do
   context 'Add Viewer permissions to user (Role)' do
     let(:admin_user) { create :admin_user }
     let!(:user) { create :user }
-    let!(:user_with_role) { create :user_with_role, role_name: 'TestRole' }
-    let!(:admin_set) { create :admin_set, title: ["Test Admin Set"] }
+    let!(:user_with_role) { create :user, role_names: ['TestRole'] }
+    let!(:admin_set) { create :admin_set }
     let!(:work) { create :public_work }
 
     let(:permission_template) { Hyrax::PermissionTemplate.find_or_create_by!(admin_set_id: admin_set.id) }
@@ -40,8 +40,6 @@ RSpec.feature 'AssignRoleViewer.', js: true do
       # Check other user viewer search permissions exist
       visit '/admin/admin_sets'
       expect(page).to have_content 'You are not authorized to access this page.'
-
-      exit
     end
   end
 end

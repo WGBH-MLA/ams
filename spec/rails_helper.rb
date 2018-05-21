@@ -7,7 +7,6 @@ require File.expand_path('../../config/environment', __FILE__)
 abort("The Rails environment is running in production mode!") if Rails.env.production?
 require 'rails/all'
 require 'rspec/rails'
-require 'support/factory_bot'
 require 'action_view'
 require 'spec_helper'
 require 'devise'
@@ -39,16 +38,12 @@ RSpec.configure do |config|
   config.infer_spec_type_from_file_location!
 
   config.before :suite do
+    # Clean out Fedora
     ActiveFedora::Cleaner.clean!
-  end
-
-  config.before :each do
-    # Note (Mike Coutermarsh): Make browser huge so that no content is hidden during tests
     DatabaseCleaner.strategy = :truncation
-    DatabaseCleaner.start
   end
 
-  config.after do
+  config.after :each do
     DatabaseCleaner.clean
   end
 
