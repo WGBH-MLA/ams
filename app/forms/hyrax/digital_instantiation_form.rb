@@ -24,6 +24,7 @@ module Hyrax
 
     self.readonly_fields = self.terms - [:title, :location, :generations, :language, :date, :annotation, :rights_link, :rights_summary]
 
+
     def primary_terms
       [:digital_instantiation_pbcore_xml]
     end

@@ -13,11 +13,11 @@ module Hyrax
     class_attribute :field_groups
 
     self.field_groups = {
-      identifying_info: [:title, :local_instantiation_identifer, :media_type, :format, :location, :generations, :date,
+      identifying_info: [:title, :local_instantiation_identifer, :media_type, :format, :location, :generations, :date, :digitization_date,
                          :language, :annotiation],
       technical_info: [:dimensions, :standard, :duration, :time_start, :colors, :tracks, :channel_configuration,
                        :alternative_modes],
-      rights: [:rights_summary, :rights_statement]
+      rights: [:rights_summary, :rights_link]
     }
 
     self.terms += (self.required_fields + field_groups.values.map(&:to_a).flatten).uniq

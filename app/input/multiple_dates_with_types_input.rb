@@ -1,7 +1,8 @@
 class MultipleDatesWithTypesInput < MultiValueInput
 
   def build_field(value, index)
-    date_type_choices = DateTypesService.select_all_options
+    date_types_service = DateTypesService.new
+    date_type_choices = date_types_service.select_all_options
 
     select_input_html_options = input_html_options.dup.merge({
       name: "#{@builder.object_name}[date_type][]"
