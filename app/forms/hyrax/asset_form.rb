@@ -13,7 +13,7 @@ module Hyrax
     # Add fields that we want to be required
     self.required_fields += [:titles_with_types, :descriptions_with_types]
 
-    # Remove fields tha we don't want to be required.
+    # Remove fields that we don't want to be required.
     self.required_fields -= [:creator, :keyword, :rights_statement, :title, :description]
 
     class_attribute :field_groups
@@ -94,7 +94,7 @@ module Hyrax
       dates_with_types += model.copyright_date.map { |date| ['copyright', date] }
       dates_with_types
     end
-
+    
     # Augment the list of permmitted params to accept our fields that have
     # types associated with them, e.g. title + title type
     # NOTE: `super` in this case is HyraxEditor::Form.permitted_params
