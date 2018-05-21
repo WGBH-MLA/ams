@@ -13,7 +13,7 @@ module Hyrax
     class_attribute :field_groups
 
     self.field_groups = {
-      identifying_info: [:title, :local_instantiation_identifer, :media_type, :format, :location, :generations, :date,
+      identifying_info: [:title, :local_instantiation_identifer, :media_type, :format, :location, :generations, :date, :digitization_date,
                          :language, :annotiation],
       technical_info: [:dimensions, :standard, :duration, :time_start, :colors, :tracks, :channel_configuration,
                        :alternative_modes],
