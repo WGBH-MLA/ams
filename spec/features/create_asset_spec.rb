@@ -38,7 +38,10 @@ RSpec.feature 'Create and Validate Asset', js: true, asset_form_helpers: true do
     # Make an array of [title, title_type] pairs.
     # Ensure there are 2 titles for every title type.
     let(:titles_with_types) do
-      (title_and_description_types * 2).each_with_index.map { |title_type, i| ["Test #{title_type} Title #{i+1}", title_type] }
+      (title_and_description_types * 2).each_with_index.map do |title_type, i|
+        test_title = "Test #{title_type} Title #{i+1}".gsub(/\s+/, ' ')
+        [test_title, title_type]
+      end
     end
 
     # Specify a main title.
@@ -47,7 +50,10 @@ RSpec.feature 'Create and Validate Asset', js: true, asset_form_helpers: true do
     # Make an array of [description, description_type] pairs.
     # Ensure there are 2 descriptions for every description type.
     let(:descriptions_with_types) do
-      (title_and_description_types * 2).each_with_index.map { |description_type, i| ["Test #{description_type} Description #{i+1}", description_type] }
+      (title_and_description_types * 2).each_with_index.map do |description_type, i|
+        test_description = "Test #{description_type} Description #{i+1}".gsub(/\s+/, ' ')
+        [test_description, description_type]
+      end
     end
 
     # Specify a main description.
