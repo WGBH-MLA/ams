@@ -5,6 +5,7 @@ development:
     - adeel@weareavp.com
     - jason_corum@wgbh.org
     - andrew_myers@wgbh.org
+    - wgbh_admin@wgbh-mla.org
 test:
   admin:
     - wgbh_admin@wgbh-mla.org
