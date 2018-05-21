@@ -19,7 +19,7 @@ module Hyrax
     class_attribute :field_groups
 
     self.field_groups = {
-      identifying_info: [:titles_with_types, :episode_number, :local_identifier, :pbs_nola_code, :eidr_id, :asset_types, :date, :descriptions_with_types],
+      identifying_info: [:titles_with_types, :episode_number, :local_identifier, :pbs_nola_code, :eidr_id, :asset_types, :dates_with_types, :descriptions_with_types],
       subject_info: [:genre, :topics, :subject, :spatial_coverage, :temporal_coverage, :audience_level, :audience_rating, :annotation],
       rights: [:rights_summary, :rights_link]
     }
