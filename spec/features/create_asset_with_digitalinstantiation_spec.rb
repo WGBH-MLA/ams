@@ -22,15 +22,42 @@ RSpec.feature 'Create and Validate Asset,Digital Instantiation, EssenseTrack', j
     let(:digital_instantiation_attributes) do
       {
         title: "My Test Digital Instantiation",
-        media_type: "Moving Image",
-        digital_format: 'video/mp4',
         location: 'Test Location',
         rights_summary: 'My Test Rights summary',
+        rights_link: 'Test link',
         pbcore_xml_doc: "#{Rails.root}/spec/fixtures/sample_instantiation_valid.xml"
       }
     end
 
     let(:pbcore_xml_doc) { PBCore::V2::InstantiationDocument.parse(File.read("#{Rails.root}/spec/fixtures/sample_instantiation_valid.xml")) }
+
+
+    # Use contolled vocab to retrieve all title types.
+    let(:title_and_description_types) { TitleAndDescriptionTypesService.all_terms }
+
+    # Make an array of [title, title_type] pairs.
+    # Ensure there are 2 titles for every title type.
+    let(:titles_with_types) do
+      (title_and_description_types).each_with_index.map { |title_type, i| ["Test #{title_type} Title #{i + 1}", title_type] }
+    end
+
+    # Specify a main title.
+    let(:main_title) { titles_with_types.first.first.split.join(" ") }
+
+    # Make an array of [description, description_type] pairs.
+    # Ensure there are 2 descriptions for every description type.
+    let(:descriptions_with_types) do
+      (title_and_description_types).each_with_index.map { |description_type, i| ["Test #{description_type} Description #{i + 1}", description_type] }
+    end
+
+    # Specify a main description.
+    let(:main_description) { descriptions_with_types.first.first }
+
+    # Make an array of [date, date_type] pairs.
+    # Ensure there are 2 date for every date type.
+    let(:dates_with_types) do
+      (DateTypesService.all_terms * 2).each_with_index.map { |date_type, i| [rand_date_time.strftime(output_date_format), date_type] }
+    end
 
     scenario 'Create and Validate Asset, Search asset' do
       Sipity::WorkflowAction.create!(name: 'submit', workflow: workflow)
@@ -64,20 +91,16 @@ RSpec.feature 'Create and Validate Asset,Digital Instantiation, EssenseTrack', j
       click_link "Descriptions" # switch tab
 
       click_link "Identifying Information" # expand field group
+      wait_for(2) #wait untill all elements are visiable
 
-      #wait untill all elements are visiable
-      wait_for(2)
-
-      fill_in_title asset_attributes[:title]                  # see AssetFormHelpers#fill_in_title
-      fill_in_description asset_attributes[:description]      # see AssetFormHelpers#fill_in_description
+      fill_in_titles_with_types(titles_with_types)                                # see AssetFormHelper#fill_in_titles_with_types
+      fill_in_descriptions_with_types(descriptions_with_types)                    # see AssetFormHelper#fill_in_descriptions_with_types
 
       # validated metadata without errors
       page.find("#required-metadata")[:class].include?("complete")
 
-      #wait untill all elements are visiable
-      wait_for(2)
-
       click_link "Subject Information" # expand field group
+      wait_for(2) #wait untill all elements are visiable
 
       fill_in('Spatial coverage', with: asset_attributes[:spatial_coverage])
       fill_in('Temporal coverage', with: asset_attributes[:temporal_coverage])
@@ -85,10 +108,9 @@ RSpec.feature 'Create and Validate Asset,Digital Instantiation, EssenseTrack', j
       fill_in('Audience rating', with: asset_attributes[:audience_rating])
       fill_in('Annotation', with: asset_attributes[:annotation])
 
-      #wait untill all elements are visiable
-      wait_for(2)
-
       click_link "Rights" # expand field group
+      wait_for(2) #wait untill all elements are visiable
+      
       fill_in('Rights summary', with: asset_attributes[:rights_summary])
 
       click_link "Relationships" # define adminset relation
@@ -97,6 +119,7 @@ RSpec.feature 'Create and Validate Asset,Digital Instantiation, EssenseTrack', j
       # set it public
       find('body').click
       choose('asset_visibility_open')
+
       expect(page).to have_content('Please note, making something visible to the world (i.e. marking this as Public) may be viewed as publishing which could impact your ability to')
 
       click_on('Save')
@@ -105,10 +128,10 @@ RSpec.feature 'Create and Validate Asset,Digital Instantiation, EssenseTrack', j
       find("#search-submit-header").click
 
       # Expect metadata for Asset to be displayed on the search results page.
-      expect(page).to have_content asset_attributes[:title]
+      expect(page).to have_content main_title
 
       # open asset with detail show
-      click_on asset_attributes[:title]
+      click_on main_title
 
       expect(page).to have_content asset_attributes[:spatial_coverage]
       expect(page).to have_content asset_attributes[:temporal_coverage]
@@ -123,21 +146,19 @@ RSpec.feature 'Create and Validate Asset,Digital Instantiation, EssenseTrack', j
       within 'form#new_digital_instantiation' do
         attach_file('Digital instantiation pbcore xml', File.absolute_path(digital_instantiation_attributes[:pbcore_xml_doc]))
 
-        click_link "Technical Info" # expand technical info field group
-
-        page.select digital_instantiation_attributes[:media_type], from: 'Media type'
-
-        page.select digital_instantiation_attributes[:digital_format], from: 'Digital format'
-
         click_link "Identifying Information" # expand field group
 
-        fill_in('Title', with: digital_instantiation_attributes[:title])
+        #wait untill all elements are visiable
+        wait_for(2)
 
+        fill_in('Title', with: digital_instantiation_attributes[:title])
         fill_in('Location', with: digital_instantiation_attributes[:location])
 
         click_link "Rights" # expand field group
+        wait_for(2) #wait untill all elements are visiable
 
         fill_in('Rights summary', with: digital_instantiation_attributes[:rights_summary])
+        fill_in('Rights link', with: digital_instantiation_attributes[:rights_link])
       end
 
       # set it public
@@ -152,7 +173,7 @@ RSpec.feature 'Create and Validate Asset,Digital Instantiation, EssenseTrack', j
       find("#search-submit-header").click
 
       # expect digital instantiation is showing up
-      expect(page).to have_content digital_instantiation_attributes[:title]
+      expect(page).to have_content digital_instantiation_attributes[:main_title]
 
       # Filter resources types
       click_on('Type')
@@ -162,9 +183,10 @@ RSpec.feature 'Create and Validate Asset,Digital Instantiation, EssenseTrack', j
       click_on(digital_instantiation_attributes[:title])
       expect(page).to have_content digital_instantiation_attributes[:title]
       expect(page).to have_content digital_instantiation_attributes[:location]
+      expect(page).to have_content pbcore_xml_doc.digital.value
+      expect(page).to have_content pbcore_xml_doc.media_type.value
+      expect(page).to have_content digital_instantiation_attributes[:rights_link]
       expect(page).to have_content digital_instantiation_attributes[:rights_summary]
-      expect(page).to have_content digital_instantiation_attributes[:media_type]
-      expect(page).to have_content digital_instantiation_attributes[:digital_format]
       expect(page).to have_current_path(guid_regex)
     end
   end

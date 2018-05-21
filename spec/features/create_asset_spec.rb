@@ -23,17 +23,23 @@ RSpec.feature 'Create and Validate Asset', js: true, asset_form_helpers: true do
     # Use contolled vocab to retrieve all title types.
     let(:title_and_description_types) { TitleAndDescriptionTypesService.all_terms }
 
+    # array of main titles
+    let(:main_titles) {[]}
+
+    #hyrax view :title
+    let(:main_title) { main_titles.reverse.join(", ") }
+
     # Make an array of [title, title_type] pairs.
     # Ensure there are 2 titles for every title type.
     let(:titles_with_types) do
       (title_and_description_types * 2).each_with_index.map do |title_type, i|
         test_title = "Test #{title_type} Title #{i+1}".gsub(/\s+/, ' ')
+        main_titles.push(test_title) if(title_type.blank?)
         [test_title, title_type]
       end
     end
 
-    # Specify a main title.
-    let(:main_title) { titles_with_types.first.first }
+
 
     # Make an array of [description, description_type] pairs.
     # Ensure there are 2 descriptions for every description type.
@@ -120,10 +126,10 @@ RSpec.feature 'Create and Validate Asset', js: true, asset_form_helpers: true do
       find("#search-submit-header").click
 
       # Expect metadata for Asset to be displayed on the search results page.
-      expect(page).to have_content asset_attributes[:title]
+      expect(page).to have_content main_title
 
       # open asset with detail show
-      click_on asset_attributes[:title]
+      click_on main_title
       expect(page).to have_content asset_attributes[:spatial_coverage]
       expect(page).to have_content asset_attributes[:temporal_coverage]
       expect(page).to have_content asset_attributes[:audience_level]
