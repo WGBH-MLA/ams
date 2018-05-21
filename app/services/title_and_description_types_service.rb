@@ -9,7 +9,6 @@ module TitleAndDescriptionTypesService
   end
 
   def self.all_terms
-
     select_all_options.map { |(term, id)| term }
   end
 

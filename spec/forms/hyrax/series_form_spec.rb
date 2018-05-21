@@ -31,6 +31,7 @@ RSpec.describe Hyrax::SeriesForm do
         :lease_expiration_date,
         :visibility_after_lease,
         :visibility,
+        :rendering_ids,
         :ordered_member_ids,
         :in_works_ids,
         :member_of_collection_ids,

@@ -6,7 +6,7 @@ RSpec.feature 'Create and Validate Physical Instantiation', js: true do
     let(:admin_user) { create :admin_user }
     let!(:user_with_role) { create :user_with_role, role_name: 'user' }
     let(:admin_set_id) { AdminSet.find_or_create_default_admin_set_id }
-    let(:permission_template) { Hyrax::PermissionTemplate.find_or_create_by!(admin_set_id: admin_set_id) }
+    let(:permission_template) { Hyrax::PermissionTemplate.find_or_create_by!(source_id: admin_set_id) }
     let!(:workflow) { Sipity::Workflow.create!(active: true, name: 'test-workflow', permission_template: permission_template) }
 
     let(:input_date_format) { '%m/%d/%Y' }
@@ -23,7 +23,7 @@ RSpec.feature 'Create and Validate Physical Instantiation', js: true do
           rights_summary: 'My Test Rights summary',
           rights_link: 'http://somerightslink.com/testlink',
           local_instantiation_identifer: 'localId1234',
-          tracks: '1234',
+          tracks: '2',
           channel_configuration: 'Configured!',
           alternative_modes: 'This mode is so alternative'
       }
@@ -50,6 +50,10 @@ RSpec.feature 'Create and Validate Physical Instantiation', js: true do
       click_link "Files" # switch tab
 
       click_link "Descriptions" # switch tab
+
+      click_link "Identifying Information" # expand field group
+      wait_for(2) # wait untill all elements are visiable
+
       fill_in('Title', with: physical_instantiation_attributes[:title])
 
       # Select Format
@@ -65,17 +69,23 @@ RSpec.feature 'Create and Validate Physical Instantiation', js: true do
       # Expect the required metadata indicator to indicate 'complete'
       expect(page.find("#required-metadata")[:class]).to include "complete"
 
-      click_link "Additional fields" # additional metadata
-
-
-      fill_in('Digitization date', with: physical_instantiation_attributes[:digitization_date].strftime(input_date_format))
       fill_in('Date', with: physical_instantiation_attributes[:date].strftime(input_date_format))
-      fill_in('Rights summary', with: physical_instantiation_attributes[:rights_summary])
-      fill_in('Rights link', with: physical_instantiation_attributes[:rights_link])
       fill_in('Local instantiation identifer', with: physical_instantiation_attributes[:local_instantiation_identifer])
+
+      click_link "Technical Info" # expand field group
+      wait_for(2) # wait untill all elements are visiable
+
+
       fill_in('Tracks', with: physical_instantiation_attributes[:tracks])
       fill_in('Channel configuration', with: physical_instantiation_attributes[:channel_configuration])
       fill_in('Alternative modes', with: physical_instantiation_attributes[:alternative_modes])
+
+      click_link "Rights" # expand field group
+      wait_for(2) # wait untill all elements are visiable
+
+      fill_in('Rights summary', with: physical_instantiation_attributes[:rights_summary])
+
+
       click_link "Relationships" # define adminset relation
       find("#physical_instantiation_admin_set_id option[value='#{admin_set_id}']").select_option
 
@@ -102,9 +112,7 @@ RSpec.feature 'Create and Validate Physical Instantiation', js: true do
       expect(page).to have_content physical_instantiation_attributes[:format]
       expect(page).to have_content physical_instantiation_attributes[:location]
       expect(page).to have_content physical_instantiation_attributes[:date].strftime(output_date_format)
-      expect(page).to have_content physical_instantiation_attributes[:digitization_date].strftime(output_date_format)
       expect(page).to have_content physical_instantiation_attributes[:rights_summary]
-      expect(page).to have_content physical_instantiation_attributes[:rights_link]
       expect(page).to have_content physical_instantiation_attributes[:local_instantiation_identifer]
       expect(page).to have_content physical_instantiation_attributes[:tracks]
       expect(page).to have_content physical_instantiation_attributes[:channel_configuration]

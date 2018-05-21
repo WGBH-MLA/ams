@@ -1,5 +1,5 @@
 class Admin::UsersController < ApplicationController
-  layout 'dashboard'
+  with_themed_layout 'dashboard'
 
   before_action :authenticate_user!, :is_admin?
 

@@ -15,7 +15,7 @@ module Hyrax
         def parse_pbcore_instantiation(env,pbcore_doc)
           env.attributes[:date] = pbcore_doc.dates.map {|date| date.value} if pbcore_doc.dates && env.attributes[:dates].blank?
           env.attributes[:dimensions] = pbcore_doc.dimensions.map {|dimension| dimension.value}  if pbcore_doc.dimensions && env.attributes[:dimensions].blank?
-          env.attributes[:standard] << pbcore_doc.standard.value  if pbcore_doc.standard && env.attributes[:standard].blank?
+          (env.attributes[:standard] ||= []) << pbcore_doc.standard.value  if pbcore_doc.standard && env.attributes[:standard].blank?
           env.attributes[:location] = pbcore_doc.location  if pbcore_doc.location && env.attributes[:location].blank?
           env.attributes[:media_type] = pbcore_doc.media_type.value  if pbcore_doc.media_type && env.attributes[:media_type].blank?
           env.attributes[:generations] = pbcore_doc.generations.map {|generation| generation.value}  if pbcore_doc.generations && env.attributes[:generations].blank?
@@ -28,11 +28,10 @@ module Hyrax
           env.attributes[:tracks] = pbcore_doc.tracks if pbcore_doc.tracks  && env.attributes[:tracks].blank?
           env.attributes[:alternative_modes] = pbcore_doc.alternative_modes if pbcore_doc.alternative_modes  && env.attributes[:alternative_modes].blank?
           env.attributes[:channel_configuration] = pbcore_doc.channel_configuration if pbcore_doc.channel_configuration  && env.attributes[:channel_configuration].blank?
+          env.attributes[:digital_format] = pbcore_doc.digital.value  if pbcore_doc.digital && env.attributes[:digital].blank?
           if pbcore_doc.identifiers
             pbcore_doc.identifiers.map do |id|
-              if id.source == "AMS"
-                env.attributes[:local_instantiation_identifer] << id.value
-              end
+              (env.attributes[:local_instantiation_identifer] ||= []) << id.value if id.source == "AMS"
             end
           end
           env
@@ -53,6 +52,10 @@ module Hyrax
             e.duration = track.duration if track.duration
             e.annotation << track.annotation.value if track.annotation
             e.admin_set_id = env.curation_concern.admin_set_id
+            e.depositor = env.curation_concern.depositor
+            e.date_uploaded = env.curation_concern.date_uploaded
+            e.date_modified = env.curation_concern.date_modified
+            e.access_control_id = env.curation_concern.access_control_id
             e.save
             #add essence track as child work to digital instantiation
             env.curation_concern.ordered_members << e
