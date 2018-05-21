@@ -16,10 +16,9 @@ RSpec.feature 'Create and Validate Digital Instantiation', js: true do
     let(:digital_instantiation_attributes) do
       {
         title: "My Test Digital Instantiation",
-        media_type: "Moving Image",
-        digital_format: 'video/mp4',
         location: 'Test Location',
         rights_summary: 'My Test Rights summary',
+        rights_link: 'Test link',
         pbcore_xml_doc: "#{Rails.root}/spec/fixtures/sample_instantiation_valid.xml"
       }
     end
@@ -50,16 +49,6 @@ RSpec.feature 'Create and Validate Digital Instantiation', js: true do
       attach_file('Digital instantiation pbcore xml', File.absolute_path(digital_instantiation_attributes[:pbcore_xml_doc]))
 
 
-      #wait untill all elements are visiable
-      wait_for(2)
-
-
-      click_link "Technical Info" # expand technical info field group
-
-      page.select digital_instantiation_attributes[:media_type], from: 'Media type'
-
-      page.select digital_instantiation_attributes[:digital_format], from: 'Digital format'
-
       click_link "Identifying Information" # expand field group
 
       #wait untill all elements are visiable
@@ -77,6 +66,8 @@ RSpec.feature 'Create and Validate Digital Instantiation', js: true do
 
 
       fill_in('Rights summary', with: digital_instantiation_attributes[:rights_summary])
+
+      fill_in('Rights link', with: digital_instantiation_attributes[:rights_link])
 
       # Expect the required metadata indicator to indicate 'complete'
       expect(page.find("#required-metadata")[:class]).to include "complete"
@@ -106,8 +97,9 @@ RSpec.feature 'Create and Validate Digital Instantiation', js: true do
       click_on(digital_instantiation_attributes[:title])
       expect(page).to have_content digital_instantiation_attributes[:title]
       expect(page).to have_content digital_instantiation_attributes[:location]
-      expect(page).to have_content digital_instantiation_attributes[:media_type]
-      expect(page).to have_content digital_instantiation_attributes[:digital_format]
+      expect(page).to have_content pbcore_xml_doc.digital.value
+      expect(page).to have_content pbcore_xml_doc.media_type.value
+      expect(page).to have_content digital_instantiation_attributes[:rights_link]
       expect(page).to have_content digital_instantiation_attributes[:rights_summary]
       expect(page).to have_current_path(guid_regex)
     end
