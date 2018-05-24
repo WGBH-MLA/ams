@@ -31,8 +31,6 @@ module Hyrax
       ::PhysicalInstantiation
     ]
 
-    class_attribute :save_and_redirect
-
     self.terms += (self.required_fields + field_groups.values.map(&:to_a).flatten).uniq
 
     def primary_terms
@@ -50,7 +48,7 @@ module Hyrax
     def description_value; end
     def date_type; end
     def date_value; end
-    def save_and_redirect; end
+    def save_type; end
 
     def expand_field_group?(group)
       #Get terms for a certian field group
@@ -107,6 +105,10 @@ module Hyrax
       false
     end
 
+    def self.associated_instantiations_form_collection
+      associated_work_types.map{ |wt| [ "Save & Add #{wt.model_name.human.titleize}", "#{wt.model_name.param_key}" ] }.unshift(["Save", "save"])
+    end
+
     # Augment the list of permmitted params to accept our fields that have
     # types associated with them, e.g. title + title type
     # NOTE: `super` in this case is HyraxEditor::Form.permitted_params
@@ -118,7 +120,7 @@ module Hyrax
         permitted_params << { description_value: [] }
         permitted_params << { date_type: [] }
         permitted_params << { date_value: [] }
-        permitted_params << { save_and_redirect: [] }
+        permitted_params << { save_type: [] }
       end
     end
   end
