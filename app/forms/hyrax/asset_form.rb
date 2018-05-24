@@ -24,6 +24,15 @@ module Hyrax
       rights: [:rights_summary, :rights_link]
     }
 
+    class_attribute :associated_work_types
+
+    self.associated_work_types = [
+      ::DigitalInstantiation,
+      ::PhysicalInstantiation
+    ]
+
+    class_attribute :save_and_redirect
+
     self.terms += (self.required_fields + field_groups.values.map(&:to_a).flatten).uniq
 
     def primary_terms
@@ -36,14 +45,12 @@ module Hyrax
 
     # These methods are necessary to prevent the form builder from blowing up.
     def title_type; end
-
     def title_value; end
-
     def description_type; end
-
     def description_value; end
     def date_type; end
     def date_value; end
+    def save_and_redirect; end
 
     def expand_field_group?(group)
       #Get terms for a certian field group
@@ -86,7 +93,7 @@ module Hyrax
       descriptions_with_types += model.clip_description.map { |description| ['clip', description] }
       descriptions_with_types
     end
-    
+
     def dates_with_types
       dates_with_types = []
       dates_with_types += model.broadcast_date.map { |date| ['broadcast', date] }
@@ -94,7 +101,12 @@ module Hyrax
       dates_with_types += model.copyright_date.map { |date| ['copyright', date] }
       dates_with_types
     end
-    
+
+    def associates_instantiations?
+      return true if associated_work_types.include?( ::DigitalInstantiation || ::PhysicalInstantiation)
+      false
+    end
+
     # Augment the list of permmitted params to accept our fields that have
     # types associated with them, e.g. title + title type
     # NOTE: `super` in this case is HyraxEditor::Form.permitted_params
@@ -106,6 +118,7 @@ module Hyrax
         permitted_params << { description_value: [] }
         permitted_params << { date_type: [] }
         permitted_params << { date_value: [] }
+        permitted_params << { save_and_redirect: [] }
       end
     end
   end
