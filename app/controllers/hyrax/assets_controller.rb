@@ -10,9 +10,5 @@ module Hyrax
 
     # Use this line if you want to use a custom presenter
     self.show_presenter = Hyrax::AssetPresenter
-
-    def create
-      require 'pry'; binding.pry
-    end
   end
 end

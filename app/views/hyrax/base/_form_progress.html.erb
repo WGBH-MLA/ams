@@ -28,14 +28,14 @@
   </div>
 
   <% if @form.try(:associated_work_types) %>
-    <div class="text-center">
-      <% @form.associated_work_types.each do |wt| %>
-        Add <%= wt.model_name.human.titleize %>
-        <%= f.button :button, type: :submit, name: "name", value: "value" %>
-        <br>
-      <% end %>
-    <% end %>
-  </div>
+    <div class="list-group">
+      <div class="list-group-item">
+        <ul class="visibility">
+          <li class="radio">
+            <%= f.input :save_type, as: :radio_buttons, collection: Hyrax::AssetForm.associated_instantiations_form_collection %>
+          </li>
+    </div>
+  <% end %>
 
   <div class="panel-footer text-center">
     <% if ::Flipflop.show_deposit_agreement? %>
@@ -62,6 +62,6 @@
     <%# TODO: If we start using ActionCable, we could listen for object updates and
               alert the user that the object has changed by someone else %>
     <%= f.input Hyrax::Actors::OptimisticLockValidator.version_field, as: :hidden if f.object.persisted? %>
-    <%= f.submit class: 'btn btn-primary', onclick: "confirmation_needed = false;", id: "with_files_submit", name: "save_with_files", value: "value" %>
+    <%= f.submit class: 'btn btn-primary', onclick: "confirmation_needed = false;", id: "with_files_submit", name: "save_with_files" %>
   </div>
 </aside>
