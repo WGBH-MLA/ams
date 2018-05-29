@@ -278,4 +278,8 @@ class SolrDocument
   def copyright_date
     self[Solrizer.solr_name('copyright_date')]
   end
+
+  def holding_organization
+    self[Solrizer.solr_name('holding_organization')]
+  end
 end

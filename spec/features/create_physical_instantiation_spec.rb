@@ -24,6 +24,7 @@ RSpec.feature 'Create and Validate Physical Instantiation', js: true do
           rights_link: 'http://somerightslink.com/testlink',
           local_instantiation_identifer: 'localId1234',
           tracks: '2',
+          holding_organization: 'WGBH',
           channel_configuration: 'Configured!',
           alternative_modes: 'This mode is so alternative'
       }
@@ -59,6 +60,10 @@ RSpec.feature 'Create and Validate Physical Instantiation', js: true do
       # Select Format
       select = page.find('select#physical_instantiation_format')
       select.select physical_instantiation_attributes[:format]
+
+      # Select Holding Organization
+      select = page.find('select#physical_instantiation_holding_organization')
+      select.select physical_instantiation_attributes[:holding_organization]
 
       # Select Media Type
       select = page.find('select#physical_instantiation_media_type')
@@ -117,6 +122,7 @@ RSpec.feature 'Create and Validate Physical Instantiation', js: true do
       expect(page).to have_content physical_instantiation_attributes[:tracks]
       expect(page).to have_content physical_instantiation_attributes[:channel_configuration]
       expect(page).to have_content physical_instantiation_attributes[:alternative_modes]
+      expect(page).to have_content physical_instantiation_attributes[:holding_organization]
       expect(page).to have_current_path(guid_regex)
     end
   end
