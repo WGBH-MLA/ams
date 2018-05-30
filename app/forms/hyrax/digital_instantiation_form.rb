@@ -9,20 +9,20 @@ module Hyrax
                    :keyword, :license, :rights_statement, :publisher, :subject, :identifier, :based_near, :related_url,
                    :bibliographic_citation, :source]
     self.required_fields -= [:creator, :keyword, :rights_statement]
-    self.required_fields += [:title, :digital_instantiation_pbcore_xml, :location]
+    self.required_fields += [:title, :digital_instantiation_pbcore_xml, :location, :holding_organization]
 
     class_attribute :field_groups
 
     self.field_groups = {
       technical_info: [:local_instantiation_identifer, :media_type, :digital_format, :dimensions, :standard, :file_size,
                        :duration, :time_start, :data_rate, :colors, :tracks, :channel_configuration, :alternative_modes],
-      identifying_info: [:title, :location, :generations, :language, :date, :annotation],
+      identifying_info: [:title, :holding_organization, :location, :generations, :language, :date, :annotation],
       rights: [:rights_summary, :rights_link]
     }
 
     self.terms += (self.required_fields + field_groups.values.map(&:to_a).flatten).uniq
 
-    self.readonly_fields = self.terms - [:title, :location, :generations, :language, :date, :annotation, :rights_link, :rights_summary]
+    self.readonly_fields = self.terms - [:title, :location, :generations, :language, :date, :annotation, :rights_link, :rights_summary, :holding_organization]
 
 
     def primary_terms
