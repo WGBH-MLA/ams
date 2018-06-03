@@ -24,13 +24,6 @@ module Hyrax
       rights: [:rights_summary, :rights_link]
     }
 
-    class_attribute :associated_work_types
-
-    self.associated_work_types = [
-      ::DigitalInstantiation,
-      ::PhysicalInstantiation
-    ]
-
     self.terms += (self.required_fields + field_groups.values.map(&:to_a).flatten).uniq
 
     def primary_terms
@@ -100,15 +93,6 @@ module Hyrax
       dates_with_types
     end
 
-    def associates_instantiations?
-      return true if associated_work_types.include?( ::DigitalInstantiation || ::PhysicalInstantiation)
-      false
-    end
-
-    def self.associated_instantiations_form_collection
-      associated_work_types.map{ |wt| [ "Save & Add #{wt.model_name.human.titleize}", "#{wt.model_name.param_key}" ] }.unshift(["Save", "save"])
-    end
-
     # Augment the list of permmitted params to accept our fields that have
     # types associated with them, e.g. title + title type
     # NOTE: `super` in this case is HyraxEditor::Form.permitted_params
@@ -120,7 +104,6 @@ module Hyrax
         permitted_params << { description_value: [] }
         permitted_params << { date_type: [] }
         permitted_params << { date_value: [] }
-        permitted_params << { save_type: [] }
       end
     end
   end
