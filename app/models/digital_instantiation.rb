@@ -10,7 +10,7 @@ class DigitalInstantiation < ActiveFedora::Base
 
   self.indexer = DigitalInstantiationIndexer
   # Change this to restrict which works can be added as a child.
-  # self.valid_child_concerns = []
+  self.valid_child_concerns = [EssenceTrack]
   #
   mount_uploader :digital_instantiation_pbcore_xml, PbCoreInstantiationXmlUploader
 

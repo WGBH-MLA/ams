@@ -26,16 +26,21 @@
         </div>
     <% end %>
   </div>
-
-  <% if @form.try(:associated_work_types) %>
+  <% if @form.model.valid_child_concerns.any? %>
+    <%= javascript_include_tag "work_actions" %>
     <div class="list-group">
       <div class="list-group-item">
-        <ul class="visibility">
-          <li class="radio">
-            <%= f.input :save_type, as: :radio_buttons, collection: Hyrax::AssetForm.associated_instantiations_form_collection %>
-          </li>
+        <%= f.input :child_work_create , :as => :hidden, :input_html => { :value => "", name:"child_work_create", id: "child_work_create" } %>
+        <% @form.model.valid_child_concerns.each do |child| %>
+                  <%= f.button :button,"Save & Create "+child.model_name.human.titleize, onclick:"ChildWorkActions.saveActon(this);", class: 'btn btn-primary associated_work_actions', value:child.model_name %>
+                  <br>
+          <br>
+                <% end %>
+      </div>
     </div>
   <% end %>
+
+
 
   <div class="panel-footer text-center">
     <% if ::Flipflop.show_deposit_agreement? %>

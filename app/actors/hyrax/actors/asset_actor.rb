@@ -4,7 +4,6 @@ module Hyrax
   module Actors
     class AssetActor < Hyrax::Actors::BaseActor
       def create(env)
-        require 'pry'; binding.pry
         add_title_types(env)
         add_description_types(env)
         add_date_types(env)

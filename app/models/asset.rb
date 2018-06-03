@@ -5,7 +5,7 @@ class Asset < ActiveFedora::Base
 
   self.indexer = AssetIndexer
   # Change this to restrict which works can be added as a child.
-  # self.valid_child_concerns = []
+  self.valid_child_concerns = [DigitalInstantiation,PhysicalInstantiation]
 
   # validate :at_least_one_title
   # validate :at_least_one_description
