@@ -8,14 +8,15 @@ RSpec.feature 'AssignRoleViewer.', js: true do
     let!(:user) { create :user }
     let!(:user_with_role) { create :user, role_names: ['TestRole'] }
     let!(:admin_set) { create :admin_set }
-    let!(:work) { create :public_work }
+    let!(:work) { create :asset, :public, admin_set_id: admin_set.id }
 
-    let(:permission_template) { Hyrax::PermissionTemplate.find_or_create_by!(admin_set_id: admin_set.id) }
+    let(:permission_template) { Hyrax::PermissionTemplate.find_or_create_by!(source_id: admin_set.id) }
     let(:workflow) { Sipity::Workflow.create!(active: true, name: 'test-workflow', permission_template: permission_template) }
 
     scenario 'Assign set of user (role) as Viewer to AdminSet' do
       work.admin_set_id = admin_set.id
       work.save!
+
       Hyrax::PermissionTemplateAccess.create!(
         permission_template_id: permission_template.id,
         agent_type: 'group',
