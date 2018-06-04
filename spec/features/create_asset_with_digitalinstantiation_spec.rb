@@ -111,7 +111,7 @@ RSpec.feature 'Create and Validate Asset,Digital Instantiation, EssenseTrack', j
 
       click_link "Rights" # expand field group
       wait_for(2) #wait untill all elements are visiable
-      
+
       fill_in('Rights summary', with: asset_attributes[:rights_summary])
 
       click_link "Relationships" # define adminset relation
@@ -123,32 +123,12 @@ RSpec.feature 'Create and Validate Asset,Digital Instantiation, EssenseTrack', j
 
       expect(page).to have_content('Please note, making something visible to the world (i.e. marking this as Public) may be viewed as publishing which could impact your ability to')
 
-      click_on('Save')
-
-      visit '/'
-      find("#search-submit-header").click
-
-      # Expect metadata for Asset to be displayed on the search results page.
-      expect(page).to have_content main_title
-
-      # open asset with detail show
-      click_on main_title
-
-      expect(page).to have_content asset_attributes[:spatial_coverage]
-      expect(page).to have_content asset_attributes[:temporal_coverage]
-      expect(page).to have_content asset_attributes[:audience_level]
-      expect(page).to have_content asset_attributes[:audience_rating]
-      expect(page).to have_content asset_attributes[:annotation]
-      expect(page).to have_content asset_attributes[:rights_summary]
-      expect(page).to have_current_path(guid_regex)
-
-      click_on('Add Digital Instantiation')
+      click_on('Save & Create Digital Instantiation')
 
       within 'form#new_digital_instantiation' do
         attach_file('Digital instantiation pbcore xml', File.absolute_path(digital_instantiation_attributes[:pbcore_xml_doc]))
 
         click_link "Identifying Information" # expand field group
-
         #wait untill all elements are visiable
         wait_for(2)
 
@@ -174,6 +154,29 @@ RSpec.feature 'Create and Validate Asset,Digital Instantiation, EssenseTrack', j
       click_on('Save')
 
       wait_for(10) { DigitalInstantiation.where(title: digital_instantiation_attributes[:title]).first }
+
+      visit '/'
+      find("#search-submit-header").click
+
+      # Filter resources types
+      click_on('Type')
+      click_on('Asset')
+
+      # Expect metadata for Asset to be displayed on the search results page.
+      expect(page).to have_content main_title
+
+      # open asset with detail show
+      click_on main_title
+
+      expect(page).to have_content asset_attributes[:spatial_coverage]
+      expect(page).to have_content asset_attributes[:temporal_coverage]
+      expect(page).to have_content asset_attributes[:audience_level]
+      expect(page).to have_content asset_attributes[:audience_rating]
+      expect(page).to have_content asset_attributes[:annotation]
+      expect(page).to have_content asset_attributes[:rights_summary]
+      expect(page).to have_current_path(guid_regex)
+
+      click_on('Add Digital Instantiation')
 
       visit '/'
       find("#search-submit-header").click
