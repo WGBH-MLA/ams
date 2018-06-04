@@ -60,8 +60,6 @@ RSpec.feature 'Create Asset with Asset Type', js: true, asset_form_helpers: true
       # wait untill all elements are visiable
       wait_for(2)
 
-      # Select genre
-      click_on 'Subject Information'
       select = page.find('select#asset_genre')
       select.select asset_attributes[:genre]
 
