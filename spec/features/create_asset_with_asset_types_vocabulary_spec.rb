@@ -1,7 +1,7 @@
 require 'rails_helper'
 include Warden::Test::Helpers
 
-RSpec.feature 'Create Asset with Asset Type', js: true, asset_form_helpers: true do
+RSpec.feature 'Create Asset with Asset Type', js: true, asset_form_helpers: true, clean:true do
   context 'Create adminset, create asset' do
     let(:admin_user) { create :admin_user }
     let!(:user_with_role) { create :user, role_names: ['user'] }
@@ -11,7 +11,7 @@ RSpec.feature 'Create Asset with Asset Type', js: true, asset_form_helpers: true
     let(:workflow) { Sipity::Workflow.create!(active: true, name: 'test-workflow', permission_template: permission_template) }
 
     let(:asset_attributes) do
-      { title: "My Asset Test Title Asset Type", description: "My Asset Test Description", asset_type: "Album" }
+      { title: "My Asset Test Title"+ get_random_string, description: "My Asset Test Description", asset_type: "Album" }
     end
 
     before do

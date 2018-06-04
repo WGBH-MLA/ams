@@ -3,7 +3,7 @@ require_relative '../../app/services/title_and_description_types_service'
 require_relative '../../app/services/date_types_service'
 include Warden::Test::Helpers
 
-RSpec.feature 'Create and Validate Asset', js: true, asset_form_helpers: true do
+RSpec.feature 'Create and Validate Asset', js: true, asset_form_helpers: true, clean:true do
   context 'Create adminset, create asset' do
     let(:admin_user) { create :admin_user }
     let!(:user_with_role) { create :user, role_names: ['user'] }
@@ -27,7 +27,7 @@ RSpec.feature 'Create and Validate Asset', js: true, asset_form_helpers: true do
     let(:main_titles) {[]}
 
     #hyrax view :title
-    let(:main_title) { main_titles.reverse.join(", ") }
+    let(:main_title) { main_titles.join(", ") }
 
     # Make an array of [title, title_type] pairs.
     # Ensure there are 2 titles for every title type.

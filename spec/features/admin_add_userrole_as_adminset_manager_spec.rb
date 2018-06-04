@@ -2,7 +2,7 @@ require 'rails_helper'
 
 include Warden::Test::Helpers
 
-RSpec.feature 'AdminAddUserroleAsAdminserManager.', js: true do
+RSpec.feature 'AdminAddUserroleAsAdminserManager.', js: true, clean:true do
 
   context 'As Admin add a UserRole as Adminset Manager' do
     let(:admin_user) { create :admin_user }

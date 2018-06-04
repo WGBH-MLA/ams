@@ -2,7 +2,7 @@ require 'rails_helper'
 
 include Warden::Test::Helpers
 
-RSpec.feature 'AssignUserroleAsViewerAndManager.', js: true do
+RSpec.feature 'AssignUserroleAsViewerAndManager.', js: true, clean:true do
   context 'Add permissions to user (Role)' do
     let(:admin_user) { create :admin_user }
     let!(:user) { create :user }

@@ -64,6 +64,8 @@ RSpec.configure do |config|
     config.mock_with :rspec do |mocks|
       mocks.verify_partial_doubles = example.metadata.fetch(:verify_partial_doubles, true)
     end
+    # Pass `:clean' to destroy objects in fedora/solr and start from scratch
+    ActiveFedora::Cleaner.clean! if example.metadata[:clean]
   end
 
   # Filter lines from Rails gems in backtraces.

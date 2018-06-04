@@ -2,7 +2,7 @@ require 'rails_helper'
 include Warden::Test::Helpers
 
 RSpec.feature 'Create and Validate Asset,Digital Instantiation, EssenseTrack', js: true, asset_form_helpers: true,
-              disable_animation:true, expand_fieldgroup: true do
+              disable_animation:true, expand_fieldgroup: true, clean:true do
   context 'Create adminset, create asset, import pbcore xml for digital instantiation and essensetrack' do
     let(:admin_user) { create :admin_user }
     let!(:user_with_role) { create :user, role_names: ['user'] }
@@ -14,14 +14,14 @@ RSpec.feature 'Create and Validate Asset,Digital Instantiation, EssenseTrack', j
     let(:output_date_format) { '%F' }
 
     let(:asset_attributes) do
-      { title: "My Test Title", description: "My Test Description",spatial_coverage: 'My Test Spatial coverage',
+      { title: "My Test Title"+ get_random_string, description: "My Test Description",spatial_coverage: 'My Test Spatial coverage',
         temporal_coverage: 'My Test Temporal coverage', audience_level: 'My Test Audience level',
         audience_rating: 'My Test Audience rating', annotation: 'My Test Annotation', rights_summary: 'My Test Rights summary' }
     end
 
     let(:digital_instantiation_attributes) do
       {
-        title: "My Test Digital Instantiation",
+        title: "My Test Digital Instantiation"+ get_random_string,
         location: 'Test Location',
         rights_summary: 'My Test Rights summary',
         rights_link: 'Test link',
