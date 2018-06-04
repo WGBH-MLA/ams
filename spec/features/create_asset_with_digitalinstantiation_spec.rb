@@ -177,6 +177,31 @@ RSpec.feature 'Create and Validate Asset,Digital Instantiation, EssenseTrack', j
 
       click_on('Add Digital Instantiation')
 
+      find('body').click
+      expect(page).to have_content 'Add New Digital Instantiation'
+
+      #show all fields groups
+      sleep(5)
+      # TODO: Why do we need to call this twice?
+      disable_collapse
+      disable_collapse
+
+
+      attach_file('Digital instantiation pbcore xml', File.absolute_path(digital_instantiation_attributes[:pbcore_xml_doc]))
+      fill_in('Title', with: digital_instantiation_attributes[:title])
+      fill_in('Location', with: digital_instantiation_attributes[:location])
+      fill_in('Rights summary', with: digital_instantiation_attributes[:rights_summary])
+      fill_in('Rights link', with: digital_instantiation_attributes[:rights_link])
+
+
+      # set it public
+      find('body').click
+      choose('digital_instantiation_visibility_open')
+      expect(page).to have_content('Please note, making something visible to the world (i.e. marking this as Public) may be viewed as publishing which could impact your ability to')
+      click_on('Save')
+
+      wait_for(10) { DigitalInstantiation.where(title: digital_instantiation_attributes[:title]).first }
+
       visit '/'
       find("#search-submit-header").click
 

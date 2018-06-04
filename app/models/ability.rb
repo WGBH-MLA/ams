@@ -13,6 +13,7 @@ class Ability
     can [:create], PhysicalInstantiation
     can [:create], DigitalInstantiation
     can [:create], Collection
+    can [:create], Contribution
 
     # Limits deleting objects to a the admin user
     #
