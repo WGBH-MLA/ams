@@ -25,12 +25,12 @@
         <div class="panel panel-default">
           <div class="panel-heading">
             <h4 class="panel-title">
-              <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapse-<%= group %>">
+              <a class="accordion-toggle" data-toggle="collapse" href="#collapse-<%= group %>">
                 <%= t("form.#{group}") %>
               </a>
             </h4>
           </div>
-          <div id="collapse-<%= group %>" class="panel-collapse collapse in <%= "show" if f.object.expand_field_group?(group) %>">
+          <div id="collapse-<%= group %>" class="panel-collapse collapse  <%= "in" if f.object.expand_field_group?(group) %>" aria-expanded="<%= f.object.expand_field_group?(group)?"true":"false" %>">
             <div class="panel-body">
               <% fields.each do |term| %>
                 <%= render_edit_field_partial(term, f: f) %>
