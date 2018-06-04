@@ -27,7 +27,7 @@ RSpec.feature 'AdminAddUserroleAsAdminserManager.', js: true do
 
       # Add participants
       click_on('Participants')
-      fill_in('permission_template_access_grants_attributes_0_agent_id', with: 'user')
+      fill_in('permission_template_access_grants_attributes_0_agent_id', with: user_with_role.groups.first)
       find("#group-participants-form select option[value='manage']").select_option
       find('#group-participants-form .btn').click
       expect(page).to have_content  'participant rights have been updated'

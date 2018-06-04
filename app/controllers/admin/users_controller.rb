@@ -20,7 +20,6 @@ class Admin::UsersController < ApplicationController
 
   def savenew
     @user = User.create(user_params)
-    byebug
     redirect_to admin_users_path
   end
 

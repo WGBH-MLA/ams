@@ -11,7 +11,7 @@ RSpec.feature 'Create Asset with Asset Type', js: true, asset_form_helpers: true
     let(:workflow) { Sipity::Workflow.create!(active: true, name: 'test-workflow', permission_template: permission_template) }
 
     let(:asset_attributes) do
-      { title: "My Asset Test Title", description: "My Asset Test Description", asset_type: "Album" }
+      { title: "My Asset Test Title Asset Type", description: "My Asset Test Description", asset_type: "Album" }
     end
 
     before do
