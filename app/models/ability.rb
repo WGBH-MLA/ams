@@ -9,10 +9,11 @@ class Ability
     # Probbly too permissive in the long run. Replace and augment with
     # hydra-role-management gem in long run.
     can [:create], Asset
-    can [:create], Series
     can [:create], EssenceTrack
     can [:create], PhysicalInstantiation
     can [:create], DigitalInstantiation
+    can [:create], Collection
+    can [:create], Contribution
 
     # Limits deleting objects to a the admin user
     #

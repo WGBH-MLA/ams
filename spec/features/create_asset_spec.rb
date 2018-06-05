@@ -3,10 +3,10 @@ require_relative '../../app/services/title_and_description_types_service'
 require_relative '../../app/services/date_types_service'
 include Warden::Test::Helpers
 
-RSpec.feature 'Create and Validate Asset', js: true, asset_form_helpers: true do
+RSpec.feature 'Create and Validate Asset', js: true, asset_form_helpers: true, clean:true do
   context 'Create adminset, create asset' do
     let(:admin_user) { create :admin_user }
-    let!(:user_with_role) { create :user_with_role, role_name: 'user' }
+    let!(:user_with_role) { create :user, role_names: ['user'] }
     let(:admin_set_id) { AdminSet.find_or_create_default_admin_set_id }
     let(:permission_template) { Hyrax::PermissionTemplate.find_or_create_by!(source_id: admin_set_id) }
     let!(:workflow) { Sipity::Workflow.create!(active: true, name: 'test-workflow', permission_template: permission_template) }
@@ -23,22 +23,14 @@ RSpec.feature 'Create and Validate Asset', js: true, asset_form_helpers: true do
     # Use contolled vocab to retrieve all title types.
     let(:title_and_description_types) { TitleAndDescriptionTypesService.all_terms }
 
-    # array of main titles
-    let(:main_titles) {[]}
-
-    #hyrax view :title
-    let(:main_title) { main_titles.reverse.join(", ") }
-
     # Make an array of [title, title_type] pairs.
     # Ensure there are 2 titles for every title type.
     let(:titles_with_types) do
       (title_and_description_types * 2).each_with_index.map do |title_type, i|
         test_title = "Test #{title_type} Title #{i+1}".gsub(/\s+/, ' ')
-        main_titles.push(test_title) if(title_type.blank?)
         [test_title, title_type]
       end
     end
-
 
 
     # Make an array of [description, description_type] pairs.
@@ -47,6 +39,15 @@ RSpec.feature 'Create and Validate Asset', js: true, asset_form_helpers: true do
       (title_and_description_types * 2).each_with_index.map do |description_type, i|
         test_description = "Test #{description_type} Description #{i+1}".gsub(/\s+/, ' ')
         [test_description, description_type]
+      end
+    end
+
+    # array of main titles, i.e. all titles without a type
+    let(:main_titles) do
+      titles_with_types.select do |_title, title_type|
+        title_type.blank?
+      end.map do |title, _title_type|
+        title
       end
     end
 
@@ -75,7 +76,6 @@ RSpec.feature 'Create and Validate Asset', js: true, asset_form_helpers: true do
       click_link "Share Your Work"
       choose "payload_concern", option: "Asset"
       click_button "Create work"
-
       expect(page).to have_content "Add New Asset"
 
       click_link "Files" # switch tab
@@ -106,10 +106,10 @@ RSpec.feature 'Create and Validate Asset', js: true, asset_form_helpers: true do
       fill_in('Audience level', with: asset_attributes[:audience_level])
       fill_in('Audience rating', with: asset_attributes[:audience_rating])
       fill_in('Annotation', with: asset_attributes[:annotation])
-      
+
       click_link "Rights" # expand field group
       wait_for(2) # wait untill all elements are visiable
-      
+
       fill_in('Rights summary', with: asset_attributes[:rights_summary])
 
       click_link "Relationships" # define adminset relation
@@ -126,10 +126,12 @@ RSpec.feature 'Create and Validate Asset', js: true, asset_form_helpers: true do
       find("#search-submit-header").click
 
       # Expect metadata for Asset to be displayed on the search results page.
-      expect(page).to have_content main_title
+      main_titles.each do |main_title|
+        expect(page).to have_content main_title
+      end
 
       # open asset with detail show
-      click_on main_title
+      click_on main_titles.first
       expect(page).to have_content asset_attributes[:spatial_coverage]
       expect(page).to have_content asset_attributes[:temporal_coverage]
       expect(page).to have_content asset_attributes[:audience_level]
