@@ -8,12 +8,12 @@ module Hyrax
                    :keyword, :license, :rights_statement, :publisher, :subject, :identifier, :based_near, :related_url,
                    :bibliographic_citation, :source]
     self.required_fields -= [:creator, :keyword, :rights_statement]
-    self.required_fields += [:format, :location, :media_type]
+    self.required_fields += [:format, :location, :media_type, :holding_organization]
 
     class_attribute :field_groups
 
     self.field_groups = {
-      identifying_info: [:title, :local_instantiation_identifer, :media_type, :format, :location, :generations, :date, :digitization_date,
+      identifying_info: [:title, :holding_organization, :local_instantiation_identifer, :media_type, :format, :location, :generations, :date, :digitization_date,
                          :language, :annotiation],
       technical_info: [:dimensions, :standard, :duration, :time_start, :colors, :tracks, :channel_configuration,
                        :alternative_modes],

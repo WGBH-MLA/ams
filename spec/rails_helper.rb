@@ -7,7 +7,6 @@ require File.expand_path('../../config/environment', __FILE__)
 abort("The Rails environment is running in production mode!") if Rails.env.production?
 require 'rails/all'
 require 'rspec/rails'
-require 'support/factory_bot'
 require 'action_view'
 require 'spec_helper'
 require 'devise'
@@ -33,22 +32,23 @@ Shoulda::Matchers.configure do |config|
   end
 end
 
+# Disable automatic screenshots on failure if ENV var says so.
+if [false, 'false', '0', 0].include? ENV['AUTO_SCREENSHOTS'].to_s.downcase
+  Capybara::Screenshot.autosave_on_failure = false
+end
+
 RSpec.configure do |config|
   config.fixture_path = "#{::Rails.root}/spec/fixtures"
   config.use_transactional_fixtures = false
   config.infer_spec_type_from_file_location!
 
   config.before :suite do
+    # Clean out Fedora
     ActiveFedora::Cleaner.clean!
-  end
-
-  config.before :each do
-    # Note (Mike Coutermarsh): Make browser huge so that no content is hidden during tests
     DatabaseCleaner.strategy = :truncation
-    DatabaseCleaner.start
   end
 
-  config.after do
+  config.after :each do
     DatabaseCleaner.clean
   end
 
@@ -69,6 +69,8 @@ RSpec.configure do |config|
     config.mock_with :rspec do |mocks|
       mocks.verify_partial_doubles = example.metadata.fetch(:verify_partial_doubles, true)
     end
+    # Pass `:clean' to destroy objects in fedora/solr and start from scratch
+    ActiveFedora::Cleaner.clean! if example.metadata[:clean]
   end
 
   # Filter lines from Rails gems in backtraces.

@@ -1,17 +1,17 @@
 require 'rails_helper'
 include Warden::Test::Helpers
 
-RSpec.feature 'Create Asset with Asset Type', js: true, asset_form_helpers: true do
+RSpec.feature 'Create Asset with Asset Type', js: true, asset_form_helpers: true, clean:true do
   context 'Create adminset, create asset' do
     let(:admin_user) { create :admin_user }
-    let!(:user_with_role) { create :user_with_role, role_name: 'user' }
+    let!(:user_with_role) { create :user, role_names: ['user'] }
 
     let(:admin_set_id) { AdminSet.find_or_create_default_admin_set_id }
     let(:permission_template) { Hyrax::PermissionTemplate.find_or_create_by!(source_id: admin_set_id) }
     let(:workflow) { Sipity::Workflow.create!(active: true, name: 'test-workflow', permission_template: permission_template) }
 
     let(:asset_attributes) do
-      { title: "My Asset Test Title", description:"My Asset Test Description", genre:"Call-in" }
+      { title: "My Asset Test Title"+ get_random_string, description:"My Asset Test Description", genre:"Call-in" }
     end
 
     before do
@@ -55,9 +55,11 @@ RSpec.feature 'Create Asset with Asset Type', js: true, asset_form_helpers: true
       # validated metadata without errors
       page.find("#required-metadata")[:class].include?("complete")
 
+      click_link "Subject Information" # expand field group
 
+      # wait untill all elements are visiable
+      wait_for(2)
 
-      # Select genre
       select = page.find('select#asset_genre')
       select.select asset_attributes[:genre]
 
@@ -74,6 +76,7 @@ RSpec.feature 'Create Asset with Asset Type', js: true, asset_form_helpers: true
 
       # open asset with detail show
       click_on(asset_attributes[:title])
+      wait_for(2)
       expect(page).to have_content asset_attributes[:genre]
     end
   end

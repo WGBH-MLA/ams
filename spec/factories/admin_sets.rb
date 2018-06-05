@@ -1,6 +1,6 @@
 FactoryBot.define do
   factory :admin_set do
-    sequence(:title) { |n| ["Title #{n}"] }
+    sequence(:title) { |n| ["Test Admin Set #{n}"] }
 
     # Given the relationship between permission template and admin set, when
     # an admin set is created via a factory, I believe it is appropriate to go ahead and
