@@ -7,7 +7,7 @@ RSpec.feature 'Change password.', js: false do
     before { login_as user }
     scenario 'I can change my password' do
       visit '/'
-      find('#user_utility_links a:contains("Change password")').click
+      find('#user_utility_links a:contains("Edit Registration")').click
       fill_in 'Password', with: 'password2'
       fill_in 'Password confirmation', with: 'password2'
       fill_in 'Current password', with: 'password'
