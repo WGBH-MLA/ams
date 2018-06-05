@@ -24,7 +24,7 @@ class Admin::UsersController < ApplicationController
   end
 
   def destroy
-    obj = ActiveFedora::Base::User.find(check_user_request)
+    obj = User.find(check_user_request)
     obj.update(deleted_at:Time.now, deleted: obj.deleted ^= true )
     flash[:notice] = "User #{obj.email} successfully #{obj.deleted == false ? I18n.t('admin.users.index.enabled') : I18n.t('admin.users.index.disabled') }"
     redirect_to admin_users_path

@@ -4,7 +4,7 @@ include Warden::Test::Helpers
 RSpec.feature 'Create and Validate Digital Instantiation', js: true do
   context 'Create adminset, create DigitalInstantiation' do
     let(:admin_user) { create :admin_user }
-    let!(:user_with_role) { create :user_with_role, role_name: 'user' }
+    let!(:user_with_role) { create :user, role_names: ['user'] }
     let(:admin_set_id) { AdminSet.find_or_create_default_admin_set_id }
 
     let!(:permission_template) { Hyrax::PermissionTemplate.find_or_create_by!(source_id: admin_set_id) }

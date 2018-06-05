@@ -32,9 +32,6 @@ RSpec.feature 'AdminDisableUserAccounts.', js: true do
       fill_in('Password', with: user_attributes["password"] )
       click_on('Log in')
       expect(page).to have_content I18n.t('devise.sessions.user.account_deactivated')
-      exit
     end
   end
-
-
 end
