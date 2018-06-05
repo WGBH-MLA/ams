@@ -6,7 +6,8 @@ RSpec.feature 'Create and Validate Asset,Digital Instantiation, EssenseTrack', j
   context 'Create adminset, create asset, import pbcore xml for digital instantiation and essensetrack' do
     let(:admin_user) { create :admin_user }
     let!(:user_with_role) { create :user, role_names: ['user'] }
-    let(:admin_set_id) { AdminSet.find_or_create_default_admin_set_id }
+    # let(:admin_set_id) { AdminSet.find_or_create_default_admin_set_id }
+    let(:admin_set_id) { create(:admin_set).id }
     let(:permission_template) { Hyrax::PermissionTemplate.find_or_create_by!(source_id: admin_set_id) }
     let!(:workflow) { Sipity::Workflow.create!(active: true, name: 'test-workflow', permission_template: permission_template) }
 
@@ -105,10 +106,6 @@ RSpec.feature 'Create and Validate Asset,Digital Instantiation, EssenseTrack', j
       fill_in('Audience level', with: asset_attributes[:audience_level])
       fill_in('Audience rating', with: asset_attributes[:audience_rating])
       fill_in('Annotation', with: asset_attributes[:annotation])
-
-      click_link "Rights" # expand field group
-      wait_for(2) #wait untill all elements are visiable
-
       fill_in('Rights summary', with: asset_attributes[:rights_summary])
 
       click_link "Relationships" # define adminset relation
@@ -124,10 +121,9 @@ RSpec.feature 'Create and Validate Asset,Digital Instantiation, EssenseTrack', j
 
       within 'form#new_digital_instantiation' do
         attach_file('Digital instantiation pbcore xml', File.absolute_path(digital_instantiation_attributes[:pbcore_xml_doc]))
-
-        click_link "Identifying Information" # expand field group
-        #wait untill all elements are visiable
-        wait_for(2)
+      
+        #show all fields groups
+        disable_collapse
 
         fill_in('Title', with: digital_instantiation_attributes[:title])
 
@@ -150,6 +146,7 @@ RSpec.feature 'Create and Validate Asset,Digital Instantiation, EssenseTrack', j
       find('body').click
       choose('digital_instantiation_visibility_open')
       expect(page).to have_content('Please note, making something visible to the world (i.e. marking this as Public) may be viewed as publishing which could impact your ability to')
+
       click_on('Save')
 
       wait_for(10) { DigitalInstantiation.where(title: digital_instantiation_attributes[:title]).first }
@@ -190,6 +187,11 @@ RSpec.feature 'Create and Validate Asset,Digital Instantiation, EssenseTrack', j
       attach_file('Digital instantiation pbcore xml', File.absolute_path(digital_instantiation_attributes[:pbcore_xml_doc]))
       fill_in('Title', with: digital_instantiation_attributes[:title])
       fill_in('Location', with: digital_instantiation_attributes[:location])
+
+      # Select Holding Organization
+      select = page.find('select#digital_instantiation_holding_organization')
+      select.select digital_instantiation_attributes[:holding_organization]
+
       fill_in('Rights summary', with: digital_instantiation_attributes[:rights_summary])
       fill_in('Rights link', with: digital_instantiation_attributes[:rights_link])
 
@@ -198,6 +200,7 @@ RSpec.feature 'Create and Validate Asset,Digital Instantiation, EssenseTrack', j
       find('body').click
       choose('digital_instantiation_visibility_open')
       expect(page).to have_content('Please note, making something visible to the world (i.e. marking this as Public) may be viewed as publishing which could impact your ability to')
+
       click_on('Save')
 
       wait_for(10) { DigitalInstantiation.where(title: digital_instantiation_attributes[:title]).first }
