@@ -5,7 +5,7 @@ class PhysicalInstantiation < ActiveFedora::Base
 
   self.indexer = PhysicalInstantiationIndexer
   # Change this to restrict which works can be added as a child.
-  # self.valid_child_concerns = []
+  self.valid_child_concerns = [EssenceTrack]
 
   validates :title, presence: { message: 'Your work must have a title.' }
   validates :format, presence: { message: 'Your work must have a format.' }
@@ -83,6 +83,10 @@ class PhysicalInstantiation < ActiveFedora::Base
 
   property :alternative_modes, predicate: ::RDF::URI.new("http://pbcore.org#hasAlternativeModes"), multiple: true do |index|
     index.as :stored_searchable
+  end
+
+  property :holding_organization, predicate: ::RDF::URI.new("http://pbcore.org#hasHoldingOrganization"), multiple: false do |index|
+    index.as :stored_searchable, :facetable
   end
 
   # This must be included at the end, because it finalizes the metadata if you have any further properties define above in current model

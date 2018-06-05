@@ -1,8 +1,6 @@
 Hyrax.config do |config|
   # Injected via `rails g hyrax:work Asset`
   config.register_curation_concern :asset
-  # Injected via `rails g hyrax:work Series`
-  config.register_curation_concern :series
   # Injected via `rails g hyrax:work PhysicalInstantiation`
   config.register_curation_concern :physical_instantiation
   # Injected via `rails g hyrax:work DigitalInstantiation`

@@ -5,7 +5,8 @@ class EssenceTrack < ActiveFedora::Base
 
   self.indexer = EssenceTrackIndexer
   # Change this to restrict which works can be added as a child.
-  # self.valid_child_concerns = []
+  self.valid_child_concerns = []
+
   validates :track_type, presence: { message: 'Your work must have track type.' }
   validates :track_id, presence: { message: 'Your work must have track ID.' }
 

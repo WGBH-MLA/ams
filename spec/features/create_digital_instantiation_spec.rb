@@ -4,7 +4,7 @@ include Warden::Test::Helpers
 RSpec.feature 'Create and Validate Digital Instantiation', js: true do
   context 'Create adminset, create DigitalInstantiation' do
     let(:admin_user) { create :admin_user }
-    let!(:user_with_role) { create :user_with_role, role_name: 'user' }
+    let!(:user_with_role) { create :user, role_names: ['user'] }
     let(:admin_set_id) { AdminSet.find_or_create_default_admin_set_id }
 
     let!(:permission_template) { Hyrax::PermissionTemplate.find_or_create_by!(source_id: admin_set_id) }
@@ -19,6 +19,7 @@ RSpec.feature 'Create and Validate Digital Instantiation', js: true do
         location: 'Test Location',
         rights_summary: 'My Test Rights summary',
         rights_link: 'Test link',
+        holding_organization: 'WGBH',
         pbcore_xml_doc: "#{Rails.root}/spec/fixtures/sample_instantiation_valid.xml"
       }
     end
@@ -53,6 +54,10 @@ RSpec.feature 'Create and Validate Digital Instantiation', js: true do
       #wait untill all elements are visiable
       wait_for(2)
       fill_in('Title', with: digital_instantiation_attributes[:title])
+
+      # Select Holding Organization
+      select = page.find('select#digital_instantiation_holding_organization')
+      select.select digital_instantiation_attributes[:holding_organization]
 
       fill_in('Location', with: digital_instantiation_attributes[:location])
 
@@ -98,6 +103,7 @@ RSpec.feature 'Create and Validate Digital Instantiation', js: true do
       expect(page).to have_content pbcore_xml_doc.media_type.value
       expect(page).to have_content digital_instantiation_attributes[:rights_link]
       expect(page).to have_content digital_instantiation_attributes[:rights_summary]
+      expect(page).to have_content digital_instantiation_attributes[:holding_organization]
       expect(page).to have_current_path(guid_regex)
     end
   end

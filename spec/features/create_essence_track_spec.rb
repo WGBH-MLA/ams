@@ -5,10 +5,9 @@ include Warden::Test::Helpers
 
 RSpec.feature 'Create and Validate Essence Track', js: true do
   context 'Create adminset, create EssenceTrack' do
-    let(:admin_user) { create :admin_user }
-    let!(:user_with_role) { create :user_with_role, role_name: 'user' }
-    let!(:admin_set) { create :admin_set, title: ["Test Admin Set"] }
+    let!(:user_with_role) { create :user, role_names: ['user'] }
 
+    let!(:admin_set) { create :admin_set }
     let!(:permission_template) { Hyrax::PermissionTemplate.find_or_create_by!(source_id: admin_set.id) }
     let!(:workflow) { Sipity::Workflow.create!(active: true, name: 'test-workflow', permission_template: permission_template) }
 
@@ -36,6 +35,7 @@ RSpec.feature 'Create and Validate Essence Track', js: true do
     end
 
     scenario 'Create and Validate Essence Track, Search Essence Track' do
+
       Sipity::WorkflowAction.create!(name: 'submit', workflow: workflow)
       Hyrax::PermissionTemplateAccess.create!(
           permission_template_id: permission_template.id,
@@ -107,7 +107,6 @@ RSpec.feature 'Create and Validate Essence Track', js: true do
       # open essence track with detail show
       click_on(essence_track_attributes[:title])
       expect(page).to have_content essence_track_attributes[:title]
-      expect(page).to have_content essence_track_attributes[:track_type]
       expect(page).to have_content essence_track_attributes[:track_id]
       expect(page).to have_content essence_track_attributes[:encoding]
       expect(page).to have_content essence_track_attributes[:data_rate]

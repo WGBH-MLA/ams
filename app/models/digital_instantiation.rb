@@ -10,7 +10,7 @@ class DigitalInstantiation < ActiveFedora::Base
 
   self.indexer = DigitalInstantiationIndexer
   # Change this to restrict which works can be added as a child.
-  # self.valid_child_concerns = []
+  self.valid_child_concerns = [EssenceTrack]
   #
   mount_uploader :digital_instantiation_pbcore_xml, PbCoreInstantiationXmlUploader
 
@@ -108,6 +108,10 @@ class DigitalInstantiation < ActiveFedora::Base
 
   property :alternative_modes, predicate: ::RDF::URI.new("http://pbcore.org#hasAlternativeModes"), multiple: true do |index|
     index.as :stored_searchable
+  end
+
+  property :holding_organization, predicate: ::RDF::URI.new("http://pbcore.org#hasHoldingOrganization"), multiple: false do |index|
+    index.as :stored_searchable, :facetable
   end
 
   # This must be included at the end, because it finalizes the metadata if you have any further properties define above in current model
