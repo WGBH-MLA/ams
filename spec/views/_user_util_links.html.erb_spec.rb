@@ -8,6 +8,6 @@ RSpec.describe '/_user_util_links.html.erb', type: :view do
     render
   end
   it 'links to edit registration path' do
-    expect(rendered).to match /Change password/
+    expect(rendered).to match /Edit Registration/
   end
 end
