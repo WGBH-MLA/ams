@@ -32,6 +32,11 @@ Shoulda::Matchers.configure do |config|
   end
 end
 
+# Disable automatic screenshots on failure if ENV var says so.
+if [false, 'false', '0', 0].include? ENV['AUTO_SCREENSHOTS'].to_s.downcase
+  Capybara::Screenshot.autosave_on_failure = false
+end
+
 RSpec.configure do |config|
   config.fixture_path = "#{::Rails.root}/spec/fixtures"
   config.use_transactional_fixtures = false

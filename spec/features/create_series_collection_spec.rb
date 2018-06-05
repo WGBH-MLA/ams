@@ -2,6 +2,9 @@ require 'rails_helper'
 include Warden::Test::Helpers
 
 RSpec.feature 'Create and Validate Series Collection', js: true do
+
+  before { Rails.application.load_seed }
+
   context 'Create adminset, create series collection' do
     let(:admin_user) { create :admin_user }
     let(:admin_set_id) { AdminSet.find_or_create_default_admin_set_id }
@@ -33,8 +36,9 @@ RSpec.feature 'Create and Validate Series Collection', js: true do
       # Login role user to create series
       login_as(admin_user)
       visit hyrax.dashboard_collections_path
+
       click_on "New Collection"
-      expect(page).to have_content "New Series"
+      expect(find('div.main-header')).to have_content "New Series"
       fill_in('Series title', with: series_collection_attributes[:series_title].first)
       fill_in('Series description', with: series_collection_attributes[:series_description].first)
       click_on('Save')
