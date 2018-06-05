@@ -118,9 +118,9 @@ en:
       update: Save changes
   hyrax:
     ams:
-        toolbar:
-          profile:
-            edit_registration: 'Change password'
+      toolbar:
+        profile:
+          edit_registration: 'Change password'
     account_label: User
     active_consent_to_agreement: I have read and agree to the
     product_name:           "Hyrax"
@@ -1093,6 +1093,7 @@ en:
         one: You have one unread notification
         zero: You have no unread notifications
       profile:
+        edit_registration: 'Change password'
         login: Login
         logout: Logout
         sr_action: View
