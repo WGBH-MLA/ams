@@ -26,6 +26,8 @@ namespace :hydra do
         # and there's nothing left to do.
         false
       end
+      puts "Seeding the database"
+      Rake::Task['db:seed'].invoke
     end
 
     desc 'Resets Fedora, Solr, Database, and creates default admin set for test environment'
