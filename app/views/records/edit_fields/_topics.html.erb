@@ -2,6 +2,6 @@
 <%= f.input :topics, as: :select,
             collection: topics_service.select_all_options,
             include_blank: true,
-            disabled:f.object.respond_to?(:readonly?) && f.object.readonly?(key),
+            disabled:f.object.respond_to?(:disabled?) && f.object.disabled?(key),
             input_html: { class: 'form-control' , multiple: true}
 %>

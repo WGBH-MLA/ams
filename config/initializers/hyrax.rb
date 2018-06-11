@@ -213,6 +213,11 @@ Hyrax.config do |config|
     config.browse_everything = nil
   end
 
+  #Register custom Actor
+  #
+  Hyrax::CurationConcern.actor_factory.insert_after Hyrax::Actors::ApplyPermissionTemplateActor, Hyrax::Actors::EnforceParentTitle
+
+
   ## Whitelist all directories which can be used to ingest from the local file
   # system.
   #

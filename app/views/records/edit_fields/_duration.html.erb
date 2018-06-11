@@ -1,1 +1,1 @@
-<%= f.input :duration, input_html: { type: 'number'} , required: f.object.required?(key), disabled:f.object.respond_to?(:readonly?) && f.object.readonly?(key) %>
+<%= f.input :duration, input_html: { type: 'number'} , required: f.object.required?(key), disabled:f.object.respond_to?(:disabled?) && f.object.disabled?(key) %>
