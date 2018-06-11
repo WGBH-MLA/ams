@@ -22,7 +22,6 @@ RSpec.feature 'Create and Validate Asset,Digital Instantiation, EssenseTrack', j
 
     let(:digital_instantiation_attributes) do
       {
-        title: "My Test Digital Instantiation"+ get_random_string,
         location: 'Test Location',
         rights_summary: 'My Test Rights summary',
         rights_link: 'Test link',
@@ -153,7 +152,6 @@ RSpec.feature 'Create and Validate Asset,Digital Instantiation, EssenseTrack', j
 
 
       attach_file('Digital instantiation pbcore xml', File.absolute_path(digital_instantiation_attributes[:pbcore_xml_doc]))
-      fill_in('Title', with: digital_instantiation_attributes[:title])
       fill_in('Location', with: digital_instantiation_attributes[:location])
 
       # Select Holding Organization
@@ -184,8 +182,8 @@ RSpec.feature 'Create and Validate Asset,Digital Instantiation, EssenseTrack', j
       click_on('Digital Instantiation')
 
       # open digital instantiation with detail show
-      click_on(digital_instantiation_attributes[:title])
-      expect(page).to have_content digital_instantiation_attributes[:title]
+      click_on(main_title)
+      expect(page).to have_content main_title
       expect(page).to have_content digital_instantiation_attributes[:location]
       expect(page).to have_content pbcore_xml_doc.digital.value
       expect(page).to have_content pbcore_xml_doc.media_type.value
