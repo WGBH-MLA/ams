@@ -1,5 +1,5 @@
 class RolesController < ApplicationController
   include Hydra::RoleManagement::RolesBehavior
-  layout 'dashboard'
+  with_themed_layout 'dashboard'
 end
 
