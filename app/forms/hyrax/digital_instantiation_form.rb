@@ -2,7 +2,7 @@
 #  `rails generate hyrax:work DigitalInstantiation`
 module Hyrax
   class DigitalInstantiationForm < Hyrax::Forms::WorkForm
-    include ReadOnlyFields
+    include DisabledFields
 
     self.model_class = ::DigitalInstantiation
     self.terms -= [:description, :relative_path, :import_url, :date_created, :resource_type, :creator, :contributor,
@@ -22,14 +22,27 @@ module Hyrax
 
     self.terms += (self.required_fields + field_groups.values.map(&:to_a).flatten).uniq
 
-    self.readonly_fields = self.terms - [:title, :location, :generations, :language, :date, :annotation, :rights_link, :rights_summary, :holding_organization]
+    self.disabled_fields = self.terms - [:title, :location, :generations, :language, :date, :annotation, :rights_link, :rights_summary, :holding_organization]
+    self.readonly_fields = [:title]
 
+    self.field_metadata_service = WGBH::MetadataService
 
     def primary_terms
       [:digital_instantiation_pbcore_xml]
     end
 
     def secondary_terms
+      []
+    end
+
+
+    def title
+      if @controller.params.has_key?(:parent_id)
+        parent_object = ActiveFedora::Base.find(@controller.params[:parent_id])
+        if(parent_object.title.any?)
+          return [parent_object.title.first]
+        end
+      end
       []
     end
 
@@ -51,6 +64,7 @@ module Hyrax
       terms.each do |key|
         clean_params[key].delete('') if clean_params[key] && multiple?(key)
       end
+      clean_params[:title] = Array(clean_params[:title])
       clean_params
     end
   end

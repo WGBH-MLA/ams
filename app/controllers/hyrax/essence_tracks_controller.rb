@@ -5,6 +5,8 @@ module Hyrax
   class EssenceTracksController < ApplicationController
     # Adds Hyrax behaviors to the controller.
     include Hyrax::WorksControllerBehavior
+    # Add after WorksControllerBehavior to override method
+    include Hyrax::AddParentIdToActor
     include Hyrax::BreadcrumbsForWorks
     # Handle Child Work button and redirect to child work page
     include Hyrax::ChildWorkRedirect
