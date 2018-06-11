@@ -16,6 +16,12 @@ class MultipleDescriptionsWithTypesInput < MultiValueInput
     # But 'description_value' needs to remain required if set.
     select_input_html_options.delete(:required)
     select_input_html_options[:class].delete(:required)
+    text_input_html_options[:class] << "multi-text-field"
+
+    if(text_input_html_options[:value].blank?)
+      text_input_html_options.delete(:required)
+      text_input_html_options[:class].delete(:required)
+    end
 
     output = @builder.text_area(:description_value, text_input_html_options)
     output += @builder.select(:description_type, description_type_choices, { selected: value[0] }, select_input_html_options)
