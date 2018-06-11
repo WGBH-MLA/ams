@@ -20,9 +20,12 @@ class MultipleTitlesWithTypesInput < MultiValueInput
     select_input_html_options[:class].delete(:required)
     text_input_html_options[:class] << "multi-text-field"
 
-    if(text_input_html_options[:value].blank?)
-      text_input_html_options.delete(:required)
-      text_input_html_options[:class].delete(:required)
+    if(text_input_html_options[:title_value].blank?)
+      if(@rendered_first_element)
+        text_input_html_options.delete(:required)
+        text_input_html_options[:class].delete(:required)
+      end
+      @rendered_first_element = true
     end
 
     output = @builder.text_field(:title_value, text_input_html_options)
