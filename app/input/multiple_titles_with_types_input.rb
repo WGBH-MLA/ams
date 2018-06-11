@@ -18,6 +18,12 @@ class MultipleTitlesWithTypesInput < MultiValueInput
     # But 'title_value' needs to remain required if set.
     select_input_html_options.delete(:required)
     select_input_html_options[:class].delete(:required)
+    text_input_html_options[:class] << "multi-text-field"
+
+    if(text_input_html_options[:value].blank?)
+      text_input_html_options.delete(:required)
+      text_input_html_options[:class].delete(:required)
+    end
 
     output = @builder.text_field(:title_value, text_input_html_options)
     output += @builder.select(:title_type, title_type_choices, { selected: value[0] }, select_input_html_options)
