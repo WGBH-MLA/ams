@@ -72,13 +72,7 @@ RSpec.feature 'Create and Validate Asset,Digital Instantiation, EssenseTrack', j
       login_as(user_with_role)
 
       # create asset
-      visit '/'
-
-      disable_js_animation
-
-      click_link "Share Your Work"
-      choose "payload_concern", option: "Asset"
-      click_button "Create work"
+      visit new_hyrax_asset_path
 
       expect(page).to have_content "Add New Asset"
 
@@ -130,6 +124,7 @@ RSpec.feature 'Create and Validate Asset,Digital Instantiation, EssenseTrack', j
 
       # open asset with detail show
       click_on main_title
+      wait_for(5)
 
       expect(page).to have_content asset_attributes[:spatial_coverage]
       expect(page).to have_content asset_attributes[:temporal_coverage]
