@@ -38,13 +38,7 @@ RSpec.feature 'Create a Contriubtion', js: true do
     end
 
     scenario do
-      visit '/dashboard'
-      click_link "Works"
-      click_link "Add new work"
-
-      # If you generate more than one work uncomment these lines
-      choose "payload_concern", option: "Contribution"
-      click_button "Create work"
+      visit new_hyrax_contribution_path
 
       expect(page).to have_content "Add New Contribution"
       fill_in('Title', with: contribution_attributes[:title])
