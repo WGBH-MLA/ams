@@ -1,6 +1,9 @@
 module Hyrax
-  # Presents the list of work type options that a user may choose from when deciding to
-  # create a new work
+  # Overwritten from Hyrax's app/presenters/hyrax/select_type_presenter.rb.
+  # We need a different implementation of #authorized_models to only return our Asset model.
+
+  # Presents the list of work type options that a user may choose from when deciding to create a new work
+
   class SelectTypeListPresenter
     # @param current_user [User]
     def initialize(current_user)
