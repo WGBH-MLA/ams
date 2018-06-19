@@ -30,7 +30,7 @@ module Hyrax
         end
 
         def create_or_update_contributions(env, contributions)
-            if(contributions.any?)
+            if(contributions.any? && !contributions.first["contributor"].blank?)
               contributions.each do |param_contributor|
                 actor ||= Hyrax::CurationConcern.actor
                 #Moving contributor into Array before saving object
