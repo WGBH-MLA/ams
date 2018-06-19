@@ -4,20 +4,55 @@ module Hyrax
   module Actors
     class AssetActor < Hyrax::Actors::BaseActor
       def create(env)
+        contributions = extract_contributions(env)
         add_title_types(env)
         add_description_types(env)
         add_date_types(env)
         super
+        create_or_update_contributions(env, contributions)
       end
 
       def update(env)
+        contributions = extract_contributions(env)
         add_title_types(env)
         add_description_types(env)
         add_date_types(env)
         super
+        create_or_update_contributions(env, contributions)
+
       end
 
       private
+        def extract_contributions(env)
+            contributors = env.attributes[:contributors]
+            env.attributes.delete(:contributors)
+            contributors
+        end
+
+        def create_or_update_contributions(env, contributions)
+            if(contributions.any?)
+              contributions.each do |param_contributor|
+                actor ||= Hyrax::CurationConcern.actor
+                #Moving contributor into Array before saving object
+                param_contributor[:contributor] = Array(param_contributor[:contributor])
+                param_contributor[:admin_set_id] = env.curation_concern.admin_set_id
+
+                if(param_contributor[:id].blank?)
+                  param_contributor.delete(:id)
+                  param_contributor[:title] = env.attributes["title"]
+                  contributor = ::Contribution.new
+                  if actor.create(Actors::Environment.new(contributor, env.current_ability, param_contributor))
+                    env.curation_concern.ordered_members << contributor
+                    env.curation_concern.save
+                  end
+                else
+                  contributor = ActiveFedora::Base.find(param_contributor[:id])
+                  param_contributor.delete(:id)
+                  actor.update(Actors::Environment.new(contributor, env.current_ability, param_contributor))
+                end
+              end
+            end
+        end
 
         def add_title_types(env)
           env.attributes[:title] = get_titles_by_type('main', env.attributes)
