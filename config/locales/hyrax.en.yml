@@ -1274,6 +1274,7 @@ en:
         visibility_after_lease: then restrict it to
         visibility_during_embargo: Restricted to
         visibility_during_lease: Is available to
+        child_contributors: Contributor
       proxy_deposit_request:
         sender_comment: Comments
         transfer_to: User
