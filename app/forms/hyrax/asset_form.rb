@@ -21,7 +21,8 @@ module Hyrax
     self.field_groups = {
       identifying_info: [:titles_with_types, :episode_number, :local_identifier, :pbs_nola_code, :eidr_id, :asset_types, :dates_with_types, :descriptions_with_types],
       subject_info: [:genre, :topics, :subject, :spatial_coverage, :temporal_coverage, :audience_level, :audience_rating, :annotation],
-      rights: [:rights_summary, :rights_link]
+      rights: [:rights_summary, :rights_link],
+      credits: [:child_contributors]
     }
 
     self.terms += (self.required_fields + field_groups.values.map(&:to_a).flatten).uniq
@@ -43,8 +44,18 @@ module Hyrax
     def date_value; end
     def save_type; end
 
+    def multiple?(field)
+      if [:child_contributors].include?(field.to_sym)
+        true
+      else
+        super
+      end
+    end
+
     def expand_field_group?(group)
       #Get terms for a certian field group
+      return true if group == :credits && model.members.any?
+
       field_group_terms(group).each do |term|
         #Expand field group
         return true if !model.attributes[term.to_s].blank? || model.errors.has_key?(term)
@@ -60,6 +71,16 @@ module Hyrax
         group_terms += [:description, :episode_description, :segment_description, :raw_footage_description, :promo_description, :clip_description]
       end
       group_terms
+    end
+
+    def child_contributors
+      child_contributions = []
+      model.members.reverse.each do |member|
+         if( member.class == Contribution )
+            child_contributions << [member.id, member.contributor_role, member.contributor.first , member.portrayal]
+         end
+       end
+      child_contributions
     end
 
     def titles_with_types
@@ -104,6 +125,7 @@ module Hyrax
         permitted_params << { description_value: [] }
         permitted_params << { date_type: [] }
         permitted_params << { date_value: [] }
+        permitted_params << { contributors: [[:id,:contributor_role,:contributor,:portrayal]] }
       end
     end
   end
