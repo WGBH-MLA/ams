@@ -38,17 +38,17 @@ module Hyrax
                 param_contributor[:contributor] = Array(param_contributor[:contributor])
                 param_contributor[:admin_set_id] = env.curation_concern.admin_set_id
                 param_contributor[:title] = env.attributes["title"]
-                if(param_contributor[:id].blank? && !param_contributor[:contributor].first.blank?)
+
+                if param_contributor[:id].blank?
                   param_contributor.delete(:id)
                   contributor = ::Contribution.new
                   if actor.create(Actors::Environment.new(contributor, env.current_ability, param_contributor))
                     env.curation_concern.ordered_members << contributor
                     env.curation_concern.save
                   end
-                else
-                  contributor = ActiveFedora::Base.find(param_contributor[:id])
-                  param_contributor.delete(:id)
-                  actor.update(Actors::Environment.new(contributor, env.current_ability, param_contributor))
+                elsif (contributor = Contribution.find(param_contributor[:id]))
+                    param_contributor.delete(:id)
+                    actor.update(Actors::Environment.new(contributor, env.current_ability, param_contributor))
                 end
               end
             end
