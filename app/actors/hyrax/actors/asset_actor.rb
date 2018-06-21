@@ -26,7 +26,8 @@ module Hyrax
         def extract_contributions(env)
             contributors = env.attributes[:contributors]
             env.attributes.delete(:contributors)
-            contributors
+            # removing element where contributor is blank, as its req field
+            contributors.select{|contributor| contributor unless contributor[:contributor].first.blank? }
         end
 
         def create_or_update_contributions(env, contributions)
@@ -36,10 +37,9 @@ module Hyrax
                 #Moving contributor into Array before saving object
                 param_contributor[:contributor] = Array(param_contributor[:contributor])
                 param_contributor[:admin_set_id] = env.curation_concern.admin_set_id
-
-                if(param_contributor[:id].blank?)
+                param_contributor[:title] = env.attributes["title"]
+                if(param_contributor[:id].blank? && !param_contributor[:contributor].first.blank?)
                   param_contributor.delete(:id)
-                  param_contributor[:title] = env.attributes["title"]
                   contributor = ::Contribution.new
                   if actor.create(Actors::Environment.new(contributor, env.current_ability, param_contributor))
                     env.curation_concern.ordered_members << contributor

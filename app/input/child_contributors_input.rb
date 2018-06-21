@@ -4,26 +4,32 @@ class ChildContributorsInput < MultiValueInput
     contributor_role_service = ContributorRoleService.new
     role_choices = [""] + contributor_role_service.select_all_options
 
+    input_dom_id_prefix = "#{object_name}_#{attribute_name}_#{_index}"
+
     role_select_input_html_options = input_html_options.dup.merge(
-      name: "#{@builder.object_name}[contributors][][contributor_role]"
+      name: "#{@builder.object_name}[contributors][][contributor_role]",
+      id: input_dom_id_prefix + "_role"
     )
 
     contributor_text_input_html_options = input_html_options.dup.merge(
       name: "#{@builder.object_name}[contributors][][contributor]",
       value: value[2],
       placeholder: "Name",
-      class: "string child_contributors form-control multi-text-field"
+      class: "string child_contributors form-control multi-text-field",
+      id: input_dom_id_prefix + "_contributor"
     )
 
     portrayal_text_input_html_options = input_html_options.dup.merge(
       name: "#{@builder.object_name}[contributors][][portrayal]",
       value: value[3],
-      placeholder: "Portrayal"
+      placeholder: "Portrayal",
+      id: input_dom_id_prefix + "_portrayal"
     )
 
     id_hidden_options = input_html_options.dup.merge(
         value: value[0],
-        name: "#{@builder.object_name}[contributors][][id]"
+        name: "#{@builder.object_name}[contributors][][id]",
+        id: input_dom_id_prefix + "_id"
     )
 
 
