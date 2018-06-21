@@ -57,7 +57,7 @@ RSpec.feature 'Create and Validate Asset', js: true, asset_form_helpers: true, c
     # Make an array of [date, date_type] pairs.
     # Ensure there are 2 date for every date type.
     let(:dates_with_types) do
-      (DateTypesService.all_terms * 1).each_with_index.map { |date_type, i| [rand_date_time.strftime(output_date_format), date_type] }
+      (DateTypesService.all_terms * 2).each_with_index.map { |date_type, i| [rand_date_time.strftime(output_date_format), date_type] }
     end
 
     let(:contribution_attributes) {FactoryBot.attributes_for(:contribution)}

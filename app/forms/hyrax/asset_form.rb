@@ -54,7 +54,7 @@ module Hyrax
 
     def expand_field_group?(group)
       #Get terms for a certian field group
-      return true if group == :credits && model.members.any?
+      return true if group == :credits && model.members.map{ |member| member.class }.include?(Contribution)
 
       field_group_terms(group).each do |term|
         #Expand field group
@@ -75,7 +75,7 @@ module Hyrax
 
     def child_contributors
       child_contributions = []
-      model.members.reverse.each do |member|
+      model.ordered_members.to_a.each do |member|
          if( member.class == Contribution )
             child_contributions << [member.id, member.contributor_role, member.contributor.first , member.portrayal]
          end
