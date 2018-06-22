@@ -74,10 +74,7 @@ RSpec.feature 'Create and Validate Asset', js: true, asset_form_helpers: true, c
       login_as(user_with_role)
 
       # create asset
-      visit '/'
-      click_link "Share Your Work"
-      choose "payload_concern", option: "Asset"
-      click_button "Create work"
+      visit new_hyrax_asset_path
       expect(page).to have_content "Add New Asset"
 
       click_link "Files" # switch tab
