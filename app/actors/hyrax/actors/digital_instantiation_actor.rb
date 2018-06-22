@@ -39,27 +39,31 @@ module Hyrax
 
         def parse_pbcore_essense_track(env,pbcore_doc)
           pbcore_doc.essence_tracks.each do |track|
-            e = ::EssenceTrack.new
-            e.title = env.curation_concern.title
-            e.track_type = track.type  if track.type
-            e.track_id << track.identifiers.map {|id| id.value}  if track.identifiers
-            e.standard = track.standard.value if track.standard
-            e.encoding = track.encoding.value if track.encoding
-            e.data_rate = track.data_rate.value if track.data_rate
-            e.frame_rate = track.frame_rate.value if track.frame_rate
-            e.bit_depth = track.bit_depth if track.bit_depth
-            e.aspect_ratio << track.aspect_ratio.value if track.aspect_ratio
-            e.duration = track.duration if track.duration
-            e.annotation << track.annotation.value if track.annotation
-            e.admin_set_id = env.curation_concern.admin_set_id
-            e.depositor = env.curation_concern.depositor
-            e.date_uploaded = env.curation_concern.date_uploaded
-            e.date_modified = env.curation_concern.date_modified
-            e.access_control_id = env.curation_concern.access_control_id
-            e.save
-            #add essence track as child work to digital instantiation
-            env.curation_concern.ordered_members << e
-            env.curation_concern.save
+            e = {}
+            e[:title] = env.curation_concern.title
+            e[:track_type] = track.type  if track.type
+            e[:track_id] = Array(track.identifiers.map {|id| id.value})  if track.identifiers
+            e[:standard] = track.standard.value if track.standard
+            e[:encoding] = track.encoding.value if track.encoding
+            e[:data_rate] = track.data_rate.value if track.data_rate
+            e[:frame_rate] = track.frame_rate.value if track.frame_rate
+            e[:bit_depth] = track.bit_depth if track.bit_depth
+            e[:aspect_ratio] = Array(track.aspect_ratio.value) if track.aspect_ratio
+            e[:duration] = track.duration if track.duration
+            e[:annotation] =  Array(track.annotation.value) if track.annotation
+            e[:admin_set_id] = env.curation_concern.admin_set_id
+            e[:depositor] = env.curation_concern.depositor
+            e[:date_uploaded] = env.curation_concern.date_uploaded
+            e[:date_modified] = env.curation_concern.date_modified
+            e[:access_control_id] = env.curation_concern.access_control_id
+
+            actor = Hyrax::CurationConcern.actor
+            essence_track = ::EssenceTrack.new
+              if actor.create(Actors::Environment.new(essence_track, env.current_ability, e))
+                #add essence track as child work to digital instantiation
+                env.curation_concern.ordered_members << essence_track
+                env.curation_concern.save
+              end
           end
 
 

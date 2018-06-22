@@ -60,6 +60,8 @@ RSpec.feature 'Create and Validate Asset', js: true, asset_form_helpers: true, c
       (DateTypesService.all_terms * 2).each_with_index.map { |date_type, i| [rand_date_time.strftime(output_date_format), date_type] }
     end
 
+    let(:contribution_attributes) {FactoryBot.attributes_for(:contribution)}
+
     scenario 'Create and Validate Asset, Search asset' do
       Sipity::WorkflowAction.create!(name: 'submit', workflow: workflow)
       Hyrax::PermissionTemplateAccess.create!(
@@ -72,10 +74,7 @@ RSpec.feature 'Create and Validate Asset', js: true, asset_form_helpers: true, c
       login_as(user_with_role)
 
       # create asset
-      visit '/'
-      click_link "Share Your Work"
-      choose "payload_concern", option: "Asset"
-      click_button "Create work"
+      visit new_hyrax_asset_path
       expect(page).to have_content "Add New Asset"
 
       click_link "Files" # switch tab
@@ -112,8 +111,18 @@ RSpec.feature 'Create and Validate Asset', js: true, asset_form_helpers: true, c
 
       fill_in('Rights summary', with: asset_attributes[:rights_summary])
 
+
+      click_link "Credits" # expand field group
+      wait_for(2) # wait untill all elements are visiable
+
+      select(contribution_attributes[:contributor_role].first, :from => "asset_child_contributors_0_role")
+
+      fill_in('asset_child_contributors_0_contributor', with: contribution_attributes[:contributor].first)
+      fill_in('asset_child_contributors_0_portrayal', with: contribution_attributes[:portrayal].first)
+
       click_link "Relationships" # define adminset relation
       find("#asset_admin_set_id option[value='#{admin_set_id}']").select_option
+
 
       # set it public
       find('body').click
@@ -124,6 +133,11 @@ RSpec.feature 'Create and Validate Asset', js: true, asset_form_helpers: true, c
 
       visit '/'
       find("#search-submit-header").click
+
+      # Filter resources types
+      click_on('Type')
+      click_on('Asset')
+
 
       # Expect metadata for Asset to be displayed on the search results page.
       main_titles.each do |main_title|
@@ -138,6 +152,15 @@ RSpec.feature 'Create and Validate Asset', js: true, asset_form_helpers: true, c
       expect(page).to have_content asset_attributes[:audience_rating]
       expect(page).to have_content asset_attributes[:annotation]
       expect(page).to have_content asset_attributes[:rights_summary]
+      expect(page).to have_current_path(guid_regex)
+
+      expect(page).to have_link(href: /contributions/)
+      #Clicking contribution link from members table
+      within('.thumbnail') {find('a[href*="contribution"]').click }
+
+      expect(page).to have_content contribution_attributes[:contributor].first
+      expect(page).to have_content contribution_attributes[:portrayal].first
+      expect(page).to have_content contribution_attributes[:contributor_role].first
       expect(page).to have_current_path(guid_regex)
     end
   end
