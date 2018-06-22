@@ -1,0 +1,7 @@
+<%=
+  f.input :child_contributors,
+          as: :child_contributors,
+          wrapper_html: { class: 'multi_value' },
+          input_html: { class: 'form-control' },
+          required: f.object.required?(key)
+%>
