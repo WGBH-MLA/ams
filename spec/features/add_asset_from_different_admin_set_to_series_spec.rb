@@ -41,9 +41,7 @@ RSpec.feature "AddAssetFromDifferentAdminSetToSeries", type: :feature, js: true,
 
       # Login role user to create series
       login_as(user)
-      visit hyrax.dashboard_collections_path
-
-      click_on "New Collection"
+      visit hyrax.new_dashboard_collection_path(collection_type_id: Hyrax::CollectionType.find_by_machine_id('series').id)
       expect(find('div.main-header')).to have_content "New Series"
       fill_in('Series title', with: series_collection_attributes[:series_title].first)
       fill_in('Series description', with: series_collection_attributes[:series_description].first)

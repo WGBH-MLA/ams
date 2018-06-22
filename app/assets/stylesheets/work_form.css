@@ -10,3 +10,14 @@ textarea.multiple_descriptions_with_types {
   width: 65% !important;
   margin-right: 5px !important;
 }
+
+select.child_contributors
+{
+    width: 30% !important;
+}
+
+input.child_contributors
+{
+    width: 30% !important;
+    margin-left: 5px !important;
+}
