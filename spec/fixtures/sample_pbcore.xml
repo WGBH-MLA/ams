@@ -1,0 +1,292 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pbcoreDescriptionDocument xmlns="http://www.pbcore.org/PBCore/PBCoreNamespace.html" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.pbcore.org/PBCore/PBCoreNamespace.html http://pbcore.org/xsd/pbcore-2.0.xsd">
+  <!--XML Generated at Tue Jan 02 16:44:33 -0500 2018 by rails pbcore database-->
+  <!--created at 2011-01-12 21:45:10 UTC by evinson-->
+  <!--updated at 2018-01-02 21:44:16 UTC by jpassmore-->
+  <pbcoreAssetDate dateType="broadcast">1952-10-03</pbcoreAssetDate>
+  <pbcoreIdentifier source="WNYC Archive Catalog">69762</pbcoreIdentifier>
+  <pbcoreIdentifier source="Municipal Archives">LT786 </pbcoreIdentifier>
+  <pbcoreIdentifier source="Municipal Archives">LT787</pbcoreIdentifier>
+  <pbcoreIdentifier source="pbcore XML database UUID">8b751948-e47e-47ba-98a4-d13808e431aa</pbcoreIdentifier>
+  <pbcoreTitle titleType="Episode">American Chemical Society Honors WNYC</pbcoreTitle>
+  <pbcoreTitle titleType="Series">Headlines in Chemistry</pbcoreTitle>
+  <pbcoreTitle titleType="Collection">MUNI</pbcoreTitle>
+  <pbcoreSubject source="Library of Congress Name Authority" ref="http://authorities.loc.gov/">WNYC (Radio station : New York, N.Y.).</pbcoreSubject>
+  <pbcoreSubject source="Library of Congress Name Authority" ref="http://authorities.loc.gov/">Science.</pbcoreSubject>
+  <pbcoreSubject source="Library of Congress Name Authority" ref="http://authorities.loc.gov/">Radio.</pbcoreSubject>
+  <pbcoreSubject source="Library of Congress Name Authority" ref="http://authorities.loc.gov/">Mass media.</pbcoreSubject>
+  <pbcoreSubject source="Library of Congress Name Authority" ref="http://authorities.loc.gov/">Education.</pbcoreSubject>
+  <pbcoreSubject source="Library of Congress Name Authority" ref="http://authorities.loc.gov/">Social sciences.</pbcoreSubject>
+  <pbcoreSubject source="Library of Congress Name Authority" ref="http://authorities.loc.gov/">Broadcasting.</pbcoreSubject>
+  <pbcoreDescription descriptionType="Abstract">Dr. Edgar C. Britton, president of the American Chemical Society honors WNYC for the show "Headlines in Chemistry." He presents a plaque to WNYC on the 5th anniversary of "Headlines in Chemistry." Mayor Impellitteri responds with gratitude for the honor. </pbcoreDescription>
+  <pbcoreDescription descriptionType="Transcript">This is a machine generated transcript. Text is unformatted and may contain errors.  Yes under your direct supervision this bill broadcasting system has been presenting a series of distinguished informational programs under the auspices of the American Chemical Society and title headlines in chemistry.  These programs have been extremely important in keeping housewives and consumers aware of the latest developments in the chemical laboratories of America and showing how life can be made.  By reason of chemistry and today.  Is extremely proud and on it because.  The president of the American Chemical Society and the director of the organic research laboratory of the Dow Chemical Company is here to take some tangible recognition of this public service activity on the part of the city station and Dr Bretton Miss America the American Cancer Society is presenting this plaque to our radio station Debbie N.Y.C. in New York City for the standing Service in broadcasting scientific information on the program headlined in chemistry as a composer and edited by the American Chemical Society new shared this service established in one nine hundred seventy as an enviable record of contributing to the lay public appreciation of chemistry and chemical engineering and it applies to our slogan chemistry better living the problem of translating scientific publication in.  One But it has been happen by our news servers the role.  During the past five years enhancing this work had been of great significance to the both the chemical profession and the lay public scientists remaking the world for the better.  And our people must be continually informed of the progress of this transformation.  And why she had been such a power by the spoken word in this information service and we American Chemical Society on this occasion of the fifth anniversary offer our heartiest congratulations.  As a token of our steam the plaque read just follow.  N.Y.C. and the City of New York this award is presented by the American Chemical Society on the fifth anniversary of the an organization of the American Chemical Society news service program headlined in chemistry in recognition of the outstanding contribution made by the N.Y.C. to the broadcasting of educational and scientific information thank you very much Dr Brown.  I.  Assure you and the members of the American Chemical Society that I as mayor of the city of New York and I'm proud and happy to receive this citation then behalf of N.Y.C. and the people of the city of New York I want to particularly congratulate the members of your society for providing the people of our city with this very interesting and educational program very properly called headlines and chemistry I also on this occasion want to take time to congratulate Mr Seymour and Siegel and his staff for providing the city of New York and the people of the setting where the education programs which have great value for all the people of our city may I hope that this program headlines in chemistry will continue for our right number of years to come thank you very much for this present Thanks thank you Mr. </pbcoreDescription>
+  <pbcoreDescription descriptionType="CMS Tease">Radio show generates praise.</pbcoreDescription>
+  <pbcoreGenre source="PBCore Genre Picklist">Awards</pbcoreGenre>
+  <pbcoreRelation>
+    <pbcoreRelationType ref="http://metadataregistry.org/concept/show/id/3093.html">Is Part Of</pbcoreRelationType>
+    <pbcoreRelationIdentifier>NEH Grant</pbcoreRelationIdentifier>
+  </pbcoreRelation>
+  <pbcoreRelation>
+    <pbcoreRelationType ref="http://metadataregistry.org/concept/show/id/3093.html">Is Part Of</pbcoreRelationType>
+    <pbcoreRelationIdentifier>CMS</pbcoreRelationIdentifier>
+  </pbcoreRelation>
+  <pbcoreRelation>
+    <pbcoreRelationType>Website Series</pbcoreRelationType>
+    <pbcoreRelationIdentifier>Municipal Archives</pbcoreRelationIdentifier>
+  </pbcoreRelation>
+  <pbcoreRelation>
+    <pbcoreRelationType>Website Series</pbcoreRelationType>
+    <pbcoreRelationIdentifier>Headlines in Chemistry</pbcoreRelationIdentifier>
+  </pbcoreRelation>
+  <pbcoreRelation>
+    <pbcoreRelationType>Is Referenced By</pbcoreRelationType>
+    <pbcoreRelationIdentifier>www.wnyc.org/story/american-chemical-society-honors-wnyc</pbcoreRelationIdentifier>
+  </pbcoreRelation>
+  <pbcoreAnnotation annotationType="CMS Image">147556</pbcoreAnnotation>
+  <pbcoreContributor>
+    <contributor>Britton, Edgar C</contributor>
+    <contributorRole>Speaker</contributorRole>
+  </pbcoreContributor>
+  <pbcoreContributor>
+    <contributor>Impellitteri, Vincent R. (Vincent Richard), 1900-1987</contributor>
+    <contributorRole>Speaker</contributorRole>
+  </pbcoreContributor>
+  <pbcorePublisher>
+    <publisher>WNYC</publisher>
+    <publisherRole>Publisher</publisherRole>
+  </pbcorePublisher>
+  <pbcoreInstantiation>
+    <instantiationIdentifier source="WNYC Media Archive Label">69762.1</instantiationIdentifier>
+    <instantiationIdentifier source="pbcore XML database UUID">0894527f-7c2e-4c1e-922e-ec5c134d93e6</instantiationIdentifier>
+    <instantiationDate dateType="Created">2011-01-12</instantiationDate>
+    <instantiationDate dateType="Issued">1952-10-03</instantiationDate>
+    <instantiationDigital>BWF</instantiationDigital>
+    <instantiationLocation>DAVID NEH Folder</instantiationLocation>
+    <instantiationMediaType>Sound</instantiationMediaType>
+    <instantiationGenerations>Audio/Transcription dub</instantiationGenerations>
+    <instantiationDuration>00:04:01</instantiationDuration>
+    <instantiationChannelConfiguration>Stereo</instantiationChannelConfiguration>
+    <instantiationLanguage>eng</instantiationLanguage>
+    <instantiationEssenceTrack>
+      <essenceTrackType>audio</essenceTrackType>
+      <essenceTrackIdentifier>MUNI-HIC-1952-10-03-69762.1a LT786 R545 American Chem Soc Honors WNYC</essenceTrackIdentifier>
+      <essenceTrackEncoding>Linear PCM</essenceTrackEncoding>
+      <essenceTrackSamplingRate>96 kHz</essenceTrackSamplingRate>
+      <essenceTrackBitDepth>24</essenceTrackBitDepth>
+      <essenceTrackDuration>00:04:01</essenceTrackDuration>
+    </instantiationEssenceTrack>
+    <instantiationAnnotation annotationType="provenance">BWF created from Municipal Archives (1960s) acetate reel recording of original lacquer transcription disc. Reformatted as part of NEH project.</instantiationAnnotation>
+  </pbcoreInstantiation>
+  <pbcoreInstantiation>
+    <instantiationIdentifier source="WNYC Media Archive Label">69762.2</instantiationIdentifier>
+    <instantiationIdentifier source="WNYC Media Archive Label">CD NEH 744</instantiationIdentifier>
+    <instantiationIdentifier source="pbcore XML database UUID">0b2f9086-da48-4644-a589-94086304eb0d</instantiationIdentifier>
+    <instantiationDate dateType="Created">2011-01-12</instantiationDate>
+    <instantiationDate dateType="Issued">1952-10-29</instantiationDate>
+    <instantiationPhysical>CD-Audio</instantiationPhysical>
+    <instantiationLocation>Archives Storage</instantiationLocation>
+    <instantiationMediaType>Sound</instantiationMediaType>
+    <instantiationGenerations>Audio/Transcription dub</instantiationGenerations>
+    <instantiationDuration>00:04:01</instantiationDuration>
+    <instantiationChannelConfiguration>Stereo</instantiationChannelConfiguration>
+    <instantiationLanguage>eng</instantiationLanguage>
+    <instantiationEssenceTrack>
+      <essenceTrackType>audio</essenceTrackType>
+      <essenceTrackIdentifier source="WNYC Media Archive Label">CD NEH 744</essenceTrackIdentifier>
+      <essenceTrackEncoding>Linear PCM</essenceTrackEncoding>
+      <essenceTrackSamplingRate>44.1 kHz</essenceTrackSamplingRate>
+      <essenceTrackBitDepth>16</essenceTrackBitDepth>
+      <essenceTrackDuration>00:04:01</essenceTrackDuration>
+      <essenceTrackLanguage>eng</essenceTrackLanguage>
+      <essenceTrackAnnotation>One track: 69762.1. Preservation copy.</essenceTrackAnnotation>
+    </instantiationEssenceTrack>
+    <instantiationAnnotation>CD created from Municipal Archives (1960s) acetate reel recording of original lacquer transcription disc. Reformatted as part of NEH project.</instantiationAnnotation>
+  </pbcoreInstantiation>
+  <pbcoreInstantiation>
+    <instantiationIdentifier source="WNYC Media Archive Label">69762.3</instantiationIdentifier>
+    <instantiationIdentifier source="pbcore XML database UUID">14e7ee1b-f5dd-4539-aba1-0b2aae1a0684</instantiationIdentifier>
+    <instantiationDate dateType="Created">2011-01-12</instantiationDate>
+    <instantiationDigital>BWF</instantiationDigital>
+    <instantiationLocation>DAVID NEH Folder</instantiationLocation>
+    <instantiationMediaType>Sound</instantiationMediaType>
+    <instantiationGenerations>Audio/Transcription dub</instantiationGenerations>
+    <instantiationDuration>00:04:00</instantiationDuration>
+    <instantiationChannelConfiguration>Stereo</instantiationChannelConfiguration>
+    <instantiationLanguage>eng</instantiationLanguage>
+    <instantiationEssenceTrack>
+      <essenceTrackType>audio</essenceTrackType>
+      <essenceTrackIdentifier source="DAVID Title">MUNI-HIC-1952-10-29-69762.3 LT787 R545 American Chem Soc Honors WNYC DUPLICATE</essenceTrackIdentifier>
+      <essenceTrackEncoding>Linear PCM</essenceTrackEncoding>
+      <essenceTrackSamplingRate>96 kHz</essenceTrackSamplingRate>
+      <essenceTrackBitDepth>24</essenceTrackBitDepth>
+      <essenceTrackDuration>00:04:00</essenceTrackDuration>
+      <essenceTrackAnnotation annotationType="DAVID filename">\\wnycdavidmedia\media$\Archives_NEH\PB7-ARCH-DAWC_E61D9E1314E34716A5ACB0263ADEF619.WAV</essenceTrackAnnotation>
+    </instantiationEssenceTrack>
+    <instantiationAnnotation annotationType="provenance">BWF created from Municipal Archives (1960s) acetate reel recording of original lacquer transcription disc. Reformatted as part of NEH project.</instantiationAnnotation>
+    <instantiationAnnotation>Duplicate of 69765.1 (LT786). Did not make preservation CD.</instantiationAnnotation>
+  </pbcoreInstantiation>
+  <pbcoreInstantiation>
+    <instantiationIdentifier source="WNYC Media Archive Label">69762.4</instantiationIdentifier>
+    <instantiationIdentifier source="pbcore XML database UUID">66fbffcf-265d-44f9-bfcb-4f5d882703b6</instantiationIdentifier>
+    <instantiationDate dateType="Created">2012-03-01</instantiationDate>
+    <instantiationDigital>BWF</instantiationDigital>
+    <instantiationLocation>DAVID NEH Folder</instantiationLocation>
+    <instantiationMediaType>Sound</instantiationMediaType>
+    <instantiationGenerations>Audio/Transcription dub</instantiationGenerations>
+    <instantiationDuration>00:04:06</instantiationDuration>
+    <instantiationChannelConfiguration>Mono</instantiationChannelConfiguration>
+    <instantiationLanguage>eng</instantiationLanguage>
+    <instantiationEssenceTrack>
+      <essenceTrackType>audio</essenceTrackType>
+      <essenceTrackIdentifier source="DAVID Title">MUNI-HIC-1952-10-03-69762.4 LT786 FLAT</essenceTrackIdentifier>
+      <essenceTrackStandard>BWF</essenceTrackStandard>
+      <essenceTrackEncoding>Linear PCM</essenceTrackEncoding>
+      <essenceTrackSamplingRate>96 kHz</essenceTrackSamplingRate>
+      <essenceTrackBitDepth>24</essenceTrackBitDepth>
+      <essenceTrackDuration>00:04:06</essenceTrackDuration>
+      <essenceTrackAnnotation annotationType="DAVID filename">\\wnycdavidmedia\media$\Archives_NEH\PB7-ARCH-DAWC_4FABB81542874804BCBB4959F5954F0B.WAV</essenceTrackAnnotation>
+    </instantiationEssenceTrack>
+    <instantiationAnnotation annotationType="provenance">BWF created from Municipal Archives lacquer transcription disc. Reformatted as part of NEH project.</instantiationAnnotation>
+    <instantiationAnnotation annotationType="Stylus_size">2.5ET</instantiationAnnotation>
+    <instantiationAnnotation>outside start.</instantiationAnnotation>
+    <instantiationAnnotation>78 rpm</instantiationAnnotation>
+  </pbcoreInstantiation>
+  <pbcoreInstantiation>
+    <instantiationIdentifier source="WNYC Media Archive Label">69762.5</instantiationIdentifier>
+    <instantiationIdentifier source="pbcore XML database UUID">67649709-e427-48a8-83d4-9f3be58e8be0</instantiationIdentifier>
+    <instantiationDate dateType="Created">2012-03-01</instantiationDate>
+    <instantiationDigital>BWF</instantiationDigital>
+    <instantiationLocation>DAVID NEH Folder</instantiationLocation>
+    <instantiationMediaType>Sound</instantiationMediaType>
+    <instantiationGenerations>Audio/Transcription dub</instantiationGenerations>
+    <instantiationDuration>00:04:06</instantiationDuration>
+    <instantiationChannelConfiguration>Mono</instantiationChannelConfiguration>
+    <instantiationLanguage>eng</instantiationLanguage>
+    <instantiationEssenceTrack>
+      <essenceTrackType>audio</essenceTrackType>
+      <essenceTrackIdentifier source="DAVID Title">MUNI-HIC-1952-10-03-69762.5 LT786 EQ</essenceTrackIdentifier>
+      <essenceTrackStandard>BWF</essenceTrackStandard>
+      <essenceTrackEncoding>Linear PCM</essenceTrackEncoding>
+      <essenceTrackSamplingRate>96 kHz</essenceTrackSamplingRate>
+      <essenceTrackBitDepth>24</essenceTrackBitDepth>
+      <essenceTrackDuration>00:04:06</essenceTrackDuration>
+      <essenceTrackAnnotation annotationType="DAVID filename">\\wnycdavidmedia\media$\Archives_NEH\PB7-ARCH-DAWC_23ECD1C6EF5840518F56AA4F47E080E1.WAV</essenceTrackAnnotation>
+    </instantiationEssenceTrack>
+    <instantiationAnnotation annotationType="provenance">BWF created from Municipal Archives lacquer transcription disc. Reformatted as part of NEH project.</instantiationAnnotation>
+    <instantiationAnnotation annotationType="Stylus_size">2.5ET</instantiationAnnotation>
+    <instantiationAnnotation annotationType="LF_turnover">250Hz</instantiationAnnotation>
+    <instantiationAnnotation annotationType="10kHz_att">8.5dB</instantiationAnnotation>
+    <instantiationAnnotation annotationType="Rumble_filter">70Hz</instantiationAnnotation>
+    <instantiationAnnotation annotationType="HF_notch">10kHz</instantiationAnnotation>
+    <instantiationAnnotation>outside start.</instantiationAnnotation>
+    <instantiationAnnotation>78 rpm</instantiationAnnotation>
+  </pbcoreInstantiation>
+  <pbcoreInstantiation>
+    <instantiationIdentifier source="WNYC Media Archive Label">69762.6</instantiationIdentifier>
+    <instantiationIdentifier source="WNYC Media Archive Label">CD NEH 1775</instantiationIdentifier>
+    <instantiationIdentifier source="pbcore XML database UUID">15e00385-ec71-466c-8a36-708b801c1f4d</instantiationIdentifier>
+    <instantiationDate dateType="Created">2012-03-01</instantiationDate>
+    <instantiationPhysical>CD-Audio</instantiationPhysical>
+    <instantiationLocation>Archives Storage</instantiationLocation>
+    <instantiationMediaType>Sound</instantiationMediaType>
+    <instantiationGenerations>Audio/Transcription dub</instantiationGenerations>
+    <instantiationDuration>00:04:06</instantiationDuration>
+    <instantiationChannelConfiguration>Stereo</instantiationChannelConfiguration>
+    <instantiationLanguage>eng</instantiationLanguage>
+    <instantiationEssenceTrack>
+      <essenceTrackType>audio</essenceTrackType>
+      <essenceTrackIdentifier source="WNYC Media Archive Label">CD NEH 1775</essenceTrackIdentifier>
+      <essenceTrackEncoding>Linear PCM</essenceTrackEncoding>
+      <essenceTrackSamplingRate>44.1 kHz</essenceTrackSamplingRate>
+      <essenceTrackBitDepth>16</essenceTrackBitDepth>
+      <essenceTrackDuration>00:04:06</essenceTrackDuration>
+      <essenceTrackLanguage>eng</essenceTrackLanguage>
+      <essenceTrackAnnotation>One track: 69762.5 (EQ). One track.</essenceTrackAnnotation>
+    </instantiationEssenceTrack>
+    <instantiationAnnotation>CD created from EQ BWF created from Municipal Archives lacquer transcription disc. Reformatted as part of NEH project</instantiationAnnotation>
+  </pbcoreInstantiation>
+  <pbcoreInstantiation>
+    <instantiationIdentifier source="WNYC Media Archive Label">69762.7</instantiationIdentifier>
+    <instantiationIdentifier source="pbcore XML database UUID">1c9115cb-4c6d-4760-be82-e420a6db5aea</instantiationIdentifier>
+    <instantiationDate dateType="Created">2012-03-01</instantiationDate>
+    <instantiationDate dateType="Issued">1952-10-29</instantiationDate>
+    <instantiationDigital>BWF</instantiationDigital>
+    <instantiationLocation>DAVID NEH Folder</instantiationLocation>
+    <instantiationMediaType>Sound</instantiationMediaType>
+    <instantiationGenerations>Audio/Transcription dub</instantiationGenerations>
+    <instantiationDuration>00:04:08</instantiationDuration>
+    <instantiationChannelConfiguration>Mono</instantiationChannelConfiguration>
+    <instantiationLanguage>eng</instantiationLanguage>
+    <instantiationEssenceTrack>
+      <essenceTrackType>audio</essenceTrackType>
+      <essenceTrackIdentifier source="DAVID Title">MUNI-HIC-1952-10-29-69762.7 LT787 FLAT DUPLICATE</essenceTrackIdentifier>
+      <essenceTrackStandard>BWF</essenceTrackStandard>
+      <essenceTrackEncoding>Linear PCM</essenceTrackEncoding>
+      <essenceTrackSamplingRate>96 kHz</essenceTrackSamplingRate>
+      <essenceTrackBitDepth>24</essenceTrackBitDepth>
+      <essenceTrackDuration>00:04:08</essenceTrackDuration>
+      <essenceTrackAnnotation annotationType="DAVID filename">\\wnycdavidmedia\media$\Archives_NEH\PB7-ARCH-DAWC_1F521C7C498D43248863D0A08FB08F00.WAV</essenceTrackAnnotation>
+    </instantiationEssenceTrack>
+    <instantiationAnnotation annotationType="provenance">BWF created from Municipal Archives lacquer transcription disc. Reformatted as part of NEH project.</instantiationAnnotation>
+    <instantiationAnnotation annotationType="Stylus_size">2.5ET</instantiationAnnotation>
+    <instantiationAnnotation>outside start.</instantiationAnnotation>
+    <instantiationAnnotation>78 rpm</instantiationAnnotation>
+    <instantiationAnnotation>Duplicate of 69762.4 (LT786). </instantiationAnnotation>
+  </pbcoreInstantiation>
+  <pbcoreInstantiation>
+    <instantiationIdentifier source="WNYC Media Archive Label">69762.8</instantiationIdentifier>
+    <instantiationIdentifier source="pbcore XML database UUID">39ae3cd9-7c49-4202-b00c-1c505440f716</instantiationIdentifier>
+    <instantiationDate dateType="Created">2012-03-01</instantiationDate>
+    <instantiationDate dateType="Issued">1952-10-29</instantiationDate>
+    <instantiationDigital>BWF</instantiationDigital>
+    <instantiationLocation>DAVID NEH Folder</instantiationLocation>
+    <instantiationMediaType>Sound</instantiationMediaType>
+    <instantiationGenerations>Audio/Transcription dub</instantiationGenerations>
+    <instantiationDuration>00:04:08</instantiationDuration>
+    <instantiationChannelConfiguration>Mono</instantiationChannelConfiguration>
+    <instantiationLanguage>eng</instantiationLanguage>
+    <instantiationEssenceTrack>
+      <essenceTrackType>audio</essenceTrackType>
+      <essenceTrackIdentifier source="DAVID Title">MUNI-HIC-1952-10-29-69762.8 LT787 EQ DUPLICATE</essenceTrackIdentifier>
+      <essenceTrackStandard>BWF</essenceTrackStandard>
+      <essenceTrackEncoding>Linear PCM</essenceTrackEncoding>
+      <essenceTrackSamplingRate>96 kHz</essenceTrackSamplingRate>
+      <essenceTrackBitDepth>24</essenceTrackBitDepth>
+      <essenceTrackDuration>00:04:08</essenceTrackDuration>
+      <essenceTrackAnnotation annotationType="DAVID filename">\\wnycdavidmedia\media$\Archives_NEH\PB7-ARCH-DAWC_AB8D2D7F902F40E7AE230B04731AE9CF.WAV</essenceTrackAnnotation>
+    </instantiationEssenceTrack>
+    <instantiationAnnotation annotationType="provenance">BWF created from Municipal Archives lacquer transcription disc. Reformatted as part of NEH project.</instantiationAnnotation>
+    <instantiationAnnotation annotationType="Stylus_size">2.5ET</instantiationAnnotation>
+    <instantiationAnnotation annotationType="LF_turnover">250Hz</instantiationAnnotation>
+    <instantiationAnnotation annotationType="10kHz_att">8.5dB</instantiationAnnotation>
+    <instantiationAnnotation annotationType="Rumble_filter">70Hz</instantiationAnnotation>
+    <instantiationAnnotation annotationType="HF_notch">10kHz</instantiationAnnotation>
+    <instantiationAnnotation>outside start.</instantiationAnnotation>
+    <instantiationAnnotation>78 rpm</instantiationAnnotation>
+    <instantiationAnnotation>Duplicate of 69762.5 (LT786). </instantiationAnnotation>
+  </pbcoreInstantiation>
+  <pbcoreInstantiation>
+    <instantiationIdentifier source="WNYC Media Archive Label">69762.9</instantiationIdentifier>
+    <instantiationIdentifier source="WNYC Media Archive Label">CD NEH 1776</instantiationIdentifier>
+    <instantiationIdentifier source="pbcore XML database UUID">bdd71737-e99e-44e3-9c51-6fd635032323</instantiationIdentifier>
+    <instantiationDate dateType="Created">2012-03-01</instantiationDate>
+    <instantiationPhysical>CD-Audio</instantiationPhysical>
+    <instantiationLocation>Archives Storage</instantiationLocation>
+    <instantiationMediaType>Sound</instantiationMediaType>
+    <instantiationGenerations>Audio/Transcription dub</instantiationGenerations>
+    <instantiationDuration>00:04:08</instantiationDuration>
+    <instantiationChannelConfiguration>Stereo</instantiationChannelConfiguration>
+    <instantiationLanguage>eng</instantiationLanguage>
+    <instantiationEssenceTrack>
+      <essenceTrackType>audio</essenceTrackType>
+      <essenceTrackIdentifier source="WNYC Media Archive Label">CD NEH 1776</essenceTrackIdentifier>
+      <essenceTrackEncoding>Linear PCM</essenceTrackEncoding>
+      <essenceTrackSamplingRate>44.1 kHz</essenceTrackSamplingRate>
+      <essenceTrackBitDepth>16</essenceTrackBitDepth>
+      <essenceTrackDuration>00:04:08</essenceTrackDuration>
+      <essenceTrackLanguage>eng</essenceTrackLanguage>
+      <essenceTrackAnnotation>One track: 69762.8 (EQ). Preservation copy.</essenceTrackAnnotation>
+    </instantiationEssenceTrack>
+    <instantiationAnnotation>CD created from EQ BWF created from Municipal Archives lacquer transcription disc. Reformatted as part of NEH project</instantiationAnnotation>
+  </pbcoreInstantiation>
+</pbcoreDescriptionDocument>

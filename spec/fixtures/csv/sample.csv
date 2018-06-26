@@ -1,0 +1,3 @@
+depositor@example.edu,,
+accession_number,pbcore_path,admin_set_id
+,spec/fixtures/sample_pbcore.xml,admin_set/default

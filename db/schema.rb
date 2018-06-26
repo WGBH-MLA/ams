@@ -12,6 +12,26 @@
 
 ActiveRecord::Schema.define(version: 20180508210345) do
 
+  create_table "batch_items", force: :cascade do |t|
+    t.integer "batch_id"
+    t.integer "row_number"
+    t.string "accession_number"
+    t.text "attribute_hash"
+    t.string "status"
+    t.text "error"
+    t.string "created_item"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "batches", force: :cascade do |t|
+    t.string "job_id"
+    t.string "submitter"
+    t.string "original_filename"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "bookmarks", force: :cascade do |t|
     t.integer "user_id", null: false
     t.string "user_type"
