@@ -38,7 +38,7 @@ class BatchItem < ApplicationRecord
   private
 
     def runnable_item?
-      unique? && attributes_valid? && controlled_properties_valid?
+      unique? && attributes_valid? #&& controlled_properties_valid?
     end
 
     def attributes_valid?
@@ -92,7 +92,7 @@ class BatchItem < ApplicationRecord
       working_attrs = attribute_hash.dup
       # s3_url = Addressable::URI.parse(working_attrs.delete(:batch_location))
       # s3_resource = Aws::S3::Object.new(bucket_name: s3_url.host, key: s3_url.path.sub(%r{^/}, ''))
-      @factory = AssetFactory.new(working_attrs)
+      @factory = ::Importer::AssetFactory.new(working_attrs)
     end
 
     # # @return [Class] the model class to be used

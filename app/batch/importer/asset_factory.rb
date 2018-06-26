@@ -6,7 +6,7 @@ module Importer
     attr_reader :attributes, :object #, :s3_resource
     delegate :valid?, to: :trashable_instance
 
-    self.klass = Asset
+    self.klass = ::Asset
 
     def initialize(attributes)#, s3_resource = nil)
       @attributes = attributes
@@ -94,12 +94,13 @@ module Importer
       # @param [Hash] attrs the attributes to put in the environment
       # @return [Hyrax::Actors::Environment]
       def environment(attrs)
-        attrs[:member_of_collections].each { |collection| collection.reindex_extent = Hyrax::Adapters::NestingIndexAdapter::LIMITED_REINDEX }
+        # attrs[:member_of_collections].each { |collection| collection.reindex_extent = Hyrax::Adapters::NestingIndexAdapter::LIMITED_REINDEX }
         Hyrax::Actors::Environment.new(@object, Ability.new(@deposit_user), attrs)
       end
 
       def work_actor
-        Hyrax::CurationConcern.actor
+        # Hyrax::CurationConcern.actor
+        Hyrax::Actors::Terminator.new
       end
 
       # def create_collection(attrs)
@@ -112,7 +113,7 @@ module Importer
       # Override if we need to map the attributes from the parser in
       # a way that is compatible with how the factory needs them.
       def transform_attributes
-        attributes.slice(*permitted_attributes).merge(file_attributes)
+        attributes.slice(*permitted_attributes)#.merge(file_attributes)
       end
 
       # # NOTE: This approach is probably broken since the actor that handled `:files` attribute was removed:

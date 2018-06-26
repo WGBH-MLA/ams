@@ -46,6 +46,7 @@ RSpec.describe BatchItem, :clean, type: :model, admin_set: true do
     let(:attributes) { common_attributes.reject { |k, _v| k == :pbcore_path } }
 
     it 'errors on :pbcore_path' do
+      byebug
       batch_item.run
       expect(batch_item.status).to eq('error')
       expect(batch_item.error.keys).to eq([:pbcore_path])
