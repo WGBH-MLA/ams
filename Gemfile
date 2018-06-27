@@ -52,7 +52,7 @@ group :development, :test do
   gem 'capybara', '~> 2.18'
   gem 'database_cleaner'
   gem 'fcrepo_wrapper'
-  gem 'solr_wrapper', '>= 0.3'
+  gem 'solr_wrapper', '~> 2.0'
 end
 
 group :development do
