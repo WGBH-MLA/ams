@@ -7,17 +7,14 @@ module Hyrax
         xml_file = File.read(env.attributes[:digital_instantiation_pbcore_xml].tempfile)
         pbcore_doc = PBCore::V2::InstantiationDocument.parse(xml_file)
         env = parse_pbcore_instantiation(env,pbcore_doc) if(env.attributes[:digital_instantiation_pbcore_xml])
-        super
-        parse_pbcore_essense_track(env,pbcore_doc)
+        super && parse_pbcore_essense_track(env,pbcore_doc)
       end
 
       def update(env)
         xml_file = File.read(env.attributes[:digital_instantiation_pbcore_xml].tempfile)
         pbcore_doc = PBCore::V2::InstantiationDocument.parse(xml_file)
         env = parse_pbcore_instantiation(env,pbcore_doc) if(env.attributes[:digital_instantiation_pbcore_xml])
-        super
-        destroy_child_objects(env)
-        parse_pbcore_essense_track(env,pbcore_doc)
+        super && destroy_child_objects(env) && parse_pbcore_essense_track(env,pbcore_doc)
       end
 
       private
