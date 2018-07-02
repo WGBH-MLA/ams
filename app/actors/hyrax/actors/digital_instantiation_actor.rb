@@ -7,11 +7,28 @@ module Hyrax
         xml_file = File.read(env.attributes[:digital_instantiation_pbcore_xml].tempfile)
         pbcore_doc = PBCore::V2::InstantiationDocument.parse(xml_file)
         env = parse_pbcore_instantiation(env,pbcore_doc) if(env.attributes[:digital_instantiation_pbcore_xml])
-        super
-        parse_pbcore_essense_track(env,pbcore_doc)
+        super && parse_pbcore_essense_track(env,pbcore_doc)
+      end
+
+      def update(env)
+        xml_file = File.read(env.attributes[:digital_instantiation_pbcore_xml].tempfile)
+        pbcore_doc = PBCore::V2::InstantiationDocument.parse(xml_file)
+        env = parse_pbcore_instantiation(env,pbcore_doc) if(env.attributes[:digital_instantiation_pbcore_xml])
+        super && destroy_child_objects(env) && parse_pbcore_essense_track(env,pbcore_doc)
       end
 
       private
+        def destroy_child_objects(env)
+          env.curation_concern.members.to_a.delete_if do |child|
+            actor = Hyrax::CurationConcern.actor
+            if actor.destroy(Actors::Environment.new(child, env.current_ability, {}))
+              Hyrax.config.callback.run(:after_destroy, child.id, env.user)
+              true
+            end
+          end
+          env.curation_concern.reload
+        end
+
         def parse_pbcore_instantiation(env,pbcore_doc)
           env.attributes[:date] = pbcore_doc.dates.map {|date| date.value} if pbcore_doc.dates && env.attributes[:dates].blank?
           env.attributes[:dimensions] = pbcore_doc.dimensions.map {|dimension| dimension.value}  if pbcore_doc.dimensions && env.attributes[:dimensions].blank?

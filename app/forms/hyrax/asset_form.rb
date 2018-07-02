@@ -2,6 +2,7 @@
 #  `rails generate hyrax:work Asset`
 module Hyrax
   class AssetForm < Hyrax::Forms::WorkForm
+    include ChildCreateButton
     self.model_class = ::Asset
     # Remove terms that we don't want to be a part of the form.
     self.terms -= [:relative_path, :import_url, :date_created, :resource_type,

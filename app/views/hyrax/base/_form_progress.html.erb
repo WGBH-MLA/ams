@@ -26,7 +26,7 @@
         </div>
     <% end %>
   </div>
-  <% if @form.model.valid_child_concerns.any? %>
+  <% if @form.model.valid_child_concerns.any? && @form.respond_to?(:child_create_button) && @form.child_create_button %>
     <%= javascript_include_tag "work_actions" %>
     <div class="list-group">
       <div class="list-group-item">
