@@ -14,12 +14,9 @@ module Hyrax
 
       private
       def inherit_parent_title(env)
-        if env.attributes.has_key?(:parent_id)
-          parent_object = ActiveFedora::Base.find(env.attributes[:parent_id])
-          if(parent_object.title.any?)
-            env.attributes[:title] = [parent_object.title.first]
-          end
-          env.attributes.delete(:parent_id)
+        #TODO: find a way to query solr, that will speed this up
+        if env.curation_concern.in_objects.any?
+          env.attributes[:title] = Array(env.curation_concern.in_objects.first.title)
         end
       end
 
