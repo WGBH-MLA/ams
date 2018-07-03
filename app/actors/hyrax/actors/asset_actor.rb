@@ -8,8 +8,7 @@ module Hyrax
         add_title_types(env)
         add_description_types(env)
         add_date_types(env)
-        super
-        create_or_update_contributions(env, contributions)
+        super && create_or_update_contributions(env, contributions)
       end
 
       def update(env)
@@ -17,8 +16,7 @@ module Hyrax
         add_title_types(env)
         add_description_types(env)
         add_date_types(env)
-        super
-        create_or_update_contributions(env, contributions)
+        super && create_or_update_contributions(env, contributions)
 
       end
 
@@ -52,6 +50,8 @@ module Hyrax
                 end
               end
             end
+            #This method must return true
+            true
         end
 
         def add_title_types(env)
