@@ -3,6 +3,7 @@
 module Hyrax
   class PhysicalInstantiationForm < Hyrax::Forms::WorkForm
     include DisabledFields
+    include ChildCreateButton
 
     self.model_class = ::PhysicalInstantiation
 
