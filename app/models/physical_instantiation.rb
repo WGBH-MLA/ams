@@ -65,7 +65,7 @@ class PhysicalInstantiation < ActiveFedora::Base
     index.as :stored_searchable
   end
 
-  property :annotiation, predicate: ::RDF::URI.new("http://www.w3.org/2004/02/skos/core#note"), multiple: true do |index|
+  property :annotation, predicate: ::RDF::URI.new("http://www.w3.org/2004/02/skos/core#note"), multiple: true do |index|
     index.as :stored_searchable
   end
 
