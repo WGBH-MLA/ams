@@ -10,11 +10,15 @@ class Contribution < ActiveFedora::Base
 
 
   property :contributor_role, predicate: ::RDF::URI.new("http://www.w3.org/2006/vcard/ns#hasRole"), multiple: false do |index|
-    index.as :stored_searchable,  :facetable
+    index.as :stored_searchable
   end
 
   property :portrayal, predicate: ::RDF::URI.new("http://www.ebu.ch/metadata/ontologies/ebucore/ebucore#hasCastRole"), multiple: false do |index|
-    index.as :stored_searchable,  :facetable
+    index.as :stored_searchable
+  end
+
+  property :affiliation, predicate: ::RDF::URI.new("http://www.ebu.ch/metadata/ontologies/ebucore/ebucore:hasAffiliation"), multiple: false do |index|
+    index.as :stored_searchable
   end
 
   # This must be included at the end, because it finalizes the metadata

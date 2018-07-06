@@ -26,6 +26,13 @@ class ChildContributorsInput < MultiValueInput
       id: input_dom_id_prefix + "_portrayal"
     )
 
+    affiliation_text_input_html_options = input_html_options.dup.merge(
+      name: "#{@builder.object_name}[contributors][][affiliation]",
+      value: value[4],
+      placeholder: "Affiliation",
+      id: input_dom_id_prefix + "_affiliation"
+    )
+
     id_hidden_options = input_html_options.dup.merge(
         value: value[0],
         name: "#{@builder.object_name}[contributors][][id]",
@@ -39,6 +46,8 @@ class ChildContributorsInput < MultiValueInput
     role_select_input_html_options[:class].delete(:required)
     portrayal_text_input_html_options.delete(:required)
     portrayal_text_input_html_options[:class].delete(:required)
+    affiliation_text_input_html_options.delete(:required)
+    affiliation_text_input_html_options[:class].delete(:required)
 
     if contributor_text_input_html_options[:title_value].blank?
       if @rendered_first_element
@@ -50,6 +59,7 @@ class ChildContributorsInput < MultiValueInput
     output = @builder.hidden_field(:contributor_id, id_hidden_options)
     output += @builder.select(:contributor_role, role_choices, { selected: value[1] }, role_select_input_html_options)
     output += @builder.text_field(:contributor_name, contributor_text_input_html_options)
+    output += @builder.text_field(:affiliation, affiliation_text_input_html_options)
     output += @builder.text_field(:portrayal, portrayal_text_input_html_options)
     output
   end
