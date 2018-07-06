@@ -118,7 +118,7 @@ RSpec.feature 'Create and Validate Asset', js: true, asset_form_helpers: true, c
       select(contribution_attributes[:contributor_role], :from => "asset_child_contributors_0_role")
 
       fill_in('asset_child_contributors_0_contributor', with: contribution_attributes[:contributor].first)
-      fill_in('asset_child_contributors_0_portrayal', with: contribution_attributes[:portrayal].first)
+      fill_in('asset_child_contributors_0_portrayal', with: contribution_attributes[:portrayal])
       fill_in('asset_child_contributors_0_affiliation', with: contribution_attributes[:affiliation])
 
       click_link "Relationships" # define adminset relation

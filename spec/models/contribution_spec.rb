@@ -39,4 +39,12 @@ RSpec.describe Contribution do
       expect(contribution.portrayal.include?("Test portrayal")).to be true
     end
   end
+  context "affiliation" do
+    let(:contribution) { FactoryBot.build(:contribution) }
+    it "has affiliation" do
+      contribution.portrayal = "Test affiliation"
+      expect(contribution.resource.dump(:ttl)).to match(/ebucore\/ebucore#hasAffiliation/)
+      expect(contribution.portrayal.include?("Test affiliation")).to be true
+    end
+  end
 end
