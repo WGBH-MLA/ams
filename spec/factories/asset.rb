@@ -1,14 +1,16 @@
 FactoryBot.define do
-  factory :asset, class: Asset do
+  factory :asset do
+    id { Noid::Rails::Service.new.mint }
+    sequence(:title)         { |n| ["Test Asset #{n}"] }
+    sequence(:description)   { |n| ["This is a description of Test Asset #{n}"] }
+    visibility Hydra::AccessControls::AccessRight::VISIBILITY_TEXT_VALUE_PUBLIC
+
 
     transient do
       user { create(:user) }
       # Set to true (or a hash) if you want to create an admin set
       with_admin_set false
     end
-
-    sequence(:title)         { |n| ["Test Asset #{n}"] }
-    sequence(:description)   { |n| ["This is a description of Test Asset #{n}"] }
 
     trait :public do
       visibility Hydra::AccessControls::AccessRight::VISIBILITY_TEXT_VALUE_PUBLIC
