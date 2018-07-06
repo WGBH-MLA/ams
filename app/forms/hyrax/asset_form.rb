@@ -78,7 +78,7 @@ module Hyrax
       child_contributions = []
       model.ordered_members.to_a.each do |member|
          if( member.class == Contribution )
-            child_contributions << [member.id, member.contributor_role, member.contributor.first , member.portrayal]
+            child_contributions << [member.id, member.contributor_role, member.contributor.first , member.portrayal, member.affiliation]
          end
        end
       child_contributions
@@ -126,7 +126,7 @@ module Hyrax
         permitted_params << { description_value: [] }
         permitted_params << { date_type: [] }
         permitted_params << { date_value: [] }
-        permitted_params << { contributors: [[:id,:contributor_role,:contributor,:portrayal]] }
+        permitted_params << { contributors: [[:id,:contributor_role,:contributor, :affiliation,:portrayal]] }
       end
     end
   end

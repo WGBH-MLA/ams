@@ -13,11 +13,11 @@ textarea.multiple_descriptions_with_types {
 
 select.child_contributors
 {
-    width: 30% !important;
+    width: 22% !important;
 }
 
 input.child_contributors
 {
-    width: 30% !important;
+    width: 22% !important;
     margin-left: 5px !important;
 }
