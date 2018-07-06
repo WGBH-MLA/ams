@@ -115,7 +115,7 @@ RSpec.feature 'Create and Validate Asset', js: true, asset_form_helpers: true, c
       click_link "Credits" # expand field group
       wait_for(2) # wait untill all elements are visiable
 
-      select(contribution_attributes[:contributor_role].first, :from => "asset_child_contributors_0_role")
+      select(contribution_attributes[:contributor_role], :from => "asset_child_contributors_0_role")
 
       fill_in('asset_child_contributors_0_contributor', with: contribution_attributes[:contributor].first)
       fill_in('asset_child_contributors_0_portrayal', with: contribution_attributes[:portrayal].first)
