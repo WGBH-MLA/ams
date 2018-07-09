@@ -13,11 +13,11 @@ require 'devise'
 require 'devise/version'
 require 'noid/rails/rspec'
 require 'rspec/matchers'
-require 'active_fedora/cleaner'
 require 'capybara/rspec'
 require 'capybara-screenshot/rspec'
 require 'capybara/rails'
-require 'database_cleaner'
+require 'ams'
+
 # Require support files
 Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each { |f| require f }
 require_relative 'support/controller_macros'
@@ -42,16 +42,6 @@ RSpec.configure do |config|
   config.use_transactional_fixtures = false
   config.infer_spec_type_from_file_location!
 
-  config.before :suite do
-    # Clean out Fedora
-    ActiveFedora::Cleaner.clean!
-    DatabaseCleaner.strategy = :truncation
-  end
-
-  config.after :each do
-    DatabaseCleaner.clean
-  end
-
   config.include Devise::Test::ControllerHelpers, type: :controller
   config.include Capybara::RSpecMatchers, type: :input
 
@@ -69,8 +59,16 @@ RSpec.configure do |config|
     config.mock_with :rspec do |mocks|
       mocks.verify_partial_doubles = example.metadata.fetch(:verify_partial_doubles, true)
     end
-    # Pass `:clean' to destroy objects in fedora/solr and start from scratch
-    ActiveFedora::Cleaner.clean! if example.metadata[:clean]
+  end
+
+  # Reset data before the suite is run.
+  config.before :suite do
+    AMS.reset_data!
+  end
+
+  # Reset data conditionally for each example (default false)
+  config.before :each do |example|
+    AMS.reset_data! unless example.metadata.fetch(:keep_data, false)
   end
 
   # Filter lines from Rails gems in backtraces.
