@@ -2,6 +2,7 @@
 #  `rails generate hyrax:work Asset`
 module Hyrax
   class AssetForm < Hyrax::Forms::WorkForm
+    include ChildCreateButton
     self.model_class = ::Asset
     # Remove terms that we don't want to be a part of the form.
     self.terms -= [:relative_path, :import_url, :date_created, :resource_type,
@@ -77,7 +78,7 @@ module Hyrax
       child_contributions = []
       model.ordered_members.to_a.each do |member|
          if( member.class == Contribution )
-            child_contributions << [member.id, member.contributor_role, member.contributor.first , member.portrayal]
+            child_contributions << [member.id, member.contributor_role, member.contributor.first , member.portrayal, member.affiliation]
          end
        end
       child_contributions
@@ -125,7 +126,7 @@ module Hyrax
         permitted_params << { description_value: [] }
         permitted_params << { date_type: [] }
         permitted_params << { date_value: [] }
-        permitted_params << { contributors: [[:id,:contributor_role,:contributor,:portrayal]] }
+        permitted_params << { contributors: [[:id,:contributor_role,:contributor, :affiliation,:portrayal]] }
       end
     end
   end

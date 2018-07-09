@@ -1,7 +1,9 @@
 #!/bin/bash
 echo "Running Deployment for ID: $DEPLOYMENT_ID"
+sudo yum -y update
 export HOME=/var/www/ams
 cd $HOME
+rvm gemset use ams --create
 source /etc/profile
 echo "ruby version:`ruby -v`"
 echo "rails versions:`rails -v`"
