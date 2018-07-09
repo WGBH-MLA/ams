@@ -281,5 +281,9 @@ class SolrDocument
 
   def holding_organization
     self[Solrizer.solr_name('holding_organization')]
+    end
+
+  def affiliation
+    self[Solrizer.solr_name('affiliation')]
   end
 end

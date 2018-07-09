@@ -118,7 +118,8 @@ RSpec.feature 'Create and Validate Asset', js: true, asset_form_helpers: true, c
       select(contribution_attributes[:contributor_role], :from => "asset_child_contributors_0_role")
 
       fill_in('asset_child_contributors_0_contributor', with: contribution_attributes[:contributor].first)
-      fill_in('asset_child_contributors_0_portrayal', with: contribution_attributes[:portrayal].first)
+      fill_in('asset_child_contributors_0_portrayal', with: contribution_attributes[:portrayal])
+      fill_in('asset_child_contributors_0_affiliation', with: contribution_attributes[:affiliation])
 
       click_link "Relationships" # define adminset relation
       find("#asset_admin_set_id option[value='#{admin_set_id}']").select_option
@@ -159,8 +160,9 @@ RSpec.feature 'Create and Validate Asset', js: true, asset_form_helpers: true, c
       within('.thumbnail') {find('a[href*="contribution"]').click }
 
       expect(page).to have_content contribution_attributes[:contributor].first
-      expect(page).to have_content contribution_attributes[:portrayal].first
-      expect(page).to have_content contribution_attributes[:contributor_role].first
+      expect(page).to have_content contribution_attributes[:portrayal]
+      expect(page).to have_content contribution_attributes[:affiliation]
+      expect(page).to have_content contribution_attributes[:contributor_role]
       expect(page).to have_current_path(guid_regex)
     end
   end
