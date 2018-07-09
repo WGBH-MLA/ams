@@ -1,5 +1,5 @@
 unless Rails.env.production?
-  APP_ROOT = File.dirname(__FILE__)
+  APP_ROOT = File.dirname(__FILE__) unless defined?(APP_ROOT)
   require "solr_wrapper"
   require "fcrepo_wrapper"
   require 'solr_wrapper/rake_task'
