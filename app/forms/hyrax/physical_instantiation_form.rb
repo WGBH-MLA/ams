@@ -3,6 +3,7 @@
 module Hyrax
   class PhysicalInstantiationForm < Hyrax::Forms::WorkForm
     include DisabledFields
+    include ChildCreateButton
 
     self.model_class = ::PhysicalInstantiation
 
@@ -16,7 +17,7 @@ module Hyrax
 
     self.field_groups = {
       identifying_info: [:title, :holding_organization, :local_instantiation_identifer, :media_type, :format, :location, :generations, :date, :digitization_date,
-                         :language, :annotiation],
+                         :language, :annotation],
       technical_info: [:dimensions, :standard, :duration, :time_start, :colors, :tracks, :channel_configuration,
                        :alternative_modes],
       rights: [:rights_summary, :rights_link]
