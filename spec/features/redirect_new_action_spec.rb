@@ -1,5 +1,4 @@
 require 'rails_helper'
-include Warden::Test::Helpers
 
 RSpec.feature 'Redirect controller#new actions', js: true do
   context 'a logged in User' do

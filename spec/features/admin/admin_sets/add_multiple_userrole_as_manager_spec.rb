@@ -1,7 +1,5 @@
 require 'rails_helper'
 
-include Warden::Test::Helpers
-
 RSpec.feature 'AssignMultipleRolesAsManager.', js: true do
     context 'Add Manager permissions to user (Role)' do
       let(:admin_user) { create :admin_user }
@@ -65,4 +63,3 @@ RSpec.feature 'AssignMultipleRolesAsManager.', js: true do
       end
     end
   end
-  
