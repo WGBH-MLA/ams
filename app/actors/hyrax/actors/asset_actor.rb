@@ -8,6 +8,7 @@ module Hyrax
         add_title_types(env)
         add_description_types(env)
         add_date_types(env)
+        save_aapb_admin_data(env)
         super && create_or_update_contributions(env, contributions)
       end
 
@@ -16,11 +17,56 @@ module Hyrax
         add_title_types(env)
         add_description_types(env)
         add_date_types(env)
+        save_aapb_admin_data(env)
         super && create_or_update_contributions(env, contributions)
+      end
 
+      def destory(env)
+        super && destory_admin_data(env)
       end
 
       private
+        def save_aapb_admin_data(env)
+          env.curation_concern.admin_data = find_or_create_admin_data(env)
+          set_admin_data_attributes(env.curation_concern.admin_data,env)
+          remove_admin_data_from_env_attributes(env)
+        end
+
+        def set_admin_data_attributes(admin_data,env)
+          admin_data_attributes.each do |k|
+            if [:special_collection,:sonyci_id].include?(k)
+              admin_data.send("#{k.to_s}=",Array(env.attributes[k]))
+            else
+             admin_data.send("#{k.to_s}=",env.attributes[k].to_s)
+            end
+          end
+        end
+
+        def remove_admin_data_from_env_attributes(env)
+          admin_data_attributes.each { |k| env.attributes.delete(k) }
+
+        end
+
+        def admin_data_attributes
+          #removing id, created_at & updated_at from attributes
+          AdminData.attribute_names.dup.tap {|admin| admin.shift() && admin.pop() && admin.pop() }.map &:to_sym
+        end
+
+        def find_or_create_admin_data(env)
+          if env.curation_concern.admin_data_gid.blank?
+            admin_data = AdminData.create
+          else
+            admin_data = AdminData.find_by_gid!(env.curation_concern.admin_data_gid)
+          end
+          admin_data
+        end
+
+        def destroy_admin_data(env)
+          if env.curation_concern.admin_data_gid
+            env.curation_concern.admin_data.destroy
+          end
+        end
+
         def extract_contributions(env)
             contributors = env.attributes[:contributors]
             env.attributes.delete(:contributors)
