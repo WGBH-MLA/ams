@@ -3,7 +3,10 @@
 class Asset < ActiveFedora::Base
   include ::Hyrax::WorkBehavior
 
+
   self.indexer = AssetIndexer
+  #after_initialize :initialize_admin_data
+  before_save :save_admin_data
   # Change this to restrict which works can be added as a child.
   self.valid_child_concerns = [DigitalInstantiation,PhysicalInstantiation]
 
@@ -34,6 +37,14 @@ class Asset < ActiveFedora::Base
     if all_descriptions.empty?
       errors.add :description, "cannot be empty"
     end
+  end
+
+  def admin_data
+    @admin_data ||= AdminData.find_by_gid(admin_data_gid)
+  end
+
+  def admin_data=(new_admin_data)
+    self.admin_data_gid = new_admin_data.gid
   end
 
   property :asset_types, predicate: ::RDF::URI.new("http://www.ebu.ch/metadata/ontologies/ebucore/ebucore#hasType"), multiple: true do |index|
@@ -160,6 +171,22 @@ class Asset < ActiveFedora::Base
     index.as :stored_searchable
   end
 
+  class_attribute :index_admin_data_gid, writer: false
+  self.index_admin_data_gid = [:symbol]
+
+  property :admin_data_gid, predicate: ::RDF::Vocab::SCHEMA.additionalType, multiple: false do |index|
+    index.as(*index_admin_data_gid)
+  end
+
   # This must be included at the end, because it finalizes the metadata if you have any further properties define above in current model
   include ::Hyrax::BasicMetadata
+
+  private
+    def find_or_create_admin_data
+      self.admin_data ||= AdminData.create
+    end
+    def save_admin_data
+      find_or_create_admin_data
+      self.admin_data.save
+    end
 end
