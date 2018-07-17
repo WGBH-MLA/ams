@@ -1,7 +1,6 @@
 require 'rails_helper'
 require_relative '../../app/services/title_and_description_types_service'
 require_relative '../../app/services/date_types_service'
-include Warden::Test::Helpers
 
 RSpec.feature 'Create and Validate Asset', js: true, asset_form_helpers: true, clean:true do
   context 'Create adminset, create asset' do
