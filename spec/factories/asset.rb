@@ -10,6 +10,7 @@ FactoryBot.define do
       user { create(:user) }
       # Set to true (or a hash) if you want to create an admin set
       with_admin_set false
+      with_admin_data false
     end
 
     trait :public do
@@ -25,6 +26,13 @@ FactoryBot.define do
         attributes = evaluator.with_admin_set.merge(attributes) if evaluator.with_admin_set.respond_to?(:merge)
         admin_set = create(:admin_set, attributes)
         work.admin_set_id = admin_set.id
+      end
+    end
+
+    after(:build) do |work, evaluator|
+      if evaluator.with_admin_data
+        attributes = {}
+        work.admin_data_gid = evaluator.with_admin_data if !work.admin_data_gid.present?
       end
     end
 

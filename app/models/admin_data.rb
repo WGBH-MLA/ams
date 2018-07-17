@@ -20,8 +20,9 @@ class AdminData < ApplicationRecord
   # @return [AdminData] an instance of AdminData with id = the model_id portion of the gid (e.g. 1)
   # @raise [ActiveRecord::RecordNotFound] if record matching gid is not found
   def self.find_by_gid!(gid)
+    gid = gid.first if gid.kind_of?(Array)
     result = find_by_gid(gid)
-    raise ActiveRecord::RecordNotFound, "Couldn't find AdminData matching GID '#{gid}'" unless result
+    raise ActiveRecord::RecordNotFound, "Couldn't find AdminData matching GID #{gid}" unless result
     result
   end
 

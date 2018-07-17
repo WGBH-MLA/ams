@@ -43,9 +43,11 @@ class Asset < ActiveFedora::Base
     @admin_data ||= AdminData.find_by_gid(admin_data_gid)
   end
 
+
   def admin_data=(new_admin_data)
-    self.admin_data_gid = new_admin_data.gid
+    self[:admin_data_gid] = new_admin_data.gid
   end
+
 
   property :asset_types, predicate: ::RDF::URI.new("http://www.ebu.ch/metadata/ontologies/ebucore/ebucore#hasType"), multiple: true do |index|
     index.as :stored_searchable, :facetable
@@ -171,11 +173,21 @@ class Asset < ActiveFedora::Base
     index.as :stored_searchable
   end
 
-  class_attribute :index_admin_data_gid, writer: false
-  self.index_admin_data_gid = [:symbol]
+  property :admin_data_gid, predicate: ::RDF::Vocab::DC.isPartOf, multiple: false do |index|
+    index.as(:symbol)
+  end
 
-  property :admin_data_gid, predicate: ::RDF::Vocab::SCHEMA.additionalType, multiple: false do |index|
-    index.as(*index_admin_data_gid)
+  def admin_data_gid=(new_admin_data_gid)
+    raise "Can't modify admin data of this asset" if persisted? && !admin_data_gid_was.nil? && admin_data_gid_was != new_admin_data_gid
+    new_admin_data = AdminData.find_by_gid!(new_admin_data_gid)
+    super
+    @admin_data=new_admin_data
+    admin_data_gid
+  end
+
+
+  def admin_data_gid_document_field_name
+    Solrizer.solr_name('admin_data_gid', *index_admin_data_gid_as)
   end
 
   # This must be included at the end, because it finalizes the metadata if you have any further properties define above in current model

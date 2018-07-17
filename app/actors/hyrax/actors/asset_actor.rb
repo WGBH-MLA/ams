@@ -8,7 +8,7 @@ module Hyrax
         add_title_types(env)
         add_description_types(env)
         add_date_types(env)
-        save_aapb_admin_data(env)
+        #save_aapb_admin_data(env)
         super && create_or_update_contributions(env, contributions)
       end
 
@@ -49,7 +49,8 @@ module Hyrax
 
         def admin_data_attributes
           #removing id, created_at & updated_at from attributes
-          AdminData.attribute_names.dup.tap {|admin| admin.shift() && admin.pop() && admin.pop() }.map &:to_sym
+          attr = AdminData.attribute_names.dup.map &:to_sym
+          attr -= [:id, :created_at, :updated_at]
         end
 
         def find_or_create_admin_data(env)

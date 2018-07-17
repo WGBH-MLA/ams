@@ -29,7 +29,7 @@ module Hyrax
       subject_info: [:genre, :topics, :subject, :spatial_coverage, :temporal_coverage, :audience_level, :audience_rating, :annotation],
       rights: [:rights_summary, :rights_link],
       credits: [:child_contributors],
-      aapb_admin_data: admin_data_attributes
+     # aapb_admin_data: admin_data_attributes
     }
 
     self.terms += (self.required_fields + field_groups.values.map(&:to_a).flatten).uniq

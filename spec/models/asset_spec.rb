@@ -222,7 +222,7 @@ RSpec.describe Asset do
   end
 
   context "promo_title" do
-    let(:asset) { FactoryBot.build(:asset) }
+    let!(:asset) { FactoryBot.build(:asset) }
     it "has promo_title" do
       asset.promo_title = ["Test promo_title"]
       expect(asset.resource.dump(:ttl)).to match(/pbcore.org#hasPromoTitle/)
@@ -268,6 +268,7 @@ RSpec.describe Asset do
 
   context "raw_footage_description" do
     let(:asset) { FactoryBot.build(:asset) }
+    c = Collection.new
     it "has raw_footage_description" do
       asset.raw_footage_description = ["Test raw_footage_description"]
       expect(asset.resource.dump(:ttl)).to match(/pbcore.org#hasRawFootageDescription/)
@@ -293,5 +294,25 @@ RSpec.describe Asset do
     end
   end
 
+  context "clip_description" do
+    let(:asset) { FactoryBot.build(:asset) }
+    it "has clip_description" do
+      asset.clip_description = ["Test clip_description"]
+      expect(asset.resource.dump(:ttl)).to match(/pbcore.org#hasClipDescription/)
+      expect(asset.clip_description.include?("Test clip_description")).to be true
+    end
+  end
 
+  context "admin_data_gid" do
+    let(:admin_data) { FactoryBot.create(:admin_data) }
+    let(:asset) { FactoryBot.build(:asset, with_admin_data:admin_data.gid) }
+    it "has admin_data_gid" do
+      expect(asset.resource.dump(:ttl)).to match(/purl.org\/dc\/terms\/isPartOf/)
+      expect(asset.admin_data_gid).to eq(admin_data.gid)
+    end
+    it "has throws ActiveRecord::RecordNotFound if cannot find admin_data for the gid" do
+      gid = 'gid://ams/admindata/999'
+      expect { asset.admin_data_gid = gid }.to raise_error(ActiveRecord::RecordNotFound, "Couldn't find AdminData matching GID #{gid}")
+    end
+  end
 end
