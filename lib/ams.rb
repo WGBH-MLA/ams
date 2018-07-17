@@ -59,6 +59,7 @@ module AMS
           {
             admin_user: admin_user,
             admin_role: admin_role,
+            aapb_admin_role: aapb_admin_role,
             series_collection_type: series_collection_type,
             admin_set: admin_set
           }
@@ -74,6 +75,12 @@ module AMS
           role = Role.find_by name: 'admin'
           return role if role
           Role.create!(name:'admin', users: [admin_user])
+        end
+
+        def aapb_admin_role
+          role = Role.find_by name: 'aapb-admin'
+          return role if role
+          Role.create!(name:'aapb-admin', users: [admin_user])
         end
 
         def series_collection_type
