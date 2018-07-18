@@ -1,5 +1,4 @@
 require 'rails_helper'
-include Warden::Test::Helpers
 
 RSpec.describe User, type: :model do
   describe 'admin user' do

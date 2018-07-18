@@ -1,5 +1,4 @@
 require 'rails_helper'
-include Warden::Test::Helpers
 
 RSpec.feature 'Reset password.', js: false do
   context 'As a logged in user' do

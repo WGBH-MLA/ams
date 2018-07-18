@@ -44,7 +44,6 @@ RSpec.configure do |config|
 
   config.include Devise::Test::ControllerHelpers, type: :controller
   config.include Capybara::RSpecMatchers, type: :input
-
   config.include Warden::Test::Helpers, type: :feature
   config.after(:each, type: :feature) { Warden.test_reset! }
 
@@ -66,10 +65,11 @@ RSpec.configure do |config|
     AMS.reset_data!
   end
 
-  # Reset data conditionally for each example (default false)
+  # Reset data conditionally for each exampld; defaults to true.
   config.before :each do |example|
-    AMS.reset_data! unless example.metadata.fetch(:keep_data, false)
+    AMS.reset_data! if example.metadata.fetch(:reset_data, true)
   end
+
 
   # Filter lines from Rails gems in backtraces.
   config.filter_rails_from_backtrace!

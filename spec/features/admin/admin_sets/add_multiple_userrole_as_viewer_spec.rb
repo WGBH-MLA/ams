@@ -1,7 +1,5 @@
 require 'rails_helper'
 
-include Warden::Test::Helpers
-
 RSpec.feature 'AssignMultipleRolesAsViewer.', js: true do
   context 'Add Viewer permissions to user (Role)' do
     let(:admin_user) { create :admin_user }
