@@ -25,6 +25,9 @@ class Ability
       can [:create, :show, :add_user, :remove_user, :index, :edit, :update, :destroy], Role
       can [:create, :savenew, :new, :index, :edit, :update, :destroy], User
     end
+    if user_groups.include? 'aapb-admin'
+      can [:create], AdminData
+    end
 
     # Limits creating new objects to a specific group
     #

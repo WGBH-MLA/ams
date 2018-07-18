@@ -80,7 +80,7 @@ module AMS
         def aapb_admin_role
           role = Role.find_by name: 'aapb-admin'
           return role if role
-          Role.create!(name:'aapb-admin', users: [admin_user])
+          Role.create!(name: 'aapb-admin', users: [admin_user])
         end
 
         def series_collection_type
