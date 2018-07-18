@@ -26,7 +26,7 @@ module Hyrax
       private
         def save_aapb_admin_data(env)
           env.curation_concern.admin_data = find_or_create_admin_data(env)
-          set_admin_data_attributes(env.curation_concern.admin_data,env)
+          set_admin_data_attributes(env.curation_concern.admin_data,env) if env.current_ability.can?(:create, AdminData)
           remove_admin_data_from_env_attributes(env)
         end
 

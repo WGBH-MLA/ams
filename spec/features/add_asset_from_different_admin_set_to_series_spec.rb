@@ -34,7 +34,7 @@ RSpec.feature "Add assets from different admin sets to the a Series collection",
     find('#s2id_member_of_collection_ids a.select2-choice').click
     # Type in the name of the Series collection.
     find('#s2id_autogen1_search').send_keys(series_collection_attributes[:series_title].first)
-    wait_for_ajax
+    sleep(2)
     # Select the series from the drop down.
     find('#select2-results-1 span.select2-match').click
     # Save the changes.
@@ -47,7 +47,7 @@ RSpec.feature "Add assets from different admin sets to the a Series collection",
     find('#s2id_member_of_collection_ids a.select2-choice').click
     # Type in the name of the Series collection.
     find('#s2id_autogen1_search').send_keys(series_collection_attributes[:series_title].first)
-    wait_for_ajax
+    sleep(2)
     # Select the series from the drop down.
     find('#select2-results-1 span.select2-match').click
     # Save the changes.

@@ -51,6 +51,13 @@ module Hyrax
     def date_value; end
     def save_type; end
 
+
+    def disabled?(field)
+      disabled_fields = self.disabled_fields.dup
+      disabled_fields += self.field_groups[:aapb_admin_data] if current_ability.cannot?(:create, AdminData)
+      disabled_fields.include?(field)
+    end
+
     def self.multiple?(field)
       if [:child_contributors,:special_collection,:sonyci_id].include?(field.to_sym)
         true
