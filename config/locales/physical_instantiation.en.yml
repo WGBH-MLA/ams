@@ -1,7 +1,7 @@
 en:
   hyrax:
     icons:
-      physical_instantiation:     'fa fa-file-text-o'
+      physical_instantiation:     'physical-instantiation-icon'
     select_type:
       physical_instantiation:
         name:               "Physical Instantiation"

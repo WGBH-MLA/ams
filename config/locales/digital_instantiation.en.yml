@@ -1,7 +1,7 @@
 en:
   hyrax:
     icons:
-      digital_instantiation:     'fa fa-file-text-o'
+      digital_instantiation:     'digital-instantiation-icon'
     select_type:
       digital_instantiation:
         name:               "Digital Instantiation"
