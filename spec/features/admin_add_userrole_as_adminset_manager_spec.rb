@@ -1,8 +1,6 @@
 require 'rails_helper'
 
-include Warden::Test::Helpers
-
-RSpec.feature 'AdminAddUserroleAsAdminserManager.', js: true, clean:true do
+RSpec.feature 'AdminAddUserroleAsAdminserManager.', js: true do
 
   context 'As Admin add a UserRole as Adminset Manager' do
     let(:admin_user) { create :admin_user }
@@ -41,7 +39,7 @@ RSpec.feature 'AdminAddUserroleAsAdminserManager.', js: true, clean:true do
       expect(page).to have_content admin_set.title[0]
 
       # Open AdminSet and edit
-      find('td a', text: "Test Admin Set").click
+      find('td a', text: admin_set.title.first).click
       click_on('Edit')
       expect(page).to have_content 'Edit Administrative Set'
 

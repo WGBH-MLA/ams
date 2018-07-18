@@ -10,7 +10,19 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180508210345) do
+ActiveRecord::Schema.define(version: 20180712002346) do
+
+  create_table "admin_data", force: :cascade do |t|
+    t.string "level_of_user_access"
+    t.string "minimally_cataloged"
+    t.string "outside_url"
+    t.text "special_collection"
+    t.string "transcript_status"
+    t.text "sonyci_id"
+    t.text "licensing_info"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
 
   create_table "bookmarks", force: :cascade do |t|
     t.integer "user_id", null: false
