@@ -215,6 +215,17 @@ class SolrDocument
     self[Solrizer.solr_name('alternative_modes')]
   end
 
+  def title
+    concatenated_titles = [
+      program_title, episode_number, episode_title, segment_title, clip_title,
+      promo_title, raw_footage_title,
+      self[Solrizer.solr_name('title')]
+    ].flatten.select(&:present?).join('; ')
+    # Wrap the return value in an array to behave like a multi-valued field,
+    # even though this will always be a single value.
+    Array(concatenated_titles)
+  end
+
   def program_title
     self[Solrizer.solr_name('program_title')]
   end
