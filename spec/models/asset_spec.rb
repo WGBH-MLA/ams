@@ -236,7 +236,7 @@ RSpec.describe Asset do
       expect(asset.segment_description.include?("Test segment_description")).to be true
     end
   end
-
+  
   describe "#raw_footage_description" do
     it "returns the raw_footage_description" do
       asset.raw_footage_description = ["Test raw_footage_description"]
@@ -261,5 +261,25 @@ RSpec.describe Asset do
     end
   end
 
+  context "clip_description" do
+    let(:asset) { FactoryBot.build(:asset) }
+    it "has clip_description" do
+      asset.clip_description = ["Test clip_description"]
+      expect(asset.resource.dump(:ttl)).to match(/pbcore.org#hasClipDescription/)
+      expect(asset.clip_description.include?("Test clip_description")).to be true
+    end
+  end
 
+  context "admin_data_gid" do
+    let(:admin_data) { FactoryBot.create(:admin_data) }
+    let(:asset) { FactoryBot.build(:asset, with_admin_data:admin_data.gid) }
+    it "has admin_data_gid" do
+      expect(asset.resource.dump(:ttl)).to match(/pbcore.org#hasAAPBAdminData/)
+      expect(asset.admin_data_gid).to eq(admin_data.gid)
+    end
+    it "has throws ActiveRecord::RecordNotFound if cannot find admin_data for the gid" do
+      gid = 'gid://ams/admindata/999'
+      expect { asset.admin_data_gid = gid }.to raise_error(ActiveRecord::RecordNotFound, "Couldn't find AdminData matching GID #{gid}")
+    end
+  end
 end

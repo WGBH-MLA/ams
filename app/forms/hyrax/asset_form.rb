@@ -3,6 +3,8 @@
 module Hyrax
   class AssetForm < Hyrax::Forms::WorkForm
     include ChildCreateButton
+    include DisabledFields
+
     self.model_class = ::Asset
     # Remove terms that we don't want to be a part of the form.
     self.terms -= [:relative_path, :import_url, :date_created, :resource_type,
@@ -19,11 +21,15 @@ module Hyrax
 
     class_attribute :field_groups
 
+    #removing id, created_at & updated_at from attributes
+    admin_data_attributes = (AdminData.attribute_names.dup - ['id', 'created_at', 'updated_at']).map &:to_sym
+
     self.field_groups = {
       identifying_info: [:titles_with_types, :episode_number, :local_identifier, :pbs_nola_code, :eidr_id, :asset_types, :dates_with_types, :descriptions_with_types],
       subject_info: [:genre, :topics, :subject, :spatial_coverage, :temporal_coverage, :audience_level, :audience_rating, :annotation],
       rights: [:rights_summary, :rights_link],
-      credits: [:child_contributors]
+      credits: [:child_contributors],
+      aapb_admin_data: admin_data_attributes
     }
 
     self.terms += (self.required_fields + field_groups.values.map(&:to_a).flatten).uniq
@@ -45,8 +51,8 @@ module Hyrax
     def date_value; end
     def save_type; end
 
-    def multiple?(field)
-      if [:child_contributors].include?(field.to_sym)
+    def self.multiple?(field)
+      if [:child_contributors,:special_collection,:sonyci_id].include?(field.to_sym)
         true
       else
         super
@@ -56,6 +62,9 @@ module Hyrax
     def expand_field_group?(group)
       #Get terms for a certian field group
       return true if group == :credits && model.members.map{ |member| member.class }.include?(Contribution)
+
+      #Get terms for a certian field group
+      return true if group == :aapb_admin_data && model.admin_data && !model.admin_data.empty?
 
       field_group_terms(group).each do |term|
         #Expand field group
@@ -113,6 +122,63 @@ module Hyrax
       dates_with_types += model.created_date.map { |date| ['created', date] }
       dates_with_types += model.copyright_date.map { |date| ['copyright', date] }
       dates_with_types
+    end
+
+    def level_of_user_access
+      if model.admin_data
+        model.admin_data.level_of_user_access
+      else
+        ""
+      end
+
+    end
+
+    def minimally_cataloged
+      if model.admin_data
+        model.admin_data.minimally_cataloged
+      else
+        ""
+      end
+    end
+
+    def outside_url
+      if model.admin_data
+        model.admin_data.outside_url
+      else
+        ""
+      end
+    end
+
+    def special_collection
+      if model.admin_data
+        Array(model.admin_data.special_collection)
+      else
+        []
+      end
+    end
+
+    def transcript_status
+      if model.admin_data
+        model.admin_data.transcript_status
+      else
+        ""
+      end
+    end
+
+    def sonyci_id
+      if model.admin_data
+        Array(model.admin_data.sonyci_id)
+      else
+        []
+      end
+    end
+
+    def licensing_info
+      if model.admin_data
+        model.admin_data.licensing_info
+      else
+        ""
+      end
     end
 
     # Augment the list of permmitted params to accept our fields that have
