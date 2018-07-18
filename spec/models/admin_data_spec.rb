@@ -2,15 +2,6 @@ require 'rails_helper'
 
 RSpec.describe AdminData, type: :model do
 
-
-  it "has level_of_user_access"
-  it "has minimally_cataloged"
-  it "has outside_url"
-  it "has special_collection"
-  it "has transcript_status"
-  it "has sonnyci_id"
-  it "has licensing_info"
-
   context "attributes" do
     let(:admin_data) { FactoryBot.build(:admin_data) }
     it "is valid with valid attributes" do
@@ -20,8 +11,9 @@ RSpec.describe AdminData, type: :model do
 
   context "gid" do
     let(:admin_data) { FactoryBot.create(:admin_data) }
+    let(:expected_admin_data_gid) {URI::GID.build(app: GlobalID.app, model_name: :admindata, model_id: admin_data.id).to_s}
     it "has gid when created" do
-      expect(admin_data.valid?).to be true
+      expect(admin_data.gid).to eq(expected_admin_data_gid)
     end
   end
 end
