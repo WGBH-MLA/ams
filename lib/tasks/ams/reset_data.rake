@@ -17,6 +17,5 @@ namespace :ams do
     # NOTE: The Fedora and Solr must already be running.
     AMS.logger.level = Logger::INFO
     AMS.reset_data!
-    puts "\nData reset for #{Rails.env.upcase} environment complete.\n\n"
   end
 end
