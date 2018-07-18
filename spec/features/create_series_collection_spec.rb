@@ -1,5 +1,4 @@
 require 'rails_helper'
-include Warden::Test::Helpers
 
 RSpec.feature 'Create and Validate Series Collection', js: true do
 
@@ -59,4 +58,3 @@ RSpec.feature 'Create and Validate Series Collection', js: true do
     end
   end
 end
-

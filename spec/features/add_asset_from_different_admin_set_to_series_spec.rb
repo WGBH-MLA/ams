@@ -1,83 +1,63 @@
 require 'rails_helper'
 
-RSpec.feature "AddAssetFromDifferentAdminSetToSeries", type: :feature, js: true, disable_animation:true do
+RSpec.feature "Add assets from different admin sets to the a Series collection", type: :feature, js: true, disable_animation: true do
+  let(:user) { create :user, role_names: ['test_user_role']}
 
-  before { Rails.application.load_seed }
+  let(:admin_set_1) { create :admin_set, title: ["Test Admin Set 1"], with_permission_template: { with_active_workflow: true } }
+  let(:admin_set_2) { create :admin_set, title: ["Test Admin Set 2"], with_permission_template: { with_active_workflow: true } }
 
-  context 'Create adminset, create series collection' do
-    let!(:user) { create :user, role_names: ['user']}
+  let(:asset_1) { create :asset, admin_set: admin_set_1, user: user}
+  let(:asset_2) { create :asset, admin_set: admin_set_2, user: user}
 
-    let!(:admin_set_1) { create :admin_set }
-    let(:permission_template_1) { Hyrax::PermissionTemplate.find_or_create_by!(source_id: admin_set_1.id) }
-    let!(:workflow_1) { Sipity::Workflow.create!(active: true, name: 'test-workflow', permission_template: permission_template_1) }
+  let(:series_collection_attributes) do
+    attributes_for :series_collection
+  end
 
-    let!(:admin_set_2) { create :admin_set }
-    let(:permission_template_2) { Hyrax::PermissionTemplate.find_or_create_by!(source_id: admin_set_2.id) }
-    let!(:workflow_2) { Sipity::Workflow.create!(active: true, name: 'test-workflow', permission_template: permission_template_2) }
+  scenario 'Create and Validate Series, Search series' do
+    # Login role user to create series
+    login_as(user)
 
-    let!(:asset_1) { create :asset, with_admin_set:true, admin_set_id:admin_set_1.id, user:user}
-    let!(:asset_2) { create :asset, with_admin_set:true, admin_set_id:admin_set_2.id, user:user}
+    visit hyrax.new_dashboard_collection_path(collection_type_id: Hyrax::CollectionType.find_by_machine_id('series').id)
+    expect(find('div.main-header')).to have_content "New Series"
+    fill_in('Series title', with: series_collection_attributes[:series_title].first)
+    fill_in('Series description', with: series_collection_attributes[:series_description].first)
+    click_on('Save')
 
-    let(:series_collection_attributes) do
-      attributes_for :series_collection
-    end
+    wait_for(3) { Collection.where(series_title: series_collection_attributes[:title]).first }
 
-    scenario 'Create and Validate Series, Search series' do
-      Sipity::WorkflowAction.create!(name: 'submit', workflow: workflow_1)
-      Hyrax::PermissionTemplateAccess.create!(
-          permission_template_id: permission_template_1.id,
-          agent_type: 'group',
-          agent_id: 'user',
-          access: 'deposit'
-      )
+    # Go to the #show page for asset_1
+    visit "/concern/assets/#{asset_1.id}"
+    # Click on 'Add to collection'
+    click_on I18n.t('hyrax.dashboard.my.action.add_to_collection')
 
-      Sipity::WorkflowAction.create!(name: 'submit', workflow: workflow_2)
-      Hyrax::PermissionTemplateAccess.create!(
-          permission_template_id: permission_template_2.id,
-          agent_type: 'group',
-          agent_id: 'user',
-          access: 'deposit'
-      )
+    # Click on the auto complete autocomplete select box to select a Series collection.
+    find('#s2id_member_of_collection_ids a.select2-choice').click
+    # Type in the name of the Series collection.
+    find('#s2id_autogen1_search').send_keys(series_collection_attributes[:series_title].first)
+    sleep(2)
+    # Select the series from the drop down.
+    find('#select2-results-1 span.select2-match').click
+    # Save the changes.
+    click_on 'Save changes'
 
-      # Login role user to create series
-      login_as(user)
-      visit hyrax.new_dashboard_collection_path(collection_type_id: Hyrax::CollectionType.find_by_machine_id('series').id)
-      expect(find('div.main-header')).to have_content "New Series"
-      fill_in('Series title', with: series_collection_attributes[:series_title].first)
-      fill_in('Series description', with: series_collection_attributes[:series_description].first)
-      click_on('Save')
+    visit "/concern/assets/#{asset_2.id}"
+    click_on I18n.t('hyrax.dashboard.my.action.add_to_collection')
 
-      wait_for(3) { Collection.where(series_title: series_collection_attributes[:title]).first }
+    # Click on the auto complete autocomplete select box to select a Series collection.
+    find('#s2id_member_of_collection_ids a.select2-choice').click
+    # Type in the name of the Series collection.
+    find('#s2id_autogen1_search').send_keys(series_collection_attributes[:series_title].first)
+    sleep(2)
+    # Select the series from the drop down.
+    find('#select2-results-1 span.select2-match').click
+    # Save the changes.
+    click_on 'Save changes'
 
-      visit "/concern/assets/#{asset_1.id}"
+    # Expect to be redirect to the dashboard collections page
+    expect(current_path).to match /#{hyrax.dashboard_collections_path}/
 
-      click_on I18n.t('hyrax.dashboard.my.action.add_to_collection')
-
-      within('#s2id_member_of_collection_ids') {find('a.select2-choice').click }
-      sleep(2)
-      find('#s2id_autogen1_search').send_keys(series_collection_attributes[:series_title].first)
-      sleep(2)
-      expect(find("#select2-results-1")).to have_content series_collection_attributes[:series_title].first
-      within('#select2-results-1') {find('span', text: series_collection_attributes[:series_title].first).click}
-      click_on 'Save changes'
-
-
-      visit "/concern/assets/#{asset_2.id}"
-
-      click_on I18n.t('hyrax.dashboard.my.action.add_to_collection')
-
-
-      within('#s2id_member_of_collection_ids') {find('a.select2-choice').click }
-      sleep(2)
-      find('#s2id_autogen1_search').send_keys(series_collection_attributes[:series_title].first)
-      sleep(2)
-      expect(find("#select2-results-1")).to have_content series_collection_attributes[:series_title].first
-      within('#select2-results-1') {find('span', text: series_collection_attributes[:series_title].first).click}
-      click_on 'Save changes'
-
-      expect(page).to have_content asset_1.title.first
-      expect(page).to have_content asset_2.title.first
-
-    end
+    # And expect to see the two newly added assets.
+    expect(page).to have_content asset_1.title.first
+    expect(page).to have_content asset_2.title.first
   end
 end

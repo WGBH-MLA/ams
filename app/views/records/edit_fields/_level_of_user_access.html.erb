@@ -1,0 +1,7 @@
+<% level_of_user_access =  LevelOfUserAccessService.new %>
+<%= f.input :level_of_user_access, as: :select,
+            collection: level_of_user_access.select_all_options,
+            include_blank: true,
+            disabled:f.object.respond_to?(:disabled?) && f.object.disabled?(key),
+            input_html: { class: 'form-control'}
+%>

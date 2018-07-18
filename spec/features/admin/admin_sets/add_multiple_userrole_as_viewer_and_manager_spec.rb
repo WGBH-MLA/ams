@@ -1,59 +1,49 @@
 require 'rails_helper'
 
-include Warden::Test::Helpers
+RSpec.feature 'Add "manage" permissions to test role', js: true, clean:true do
+  let!(:admin_user) { create :admin_user }
+  let!(:user) { create :user, role_names: ['test_role'] }
+  let!(:admin_set) { create(:admin_set, with_permission_template: true ) }
+  let!(:asset) { create(:asset, :public, user: user, admin_set: admin_set) }
 
-RSpec.feature 'AssignUserroleAsViewerAndManager.', js: true, clean:true do
-  context 'Add permissions to user (Role)' do
-    let(:admin_user) { create :admin_user }
-    let!(:user) { create :user }
-    let!(:user_with_role) { create :user, role_names: ['user'] }
-    let!(:admin_set_1) { create :admin_set }
-    let!(:admin_set_2) { create :admin_set }
-    let!(:work_2) { create :asset, :public, user: user}
-    let!(:permission_template_2) { Hyrax::PermissionTemplate.find_or_create_by!(source_id: admin_set_2.id) }
-    let!(:workflow) { Sipity::Workflow.create!(active: true, name: 'test-workflow', permission_template: permission_template_2) }
+  scenario 'Assigning Permissions to AdminSets' do
+    login_as(admin_user)
 
-    scenario 'Assigning Permissions to AdminSets' do
-      work_2.admin_set_id = admin_set_2.id
-      work_2.save!
-      Hyrax::PermissionTemplateAccess.create!(
-          permission_template_id: permission_template_2.id,
-          agent_type: 'group',
-          agent_id: 'user',
-          access: 'view'
-      )
+    # Edit first AdminSet
+    visit "/admin/admin_sets/#{admin_set.id}/edit"
+    expect(page).to have_content 'Edit Administrative Set'
 
-      login_as(admin_user)
+    # Add user as manager
+    click_on('Participants')
+    # Choose the custom role we created when creating the user.
+    fill_in('permission_template_access_grants_attributes_0_agent_id', with: user.roles[0].name)
+    # Select the "manage" option
+    find("#group-participants-form select option[value='manage']").select_option
+    # Save the changes.
+    find('#group-participants-form .btn').click
+    # Check for the confirmation flash message.
+    expect(page).to have_content  'participant rights have been updated'
 
-      # Edit first AdminSet
-      visit "/admin/admin_sets/#{admin_set_1.id}/edit"
-      expect(page).to have_content 'Edit Administrative Set'
+    # Now logout the admin user, and log in as the non-admin user we created.
+    logout(admin_user)
+    login_as(user)
 
-      # Add user as manager
-      click_on('Participants')
-      fill_in('permission_template_access_grants_attributes_0_agent_id', with: user_with_role.roles[0].name)
-      find("#group-participants-form select option[value='manage']").select_option
-      find('#group-participants-form .btn').click
-      expect(page).to have_content  'participant rights have been updated'
-      logout(admin_user)
+    # Check first AdminSet edit permissions
+    visit "/admin/admin_sets/#{admin_set.id}"
+    expect(page).to have_content admin_set.title[0]
+    click_on('Edit')
+    expect(page).to have_content 'Edit Administrative Set'
 
-      # Login role user to check permissions
-      login_as(user_with_role)
+    # Now ensure that the Asset we created as part of the custom admin set is
+    # returned in search results.
+    visit '/'
 
-      # Check first AdminSet edit permissions
-      visit "/admin/admin_sets/#{admin_set_1.id}"
-      expect(page).to have_content admin_set_1.title[0]
-      click_on('Edit')
-      expect(page).to have_content 'Edit Administrative Set'
+    find("#search-submit-header").click
 
-      # Check second AdminSet records in search results
-      visit '/'
-      find("#search-submit-header").click
-      expect(page).to have_content work_2.title[0]
+    expect(page).to have_content asset.title[0]
 
-      # open record in search result check it dont have other records edit permissions
-      click_on(work_2.title[0])
-      expect(page).not_to have_content 'Edit'
-    end
+    # open record in search result check it dont have other records edit permissions
+    click_on(asset.title[0])
+    expect(page).not_to have_content 'Edit'
   end
 end

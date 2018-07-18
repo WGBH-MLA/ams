@@ -9,6 +9,8 @@ module Hyrax
              :program_title, :episode_title, :segment_title, :raw_footage_title, :promo_title, :clip_title,
              :program_description, :episode_description, :segment_description, :raw_footage_description,
              :promo_description, :clip_description, :broadcast_date, :created_date, :copyright_date,
+             :level_of_user_access, :minimally_cataloged, :outside_url, :special_collection, :transcript_status,
+             :sonyci_id, :licensing_info,
              to: :solr_document
   end
 end
