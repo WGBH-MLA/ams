@@ -1,7 +1,7 @@
 en:
   hyrax:
     icons:
-      essence_track:     'fa fa-file-text-o'
+      essence_track:     'essence-track-icon'
     select_type:
       essence_track:
         name:               "Essence Track"
@@ -19,5 +19,3 @@ en:
         bit_depth: 'Bit Depth'
         frame_width: 'Frame Width (in pixels)'
         frame_height: 'Frame Height (in pixels)'
-
-

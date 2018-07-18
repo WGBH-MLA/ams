@@ -1,7 +1,7 @@
 en:
   hyrax:
     icons:
-      asset:     'fa fa-file-text-o'
+      asset:     'asset-icon'
     select_type:
       asset:
         name:               "Asset"
