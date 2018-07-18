@@ -65,9 +65,9 @@ RSpec.configure do |config|
     AMS.reset_data!
   end
 
-  # Reset data for each example unless the :keep_data flag is set.
+  # Reset data conditionally for each exampld; defaults to true.
   config.before :each do |example|
-    AMS.reset_data! unless example.metadata.fetch(:keep_data, false)
+    AMS.reset_data! if example.metadata.fetch(:reset_data, true)
   end
 
 
