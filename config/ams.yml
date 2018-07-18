@@ -1,0 +1,2 @@
+default: &default
+  aapb_admin_data_write_role: 'aapb-admin'
