@@ -215,6 +215,17 @@ class SolrDocument
     self[Solrizer.solr_name('alternative_modes')]
   end
 
+  def title
+    concatenated_titles = [
+      program_title, episode_number, episode_title, segment_title, clip_title,
+      promo_title, raw_footage_title,
+      self[Solrizer.solr_name('title')]
+    ].flatten.select(&:present?).join('; ')
+    # Wrap the return value in an array to behave like a multi-valued field,
+    # even though this will always be a single value.
+    Array(concatenated_titles)
+  end
+
   def program_title
     self[Solrizer.solr_name('program_title')]
   end
@@ -285,5 +296,33 @@ class SolrDocument
 
   def affiliation
     self[Solrizer.solr_name('affiliation')]
+  end
+
+  def level_of_user_access
+    self[Solrizer.solr_name('level_of_user_access')]
+  end
+
+  def minimally_cataloged
+    self[Solrizer.solr_name('minimally_cataloged')]
+  end
+
+  def outside_url
+    self[Solrizer.solr_name('outside_url')]
+  end
+
+  def special_collection
+    self[Solrizer.solr_name('special_collection')]
+  end
+
+  def transcript_status
+    self[Solrizer.solr_name('transcript_status')]
+  end
+
+  def sonyci_id
+    self[Solrizer.solr_name('sonyci_id')]
+  end
+
+  def licensing_info
+    self[Solrizer.solr_name('licensing_info')]
   end
 end
