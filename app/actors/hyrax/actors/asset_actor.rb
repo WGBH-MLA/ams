@@ -8,8 +8,7 @@ module Hyrax
         add_title_types(env)
         add_description_types(env)
         add_date_types(env)
-        save_aapb_admin_data(env)
-        super && create_or_update_contributions(env, contributions)
+        save_aapb_admin_data(env) && super && create_or_update_contributions(env, contributions)
       end
 
       def update(env)
@@ -17,8 +16,7 @@ module Hyrax
         add_title_types(env)
         add_description_types(env)
         add_date_types(env)
-        save_aapb_admin_data(env)
-        super && create_or_update_contributions(env, contributions)
+        save_aapb_admin_data(env) && super && create_or_update_contributions(env, contributions)
       end
 
       def destory(env)
@@ -48,8 +46,7 @@ module Hyrax
 
         def admin_data_attributes
           #removing id, created_at & updated_at from attributes
-          attr = AdminData.attribute_names.dup.map &:to_sym
-          attr -= [:id, :created_at, :updated_at]
+          (AdminData.attribute_names.dup - ['id', 'created_at', 'updated_at']).map &:to_sym
         end
 
         def find_or_create_admin_data(env)
@@ -80,7 +77,7 @@ module Hyrax
                 actor ||= Hyrax::CurationConcern.actor
                 #Moving contributor into Array before saving object
                 param_contributor[:contributor] = Array(param_contributor[:contributor])
-                #param_contributor[:admin_set_id] = env.curation_concern.admin_set_id
+                param_contributor[:admin_set_id] = env.curation_concern.admin_set_id
                 param_contributor[:title] = env.attributes["title"]
 
                 if param_contributor[:id].blank?

@@ -22,7 +22,7 @@ module Hyrax
     class_attribute :field_groups
 
     #removing id, created_at & updated_at from attributes
-    admin_data_attributes = AdminData.attribute_names.dup.tap {|admin| admin.shift() && admin.pop() && admin.pop() }.map &:to_sym
+    admin_data_attributes = (AdminData.attribute_names.dup - ['id', 'created_at', 'updated_at']).map &:to_sym
 
     self.field_groups = {
       identifying_info: [:titles_with_types, :episode_number, :local_identifier, :pbs_nola_code, :eidr_id, :asset_types, :dates_with_types, :descriptions_with_types],
