@@ -307,7 +307,7 @@ RSpec.describe Asset do
     let(:admin_data) { FactoryBot.create(:admin_data) }
     let(:asset) { FactoryBot.build(:asset, with_admin_data:admin_data.gid) }
     it "has admin_data_gid" do
-      expect(asset.resource.dump(:ttl)).to match(/purl.org\/dc\/terms\/isPartOf/)
+      expect(asset.resource.dump(:ttl)).to match(/pbcore.org#hasAAPBAdminData/)
       expect(asset.admin_data_gid).to eq(admin_data.gid)
     end
     it "has throws ActiveRecord::RecordNotFound if cannot find admin_data for the gid" do

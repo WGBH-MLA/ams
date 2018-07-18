@@ -173,9 +173,11 @@ class Asset < ActiveFedora::Base
     index.as :stored_searchable
   end
 
-  property :admin_data_gid, predicate: ::RDF::Vocab::DC.isPartOf, multiple: false do |index|
-    index.as(:symbol)
+  property :admin_data_gid, predicate: ::RDF::URI.new('http://pbcore.org#hasAAPBAdminData'), multiple: false do |index|
+    index.as :symbol
   end
+
+  validates :admin_data_gid, presence: true
 
   def admin_data_gid=(new_admin_data_gid)
     raise "Can't modify admin data of this asset" if persisted? && !admin_data_gid_was.nil? && admin_data_gid_was != new_admin_data_gid
