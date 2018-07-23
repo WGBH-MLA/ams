@@ -15,10 +15,14 @@ module AMS
       time = Benchmark.realtime do
         logger.info 'Checking to see if Fedora is working...'
         ensure_fedora_is_working
+        logger.info 'Checking for migrations...'
+        run_migrations!
         logger.info 'Cleaning the database...'
         clean_database!
         logger.info 'Cleaning the repository...'
         clean_solr_and_fedora!
+        logger.info 'Flushing Redis cache...'
+        flush_redis_cache!
         logger.info 'Loading seed data...'
         Seed.all
       end
@@ -51,6 +55,14 @@ module AMS
       def clean_solr_and_fedora!
         require 'active_fedora/cleaner'
         ActiveFedora::Cleaner.clean!
+      end
+
+      def run_migrations!
+        ActiveRecord::Migration.migrate(:up) if ActiveRecord::Migration.check_pending!
+      end
+
+      def flush_redis_cache!
+        Redis.new(port: '6379').flushall
       end
 
     module Seed
