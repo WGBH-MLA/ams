@@ -3,7 +3,6 @@
 # WARNING: upgrading Hyrax may break this override.
 # Gets default thumbnail from solr document instead of using default.png
 %>
-
 <% if presenter.representative_id.present? && presenter.representative_presenter.present? %>
   <% if defined?(viewer) && viewer %>
     <%= PulUvRails::UniversalViewer.script_tag %>
