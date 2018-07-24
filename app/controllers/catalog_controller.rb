@@ -17,18 +17,6 @@ class CatalogController < ApplicationController
     solr_name('broadcast', :stored_sortable)
   end
 
-  def self.asset_types
-    solr_name('asset_types', :stored_sortable)
-  end
-
-  def self.genre
-    solr_name('genre', :stored_sortable)
-  end
-
-  def self.topics
-    solr_name('topics', :stored_sortable)
-  end
-
   def self.created
     solr_name('created', :stored_sortable, type: :date)
   end
