@@ -97,7 +97,9 @@ class CatalogController < ApplicationController
     config.add_index_field solr_name("description", :stored_searchable), itemprop: 'description', helper_method: :iconify_auto_link
 
     config.add_index_field solr_name("broadcast", :stored_searchable), itemprop: 'broadcast', helper_method: :iconify_auto_link
+    config.add_index_field solr_name("topics", :stored_searchable), itemprop: 'topics', helper_method: :iconify_auto_link
     config.add_index_field solr_name("asset_types", :stored_searchable), itemprop: 'asset_types', helper_method: :iconify_auto_link
+    config.add_index_field solr_name("genre", :stored_searchable), itemprop: 'genre', helper_method: :iconify_auto_link
     config.add_index_field solr_name("created", :stored_searchable), itemprop: 'created', helper_method: :iconify_auto_link
     config.add_index_field solr_name("date", :stored_searchable), itemprop: 'date', helper_method: :iconify_auto_link, label: 'Date'
     config.add_index_field solr_name("copyright_date", :stored_searchable), itemprop: 'copyright_date', helper_method: :iconify_auto_link
