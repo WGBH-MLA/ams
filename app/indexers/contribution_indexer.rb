@@ -9,7 +9,6 @@ class ContributionIndexer < Hyrax::WorkIndexer
   # this behavior
   include Hyrax::IndexesLinkedMetadata
 
-  self.thumbnail_path_service = Hyrax::WorkThumbnailPathService
 
   # Uncomment this block if you want to add custom indexing behavior:
   # def generate_solr_document
