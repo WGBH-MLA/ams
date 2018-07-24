@@ -57,7 +57,7 @@ module Hyrax
         def parse_pbcore_essense_track(env,pbcore_doc)
           pbcore_doc.essence_tracks.each do |track|
             e = {}
-            e[:title] = env.curation_concern.title
+            e[:title] = Array(env.curation_concern.title)
             e[:track_type] = track.type  if track.type
             e[:track_id] = Array(track.identifiers.map {|id| id.value})  if track.identifiers
             e[:standard] = track.standard.value if track.standard

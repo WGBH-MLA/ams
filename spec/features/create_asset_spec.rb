@@ -133,10 +133,11 @@ RSpec.feature 'Create and Validate Asset', js: true, asset_form_helpers: true, c
 
       visit '/'
       find("#search-submit-header").click
-
-      # Filter resources types
-      click_on('Type')
-      click_on('Asset')
+      within('#facets') do
+        # Filter resources types
+        click_on('Type')
+        click_on('Asset')
+      end
 
 
       # Expect metadata for Asset to be displayed on the search results page.
