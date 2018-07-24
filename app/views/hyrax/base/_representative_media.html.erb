@@ -1,4 +1,9 @@
-<%# This is an override of Hyrax 2.1.0 [b19e3f5] [app/views/hyrax/base/_representative_media.html.erb] %>
+<%
+# This is an override of Hyrax 2.1.0 [b19e3f5] [app/views/hyrax/base/_representative_media.html.erb] 
+# WARNING: upgrading Hyrax may break this override.
+# Gets default thumbnail from solr document instead of using default.png
+%>
+
 <% if presenter.representative_id.present? && presenter.representative_presenter.present? %>
   <% if defined?(viewer) && viewer %>
     <%= PulUvRails::UniversalViewer.script_tag %>
