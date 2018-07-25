@@ -109,17 +109,13 @@ RSpec.feature 'Create and Validate Asset,Digital Instantiation, EssenseTrack', j
 
       expect(page).to have_content('Please note, making something visible to the world (i.e. marking this as Public) may be viewed as publishing which could impact your ability to')
 
-
       click_on('Save & Create Digital Instantiation')
 
       expect(page).to have_content 'Add New Digital Instantiation', wait: 5
 
-      #show all fields groups
-      sleep(5)
       # TODO: Why do we need to call this twice?
       disable_collapse
       disable_collapse
-
 
       attach_file('Digital instantiation pbcore xml', File.absolute_path(digital_instantiation_attributes[:pbcore_xml_doc]))
       fill_in('Location', with: digital_instantiation_attributes[:location])
@@ -137,50 +133,15 @@ RSpec.feature 'Create and Validate Asset,Digital Instantiation, EssenseTrack', j
       choose('digital_instantiation_visibility_open')
       expect(page).to have_content('Please note, making something visible to the world (i.e. marking this as Public) may be viewed as publishing which could impact your ability to')
 
+      click_link "Relationships" # define adminset relation
+      find("#digital_instantiation_admin_set_id option[value='#{admin_set_id}']").select_option
+
       click_on('Save')
+      # Wait for the DigitalInstantiation to be saved
+      Timeout::timeout(10) { DigitalInstantiation.where(title: digital_instantiation_attributes[:title]).first }
 
-      wait_for(10) { DigitalInstantiation.where(title: digital_instantiation_attributes[:title]).first }
-
-      visit '/'
-      find("#search-submit-header").click
-
-      within('#facets') do
-        # Filter resources types
-        click_on('Type')
-        click_on('Asset')
-      end
-
-      # Expect metadata for Asset to be displayed on the search results page.
-      expect(page).to have_content main_title
-
-      # open asset with detail show
-      click_on main_title
-      wait_for(5)
-
-      expect(page).to have_content asset_attributes[:spatial_coverage]
-      expect(page).to have_content asset_attributes[:temporal_coverage]
-      expect(page).to have_content asset_attributes[:audience_level]
-      expect(page).to have_content asset_attributes[:audience_rating]
-      expect(page).to have_content asset_attributes[:annotation]
-      expect(page).to have_content asset_attributes[:rights_summary]
-      expect(page).to have_current_path(guid_regex)
-      
-
-      visit '/'
-      find("#search-submit-header").click
-
-      # expect digital instantiation is showing up
+      # Expect page to have the main_title as the DigitalInstantiation's title.
       expect(page).to have_content digital_instantiation_attributes[:main_title]
-
-      within('#facets', wait: 5) do
-        # Filter resources types
-        click_on('Type')
-        click_on('Digital Instantiation')
-      end
-
-      # open digital instantiation with detail show
-      click_on(main_title)
-      expect(page).to have_content main_title
       expect(page).to have_content digital_instantiation_attributes[:location]
       expect(page).to have_content pbcore_xml_doc.digital.value
       expect(page).to have_content pbcore_xml_doc.media_type.value
