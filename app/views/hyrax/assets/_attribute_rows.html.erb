@@ -1,6 +1,7 @@
 <%= presenter.attribute_to_html(:program_title, render_as: :faceted) %>
 <%= presenter.attribute_to_html(:program_description) %>
 <%= presenter.attribute_to_html(:episode_title, render_as: :faceted) %>
+<%= presenter.attribute_to_html(:episode_number) %>
 <%= presenter.attribute_to_html(:episode_description) %>
 <%= presenter.attribute_to_html(:segment_title, render_as: :faceted) %>
 <%= presenter.attribute_to_html(:segment_description) %>
@@ -16,7 +17,6 @@
 <%= presenter.attribute_to_html(:broadcast_date, render_as: :faceted) %>
 <%= presenter.attribute_to_html(:created_date, render_as: :faceted) %>
 <%= presenter.attribute_to_html(:copyright_date, render_as: :faceted) %>
-<%= presenter.attribute_to_html(:episode_number) %>
 <%= presenter.attribute_to_html(:spatial_coverage) %>
 <%= presenter.attribute_to_html(:temporal_coverage) %>
 <%= presenter.attribute_to_html(:audience_level) %>
