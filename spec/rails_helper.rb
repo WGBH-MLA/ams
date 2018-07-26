@@ -15,6 +15,7 @@ require 'noid/rails/rspec'
 require 'rspec/matchers'
 require 'capybara/rspec'
 require 'capybara-screenshot/rspec'
+require 'selenium/webdriver'
 require 'capybara/rails'
 require 'ams'
 
@@ -60,16 +61,19 @@ RSpec.configure do |config|
     end
   end
 
-  # Reset data before the suite is run.
   config.before :suite do
+    # Reset data before the suite is run.
     AMS.reset_data!
+
+    # Set the capybara JS driver to whatever was passed in to JS_DRIVER,
+    # defaulting to :selenium_chrome_headless
+    Capybara.javascript_driver = ENV.fetch('JS_DRIVER', 'selenium_chrome_headless').to_sym
   end
 
   # Reset data conditionally for each exampld; defaults to true.
   config.before :each do |example|
     AMS.reset_data! if example.metadata.fetch(:reset_data, true)
   end
-
 
   # Filter lines from Rails gems in backtraces.
   config.filter_rails_from_backtrace!

@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.feature 'Create and Validate Asset,Digital Instantiation, EssenseTrack', js: true, asset_form_helpers: true,
-              disable_animation:true, expand_fieldgroup: true, clean:true do
+              disable_animation:true, expand_fieldgroup: true  do
   context 'Create adminset, create asset, import pbcore xml for digital instantiation and essensetrack' do
     let(:admin_user) { create :admin_user }
     let!(:user_with_role) { create :user, role_names: ['user'] }
@@ -114,7 +114,7 @@ RSpec.feature 'Create and Validate Asset,Digital Instantiation, EssenseTrack', j
       visit '/'
       find("#search-submit-header").click
 
-      within('#facets') do
+      within('#facets', wait: 5) do
         # Filter resources types
         click_on('Type')
         click_on('Asset')
@@ -137,8 +137,7 @@ RSpec.feature 'Create and Validate Asset,Digital Instantiation, EssenseTrack', j
 
       click_on('Add Digital Instantiation')
 
-      find('body').click
-      expect(page).to have_content 'Add New Digital Instantiation'
+      expect(page).to have_content 'Add New Digital Instantiation', wait: 5
 
       #show all fields groups
       sleep(5)
@@ -172,7 +171,8 @@ RSpec.feature 'Create and Validate Asset,Digital Instantiation, EssenseTrack', j
 
       # expect digital instantiation is showing up
       expect(page).to have_content digital_instantiation_attributes[:main_title]
-      within('#facets') do
+
+      within('#facets', wait: 5) do
         # Filter resources types
         click_on('Type')
         click_on('Digital Instantiation')

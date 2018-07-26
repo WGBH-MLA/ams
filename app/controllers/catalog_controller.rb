@@ -60,7 +60,6 @@ class CatalogController < ApplicationController
     config.add_index_field solr_name("created", :stored_searchable), itemprop: 'created', helper_method: :iconify_auto_link
     config.add_index_field solr_name("date", :stored_searchable), itemprop: 'date', helper_method: :iconify_auto_link, label: 'Date'
     config.add_index_field solr_name("copyright_date", :stored_searchable), itemprop: 'copyright_date', helper_method: :iconify_auto_link
-    config.add_index_field solr_name("episode_number", :stored_searchable), itemprop: 'episode_number', helper_method: :iconify_auto_link
 
     config.add_index_field solr_name("keyword", :stored_searchable), itemprop: 'keywords', link_to_search: solr_name("keyword", :facetable)
     config.add_index_field solr_name("subject", :stored_searchable), itemprop: 'about', link_to_search: solr_name("subject", :facetable)
@@ -92,7 +91,6 @@ class CatalogController < ApplicationController
     config.add_show_field solr_name("created", :stored_searchable)
     config.add_show_field solr_name("date", :stored_searchable), label: "Date"
     config.add_show_field solr_name("copyright_date", :stored_searchable)
-    config.add_show_field solr_name("episode_number", :stored_searchable)
 
     config.add_show_field solr_name("keyword", :stored_searchable)
     config.add_show_field solr_name("subject", :stored_searchable)
@@ -299,13 +297,6 @@ class CatalogController < ApplicationController
     end
     config.add_search_field('copyright_date') do |field|
       solr_name = solr_name("copyright_date", :stored_searchable)
-      field.solr_local_parameters = {
-        qf: solr_name,
-        pf: solr_name
-      }
-    end
-    config.add_search_field('episode_number') do |field|
-      solr_name = solr_name("episode_number", :stored_searchable)
       field.solr_local_parameters = {
         qf: solr_name,
         pf: solr_name

@@ -47,10 +47,10 @@ group :development, :test do
   gem 'factory_bot_rails', '~> 4.0'
   gem 'shoulda-matchers'
   gem 'bixby' # bixby == the hydra community's rubocop rules
-  gem 'selenium-webdriver'
   gem 'chromedriver-helper'
   gem 'capybara', '~> 2.18'
   gem 'database_cleaner'
+  gem 'selenium-webdriver'
   gem 'fcrepo_wrapper'
   gem 'solr_wrapper', '~> 2.0'
 end
