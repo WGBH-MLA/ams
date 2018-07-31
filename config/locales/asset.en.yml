@@ -2,6 +2,31 @@ en:
   hyrax:
     icons:
       asset:     'asset-icon'
+    assets:
+      aapb_admindata:
+        aapb_admin: 'AAPB Admin'
+      metadata:
+        details:  'Details'
+      contributions:
+        role:      'Role'
+        affiliation:      'Affiliation'
+        portrayal:      'portrayal'
+        name:      'name'
+        credits:    'Credits'
+      instantiations:
+        actions: Actions
+        date_uploaded: Date Uploaded
+        empty: This %{type} has no files associated with it. Click "edit" to add more files.
+        header: Items
+        thumbnail: Thumbnail
+        title: Title
+        unauthorized: There are no publicly available items in this %{type}.
+        visibility: Visibility
+      instantiation_member:
+        format:   'Format'
+        local_instantiation_identifer:   'Local ID'
+        generations:   'Generation'
+        duration:   'Duration'
     select_type:
       asset:
         name:               "Asset"

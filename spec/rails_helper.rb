@@ -15,6 +15,7 @@ require 'noid/rails/rspec'
 require 'rspec/matchers'
 require 'capybara/rspec'
 require 'capybara-screenshot/rspec'
+require 'selenium/webdriver'
 require 'capybara/rails'
 require 'ams'
 
@@ -58,6 +59,20 @@ RSpec.configure do |config|
     config.mock_with :rspec do |mocks|
       mocks.verify_partial_doubles = example.metadata.fetch(:verify_partial_doubles, true)
     end
+  end
+
+  config.before :suite do
+    # Reset data before the suite is run.
+    AMS.reset_data!
+
+    # Set the capybara JS driver to whatever was passed in to JS_DRIVER,
+    # defaulting to :selenium_chrome_headless
+    Capybara.javascript_driver = ENV.fetch('JS_DRIVER', 'selenium_chrome_headless').to_sym
+  end
+
+  # Reset data conditionally for each exampld; defaults to true.
+  config.before :each do |example|
+    AMS.reset_data! if example.metadata.fetch(:reset_data, true)
   end
 
   # Reset data before the suite is run.

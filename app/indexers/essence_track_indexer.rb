@@ -9,7 +9,7 @@ class EssenceTrackIndexer < Hyrax::WorkIndexer
   # this behavior
   include Hyrax::IndexesLinkedMetadata
 
-
+  self.thumbnail_path_service = WGBH::WorkThumbnailPathService
   # Uncomment this block if you want to add custom indexing behavior:
   # def generate_solr_document
   #  super.tap do |solr_doc|
