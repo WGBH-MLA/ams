@@ -36,6 +36,7 @@ gem 'hydra-role-management'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
+  gem 'byebug'
   gem 'pry-byebug', platforms: [:mri, :mingw, :x64_mingw]
   gem 'pry-rails'
   gem 'capybara-screenshot'
@@ -50,9 +51,9 @@ group :development, :test do
   gem 'selenium-webdriver'
   gem 'chromedriver-helper'
   gem 'capybara', '~> 2.18'
-  gem 'database_cleaner'
   gem 'fcrepo_wrapper'
   gem 'solr_wrapper', '~> 2.0'
+  gem 'xray-rails'
 end
 
 group :development do

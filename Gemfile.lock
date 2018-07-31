@@ -811,6 +811,8 @@ GEM
     xml-simple (1.1.5)
     xpath (3.1.0)
       nokogiri (~> 1.8)
+    xray-rails (0.3.1)
+      rails (>= 3.1.0)
 
 PLATFORMS
   ruby
@@ -818,6 +820,7 @@ PLATFORMS
 DEPENDENCIES
   aws-sdk-codedeploy
   bixby
+  byebug
   capybara (~> 2.18)
   capybara-screenshot
   carrierwave (~> 1.0)
@@ -860,6 +863,7 @@ DEPENDENCIES
   tzinfo-data
   uglifier (>= 1.3.0)
   web-console (>= 3.3.0)
+  xray-rails
 
 BUNDLED WITH
-   1.16.2
+   1.16.3
