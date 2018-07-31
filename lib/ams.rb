@@ -65,6 +65,7 @@ module AMS
         Redis.new(port: '6379').flushall
       end
 
+
     module Seed
       class << self
         def all
