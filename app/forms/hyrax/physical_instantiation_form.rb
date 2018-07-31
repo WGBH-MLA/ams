@@ -35,7 +35,10 @@ module Hyrax
         if(parent_object.title.any?)
           return [parent_object.title.first]
         end
+      elsif model.in_objects.any?
+        return Array(model.in_objects.first.title)
       end
+
       []
     end
 

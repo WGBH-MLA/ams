@@ -12,8 +12,8 @@ class AssetIndexer < Hyrax::WorkIndexer
   self.thumbnail_path_service = WGBH::WorkThumbnailPathService
 
   def generate_solr_document
-    if object.admin_data
-      super.tap do |solr_doc|
+    super.tap do |solr_doc|
+      if object.admin_data
         solr_doc['admin_data_tesim'] = object.admin_data.gid
         solr_doc['level_of_user_access_tesim'] = object.admin_data.level_of_user_access
         solr_doc['minimally_cataloged_tesim'] = object.admin_data.minimally_cataloged.to_s
