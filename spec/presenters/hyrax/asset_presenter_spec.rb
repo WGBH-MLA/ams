@@ -31,7 +31,7 @@ RSpec.describe Hyrax::AssetPresenter do
         asset.ordered_members << contribution
         expect(asset.save).to eq true
         expect(asset.members.to_a.size).to eq 1
-        expect(presenter.list_of_contribution_ids_to_display).to eq contribution_ids
+        expect(presenter.list_of_contribution_ids_to_display.sort).to eq contribution_ids.sort
       end
     end
 
@@ -60,7 +60,7 @@ RSpec.describe Hyrax::AssetPresenter do
         asset.ordered_members << physical_instantiation
         asset.save
         expect(asset.members.to_a.size).to eq 2
-        expect(presenter.list_of_instantiation_ids_to_display).to eq instantiation_ids
+        expect(presenter.list_of_instantiation_ids_to_display.sort).to eq instantiation_ids.sort
       end
     end
 
@@ -90,7 +90,7 @@ RSpec.describe Hyrax::AssetPresenter do
         asset.ordered_members << digital_instantiation
         asset.ordered_members << physical_instantiation
         asset.save
-        expect(presenter.filter_item_ids_to_display(query)).to eq instantiation_ids
+        expect(presenter.filter_item_ids_to_display(query).sort).to eq instantiation_ids.sort
       end
     end
 
