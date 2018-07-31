@@ -26,3 +26,4 @@ class AssetIndexer < Hyrax::WorkIndexer
     end
   end
 end
+

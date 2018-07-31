@@ -75,6 +75,17 @@ RSpec.configure do |config|
     AMS.reset_data! if example.metadata.fetch(:reset_data, true)
   end
 
+  # Reset data before the suite is run.
+  config.before :suite do
+    AMS.reset_data!
+  end
+
+  # Reset data conditionally for each exampld; defaults to true.
+  config.before :each do |example|
+    AMS.reset_data! if example.metadata.fetch(:reset_data, true)
+  end
+
+
   # Filter lines from Rails gems in backtraces.
   config.filter_rails_from_backtrace!
   # arbitrary gems may also be filtered via:
