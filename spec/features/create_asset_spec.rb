@@ -133,7 +133,8 @@ RSpec.feature 'Create and Validate Asset', js: true, asset_form_helpers: true, c
 
       visit '/'
       find("#search-submit-header").click
-      within('#facets') do
+
+      within('#facets', wait: 5) do
         # Filter resources types
         click_on('Type')
         click_on('Asset')
