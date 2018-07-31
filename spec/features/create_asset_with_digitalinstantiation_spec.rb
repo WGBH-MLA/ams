@@ -109,33 +109,8 @@ RSpec.feature 'Create and Validate Asset,Digital Instantiation, EssenseTrack', j
 
       expect(page).to have_content('Please note, making something visible to the world (i.e. marking this as Public) may be viewed as publishing which could impact your ability to')
 
-      click_on('Save')
 
-      visit '/'
-      find("#search-submit-header").click
-
-      within('#facets', wait: 5) do
-        # Filter resources types
-        click_on('Type')
-        click_on('Asset')
-      end
-
-      # Expect metadata for Asset to be displayed on the search results page.
-      expect(page).to have_content main_title
-
-      # open asset with detail show
-      click_on main_title
-      wait_for(5)
-
-      expect(page).to have_content asset_attributes[:spatial_coverage]
-      expect(page).to have_content asset_attributes[:temporal_coverage]
-      expect(page).to have_content asset_attributes[:audience_level]
-      expect(page).to have_content asset_attributes[:audience_rating]
-      expect(page).to have_content asset_attributes[:annotation]
-      expect(page).to have_content asset_attributes[:rights_summary]
-      expect(page).to have_current_path(guid_regex)
-
-      click_on('Add Digital Instantiation')
+      click_on('Save & Create Digital Instantiation')
 
       expect(page).to have_content 'Add New Digital Instantiation', wait: 5
 
@@ -165,6 +140,31 @@ RSpec.feature 'Create and Validate Asset,Digital Instantiation, EssenseTrack', j
       click_on('Save')
 
       wait_for(10) { DigitalInstantiation.where(title: digital_instantiation_attributes[:title]).first }
+
+      visit '/'
+      find("#search-submit-header").click
+
+      within('#facets') do
+        # Filter resources types
+        click_on('Type')
+        click_on('Asset')
+      end
+
+      # Expect metadata for Asset to be displayed on the search results page.
+      expect(page).to have_content main_title
+
+      # open asset with detail show
+      click_on main_title
+      wait_for(5)
+
+      expect(page).to have_content asset_attributes[:spatial_coverage]
+      expect(page).to have_content asset_attributes[:temporal_coverage]
+      expect(page).to have_content asset_attributes[:audience_level]
+      expect(page).to have_content asset_attributes[:audience_rating]
+      expect(page).to have_content asset_attributes[:annotation]
+      expect(page).to have_content asset_attributes[:rights_summary]
+      expect(page).to have_current_path(guid_regex)
+      
 
       visit '/'
       find("#search-submit-header").click

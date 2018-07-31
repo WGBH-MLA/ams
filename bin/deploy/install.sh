@@ -1,15 +1,16 @@
 #!/bin/bash
+/bin/bash --login
+source /etc/profile
 echo "Running Deployment for ID: $DEPLOYMENT_ID"
 sudo yum -y update
 export HOME=/var/www/ams
 cd $HOME
 rvm gemset use ams --create
-source /etc/profile
+bundle install
 echo "ruby version:`ruby -v`"
 echo "rails versions:`rails -v`"
 echo "node version:`node -v`"
 echo "yarn version:`yarn -v`"
-bundle install
 rails db:migrate
 rails assets:precompile
 sudo chown -R ec2-user:ec2-user /var/www/ams
