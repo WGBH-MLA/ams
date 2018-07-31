@@ -57,8 +57,6 @@ module AMS
         ActiveFedora::Cleaner.clean!
       end
 
-<<<<<<< HEAD
-=======
       def run_migrations!
         ActiveRecord::Migration.migrate(:up) if ActiveRecord::Migration.check_pending!
       end
@@ -67,7 +65,7 @@ module AMS
         Redis.new(port: '6379').flushall
       end
 
->>>>>>> develop
+
     module Seed
       class << self
         def all
