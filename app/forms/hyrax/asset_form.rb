@@ -25,7 +25,7 @@ module Hyrax
     admin_data_attributes = (AdminData.attribute_names.dup - ['id', 'created_at', 'updated_at']).map &:to_sym
 
     self.field_groups = {
-      identifying_info: [:titles_with_types, :episode_number, :local_identifier, :pbs_nola_code, :eidr_id, :asset_types, :dates_with_types, :descriptions_with_types],
+      identifying_info: [:titles_with_types, :local_identifier, :pbs_nola_code, :eidr_id, :asset_types, :dates_with_types, :descriptions_with_types],
       subject_info: [:genre, :topics, :subject, :spatial_coverage, :temporal_coverage, :audience_level, :audience_rating, :annotation],
       rights: [:rights_summary, :rights_link],
       credits: [:child_contributors],
@@ -84,7 +84,7 @@ module Hyrax
       group_terms = field_groups[group]
       if group == :identifying_info
         group_terms = field_groups[group] - [:titles_with_types, :descriptions_with_types]
-        group_terms += [:title, :program_title, :episode_title, :segment_title, :raw_footage_title, :promo_title, :clip_title]
+        group_terms += [:title, :program_title, :episode_title, :episode_number, :segment_title, :raw_footage_title, :promo_title, :clip_title]
         group_terms += [:description, :episode_description, :segment_description, :raw_footage_description, :promo_description, :clip_description]
       end
       group_terms

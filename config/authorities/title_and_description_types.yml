@@ -5,6 +5,8 @@ terms:
     term: Program
   - id: episode
     term: Episode
+  - id: episode_number
+    term: Episode Number
   - id: segment
     term: Segment
   - id: raw_footage

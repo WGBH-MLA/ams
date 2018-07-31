@@ -30,6 +30,9 @@
 # available at http://guides.rubyonrails.org/i18n.html.
 
 en:
+  time:
+    format:
+      default: "%a %b %d, %Y at %I:%M %p"
   errors:
         messages:
           carrierwave_processing_error: failed to be processed

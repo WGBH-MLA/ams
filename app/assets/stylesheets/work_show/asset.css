@@ -1,0 +1,178 @@
+table.contributions {
+    margin:0px;
+}
+.asset-panel button {
+    margin-right: 5px;
+}
+.asset-panel .label {
+    border-radius: 0px;
+}
+.asset-panel .block a {
+    text-align: left;
+    border-radius: 0;
+    border: none;
+    font-size: 18px;
+    padding: 15px 20px;
+    border-bottom: 1px solid #eee;
+}
+.asset-panel .block a:hover,
+.asset-panel .block a:focus,
+.asset-panel .block a:active {
+    background: #f9f9f9;
+}
+.asset-panel .details {
+    border: 1px solid #eee;
+    margin-top: 20px;
+}
+.asset-panel .block a:after {
+    content: "\f0d7";
+    font-family: "FontAwesome";
+    font-size: 20px;
+    color: #000;
+    right: 40px;
+    position: absolute;
+}
+.asset-panel .block a.collapsed:after {
+    content: "\f0da";
+    font-family: "FontAwesome";
+    font-size: 20px;
+    color: #000;
+    right: 40px;
+    position: absolute;
+}
+.asset-panel .block ul.tabular a {
+    display: block;
+    border: none;
+    padding: 0;
+    font-size: 14px;
+}
+.asset-panel .block ul.tabular a:after {
+    display: none !important;
+}
+.asset-panel .details .well {
+    border: none;
+    border-radius: 0;
+    background: #fff;
+    margin: 0;
+    border-bottom: 1px solid #eee;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+}
+.asset-panel .head {
+    padding: 20px;
+}
+.asset-panel .head h3 {
+    font-size: 28px;
+    text-transform: capitalize;
+    margin: 0 0 10px;
+}
+.asset-panel .head span {
+    font-size: 16px;
+    line-height: 26px;
+}
+.asset-panel .head a {
+    display: block;
+    font-size: 14px;
+    line-height: 30px;
+}
+.asset-panel .table th {
+    font-weight: bold;
+    border: none;
+    border-bottom: 2px solid #3379b8;
+    background: #ffffff;
+    color: #000;
+}
+.custom-info {
+    margin-top: 20px;
+}
+.custom-info h3 {
+    font-size: 28px;
+    text-transform: capitalize;
+    margin: 0 0 15px;
+}
+.custom-info ul {
+    border: none !important;
+    margin: 0 !important;
+}
+.custom-info .table th {
+    font-weight: bold;
+    border: none;
+    border-bottom: 2px solid #3379b8;
+    background: #ffffff;
+    color: #000;
+}
+.custom-info .img {
+    width: 35px;
+    margin: 15px;
+}
+.custom-info .img img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+.asset-panel .options {
+    text-align: right;
+    padding-top: 8px;
+}
+.canonical-image {
+    width: auto;
+    margin: 0 auto;
+}
+.hold h2 {
+    font-size: 28px;
+    font-weight: bold;
+    margin: 0 0 15px;
+}
+.hold dl {
+    margin: 0;
+}
+.hold dt {
+    width: 20%;
+    float: left;
+    font-weight: bold;
+    padding-bottom: 10px;
+}
+.hold dd {
+    overflow: hidden;
+    background: #fff;
+    padding-bottom: 10px;
+}
+.related-files .thumbnail {
+    width: 60px;
+    border: none;
+    margin: 0;
+    background: transparent;
+}
+.show-actions a {
+    margin: 0 0 5px !important;
+}
+ul.tabular {
+    padding: 0 !important;
+}
+.related-files .thumbnail {
+    width: auto !important;
+    border-top: 1px solid #ddd !important;
+}
+.related-files .thumbnail a {
+    width: 40px;
+    display: block;
+    margin: 0 0 0 10px;
+}
+@media screen and (max-width: 767px){
+    .hold dt {
+        width: 100%;
+        float: none;
+    }
+    .hold dd {
+        width: 100%;
+        overflow: hidden;
+        background: #fff;
+        padding-bottom: 20px;
+    }
+    .asset-panel .options {
+        text-align: center;
+    }
+    .asset-panel .options li {
+        margin: 0 0 5px;
+    }
+}

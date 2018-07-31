@@ -134,9 +134,11 @@ RSpec.feature 'Create and Validate Asset', js: true, asset_form_helpers: true, c
       visit '/'
       find("#search-submit-header").click
 
-      # Filter resources types
-      click_on('Type')
-      click_on('Asset')
+      within('#facets', wait: 5) do
+        # Filter resources types
+        click_on('Type')
+        click_on('Asset')
+      end
 
 
       # Expect metadata for Asset to be displayed on the search results page.
@@ -154,15 +156,13 @@ RSpec.feature 'Create and Validate Asset', js: true, asset_form_helpers: true, c
       expect(page).to have_content asset_attributes[:rights_summary]
       expect(page).to have_current_path(guid_regex)
 
-      expect(page).to have_link(href: /contributions/)
-      #Clicking contribution link from members table
-      within('.thumbnail') {find('a[href*="contribution"]').click }
-
-      expect(page).to have_content contribution_attributes[:contributor].first
-      expect(page).to have_content contribution_attributes[:portrayal]
-      expect(page).to have_content contribution_attributes[:affiliation]
-      expect(page).to have_content contribution_attributes[:contributor_role]
-      expect(page).to have_current_path(guid_regex)
+      find("#tab-Credits").click
+      within('#collapse-Credits') do      
+        expect(page).to have_content contribution_attributes[:contributor].first
+        expect(page).to have_content contribution_attributes[:portrayal]
+        expect(page).to have_content contribution_attributes[:affiliation]
+        expect(page).to have_content contribution_attributes[:contributor_role]
+      end
     end
   end
 end
