@@ -268,6 +268,15 @@ RSpec.describe Asset do
       expect(asset.resource.dump(:ttl)).to match(/pbcore.org#hasClipDescription/)
       expect(asset.clip_description.include?("Test clip_description")).to be true
     end
+    end
+
+  context "producing_organization" do
+    let(:asset) { FactoryBot.build(:asset) }
+    it "has producing_organization" do
+      asset.clip_description = ["Test producing_organization"]
+      expect(asset.resource.dump(:ttl)).to match(Regexp.new(Regexp.escape('http://purl.org/dc/elements/1.1/creator')))
+      expect(asset.clip_description.include?("Test producing_organization")).to be true
+    end
   end
 
   context "admin_data_gid" do

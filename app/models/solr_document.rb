@@ -324,5 +324,9 @@ class SolrDocument
 
   def licensing_info
     self[Solrizer.solr_name('licensing_info')]
+    end
+
+  def producing_organization
+    self[Solrizer.solr_name('producing_organization')]
   end
 end
