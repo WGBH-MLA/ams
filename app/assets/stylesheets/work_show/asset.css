@@ -128,14 +128,18 @@ table.contributions {
 }
 .hold dt {
     width: 20%;
-    float: left;
+    float: none;
     font-weight: bold;
     padding-bottom: 10px;
+    display: inline-block;
 }
 .hold dd {
     overflow: hidden;
     background: #fff;
     padding-bottom: 10px;
+    display: inline-block;
+    width: 75%;
+    vertical-align: top;
 }
 .related-files .thumbnail {
     width: 60px;
