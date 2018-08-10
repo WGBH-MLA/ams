@@ -173,6 +173,10 @@ class Asset < ActiveFedora::Base
     index.as :stored_searchable
   end
 
+  property :producing_organization, predicate: ::RDF::URI.new("http://purl.org/dc/elements/1.1/creator"), multiple: true do |index|
+    index.as :stored_searchable, :facetable
+  end
+
   property :admin_data_gid, predicate: ::RDF::URI.new('http://pbcore.org#hasAAPBAdminData'), multiple: false do |index|
     index.as :symbol
   end

@@ -34,6 +34,7 @@ FactoryBot.define do
     raw_footage_description ['Test raw_footage_description']
     promo_description ['Test promo_description']
     clip_description ['Test clip_description']
+    producing_organization ['Test producing_organization']
 
 
 
