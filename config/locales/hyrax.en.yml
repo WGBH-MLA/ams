@@ -54,6 +54,7 @@ en:
           rights_statement_tesim: Rights Statement
           subject_tesim: Subject
         show:
+          id: 'GUID'
           admin_set: 'In Administrative Set:'
           based_near_label: Location
           contributor: Contributors
