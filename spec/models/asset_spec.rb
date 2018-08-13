@@ -31,33 +31,33 @@ RSpec.describe Asset do
 
   describe "#date" do
     it "returns the date" do
-      asset.date = ["02-11-2001"]
+      asset.date = ["2001-11-01"]
       expect(asset.resource.dump(:ttl)).to match(/terms\/date/)
-      expect(asset.date.include?("02-11-2001")).to be true
+      expect(asset.date.include?("2001-11-01")).to be true
     end
   end
 
   describe "#broadcast_date" do
     it "returns the broadcast_date" do
-      asset.broadcast_date = ["02-11-2002"]
+      asset.broadcast_date = ["2021-11-01"]
       expect(asset.resource.dump(:ttl)).to match(/pbcore.org#hasBroadcastDate/)
-      expect(asset.broadcast_date.include?("02-11-2002")).to be true
+      expect(asset.broadcast_date.include?("2021-11-01")).to be true
     end
   end
 
   describe "#created_date" do
     it "returns the created_date" do
-      asset.created_date = ["03-11-2001"]
+      asset.created_date = ["2011-11-01"]
       expect(asset.resource.dump(:ttl)).to match(/pbcore.org#hasCreatedDate/)
-      expect(asset.created_date.include?("03-11-2001")).to be true
+      expect(asset.created_date.include?("2011-11-01")).to be true
     end
   end
 
   describe "#copyright_date" do
     it "returns the copyright_date" do
-      asset.copyright_date = ["03-09-2001"]
+      asset.copyright_date = ["1866-11-01"]
       expect(asset.resource.dump(:ttl)).to match(/pbcore.org#hasCopyrightDate/)
-      expect(asset.copyright_date.include?("03-09-2001")).to be true
+      expect(asset.copyright_date.include?("1866-11-01")).to be true
     end
   end
 
@@ -280,6 +280,57 @@ RSpec.describe Asset do
     it "has throws ActiveRecord::RecordNotFound if cannot find admin_data for the gid" do
       gid = 'gid://ams/admindata/999'
       expect { asset.admin_data_gid = gid }.to raise_error(ActiveRecord::RecordNotFound, "Couldn't find AdminData matching GID #{gid}")
+    end
+  end
+
+  context "date format validation" do
+    let(:asset) { FactoryBot.build(:asset) }
+    it "is valid with year only as date format" do
+      asset.date = ['2001']
+      asset.broadcast_date = ['2002']
+      asset.copyright_date = ['2003']
+      asset.created_date = ['2004']
+      expect(asset.date).to eq(['2001'])
+      expect(asset.broadcast_date).to eq(['2002'])
+      expect(asset.copyright_date).to eq(['2003'])
+      expect(asset.created_date).to eq(['2004'])
+      expect(asset.valid?).to be true
+    end
+
+    it "is valid with year-month only as date format" do
+      asset.date = ['2001-01']
+      asset.broadcast_date = ['2002-02']
+      asset.copyright_date = ['2003-03']
+      asset.created_date = ['2004-04']
+      expect(asset.date).to eq(['2001-01'])
+      expect(asset.broadcast_date).to eq(['2002-02'])
+      expect(asset.copyright_date).to eq(['2003-03'])
+      expect(asset.created_date).to eq(['2004-04'])
+      expect(asset.valid?).to be true
+    end
+
+    it "is valid with year-month-day  as date format" do
+      asset.date = ['2001-01-10']
+      asset.broadcast_date = ['2002-02-11']
+      asset.copyright_date = ['2003-03-12']
+      asset.created_date = ['2004-04-13']
+      expect(asset.date).to eq(['2001-01-10'])
+      expect(asset.broadcast_date).to eq(['2002-02-11'])
+      expect(asset.copyright_date).to eq(['2003-03-12'])
+      expect(asset.created_date).to eq(['2004-04-13'])
+      expect(asset.valid?).to be true
+    end
+
+    it "is invalid with incorrect date format" do
+      asset.date = ['2001/01/10']
+      asset.broadcast_date = ['2002/02/11']
+      asset.copyright_date = ['2003/03/12']
+      asset.created_date = ['2004/04/13']
+      expect(asset.date).to eq(['2001/01/10'])
+      expect(asset.broadcast_date).to eq(['2002/02/11'])
+      expect(asset.copyright_date).to eq(['2003/03/12'])
+      expect(asset.created_date).to eq(['2004/04/13'])
+      expect(asset.valid?).to be false
     end
   end
 end

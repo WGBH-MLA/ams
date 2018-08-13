@@ -129,6 +129,7 @@ module Hyrax
         end
 
         def add_date_types(env)
+          env.attributes[:date] = get_dates_by_type('main', env.attributes)
           env.attributes[:broadcast_date] = get_dates_by_type('broadcast', env.attributes)
           env.attributes[:created_date] = get_dates_by_type('created', env.attributes)
           env.attributes[:copyright_date] = get_dates_by_type('copyright', env.attributes)
