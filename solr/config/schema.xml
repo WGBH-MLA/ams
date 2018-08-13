@@ -80,6 +80,8 @@
     <fieldType name="date" class="solr.TrieDateField" precisionStep="0" positionIncrementGap="0"/>
     <!-- A Trie based date field for faster date range queries and date faceting. -->
     <fieldType name="tdate" class="solr.TrieDateField" precisionStep="6" positionIncrementGap="0"/>
+    <!-- A DateRange based date field for truly faster date range queries. -->
+    <fieldType name="dateRange" class="solr.DateRangeField"/>
     
     
     <!-- This point type indexes the coordinates as separate fields (subFields)
@@ -256,6 +258,15 @@
     <dynamicField name="*_dttsm" type="tdate" stored="true" indexed="false" multiValued="true"/>
     <dynamicField name="*_dttsi" type="tdate" stored="true" indexed="true" multiValued="false"/>
     <dynamicField name="*_dttsim" type="tdate" stored="true" indexed="true" multiValued="true"/>
+
+
+    <!-- date range (_dr...) (for faster AND better range queries) -->
+    <dynamicField name="*_dri" type="dateRange" stored="false" indexed="true" multiValued="false"/>
+    <dynamicField name="*_drim" type="dateRange" stored="false" indexed="true" multiValued="true"/>
+    <dynamicField name="*_drs" type="dateRange" stored="true" indexed="false" multiValued="false"/>
+    <dynamicField name="*_drsm" type="dateRange" stored="true" indexed="false" multiValued="true"/>
+    <dynamicField name="*_drsi" type="dateRange" stored="true" indexed="true" multiValued="false"/>
+    <dynamicField name="*_drsim" type="dateRange" stored="true" indexed="true" multiValued="true"/>
     
     <!-- long (_l...) -->
     <dynamicField name="*_li" type="long" stored="false" indexed="true" multiValued="false"/>

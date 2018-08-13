@@ -12,6 +12,9 @@ class Asset < ActiveFedora::Base
 
   # validate :at_least_one_title
   # validate :at_least_one_description
+  validates_each :date, :broadcast_date, :created_date, :copyright_date,  allow_blank: true do |record, attr, value|
+    value.each { |val|  record.errors.add(attr, 'Invalid date format') if AMS::NonExactDateService.invalid?(val) }
+  end
 
   def at_least_one_title
     all_titles = title.to_a
