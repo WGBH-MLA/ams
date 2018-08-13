@@ -5,6 +5,10 @@ class SearchBuilder < Blacklight::SearchBuilder
   include Hydra::AccessControlsEnforcement
   include Hyrax::SearchFilters
 
+  # Overrides private method Hyrax::FilterByType#models
+  def models
+    [Asset]
+  end
 
   ##
   # @example Adding a new step to the processor chain
