@@ -101,7 +101,7 @@ module Hyrax
           env.attributes[:title] = get_titles_by_type('main', env.attributes)
           env.attributes[:program_title] = get_titles_by_type('program', env.attributes)
           env.attributes[:episode_title] = get_titles_by_type('episode', env.attributes)
-          env.attributes[:episode_number] = get_titles_by_type('episode', env.attributes)
+          env.attributes[:episode_number] = get_titles_by_type('episode_number', env.attributes)
           env.attributes[:segment_title] = get_titles_by_type('segment', env.attributes)
           env.attributes[:raw_footage_title] = get_titles_by_type('raw_footage', env.attributes)
           env.attributes[:promo_title] = get_titles_by_type('promo', env.attributes)
