@@ -12,6 +12,9 @@ class Asset < ActiveFedora::Base
 
   # validate :at_least_one_title
   # validate :at_least_one_description
+  validates_each :date, :broadcast_date, :created_date, :copyright_date,  allow_blank: true do |record, attr, value|
+    value.each { |val|  record.errors.add(attr, 'Invalid date format') if AMS::NonExactDateService.invalid?(val) }
+  end
 
   def at_least_one_title
     all_titles = title.to_a
@@ -171,6 +174,10 @@ class Asset < ActiveFedora::Base
 
   property :clip_description, predicate: ::RDF::URI.new('http://pbcore.org#hasClipDescription'), multiple: :true do |index|
     index.as :stored_searchable
+  end
+
+  property :producing_organization, predicate: ::RDF::URI.new("http://purl.org/dc/elements/1.1/creator"), multiple: true do |index|
+    index.as :stored_searchable, :facetable
   end
 
   property :admin_data_gid, predicate: ::RDF::URI.new('http://pbcore.org#hasAAPBAdminData'), multiple: false do |index|
