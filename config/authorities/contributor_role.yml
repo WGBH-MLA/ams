@@ -79,6 +79,8 @@ terms:
     term: Performing Group
   - id: Photographer
     term: Photographer
+  - id: Producers
+    term: Producer
   - id: Production Unit
     term: Production Unit
   - id: Recoding Engineer
