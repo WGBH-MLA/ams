@@ -10,7 +10,7 @@ module Hyrax
              :program_description, :episode_description, :segment_description, :raw_footage_description,
              :promo_description, :clip_description, :copyright_date,
              :level_of_user_access, :minimally_cataloged, :outside_url, :special_collection, :transcript_status,
-             :sonyci_id, :licensing_info,
+             :sonyci_id, :licensing_info, :producing_organization,
              to: :solr_document
 
     def filter_item_ids_to_display(solr_query)

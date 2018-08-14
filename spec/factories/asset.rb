@@ -5,10 +5,10 @@ FactoryBot.define do
     sequence(:description)   { |n| ["This is a description of Test Asset #{n}"] }
     asset_types ['Clip','Promo']
     genre ['Drama','Debate']
-    broadcast_date ['07/17/2017']
-    created_date ['07/05/2017']
-    copyright_date ['07/07/2017']
-    date ['07/04/2017']
+    broadcast_date ["2010","2015-01","1987-10-31"]
+    created_date ["2010","2015-01","1987-10-31"]
+    copyright_date ["2010","2015-01","1987-10-31"]
+    date ["2010","2015-01","1987-10-31"]
     episode_number ['S01E2']
     spatial_coverage ['TEST spatial_coverage']
     temporal_coverage ['Test temporal_coverage']
@@ -34,6 +34,7 @@ FactoryBot.define do
     raw_footage_description ['Test raw_footage_description']
     promo_description ['Test promo_description']
     clip_description ['Test clip_description']
+    producing_organization ['Test producing_organization']
 
 
 

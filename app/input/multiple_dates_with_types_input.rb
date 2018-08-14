@@ -13,7 +13,10 @@ class MultipleDatesWithTypesInput < MultiValueInput
       value: value[1]
     })
 
-    output = @builder.date_field(:date_value, date_input_html_options)
+    date_input_html_options[:class] += ["datepicker"]
+    date_input_html_options[:pattern] = AMS::NonExactDateService.regex.to_s
+
+    output = @builder.text_field(:date_value, date_input_html_options)
     output += @builder.select(:date_type, date_type_choices, { selected: value[0] }, select_input_html_options)
     output
   end
