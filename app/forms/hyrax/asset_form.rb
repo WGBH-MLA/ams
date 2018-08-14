@@ -125,6 +125,7 @@ module Hyrax
 
     def dates_with_types
       dates_with_types = []
+      dates_with_types += model.date.map { |date| ['main', date] }
       dates_with_types += model.broadcast_date.map { |date| ['broadcast', date] }
       dates_with_types += model.created_date.map { |date| ['created', date] }
       dates_with_types += model.copyright_date.map { |date| ['copyright', date] }
