@@ -42,17 +42,15 @@ RSpec.feature 'Create and Validate Series Collection', js: true do
       fill_in('Series description', with: series_collection_attributes[:series_description].first)
       click_on('Save')
 
-      wait_for(10) { Collection.where(series_title: series_collection_attributes[:title]).first }
+      Timeout::timeout(10) { Collection.where(series_title: series_collection_attributes[:title]).first }
 
-      visit '/'
-      find("#search-submit-header").click
-
+      # Go back to the dashboard list of colletions.
+      visit hyrax.dashboard_collections_path
       # expect series collection is showing up
       expect(page).to have_content series_collection_attributes[:series_title].first
-      # expect(page).to have_content series_collection_attributes[:series_description].first
 
       # open series collection with detail show
-      click_on(series_collection_attributes[:series_title].first)
+      all('a', text: series_collection_attributes[:series_title].first).first.click
       expect(page).to have_content series_collection_attributes[:series_title].first
       expect(page).to have_current_path(guid_regex)
     end
