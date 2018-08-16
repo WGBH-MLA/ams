@@ -33,14 +33,8 @@ class SolrDocument
     self[Solrizer.solr_name('genre')]
   end
 
-
-
   def episode_number
     self[Solrizer.solr_name('episode_number')]
-  end
-
-  def description
-    self[Solrizer.solr_name('description')]
   end
 
   def spatial_coverage
@@ -162,7 +156,7 @@ class SolrDocument
   def frame_height
     self[Solrizer.solr_name('frame_hight')]
   end
-  
+
   def aspect_ratio
     self[Solrizer.solr_name('aspect_ratio')]
   end
@@ -250,6 +244,11 @@ class SolrDocument
     self[Solrizer.solr_name('clip_title')]
   end
 
+  def display_description
+    description = [raw_footage_description, segment_description, clip_description, promo_description, episode_description, program_description, self[Solrizer.solr_name('description')]].find(&:present?)
+    description.first.truncate(100, separator: ' ') unless description.nil?
+  end
+
   def program_description
     self[Solrizer.solr_name('program_description')]
   end
@@ -277,7 +276,7 @@ class SolrDocument
   def date
     self[Solrizer.solr_name('date')]
   end
-  
+
   def broadcast_date
     self[Solrizer.solr_name('broadcast_date')]
   end

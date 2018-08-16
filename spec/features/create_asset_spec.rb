@@ -1,5 +1,6 @@
 require 'rails_helper'
-require_relative '../../app/services/title_and_description_types_service'
+require_relative '../../app/services/title_types_service'
+require_relative '../../app/services/description_types_service'
 require_relative '../../app/services/date_types_service'
 
 RSpec.feature 'Create and Validate Asset', js: true, asset_form_helpers: true, clean:true do
@@ -20,12 +21,14 @@ RSpec.feature 'Create and Validate Asset', js: true, asset_form_helpers: true, c
     end
 
     # Use contolled vocab to retrieve all title types.
-    let(:title_and_description_types) { TitleAndDescriptionTypesService.all_terms }
+    let(:title_types) { TitleTypesService.all_terms }
+    let(:description_types) { DescriptionTypesService.all_terms }
+
 
     # Make an array of [title, title_type] pairs.
     # Ensure there are 2 titles for every title type.
     let(:titles_with_types) do
-      (title_and_description_types * 2).each_with_index.map do |title_type, i|
+      (title_types * 2).each_with_index.map do |title_type, i|
         test_title = "Test #{title_type} Title #{i+1}".gsub(/\s+/, ' ')
         [test_title, title_type]
       end
@@ -35,7 +38,7 @@ RSpec.feature 'Create and Validate Asset', js: true, asset_form_helpers: true, c
     # Make an array of [description, description_type] pairs.
     # Ensure there are 2 descriptions for every description type.
     let(:descriptions_with_types) do
-      (title_and_description_types * 2).each_with_index.map do |description_type, i|
+      (description_types * 2).each_with_index.map do |description_type, i|
         test_description = "Test #{description_type} Description #{i+1}".gsub(/\s+/, ' ')
         [test_description, description_type]
       end
@@ -157,7 +160,7 @@ RSpec.feature 'Create and Validate Asset', js: true, asset_form_helpers: true, c
       expect(page).to have_current_path(guid_regex)
 
       find("#tab-Credits").click
-      within('#collapse-Credits') do      
+      within('#collapse-Credits') do
         expect(page).to have_content contribution_attributes[:contributor].first
         expect(page).to have_content contribution_attributes[:portrayal]
         expect(page).to have_content contribution_attributes[:affiliation]
