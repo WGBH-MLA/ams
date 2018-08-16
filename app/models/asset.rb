@@ -46,11 +46,9 @@ class Asset < ActiveFedora::Base
     @admin_data ||= AdminData.find_by_gid(admin_data_gid)
   end
 
-
   def admin_data=(new_admin_data)
     self[:admin_data_gid] = new_admin_data.gid
   end
-
 
   property :asset_types, predicate: ::RDF::URI.new("http://www.ebu.ch/metadata/ontologies/ebucore/ebucore#hasType"), multiple: true do |index|
     index.as :stored_searchable, :facetable
@@ -193,7 +191,6 @@ class Asset < ActiveFedora::Base
     @admin_data=new_admin_data
     admin_data_gid
   end
-
 
   def admin_data_gid_document_field_name
     Solrizer.solr_name('admin_data_gid', *index_admin_data_gid_as)

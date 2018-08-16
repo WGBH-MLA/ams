@@ -33,12 +33,13 @@ RSpec.feature 'Create and Validate Asset,Digital Instantiation, EssenseTrack', j
 
 
     # Use contolled vocab to retrieve all title types.
-    let(:title_and_description_types) { TitleAndDescriptionTypesService.all_terms }
+    let(:title_types) { TitleTypesService.all_terms }
+    let(:description_types) { DescriptionTypesService.all_terms }
 
     # Make an array of [title, title_type] pairs.
     # Ensure there are 2 titles for every title type.
     let(:titles_with_types) do
-      (title_and_description_types).each_with_index.map { |title_type, i| ["Test #{title_type} Title #{i + 1}", title_type] }
+      (title_types).each_with_index.map { |title_type, i| ["Test #{title_type} Title #{i + 1}", title_type] }
     end
 
     # Specify a main title.
@@ -47,7 +48,7 @@ RSpec.feature 'Create and Validate Asset,Digital Instantiation, EssenseTrack', j
     # Make an array of [description, description_type] pairs.
     # Ensure there are 2 descriptions for every description type.
     let(:descriptions_with_types) do
-      (title_and_description_types).each_with_index.map { |description_type, i| ["Test #{description_type} Description #{i + 1}", description_type] }
+      (description_types).each_with_index.map { |description_type, i| ["Test #{description_type} Description #{i + 1}", description_type] }
     end
 
     # Specify a main description.

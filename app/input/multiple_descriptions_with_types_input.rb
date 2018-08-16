@@ -1,7 +1,7 @@
 class MultipleDescriptionsWithTypesInput < MultiValueInput
 
   def build_field(value, index)
-    description_type_choices = TitleAndDescriptionTypesService.select_all_options
+    description_type_choices = DescriptionTypesService.select_all_options
 
     select_input_html_options = input_html_options.merge({
       name: "#{@builder.object_name}[description_type][]"

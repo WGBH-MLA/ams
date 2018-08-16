@@ -236,7 +236,7 @@ RSpec.describe Asset do
       expect(asset.segment_description.include?("Test segment_description")).to be true
     end
   end
-  
+
   describe "#raw_footage_description" do
     it "returns the raw_footage_description" do
       asset.raw_footage_description = ["Test raw_footage_description"]

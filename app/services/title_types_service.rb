@@ -1,6 +1,6 @@
-module TitleAndDescriptionTypesService
+module TitleTypesService
   mattr_accessor :authority
-  self.authority = Qa::Authorities::Local.subauthority_for('title_and_description_types')
+  self.authority = Qa::Authorities::Local.subauthority_for('title_types')
 
   def self.select_all_options
     authority.all.map do |element|
