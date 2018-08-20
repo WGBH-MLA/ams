@@ -13,7 +13,7 @@ class PhysicalInstantiation < ActiveFedora::Base
   validates :media_type, presence: { message: 'Your work must have a media type.' }
 
 
-  property :date, predicate: ::RDF::URI.new("http://purl.org/dc/terms/date"), multiple: true do |index|
+  property :date, predicate: ::RDF::URI.new("http://purl.org/dc/terms/date"), multiple: true, index_to_parent: true do |index|
     index.as :stored_searchable, :facetable
   end
 
@@ -25,7 +25,7 @@ class PhysicalInstantiation < ActiveFedora::Base
     index.as :stored_searchable
   end
 
-  property :format, predicate: ::RDF::URI.new("http://www.ebu.ch/metadata/ontologies/ebucore/ebucore#hasFormat"), multiple: false do |index|
+  property :format, predicate: ::RDF::URI.new("http://www.ebu.ch/metadata/ontologies/ebucore/ebucore#hasFormat"), multiple: false, index_to_parent: true do |index|
     index.as :stored_searchable
   end
 
@@ -37,7 +37,7 @@ class PhysicalInstantiation < ActiveFedora::Base
     index.as :stored_searchable
   end
 
-  property :media_type, predicate: ::RDF::URI.new("http://purl.org/dc/terms/type"), multiple: false do |index|
+  property :media_type, predicate: ::RDF::URI.new("http://purl.org/dc/terms/type"), multiple: false, index_to_parent: true do |index|
     index.as :stored_searchable, :facetable
   end
 
@@ -69,7 +69,7 @@ class PhysicalInstantiation < ActiveFedora::Base
     index.as :stored_searchable
   end
 
-  property :local_instantiation_identifer, predicate: ::RDF::URI.new("http://pbcore.org#localInstantiationIdentifier"), multiple: true do |index|
+  property :local_instantiation_identifer, predicate: ::RDF::URI.new("http://pbcore.org#localInstantiationIdentifier"), multiple: true, index_to_parent: true do |index|
     index.as :stored_searchable
   end
 
@@ -85,7 +85,7 @@ class PhysicalInstantiation < ActiveFedora::Base
     index.as :stored_searchable
   end
 
-  property :holding_organization, predicate: ::RDF::URI.new("http://pbcore.org#hasHoldingOrganization"), multiple: false do |index|
+  property :holding_organization, predicate: ::RDF::URI.new("http://pbcore.org#hasHoldingOrganization"), multiple: false, index_to_parent: true do |index|
     index.as :stored_searchable, :facetable
   end
 
