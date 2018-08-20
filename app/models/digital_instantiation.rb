@@ -3,6 +3,7 @@
 require 'carrierwave/validations/active_model'
 class DigitalInstantiation < ActiveFedora::Base
   include ::Hyrax::WorkBehavior
+
   extend CarrierWave::Mount
 
   validates_with CarrierWave::Validations::ActiveModel::IntegrityValidator,
@@ -11,7 +12,7 @@ class DigitalInstantiation < ActiveFedora::Base
   self.indexer = DigitalInstantiationIndexer
   # Change this to restrict which works can be added as a child.
   self.valid_child_concerns = [EssenceTrack]
-  #
+
   mount_uploader :digital_instantiation_pbcore_xml, PbCoreInstantiationXmlUploader
 
   #validates_presence_of :digital_instantiation_pbcore_xml
@@ -33,8 +34,8 @@ class DigitalInstantiation < ActiveFedora::Base
       errors.add(:digital_instantiation_pbcore_xml,"Please select pbcore xml document")
     end
   end
-
-  property :date, predicate: ::RDF::URI.new("http://purl.org/dc/terms/date"), multiple: true do |index|
+  
+  property :date, predicate: ::RDF::URI.new("http://purl.org/dc/terms/date"), multiple: true, index_to_parent: true do |index|
     index.as :stored_searchable, :facetable
   end
 
@@ -54,11 +55,11 @@ class DigitalInstantiation < ActiveFedora::Base
     index.as :stored_searchable
   end
 
-  property :media_type, predicate: ::RDF::URI.new("http://purl.org/dc/terms/type"), multiple: false do |index|
+  property :media_type, predicate: ::RDF::URI.new("http://purl.org/dc/terms/type"), multiple: false, index_to_parent: true do |index|
     index.as :stored_searchable, :facetable
   end
 
-  property :generations, predicate: ::RDF::URI.new("http://www.ebu.ch/metadata/ontologies/ebucore/ebucore#hasGeneration"), multiple: true do |index|
+  property :generations, predicate: ::RDF::URI.new("http://www.ebu.ch/metadata/ontologies/ebucore/ebucore#hasGeneration"), multiple: true, index_to_parent: true do |index|
     index.as :stored_searchable, :facetable
   end
 
@@ -94,7 +95,7 @@ class DigitalInstantiation < ActiveFedora::Base
     index.as :stored_searchable
   end
 
-  property :local_instantiation_identifer, predicate: ::RDF::URI.new("http://pbcore.org#localInstantiationIdentifier"), multiple: true do |index|
+  property :local_instantiation_identifer, predicate: ::RDF::URI.new("http://pbcore.org#localInstantiationIdentifier"), multiple: true, index_to_parent: true do |index|
     index.as :stored_searchable
   end
 
@@ -110,7 +111,7 @@ class DigitalInstantiation < ActiveFedora::Base
     index.as :stored_searchable
   end
 
-  property :holding_organization, predicate: ::RDF::URI.new("http://pbcore.org#hasHoldingOrganization"), multiple: false do |index|
+  property :holding_organization, predicate: ::RDF::URI.new("http://pbcore.org#hasHoldingOrganization"), multiple: false, index_to_parent: true do |index|
     index.as :stored_searchable, :facetable
   end
 
