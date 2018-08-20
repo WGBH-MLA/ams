@@ -36,7 +36,7 @@ class CatalogController < ApplicationController
     config.add_facet_field solr_name("asset_types", :facetable), label: "Asset Type", limit: 5, collapse: false
     config.add_facet_field solr_name("topics", :facetable), label: "Topic", limit: 5, collapse: false
     config.add_facet_field solr_name("genre", :facetable), label: "Genre", limit: 5, collapse: false
-
+    config.add_facet_field solr_name("producing_organization", :facetable), label: "Producing Organization", limit: 5, collapse: false
 
     # The generic_type isn't displayed on the facet list
     # It's used to give a label to the filter that comes from the user profile
