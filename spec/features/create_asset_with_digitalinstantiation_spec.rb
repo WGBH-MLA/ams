@@ -149,6 +149,25 @@ RSpec.feature 'Create and Validate Asset,Digital Instantiation, EssenseTrack', j
       expect(page).to have_content digital_instantiation_attributes[:rights_summary]
       expect(page).to have_content digital_instantiation_attributes[:holding_organization]
       expect(page).to have_current_path(guid_regex)
+
+      # Go to search page
+      visit '/'
+      find("#search-submit-header").click
+
+      # Get the Asset record, it's DigitalInstantiation, and it's EssenceTracks
+      # in order to test what you see in the search interface.
+      asset = Asset.where(title: main_title).first
+      digital_instantiation = asset.members.first
+      essence_tracks = digital_instantiation.members.to_a
+
+      # Expect to see the Asset in search results.
+      expect(page).to have_search_result asset
+      # Expect to NOT see the DigitalInstantiation in the search results.
+      expect(page).to_not have_search_result digital_instantiation
+      # Expect to NOT see the EssenceTracks in the search results.
+      essence_tracks.each do |essence_track|
+        expect(page).to_not have_search_result essence_track
+      end
     end
   end
 end
