@@ -38,4 +38,42 @@ describe SolrDocument do
       end
     end
   end
+
+  describe '#display_description' do
+    # These descriptions are in the order of preference of the display_description method
+    # which we are using for the convenience of using an index in the tests below.
+    let(:all_description_types) do {
+          raw_footage_description: ['Raw Footage Description'],
+          segment_description: ['Segment Description'],
+          clip_description: ['Clip Description'],
+          promo_description: ['Promo Description'],
+          episode_description: ['Episode Description'],
+          program_description: ['Program Description']
+      }
+    end
+
+    context 'when all descriptions are available' do
+      before do
+         all_description_types.each { |k,v| allow(solr_document).to receive(k).and_return(v) }
+      end
+      it 'returns the raw_footage_description' do
+        expect(solr_document.display_description).to eq(all_description_types[:raw_footage_description].first)
+      end
+    end
+
+    context 'when different descriptions are available' do
+      def build_description_types(index)
+        all_description_types.each_with_index { | (k,v),i | all_description_types[k] = nil if i <= index }
+      end
+
+      it 'chooses the right description' do
+        (0..(all_description_types.length - 2)).each do |index|
+          descriptions = build_description_types(index)
+          key = descriptions.keys[index + 1]
+          descriptions.each { |k,v| allow(solr_document).to receive(k).and_return(v) }
+          expect(solr_document.display_description).to eq(descriptions[key].first)
+        end
+      end
+    end
+  end
 end
