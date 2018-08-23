@@ -46,18 +46,18 @@ class CatalogController < ApplicationController
 
     config.add_facet_field 'minimally_cataloged_ssim', query: {
         yes: { label: 'Yes', fq: 'minimally_cataloged_ssim:Yes' },
-    no: { label: 'No', fq: '-minimally_cataloged_ssim:[* TO *]' }
+    no: { label: 'No', fq: '-minimally_cataloged_ssim:No' }
     }, label:"Minimally Cataloged", collapse: false
 
 
     config.add_facet_field 'outside_url_ssim', query: {
-        yes: { label: 'Exists', fq: 'outside_url_ssim:[* TO *]' },
-        no: { label: '(blank)', fq: '-minimally_cataloged_ssim:[* TO *]' }
+        yes: { label: 'Yes', fq: 'outside_url_ssim:[* TO *]' },
+        no: { label: 'No', fq: '-outside_url_ssim:[* TO *]' }
     }, label:"Outside URL", collapse: false
 
 
     config.add_facet_field 'sonyci_id_ssim', query: {
-        yes: { label: 'Yes', fq: 'sonyci_id_ssim:Yes' },
+        yes: { label: 'Yes', fq: 'sonyci_id_ssim:[* TO *]' },
         no: { label: 'No', fq: '-sonyci_id_ssim:[* TO *]' }
     }, label:"Digitized Copy in AAPB", collapse: false
 
