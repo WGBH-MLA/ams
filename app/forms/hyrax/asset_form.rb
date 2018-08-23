@@ -115,6 +115,7 @@ module Hyrax
     def descriptions_with_types
       descriptions_with_types = []
       descriptions_with_types += model.description.map { |description| ['main', description] }
+      descriptions_with_types += model.program_description.map { |description| ['program', description] }
       descriptions_with_types += model.episode_description.map { |description| ['episode', description] }
       descriptions_with_types += model.segment_description.map { |description| ['segment', description] }
       descriptions_with_types += model.raw_footage_description.map { |description| ['raw_footage', description] }

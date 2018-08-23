@@ -1,0 +1,15 @@
+terms:
+  - id: main
+    term: ''
+  - id: program
+    term: Program
+  - id: episode
+    term: Episode
+  - id: segment
+    term: Segment
+  - id: raw_footage
+    term: Raw Footage
+  - id: promo
+    term: Promo
+  - id: clip
+    term: Clip
