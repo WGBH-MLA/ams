@@ -37,6 +37,31 @@ class CatalogController < ApplicationController
     config.add_facet_field solr_name("topics", :facetable), label: "Topic", limit: 5, collapse: false
     config.add_facet_field solr_name("genre", :facetable), label: "Genre", limit: 5, collapse: false
     config.add_facet_field solr_name("producing_organization", :facetable), label: "Producing Organization", limit: 5, collapse: false
+    config.add_facet_field "media_type_ssim", label: "Media Type", limit: 5, collapse: false
+    config.add_facet_field "format_ssim", label: "Physical Format", limit: 5, collapse: false
+    config.add_facet_field "holding_organization_ssim", label: "Holding Organization", limit: 5, collapse: false
+    config.add_facet_field "language_ssim", label: "Language", limit: 5, collapse: false
+    config.add_facet_field "level_of_user_access_ssim", label: "Level of user access", limit: 5, collapse: false
+    config.add_facet_field "transcript_status_ssim", label: "Transcript Status", limit: 5, collapse: false
+
+    config.add_facet_field 'minimally_cataloged_ssim', query: {
+        yes: { label: 'Yes', fq: 'minimally_cataloged_ssim:Yes' },
+    no: { label: 'No', fq: '-minimally_cataloged_ssim:No' }
+    }, label:"Minimally Cataloged", collapse: false
+
+
+    config.add_facet_field 'outside_url_ssim', query: {
+        yes: { label: 'Yes', fq: 'outside_url_ssim:[* TO *]' },
+        no: { label: 'No', fq: '-outside_url_ssim:[* TO *]' }
+    }, label:"Outside URL", collapse: false
+
+
+    config.add_facet_field 'sonyci_id_ssim', query: {
+        yes: { label: 'Yes', fq: 'sonyci_id_ssim:[* TO *]' },
+        no: { label: 'No', fq: '-sonyci_id_ssim:[* TO *]' }
+    }, label:"Digitized Copy in AAPB", collapse: false
+
+
 
     # The generic_type isn't displayed on the facet list
     # It's used to give a label to the filter that comes from the user profile
