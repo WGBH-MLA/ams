@@ -14,7 +14,7 @@ module Hyrax
     class_attribute :field_groups
 
     self.field_groups = {
-      technical_info: [:local_instantiation_identifer, :media_type, :digital_format, :dimensions, :standard, :file_size,
+      technical_info: [:local_instantiation_identifer, :aapb_instantiation_identifer, :media_type, :digital_format, :dimensions, :standard, :file_size,
                        :duration, :time_start, :data_rate, :colors, :tracks, :channel_configuration, :alternative_modes],
       identifying_info: [:title, :holding_organization, :location, :generations, :language, :date, :annotation],
       rights: [:rights_summary, :rights_link]
