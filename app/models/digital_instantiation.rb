@@ -99,6 +99,10 @@ class DigitalInstantiation < ActiveFedora::Base
     index.as :stored_searchable
   end
 
+  property :aapb_instantiation_identifer, predicate: ::RDF::URI.new("http://pbcore.org#aapbInstantiationIdentifier"), multiple: false, index_to_parent: true do |index|
+    index.as :stored_searchable
+  end
+
   property :tracks, predicate: ::RDF::URI.new("http://pbcore.org#hasTracks"), multiple: false do |index|
     index.as :stored_searchable
   end

@@ -328,4 +328,8 @@ class SolrDocument
   def producing_organization
     self[Solrizer.solr_name('producing_organization')]
   end
+
+  def aapb_instantiation_identifer
+    self[Solrizer.solr_name('aapb_instantiation_identifer')]
+  end
 end

@@ -69,6 +69,10 @@ class PhysicalInstantiation < ActiveFedora::Base
     index.as :stored_searchable
   end
 
+  property :aapb_instantiation_identifer, predicate: ::RDF::URI.new("http://pbcore.org#aapbInstantiationIdentifier"), multiple: false, index_to_parent: true do |index|
+    index.as :stored_searchable
+  end
+
   property :local_instantiation_identifer, predicate: ::RDF::URI.new("http://pbcore.org#localInstantiationIdentifier"), multiple: true, index_to_parent: true do |index|
     index.as :stored_searchable
   end
