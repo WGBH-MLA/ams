@@ -50,6 +50,9 @@ class Asset < ActiveFedora::Base
     self[:admin_data_gid] = new_admin_data.gid
   end
 
+  # TODO: Use RDF::Vocab for applicable terms.
+  # See https://github.com/ruby-rdf/rdf-vocab/tree/develop/lib/rdf/vocab
+
   property :asset_types, predicate: ::RDF::URI.new("http://www.ebu.ch/metadata/ontologies/ebucore/ebucore#hasType"), multiple: true do |index|
     index.as :stored_searchable, :facetable
   end
@@ -110,7 +113,7 @@ class Asset < ActiveFedora::Base
     index.as :stored_searchable
   end
 
-  property :pbs_nola_code, predicate: ::RDF::URI.new("http://id.loc.gov/ontologies/bibframe.html#p_code"), multiple: true do |index|
+  property :pbs_nola_code, predicate: ::RDF::Vocab::EBUCore.hasIdentifier, multiple: true do |index|
     index.as :stored_searchable
   end
 
