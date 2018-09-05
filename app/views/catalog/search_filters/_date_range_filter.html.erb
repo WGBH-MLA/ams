@@ -1,11 +1,11 @@
 <div id="facet-panel-collapse" class="collapse panel-group container">
   <div class="panel panel-default facet_limit blacklight-date_drsim ">
-    <div class="collapse-toggle panel-heading" data-toggle="collapse" data-target="#facet-date_drsim" aria-expanded="true">
+    <div class="collapsed collapse-toggle panel-heading" data-toggle="collapse" data-target="#facet-date_drsim" aria-expanded="true">
       <h3 class="panel-title facet-field-heading">
         <a data-turbolinks="false" data-no-turbolink="true" href="#">Date</a>
       </h3>
     </div>
-    <div id="facet-date_drsim" class="panel-collapse facet-content collapse in" aria-expanded="true" style="">
+    <div id="facet-date_drsim" class="panel-collapse facet-content collapse" aria-expanded="true" style="">
       <div class="panel-body">
         <%= form_tag search_action_path, :method => :get do %>
           <%= render_hash_as_hidden_fields(search_state.params_for_search.except(:page, :exact_or_range, :after_date, :before_date)) %>
