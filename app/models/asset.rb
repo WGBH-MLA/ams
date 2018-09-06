@@ -182,6 +182,14 @@ class Asset < ActiveFedora::Base
     index.as :symbol
   end
 
+  property :series_title, predicate: ::RDF::URI.new('http://pbcore.org#hasSeriesTitle'), multiple: :true do |index|
+    index.as :stored_searchable
+  end
+
+  property :series_description, predicate: ::RDF::URI.new('http://pbcore.org#hasSeriesDescription'), multiple: :true do |index|
+    index.as :stored_searchable
+  end
+
   validates :admin_data_gid, presence: true
 
   def admin_data_gid=(new_admin_data_gid)

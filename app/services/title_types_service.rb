@@ -1,22 +1,21 @@
-module TitleTypesService
-  mattr_accessor :authority
-  self.authority = Qa::Authorities::Local.subauthority_for('title_types')
+class TitleTypesService < AMS::TypedFieldService
 
-  def self.select_all_options
-    authority.all.map do |element|
-      [element[:label], element[:id]]
+  TYPE = "title"
+  AUTHORITY = "title_types"
+
+  def initialize
+    super(AUTHORITY,TYPE)
+  end
+
+  # @param id of the field needs mapping to model
+  # @return [String] Returns mapping for type to model field
+  def model_field(id)
+    case id
+      when "episode_number"
+        model_field = "episode_number"
+    else
+      model_field = super
     end
-  end
-
-  def self.all_terms
-    select_all_options.map { |(term, id)| term }
-  end
-
-  def self.all_ids
-    select_all_options.map { |(term, id)| id }
-  end
-
-  def self.label(id)
-    authority.find(id).fetch('term')
+    model_field
   end
 end
