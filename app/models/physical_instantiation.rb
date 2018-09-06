@@ -11,6 +11,8 @@ class PhysicalInstantiation < ActiveFedora::Base
   validates :format, presence: { message: 'Your work must have a format.' }
   validates :location, presence: { message: 'Your work must have a location.' }
   validates :media_type, presence: { message: 'Your work must have a media type.' }
+  validates :duration, format: { with: AMS::TimeCodeService.regex, allow_blank: true, message: "Invalid format for duration. Use HH:MM:SS, H:MM:SS, MM:SS, or M:SS" }
+  validates :time_start, format: { with: AMS::TimeCodeService.regex, allow_blank: true, message: "Invalid format for time start. Use HH:MM:SS, H:MM:SS, MM:SS, or M:SS" }
 
 
   property :date, predicate: ::RDF::URI.new("http://purl.org/dc/terms/date"), multiple: true, index_to_parent: true do |index|

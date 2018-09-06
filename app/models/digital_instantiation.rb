@@ -22,6 +22,8 @@ class DigitalInstantiation < ActiveFedora::Base
   validates :location, presence: { message: 'Your work must have a Location.' }
   validates :digital_format, presence: { message: 'Your work must have a Digital Format.' }
   validates :media_type, presence: { message: 'Your work must have a Media Type.' }
+  validates :duration, format: { with: AMS::TimeCodeService.regex, allow_blank: true, message: "Invalid format for duration. Use HH:MM:SS, H:MM:SS, MM:SS, or M:SS" }
+  validates :time_start, format: { with: AMS::TimeCodeService.regex, allow_blank: true, message: "Invalid format for time start. Use HH:MM:SS, H:MM:SS, MM:SS, or M:SS" }
 
   def pbcore_validate_instantiation_xsd
     if digital_instantiation_pbcore_xml.file
@@ -34,7 +36,7 @@ class DigitalInstantiation < ActiveFedora::Base
       errors.add(:digital_instantiation_pbcore_xml,"Please select pbcore xml document")
     end
   end
-  
+
   property :date, predicate: ::RDF::URI.new("http://purl.org/dc/terms/date"), multiple: true, index_to_parent: true do |index|
     index.as :stored_searchable, :facetable
   end
