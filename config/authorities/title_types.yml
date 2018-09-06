@@ -1,6 +1,8 @@
 terms:
   - id: main
     term: ''
+  - id: series
+    term: Series
   - id: program
     term: Program
   - id: episode
