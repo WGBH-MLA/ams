@@ -90,6 +90,7 @@ class CatalogController < ApplicationController
     #   The ordering of the field names is the order of the display
     config.add_show_field "id"
     config.add_show_field solr_name("title", :stored_searchable)
+    config.add_show_field solr_name("series_title", :stored_searchable)
     config.add_show_field solr_name("raw_footage_title", :stored_searchable)
     config.add_show_field solr_name("segment_title", :stored_searchable)
     config.add_show_field solr_name("program_title", :stored_searchable)
@@ -104,6 +105,7 @@ class CatalogController < ApplicationController
     config.add_show_field solr_name("copyright_date", :stored_searchable)
 
     config.add_show_field solr_name("description", :stored_searchable)
+    config.add_show_field solr_name("series_footage_description", :stored_searchable)
     config.add_show_field solr_name("raw_footage_description", :stored_searchable)
     config.add_show_field solr_name("segment_description", :stored_searchable)
     config.add_show_field solr_name("program_description", :stored_searchable)
