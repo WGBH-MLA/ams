@@ -48,7 +48,7 @@ module Hyrax
           env.attributes[:digital_format] = pbcore_doc.digital.value  if pbcore_doc.digital && env.attributes[:digital].blank?
           if pbcore_doc.identifiers
             pbcore_doc.identifiers.map do |id|
-              env.attributes[:local_instantiation_identifer] = id.value if id.source == "AMS"
+              env.attributes[:local_instantiation_identifer] = Array(id.value) if id.source == "AMS"
             end
           end
           env
