@@ -105,7 +105,7 @@ class CatalogController < ApplicationController
     config.add_show_field solr_name("copyright_date", :stored_searchable)
 
     config.add_show_field solr_name("description", :stored_searchable)
-    config.add_show_field solr_name("series_footage_description", :stored_searchable)
+    config.add_show_field solr_name("series_description", :stored_searchable)
     config.add_show_field solr_name("raw_footage_description", :stored_searchable)
     config.add_show_field solr_name("segment_description", :stored_searchable)
     config.add_show_field solr_name("program_description", :stored_searchable)
@@ -137,7 +137,6 @@ class CatalogController < ApplicationController
     #from instantiation model
     config.add_show_field solr_name("local_instantiation_identifer", :stored_searchable)
     config.add_show_field solr_name("holding_organization", :stored_searchable)
-    config.add_show_field solr_name("aapb_instantiation_identifer", :stored_searchable)
 
     #from contribution
     config.add_show_field solr_name("contributor", :stored_searchable)
