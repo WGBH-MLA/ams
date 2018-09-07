@@ -36,7 +36,7 @@ class CatalogController < ApplicationController
     config.add_facet_field solr_name("topics", :facetable), label: "Topic", limit: 5, collapse: true
     config.add_facet_field solr_name("genre", :facetable), label: "Genre", limit: 5, collapse: true
     config.add_facet_field solr_name("producing_organization", :facetable), label: "Producing Organization", limit: 5, collapse: true
-    config.add_facet_field "media_type_ssim", label: "Media Type", limit: 5, collapse: false
+    config.add_facet_field "media_type_ssim", label: "Media Type", limit: 5, collapse: true
     config.add_facet_field "format_ssim", label: "Physical Format", limit: 5, collapse: true
     config.add_facet_field "holding_organization_ssim", label: "Holding Organization", limit: 5, collapse: true
     config.add_facet_field "language_ssim", label: "Language", limit: 5, collapse: true
