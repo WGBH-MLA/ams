@@ -21,8 +21,8 @@ RSpec.feature 'Create and Validate Asset', js: true, asset_form_helpers: true, c
     end
 
     # Use contolled vocab to retrieve all title types.
-    let(:title_types) { TitleTypesService.all_terms }
-    let(:description_types) { DescriptionTypesService.all_terms }
+    let(:title_types) { TitleTypesService.new.all_terms }
+    let(:description_types) { DescriptionTypesService.new.all_terms }
 
 
     # Make an array of [title, title_type] pairs.

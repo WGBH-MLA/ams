@@ -102,36 +102,40 @@ module Hyrax
 
     def titles_with_types
       titles_with_types = []
-      titles_with_types += model.title.map { |title| ['main', title] }
-      titles_with_types += model.program_title.map { |title| ['program', title] }
-      titles_with_types += model.episode_title.map { |title| ['episode', title] }
-      titles_with_types += model.segment_title.map { |title| ['segment', title] }
-      titles_with_types += model.raw_footage_title.map { |title| ['raw_footage', title] }
-      titles_with_types += model.promo_title.map { |title| ['promo', title] }
-      titles_with_types += model.clip_title.map { |title| ['clip', title] }
+      title_type_service = TitleTypesService.new
+      title_types = title_type_service.all_ids
+      title_types.each do |title_type|
+        model_field = title_type_service.model_field(title_type)
+        raise "Unable to find model property" unless model.respond_to?(model_field)
+        titles_with_types += model.try(model_field).to_a.map { |title| [title_type, title] }
+      end
       titles_with_types
     end
 
     def descriptions_with_types
       descriptions_with_types = []
-      descriptions_with_types += model.description.map { |description| ['main', description] }
-      descriptions_with_types += model.program_description.map { |description| ['program', description] }
-      descriptions_with_types += model.episode_description.map { |description| ['episode', description] }
-      descriptions_with_types += model.segment_description.map { |description| ['segment', description] }
-      descriptions_with_types += model.raw_footage_description.map { |description| ['raw_footage', description] }
-      descriptions_with_types += model.promo_description.map { |description| ['promo', description] }
-      descriptions_with_types += model.clip_description.map { |description| ['clip', description] }
+      description_type_service = DescriptionTypesService.new
+      types = description_type_service.all_ids
+      types.each do |description_type|
+        model_field = description_type_service.model_field(description_type)
+        raise "Unable to find model property" unless model.respond_to?(model_field)
+        descriptions_with_types += model.try(model_field).to_a.map { |value| [description_type, value] }
+      end
       descriptions_with_types
     end
 
     def dates_with_types
       dates_with_types = []
-      dates_with_types += model.date.map { |date| ['main', date] }
-      dates_with_types += model.broadcast_date.map { |date| ['broadcast', date] }
-      dates_with_types += model.created_date.map { |date| ['created', date] }
-      dates_with_types += model.copyright_date.map { |date| ['copyright', date] }
+      date_type_service = DateTypesService.new
+      types = date_type_service.all_ids
+      types.each do |date_type|
+        model_field = date_type_service.model_field(date_type)
+        raise "Unable to find model property" unless model.respond_to?(model_field)
+        dates_with_types += model.try(model_field).to_a.map { |value| [date_type, value] }
+      end
       dates_with_types
     end
+
 
     def level_of_user_access
       if model.admin_data
@@ -202,6 +206,9 @@ module Hyrax
         permitted_params << { date_type: [] }
         permitted_params << { date_value: [] }
         permitted_params << { contributors: [[:id,:contributor_role,:contributor, :affiliation,:portrayal]] }
+        permitted_params << { titles_with_types: [[:type,:value]] }
+        permitted_params << { descriptions_with_types: [[:type,:value]] }
+        permitted_params << { dates_with_types: [[:type,:value]] }
       end
     end
   end

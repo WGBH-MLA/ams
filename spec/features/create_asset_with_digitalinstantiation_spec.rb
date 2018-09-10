@@ -33,8 +33,8 @@ RSpec.feature 'Create and Validate Asset,Digital Instantiation, EssenseTrack', j
 
 
     # Use contolled vocab to retrieve all title types.
-    let(:title_types) { TitleTypesService.all_terms }
-    let(:description_types) { DescriptionTypesService.all_terms }
+    let(:title_types) { TitleTypesService.new.all_terms }
+    let(:description_types) { DescriptionTypesService.new.all_terms }
 
     # Make an array of [title, title_type] pairs.
     # Ensure there are 2 titles for every title type.
