@@ -10,7 +10,7 @@ module AMS
           child_works.each do |child_id|
             work = ActiveFedora::Base.search_by_id(child_id)
               work_type= work[:has_model_ssim].first.constantize
-              parent_indexable_properties = work_type.properties.select{|index,val| val["index_to_parent"]||index=="language"?true:false}
+              parent_indexable_properties = work_type.properties.select{|index,val| val["index_to_parent"]||index=="language"||index=="contributor"?true:false}
               parent_indexable_properties.each do |prop, config|
                 solr_doc["#{work_type.to_s.underscore}_#{prop}_ssim"] ||= []
                 solr_doc["#{work_type.to_s.underscore}_#{prop}_ssim"] |= work[Solrizer.solr_name(prop)] if work[Solrizer.solr_name(prop)]
