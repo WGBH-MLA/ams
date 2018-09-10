@@ -130,7 +130,8 @@ module Hyrax
           types = type_service.all_ids
           types.each do |id|
             model_field = type_service.model_field(id)
-            env.attributes[model_field] = get_typed_value(id, values)
+            raise "Unable to find model property" unless env.curation_concern.respond_to?(model_field)
+            env.attributes[model_field] = get_typed_value(id, values) if !values.first['value'].blank?
           end
         end
 
