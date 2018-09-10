@@ -106,6 +106,7 @@ module Hyrax
       title_types = title_type_service.all_ids
       title_types.each do |title_type|
         model_field = title_type_service.model_field(title_type)
+        raise "Unable to find model property" unless model.respond_to?(model_field)
         titles_with_types += model.try(model_field).to_a.map { |title| [title_type, title] }
       end
       titles_with_types
@@ -117,6 +118,7 @@ module Hyrax
       types = description_type_service.all_ids
       types.each do |description_type|
         model_field = description_type_service.model_field(description_type)
+        raise "Unable to find model property" unless model.respond_to?(model_field)
         descriptions_with_types += model.try(model_field).to_a.map { |value| [description_type, value] }
       end
       descriptions_with_types
@@ -128,6 +130,7 @@ module Hyrax
       types = date_type_service.all_ids
       types.each do |date_type|
         model_field = date_type_service.model_field(date_type)
+        raise "Unable to find model property" unless model.respond_to?(model_field)
         dates_with_types += model.try(model_field).to_a.map { |value| [date_type, value] }
       end
       dates_with_types

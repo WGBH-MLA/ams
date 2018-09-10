@@ -1,8 +1,7 @@
 class MultipleDescriptionsWithTypesInput < AMS::MultiTypedInput
 
   def type_choices
-    description_type_choices = DescriptionTypesService.new
-    choices = description_type_choices.select_all_options
+    DescriptionTypesService.new.select_all_options
   end
 
   def fields_prefix
@@ -10,9 +9,7 @@ class MultipleDescriptionsWithTypesInput < AMS::MultiTypedInput
   end
 
   def text_input_html_options(value, index)
-    options = super
-    options[:type] = "textarea"
-    options
+    super.merge( { type: "textarea" } )
   end
 
 
