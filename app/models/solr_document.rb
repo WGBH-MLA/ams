@@ -210,7 +210,7 @@ class SolrDocument
   end
 
   def title
-    concatenated_titles = [
+    concatenated_titles = [series_title,
       program_title, episode_number, episode_title, segment_title, clip_title,
       promo_title, raw_footage_title,
       self[Solrizer.solr_name('title')]
@@ -218,6 +218,10 @@ class SolrDocument
     # Wrap the return value in an array to behave like a multi-valued field,
     # even though this will always be a single value.
     Array(concatenated_titles)
+  end
+
+  def series_title
+    self[Solrizer.solr_name('series_title')]
   end
 
   def program_title
@@ -245,8 +249,12 @@ class SolrDocument
   end
 
   def display_description
-    description = [raw_footage_description, segment_description, clip_description, promo_description, episode_description, program_description, self[Solrizer.solr_name('description')]].find(&:present?)
+    description = [raw_footage_description, segment_description, clip_description, promo_description, episode_description, program_description, series_description, self[Solrizer.solr_name('description')]].find(&:present?)
     description.first.truncate(100, separator: ' ') unless description.nil?
+  end
+
+  def series_description
+    self[Solrizer.solr_name('series_description')]
   end
 
   def program_description

@@ -11,5 +11,7 @@ terms:
     term: Raw Footage
   - id: promo
     term: Promo
+  - id: series
+    term: Series
   - id: clip
     term: Clip
