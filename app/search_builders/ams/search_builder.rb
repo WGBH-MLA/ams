@@ -48,12 +48,12 @@ module AMS
 
       # Returns the 'before' date time formatted for a Solr query.
       def before_date
-        @before_date ||= formatted_date(blacklight_params['before_date'])
+        @before_date ||= blacklight_params['before_date'] if blacklight_params['before_date']&.present?
       end
 
       # Returns the 'after' date time formatted for a Solr query.
       def after_date
-        @after_date ||= formatted_date(blacklight_params['after_date'])
+        @after_date ||= blacklight_params['after_date'] if blacklight_params['after_date']&.present?
       end
 
       # Returns the date inputs in the form of a queryable range.
@@ -67,14 +67,6 @@ module AMS
             "#{after_date || '*'} TO #{before_date || '*'}"
           end
         end
-      end
-
-      # Converts an unformatted date (as passed in via URL) to a date formatted
-      # for a Solr query.
-      def formatted_date(unformatted_date)
-        DateTime.parse(unformatted_date.to_s).utc.strftime("%Y-%m-%d")
-      rescue ArgumentError => e
-        nil
       end
 
       def filter_exact_date?
