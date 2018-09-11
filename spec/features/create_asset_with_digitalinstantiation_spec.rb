@@ -33,12 +33,13 @@ RSpec.feature 'Create and Validate Asset,Digital Instantiation, EssenseTrack', j
 
 
     # Use contolled vocab to retrieve all title types.
-    let(:title_and_description_types) { TitleAndDescriptionTypesService.all_terms }
+    let(:title_types) { TitleTypesService.new.all_terms }
+    let(:description_types) { DescriptionTypesService.new.all_terms }
 
     # Make an array of [title, title_type] pairs.
     # Ensure there are 2 titles for every title type.
     let(:titles_with_types) do
-      (title_and_description_types).each_with_index.map { |title_type, i| ["Test #{title_type} Title #{i + 1}", title_type] }
+      (title_types).each_with_index.map { |title_type, i| ["Test #{title_type} Title #{i + 1}", title_type] }
     end
 
     # Specify a main title.
@@ -47,7 +48,7 @@ RSpec.feature 'Create and Validate Asset,Digital Instantiation, EssenseTrack', j
     # Make an array of [description, description_type] pairs.
     # Ensure there are 2 descriptions for every description type.
     let(:descriptions_with_types) do
-      (title_and_description_types).each_with_index.map { |description_type, i| ["Test #{description_type} Description #{i + 1}", description_type] }
+      (description_types).each_with_index.map { |description_type, i| ["Test #{description_type} Description #{i + 1}", description_type] }
     end
 
     # Specify a main description.
@@ -149,6 +150,25 @@ RSpec.feature 'Create and Validate Asset,Digital Instantiation, EssenseTrack', j
       expect(page).to have_content digital_instantiation_attributes[:rights_summary]
       expect(page).to have_content digital_instantiation_attributes[:holding_organization]
       expect(page).to have_current_path(guid_regex)
+
+      # Go to search page
+      visit '/'
+      find("#search-submit-header").click
+
+      # Get the Asset record, it's DigitalInstantiation, and it's EssenceTracks
+      # in order to test what you see in the search interface.
+      asset = Asset.where(title: main_title).first
+      digital_instantiation = asset.members.first
+      essence_tracks = digital_instantiation.members.to_a
+
+      # Expect to see the Asset in search results.
+      expect(page).to have_search_result asset
+      # Expect to NOT see the DigitalInstantiation in the search results.
+      expect(page).to_not have_search_result digital_instantiation
+      # Expect to NOT see the EssenceTracks in the search results.
+      essence_tracks.each do |essence_track|
+        expect(page).to_not have_search_result essence_track
+      end
     end
   end
 end

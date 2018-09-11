@@ -53,7 +53,7 @@ module AssetFormHelpers
   #  it will set the last one found.
   def title_value_input(index=nil)
     # Get all inputs for entering titles.
-    input_elements = page.all(:css, 'input[name="asset[title_value][]"]')
+    input_elements = page.all(:css, 'input[name="asset[titles_with_types][][value]"]')
     # If no specific index was passed, return the last one found.
     index ||= input_elements.count - 1
     input_elements[index]
@@ -65,7 +65,7 @@ module AssetFormHelpers
   #  it will set the last one found.
   def title_type_select(index=nil)
     # Get all elements for selecting title types.
-    select_elements = page.all(:css, 'select[name="asset[title_type][]"]')
+    select_elements = page.all(:css, 'select[name="asset[titles_with_types][][type]"]')
     # If no specific index was passed, return the last one found.
     index ||= select_elements.count - 1
     select_elements[index]
@@ -119,7 +119,7 @@ module AssetFormHelpers
   #  it will set the last one found.
   def description_value_input(index=nil)
     # Get all inputs for entering descriptions.
-    input_elements = page.all(:css, 'textarea[name="asset[description_value][]"]')
+    input_elements = page.all(:css, 'textarea[name="asset[descriptions_with_types][][value]"]')
     # If no specific index was passed, return the last one found.
     index ||= input_elements.count - 1
     input_elements[index]
@@ -131,7 +131,7 @@ module AssetFormHelpers
   #  it will set the last one found.
   def description_type_select(index=nil)
     # Get all elements for selecting description types.
-    select_elements = page.all(:css, 'select[name="asset[description_type][]"]')
+    select_elements = page.all(:css, 'select[name="asset[descriptions_with_types][][type]"]')
     # If no specific index was passed, return the last one found.
     index ||= select_elements.count - 1
     select_elements[index]
@@ -187,7 +187,7 @@ module AssetFormHelpers
   #  it will set the last one found.
   def date_value_input(index=nil)
     # Get all inputs for entering dates.
-    input_elements = page.all(:css, 'input[name="asset[date_value][]"]')
+    input_elements = page.all(:css, 'input[name="asset[dates_with_types][][value]"]')
     # If no specific index was passed, return the last one found.
     index ||= input_elements.count - 1
     input_elements[index]
@@ -199,7 +199,7 @@ module AssetFormHelpers
   #  it will set the last one found.
   def date_type_select(index=nil)
     # Get all elements for selecting date types.
-    select_elements = page.all(:css, 'select[name="asset[date_type][]"]')
+    select_elements = page.all(:css, 'select[name="asset[dates_with_types][][type]"]')
     # If no specific index was passed, return the last one found.
     index ||= select_elements.count - 1
     select_elements[index]

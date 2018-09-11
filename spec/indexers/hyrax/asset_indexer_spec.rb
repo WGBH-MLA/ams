@@ -5,6 +5,10 @@ RSpec.describe AssetIndexer do
   let(:service) { described_class.new(work) }
   let(:admin_data) { create(:admin_data) }
   let(:work) { build(:asset, with_admin_data:admin_data.gid, date:["2010"], broadcast_date:['2011-05'], copyright_date:['2011-05'], created_date:['2011-05-11']) }
+  let(:asset) { create(:asset) }
+  let(:asset_solr_doc) { described_class.new(asset) }
+  let(:digital_instantiation_work) { create(:digital_instantiation) }
+  let(:physical_instantiation_work) { create(:physical_instantiation) }
 
   context "indexes admin data" do
     it "indexes the correct fields" do
@@ -54,6 +58,15 @@ RSpec.describe AssetIndexer do
       expect(solr_document.fetch('broadcast_date_drsim')).to be_empty
       expect(solr_document.fetch('copyright_date_drsim')).to be_empty
       expect(solr_document.fetch('created_date_drsim')).to be_empty
+    end
+
+    it "index child attributes into parent" do
+      asset.ordered_members << digital_instantiation_work
+      asset.ordered_members << physical_instantiation_work
+      asset.save
+      solr_doc = asset_solr_doc.generate_solr_document
+      expect(solr_doc.fetch('media_type_ssim')).not_to be_empty
+
     end
   end
 end

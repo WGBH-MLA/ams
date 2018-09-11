@@ -1,6 +1,6 @@
 <% provide :page_title, @presenter.page_title %>
 <% content_for :head do %>
-  <%= stylesheet_link_tag 'work_show/asset' -%>
+  <%= stylesheet_link_tag 'work_show/work_show' -%>
 <% end %>
 <div class="row work-type">
   <div class="col-xs-12">
@@ -8,7 +8,7 @@
   </div>
   <div class="col-xs-12">&nbsp;</div>
   <div itemscope itemtype="http://schema.org/CreativeWork" class="col-xs-12">
-    <div class="panel panel-default asset-panel">
+    <div class="panel panel-default work-panel">
       <div class="panel-heading">
         <%= render 'work_title', presenter: @presenter %>
       </div>
