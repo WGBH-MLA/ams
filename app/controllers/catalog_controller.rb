@@ -46,7 +46,7 @@ class CatalogController < ApplicationController
     config.add_facet_field 'minimally_cataloged_ssim', query: {
         yes: { label: 'Yes', fq: 'minimally_cataloged_ssim:Yes' },
         no: { label: 'No', fq: '-minimally_cataloged_ssim:[* TO *]' }
-     }, label:"Minimally Cataloged", collapse: false
+     }, label:"Minimally Cataloged", collapse: true
 
     config.add_facet_field 'outside_url_ssim', query: {
         yes: { label: 'Yes', fq: 'outside_url_ssim:[* TO *]' },
