@@ -1,5 +1,0 @@
-<% if f.object.multiple? key %>
-  <%= f.input :dimensions, as: :multi_value, disabled:f.object.respond_to?(:disabled?) && f.object.disabled?(key), required: f.object.required?(key) %>
-<% else %>
-  <%= f.input :dimensions, required: f.object.required?(key), disabled:f.object.respond_to?(:disabled?) && f.object.disabled?(key) %>
-<% end %>
