@@ -1,13 +1,13 @@
 table.contributions {
     margin:0px;
 }
-.asset-panel button {
+.work-panel button {
     margin-right: 5px;
 }
-.asset-panel .label {
+.work-panel .label {
     border-radius: 0px;
 }
-.asset-panel .block a {
+.work-panel .block a {
     text-align: left;
     border-radius: 0;
     border: none;
@@ -15,16 +15,16 @@ table.contributions {
     padding: 15px 20px;
     border-bottom: 1px solid #eee;
 }
-.asset-panel .block a:hover,
-.asset-panel .block a:focus,
-.asset-panel .block a:active {
+.work-panel .block a:hover,
+.work-panel .block a:focus,
+.work-panel .block a:active {
     background: #f9f9f9;
 }
-.asset-panel .details {
+.work-panel .details {
     border: 1px solid #eee;
     margin-top: 20px;
 }
-.asset-panel .block a:after {
+.work-panel .block a:after {
     content: "\f0d7";
     font-family: "FontAwesome";
     font-size: 20px;
@@ -32,7 +32,7 @@ table.contributions {
     right: 40px;
     position: absolute;
 }
-.asset-panel .block a.collapsed:after {
+.work-panel .block a.collapsed:after {
     content: "\f0da";
     font-family: "FontAwesome";
     font-size: 20px;
@@ -40,16 +40,16 @@ table.contributions {
     right: 40px;
     position: absolute;
 }
-.asset-panel .block ul.tabular a {
+.work-panel .block ul.tabular a {
     display: block;
     border: none;
     padding: 0;
     font-size: 14px;
 }
-.asset-panel .block ul.tabular a:after {
+.work-panel .block ul.tabular a:after {
     display: none !important;
 }
-.asset-panel .details .well {
+.work-panel .details .well {
     border: none;
     border-radius: 0;
     background: #fff;
@@ -58,24 +58,24 @@ table.contributions {
     -webkit-box-shadow: none;
     box-shadow: none;
 }
-.asset-panel .head {
+.work-panel .head {
     padding: 20px;
 }
-.asset-panel .head h3 {
+.work-panel .head h3 {
     font-size: 28px;
     text-transform: capitalize;
     margin: 0 0 10px;
 }
-.asset-panel .head span {
+.work-panel .head span {
     font-size: 16px;
     line-height: 26px;
 }
-.asset-panel .head a {
+.work-panel .head a {
     display: block;
     font-size: 14px;
     line-height: 30px;
 }
-.asset-panel .table th {
+.work-panel .table th {
     font-weight: bold;
     border: none;
     border-bottom: 2px solid #3379b8;
@@ -110,7 +110,7 @@ table.contributions {
     height: auto;
     display: block;
 }
-.asset-panel .options {
+.work-panel .options {
     text-align: right;
     padding-top: 8px;
 }
@@ -173,10 +173,10 @@ ul.tabular {
         background: #fff;
         padding-bottom: 20px;
     }
-    .asset-panel .options {
+    .work-panel .options {
         text-align: center;
     }
-    .asset-panel .options li {
+    .work-panel .options li {
         margin: 0 0 5px;
     }
 }

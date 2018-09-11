@@ -34,4 +34,21 @@ en:
   simple_form:
     hints:
       asset:
-        dates_with_types: 'Valid Date formats are (YYYY-MM-DD, YYYY-MM, YYYY e.g. 2009-01-30, 2009-01, 2009)'
+        titles_with_types: 'A name given to an asset.'
+        descriptions_with_types: 'A summary of the content.'
+        producing_organization: 'The name of the organization(s) that produced the asset.'
+        local_identifier: 'An identifer used by a local holding institution.'
+        pbs_nola_code: 'The identifier assigned to the asset by PBS. Not relevant for all assets.'
+        eidr_id: 'The identifier assigned to the asset through the <a href="https://eidr.org/" target="_blank">EIDR registry</a>. Not relevant for all assets.'
+        asset_types: 'The type of content being described. To select multiple values, hold down the command button and click each term.'
+        genre: 'The category of the content by format. To select multiple values, hold down the command button and click each term.'
+        topics: 'The category of the content by topic. To select multiple values hold down the command button and click each term.'
+        subject: 'Words or phrases selected to describe the content. These can come from outside or local authorities, such as <a href="http://id.loc.gov/" target="_blank">Library of Congress Subject Headings</a>.'
+        spatial_coverage: 'Location depicted in the content.'
+        temporal_coverage: 'Time period depiected or covered in the content. Can be expressed as a date or range (1900s, 1970-1979) or as a phrase (20th century, Gilded Age).'
+        audience_level: 'The type of audience, viewer, or listeners for whom the content is designed.'
+        audience_rating: 'The type of audience for whom the content is intended or judged appropriate.'
+        annotation: 'Any supplementary information or notes about the content.'
+        rights_summary: 'Any information about copyright, usage, or access rights to the content, especially copyright statements. Separate rights statements can each be entered in their own rights summary field.'
+        rights_link: 'A URI pointing to a standardized declaration of rights, such as those from <a href="http://rightsstatements.org" target="_blank">RightsStatements.org</a>.'
+        dates_with_types: "Date of the broadcast, creation, or copyright of the content. Valid Date formats are (YYYY-MM-DD, YYYY-MM, YYYY e.g. 2009-01-30, 2009-01, 2009)."

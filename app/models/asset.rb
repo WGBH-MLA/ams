@@ -46,11 +46,12 @@ class Asset < ActiveFedora::Base
     @admin_data ||= AdminData.find_by_gid(admin_data_gid)
   end
 
-
   def admin_data=(new_admin_data)
     self[:admin_data_gid] = new_admin_data.gid
   end
 
+  # TODO: Use RDF::Vocab for applicable terms.
+  # See https://github.com/ruby-rdf/rdf-vocab/tree/develop/lib/rdf/vocab
 
   property :asset_types, predicate: ::RDF::URI.new("http://www.ebu.ch/metadata/ontologies/ebucore/ebucore#hasType"), multiple: true do |index|
     index.as :stored_searchable, :facetable
@@ -112,7 +113,7 @@ class Asset < ActiveFedora::Base
     index.as :stored_searchable
   end
 
-  property :pbs_nola_code, predicate: ::RDF::URI.new("http://id.loc.gov/ontologies/bibframe.html#p_code"), multiple: true do |index|
+  property :pbs_nola_code, predicate: ::RDF::Vocab::EBUCore.hasIdentifier, multiple: true do |index|
     index.as :stored_searchable
   end
 
@@ -184,6 +185,14 @@ class Asset < ActiveFedora::Base
     index.as :symbol
   end
 
+  property :series_title, predicate: ::RDF::URI.new('http://pbcore.org#hasSeriesTitle'), multiple: :true do |index|
+    index.as :stored_searchable
+  end
+
+  property :series_description, predicate: ::RDF::URI.new('http://pbcore.org#hasSeriesDescription'), multiple: :true do |index|
+    index.as :stored_searchable
+  end
+
   validates :admin_data_gid, presence: true
 
   def admin_data_gid=(new_admin_data_gid)
@@ -193,7 +202,6 @@ class Asset < ActiveFedora::Base
     @admin_data=new_admin_data
     admin_data_gid
   end
-
 
   def admin_data_gid_document_field_name
     Solrizer.solr_name('admin_data_gid', *index_admin_data_gid_as)

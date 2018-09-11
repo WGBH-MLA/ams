@@ -1,23 +1,18 @@
-class MultipleDatesWithTypesInput < MultiValueInput
+class MultipleDatesWithTypesInput < AMS::MultiTypedInput
 
-  def build_field(value, index)
-    date_types_service = DateTypesService.new
-    date_type_choices = date_types_service.select_all_options
+  def text_input_html_options(value, index)
+    super.merge( { pattern: AMS::NonExactDateService.regex.to_s } )
+  end
 
-    select_input_html_options = input_html_options.dup.merge({
-      name: "#{@builder.object_name}[date_type][]"
-    })
+  def type_choices
+    DateTypesService.new.select_all_options
+  end
 
-    date_input_html_options = input_html_options.dup.merge({
-      name: "#{@builder.object_name}[date_value][]",
-      value: value[1]
-    })
+  def fields_prefix
+    "date"
+  end
 
-    date_input_html_options[:class] += ["datepicker"]
-    date_input_html_options[:pattern] = AMS::NonExactDateService.regex.to_s
-
-    output = @builder.text_field(:date_value, date_input_html_options)
-    output += @builder.select(:date_type, date_type_choices, { selected: value[0] }, select_input_html_options)
-    output
+  def input_css_classes
+    super << "datepicker"
   end
 end

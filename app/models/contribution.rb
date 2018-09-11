@@ -13,11 +13,11 @@ class Contribution < ActiveFedora::Base
     index.as :stored_searchable
   end
 
-  property :portrayal, predicate: ::RDF::URI.new("http://www.ebu.ch/metadata/ontologies/ebucore/ebucore#hasCastRole"), multiple: false do |index|
+  property :portrayal, predicate: ::RDF::URI.new("http://www.ebu.ch/metadata/ontologies/ebucore/ebucore#hasCastRole"), multiple: false, index_to_parent:true do |index|
     index.as :stored_searchable
   end
 
-  property :affiliation, predicate: ::RDF::URI.new("http://www.ebu.ch/metadata/ontologies/ebucore/ebucore#hasAffiliation"), multiple: false do |index|
+  property :affiliation, predicate: ::RDF::URI.new("http://www.ebu.ch/metadata/ontologies/ebucore/ebucore#hasAffiliation"), multiple: false, index_to_parent:true do |index|
     index.as :stored_searchable
   end
 

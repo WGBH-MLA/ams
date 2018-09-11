@@ -9,6 +9,8 @@ class EssenceTrack < ActiveFedora::Base
 
   validates :track_type, presence: { message: 'Your work must have track type.' }
   validates :track_id, presence: { message: 'Your work must have track ID.' }
+  validates :duration, format: { with: AMS::TimeCodeService.regex, allow_blank: true, message: "Invalid format for duration. Use HH:MM:SS, H:MM:SS, MM:SS, M:SS, or HH:MM:SS" }
+  validates :time_start, format: { with: AMS::TimeCodeService.regex, allow_blank: true, message: "Invalid format for time start. Use HH:MM:SS, H:MM:SS, MM:SS, MM:SS or HH::MM::SS;FF" }
 
   property :track_type, predicate: ::RDF::URI.new("http://www.ebu.ch/metadata/ontologies/ebucore/ebucore#trackType"), multiple: false do |index|
     index.as :stored_searchable

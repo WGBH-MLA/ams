@@ -12,7 +12,7 @@ class CatalogController < ApplicationController
 
     config.show.tile_source_field = :content_metadata_image_iiif_info_ssm
     config.show.partials.insert(1, :openseadragon)
-    config.search_builder_class = Hyrax::CatalogSearchBuilder
+    config.search_builder_class = AMS::SearchBuilder
 
     # Show gallery view
     config.view.gallery.partials = [:index_header, :index]
@@ -32,11 +32,31 @@ class CatalogController < ApplicationController
 
     # solr fields that will be treated as facets by the blacklight application
     #   The ordering of the field names is the order of the display
-    config.add_facet_field solr_name("human_readable_type", :facetable), label: "Type", limit: 5
-    config.add_facet_field solr_name("asset_types", :facetable), label: "Asset Type", limit: 5, collapse: false
-    config.add_facet_field solr_name("topics", :facetable), label: "Topic", limit: 5, collapse: false
-    config.add_facet_field solr_name("genre", :facetable), label: "Genre", limit: 5, collapse: false
+    config.add_facet_field solr_name("asset_types", :facetable), label: "Asset Type", limit: 5, collapse: true
+    config.add_facet_field solr_name("topics", :facetable), label: "Topic", limit: 5, collapse: true
+    config.add_facet_field solr_name("genre", :facetable), label: "Genre", limit: 5, collapse: true
+    config.add_facet_field solr_name("producing_organization", :facetable), label: "Producing Organization", limit: 5, collapse: true
+    config.add_facet_field "media_type_ssim", label: "Media Type", limit: 5, collapse: true
+    config.add_facet_field "format_ssim", label: "Physical Format", limit: 5, collapse: true
+    config.add_facet_field "holding_organization_ssim", label: "Holding Organization", limit: 5, collapse: true
+    config.add_facet_field "language_ssim", label: "Language", limit: 5, collapse: true
+    config.add_facet_field "level_of_user_access_ssim", label: "Level of user access", limit: 5, collapse: true
+    config.add_facet_field "transcript_status_ssim", label: "Transcript Status", limit: 5, collapse: true
 
+    config.add_facet_field 'minimally_cataloged_ssim', query: {
+        yes: { label: 'Yes', fq: 'minimally_cataloged_ssim:Yes' },
+        no: { label: 'No', fq: '-minimally_cataloged_ssim:[* TO *]' }
+     }, label:"Minimally Cataloged", collapse: true
+
+    config.add_facet_field 'outside_url_ssim', query: {
+        yes: { label: 'Yes', fq: 'outside_url_ssim:[* TO *]' },
+        no: { label: 'No', fq: '-outside_url_ssim:[* TO *]' }
+    }, label:"Outside URL", collapse: true
+
+    config.add_facet_field 'sonyci_id_ssim', query: {
+        yes: { label: 'Yes', fq: 'sonyci_id_ssim:[* TO *]' },
+        no: { label: 'No', fq: '-sonyci_id_ssim:[* TO *]' }
+    }, label:"Digitized Copy in AAPB", collapse: true
 
     # The generic_type isn't displayed on the facet list
     # It's used to give a label to the filter that comes from the user profile
@@ -48,65 +68,77 @@ class CatalogController < ApplicationController
     # handler defaults, or have no facets.
     config.add_facet_fields_to_solr_request!
 
+
     # solr fields to be displayed in the index (search results) view
     #   The ordering of the field names is the order of the display
     config.add_index_field solr_name("title", :stored_searchable), label: "Title", itemprop: 'name', if: false
-    config.add_index_field solr_name("description", :stored_searchable), itemprop: 'description', helper_method: :iconify_auto_link
 
-    config.add_index_field solr_name("broadcast", :stored_searchable), itemprop: 'broadcast', helper_method: :iconify_auto_link
-    config.add_index_field solr_name("topics", :stored_searchable), itemprop: 'topics', helper_method: :iconify_auto_link
-    config.add_index_field solr_name("asset_types", :stored_searchable), itemprop: 'asset_types', helper_method: :iconify_auto_link
-    config.add_index_field solr_name("genre", :stored_searchable), itemprop: 'genre', helper_method: :iconify_auto_link
-    config.add_index_field solr_name("created", :stored_searchable), itemprop: 'created', helper_method: :iconify_auto_link
-    config.add_index_field solr_name("date", :stored_searchable), itemprop: 'date', helper_method: :iconify_auto_link, label: 'Date'
+    config.add_index_field solr_name('admin_set'), label: 'Admin Set'
+    config.add_index_field solr_name("created_date", :stored_searchable), label: 'Created Date', itemprop: 'created_date', helper_method: :iconify_auto_link
     config.add_index_field solr_name("copyright_date", :stored_searchable), itemprop: 'copyright_date', helper_method: :iconify_auto_link
+    config.add_index_field solr_name("broadcast_date", :stored_searchable), label: 'Broadcast Date', itemprop: 'broadcast_date', helper_method: :iconify_auto_link
+    config.add_index_field 'id', label: 'GUID'
 
-    config.add_index_field solr_name("keyword", :stored_searchable), itemprop: 'keywords', link_to_search: solr_name("keyword", :facetable)
-    config.add_index_field solr_name("subject", :stored_searchable), itemprop: 'about', link_to_search: solr_name("subject", :facetable)
-    config.add_index_field solr_name("creator", :stored_searchable), itemprop: 'creator', link_to_search: solr_name("creator", :facetable)
-    config.add_index_field solr_name("contributor", :stored_searchable), itemprop: 'contributor', link_to_search: solr_name("contributor", :facetable)
-    config.add_index_field solr_name("proxy_depositor", :symbol), label: "Depositor", helper_method: :link_to_profile
-    config.add_index_field solr_name("depositor"), label: "Owner", helper_method: :link_to_profile
-    config.add_index_field solr_name("publisher", :stored_searchable), itemprop: 'publisher', link_to_search: solr_name("publisher", :facetable)
-    config.add_index_field solr_name("based_near_label", :stored_searchable), itemprop: 'contentLocation', link_to_search: solr_name("based_near_label", :facetable)
-    config.add_index_field solr_name("language", :stored_searchable), itemprop: 'inLanguage', link_to_search: solr_name("language", :facetable)
-    config.add_index_field solr_name("date_uploaded", :stored_sortable, type: :date), itemprop: 'datePublished', helper_method: :human_readable_date
-    config.add_index_field solr_name("date_modified", :stored_sortable, type: :date), itemprop: 'dateModified', helper_method: :human_readable_date
-    config.add_index_field solr_name("date_created", :stored_searchable), itemprop: 'dateCreated'
-    config.add_index_field solr_name("rights_statement", :stored_searchable), helper_method: :rights_statement_links
-    config.add_index_field solr_name("license", :stored_searchable), helper_method: :license_links
-    config.add_index_field solr_name("resource_type", :stored_searchable), label: "Resource Type", link_to_search: solr_name("resource_type", :facetable)
-    config.add_index_field solr_name("file_format", :stored_searchable), link_to_search: solr_name("file_format", :facetable)
-    config.add_index_field solr_name("identifier", :stored_searchable), helper_method: :index_field_link, field_name: 'identifier'
-    config.add_index_field solr_name("embargo_release_date", :stored_sortable, type: :date), label: "Embargo release date", helper_method: :human_readable_date
-    config.add_index_field solr_name("lease_expiration_date", :stored_sortable, type: :date), label: "Lease expiration date", helper_method: :human_readable_date
+    # Uses a Blacklight model accessor for description decision logic
+    config.add_index_field "description", accessor: "display_description"
 
     # solr fields to be displayed in the show (single result) view
     #   The ordering of the field names is the order of the display
+    config.add_show_field "id"
     config.add_show_field solr_name("title", :stored_searchable)
-    config.add_show_field solr_name("description", :stored_searchable)
+    config.add_show_field solr_name("series_title", :stored_searchable)
+    config.add_show_field solr_name("raw_footage_title", :stored_searchable)
+    config.add_show_field solr_name("segment_title", :stored_searchable)
+    config.add_show_field solr_name("program_title", :stored_searchable)
+    config.add_show_field solr_name("episode_title", :stored_searchable)
+    config.add_show_field solr_name("clip_title", :stored_searchable)
+    config.add_show_field solr_name("promo_title", :stored_searchable)
 
-    config.add_show_field solr_name("broadcast", :stored_searchable)
-    config.add_show_field solr_name("asset_types", :stored_searchable)
-    config.add_show_field solr_name("created", :stored_searchable)
-    config.add_show_field solr_name("date", :stored_searchable), label: "Date"
+
+    config.add_show_field solr_name("date", :stored_searchable)
+    config.add_show_field solr_name("broadcast_date", :stored_searchable)
+    config.add_show_field solr_name("created_date", :stored_searchable)
     config.add_show_field solr_name("copyright_date", :stored_searchable)
 
-    config.add_show_field solr_name("keyword", :stored_searchable)
+    config.add_show_field solr_name("description", :stored_searchable)
+    config.add_show_field solr_name("series_description", :stored_searchable)
+    config.add_show_field solr_name("raw_footage_description", :stored_searchable)
+    config.add_show_field solr_name("segment_description", :stored_searchable)
+    config.add_show_field solr_name("program_description", :stored_searchable)
+    config.add_show_field solr_name("episode_description", :stored_searchable)
+    config.add_show_field solr_name("clip_description", :stored_searchable)
+    config.add_show_field solr_name("promo_description", :stored_searchable)
+
+    config.add_show_field solr_name("producing_organization", :stored_searchable)
+    config.add_show_field solr_name("episode_number", :stored_searchable)
+    config.add_show_field solr_name("genre", :stored_searchable)
+    config.add_show_field solr_name("spatial_coverage", :stored_searchable)
+    config.add_show_field solr_name("temporal_coverage", :stored_searchable)
+    config.add_show_field solr_name("audience_level", :stored_searchable)
+    config.add_show_field solr_name("audience_rating", :stored_searchable)
+    config.add_show_field solr_name("annotation", :stored_searchable)
+    config.add_show_field solr_name("rights_summary", :stored_searchable)
+    config.add_show_field solr_name("rights_link", :stored_searchable)
+    config.add_show_field solr_name("local_identifier", :stored_searchable)
+    config.add_show_field solr_name("pbs_nola_code", :stored_searchable)
+    config.add_show_field solr_name("eidr_id", :stored_searchable)
+    config.add_show_field solr_name("topic", :stored_searchable)
     config.add_show_field solr_name("subject", :stored_searchable)
-    config.add_show_field solr_name("creator", :stored_searchable)
+
+    #from admindata
+    config.add_show_field solr_name("outside_url", :stored_searchable)
+    config.add_show_field solr_name("special_collection", :stored_searchable)
+    config.add_show_field solr_name("sonyci_id", :stored_searchable)
+
+    #from instantiation model
+    config.add_show_field solr_name("local_instantiation_identifer", :stored_searchable)
+    config.add_show_field solr_name("holding_organization", :stored_searchable)
+
+    #from contribution
     config.add_show_field solr_name("contributor", :stored_searchable)
-    config.add_show_field solr_name("publisher", :stored_searchable)
-    config.add_show_field solr_name("based_near_label", :stored_searchable)
-    config.add_show_field solr_name("language", :stored_searchable)
-    config.add_show_field solr_name("date_uploaded", :stored_searchable)
-    config.add_show_field solr_name("date_modified", :stored_searchable)
-    config.add_show_field solr_name("date_created", :stored_searchable)
-    config.add_show_field solr_name("rights_statement", :stored_searchable)
-    config.add_show_field solr_name("license", :stored_searchable)
-    config.add_show_field solr_name("resource_type", :stored_searchable), label: "Resource Type"
-    config.add_show_field solr_name("format", :stored_searchable)
-    config.add_show_field solr_name("identifier", :stored_searchable)
+    config.add_show_field solr_name("affiliation", :stored_searchable)
+    config.add_show_field solr_name("portrayal", :stored_searchable)
+
 
     # "fielded" search configuration. Used by pulldown among other places.
     # For supported keys in hash, see rdoc for Blacklight::SearchFields
