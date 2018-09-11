@@ -4,6 +4,7 @@ module Hyrax
   class PhysicalInstantiationForm < Hyrax::Forms::WorkForm
     include DisabledFields
     include ChildCreateButton
+    include SingleValuedForm
 
     self.model_class = ::PhysicalInstantiation
 
@@ -12,6 +13,8 @@ module Hyrax
                    :bibliographic_citation, :source]
     self.required_fields -= [:creator, :keyword, :rights_statement]
     self.required_fields += [:format, :location, :media_type, :holding_organization]
+
+    self.single_valued_fields = [:title]
 
     class_attribute :field_groups
 
@@ -40,12 +43,6 @@ module Hyrax
       end
 
       []
-    end
-
-    def self.model_attributes(form_params)
-      clean_params = sanitize_params(form_params)
-      clean_params[:title] = Array(clean_params[:title])
-      clean_params
     end
 
     def primary_terms
