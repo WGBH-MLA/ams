@@ -8,6 +8,12 @@ module DateRangeFilterHelpers
     visit '/'
     find("#search-submit-header").click
 
+    # If we can't see the facet panel body, then assume the facet is collapsed.
+    unless page.has_content? '.blacklight-date_drsim .panel-body'
+      # Click the facet heading to open the facet.
+      find('.blacklight-date_drsim .panel-heading').click()
+    end
+
     if exact
       choose 'exact_date_option'
       fill_in 'after_date', with: exact
@@ -29,6 +35,12 @@ module DateRangeFilterHelpers
   def hide_date_picker_for(*input_selectors)
     input_selectors.each do |input_selector|
       execute_script("$('#{input_selector}').datepicker('hide')")
+    end
+  end
+
+  def show_date_picker_for(*input_selectors)
+    input_selectors.each do |input_selector|
+      execute_script("$('#{input_selector}').datepicker('show')")
     end
   end
 end
