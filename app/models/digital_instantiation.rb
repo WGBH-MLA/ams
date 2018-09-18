@@ -18,7 +18,7 @@ class DigitalInstantiation < ActiveFedora::Base
   #validates_presence_of :digital_instantiation_pbcore_xml
   validate :pbcore_validate_instantiation_xsd
 
-  validates :title, presence: { message: 'Your work must have a Title.' }
+
   validates :location, presence: { message: 'Your work must have a Location.' }
   validates :digital_format, presence: { message: 'Your work must have a Digital Format.' }
   validates :media_type, presence: { message: 'Your work must have a Media Type.' }
