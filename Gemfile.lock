@@ -118,6 +118,9 @@ GEM
       bootstrap-sass (~> 3.0)
       openseadragon (>= 0.2.0)
       rails
+    blacklight_advanced_search (6.4.1)
+      blacklight (~> 6.0, >= 6.0.1)
+      parslet
     bootstrap-sass (3.3.7)
       autoprefixer-rails (>= 5.2.1)
       sass (>= 3.3.4)
@@ -517,6 +520,7 @@ GEM
     parallel (1.12.1)
     parser (2.5.1.2)
       ast (~> 2.4.0)
+    parslet (1.8.2)
     pb_core (0.1.6)
       sax-machine
     posix-spawn (0.3.13)
@@ -816,6 +820,7 @@ PLATFORMS
 DEPENDENCIES
   aws-sdk-codedeploy
   bixby
+  blacklight_advanced_search (~> 6.4.0)
   byebug
   capybara (~> 2.18)
   capybara-screenshot
