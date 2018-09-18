@@ -14,7 +14,7 @@ module Hyrax
 
       private
       def inherit_parent_title(env)
-        if env.curation_concern.in_objects.any
+        if env.curation_concern.in_objects.any?
           parent_object_hash = env.curation_concern.in_objects.first.to_solr
           solr_document = SolrDocument.new(parent_object_hash)
           env.attributes[:title] = Array(solr_document.title)
