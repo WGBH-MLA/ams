@@ -7,7 +7,6 @@ class PhysicalInstantiation < ActiveFedora::Base
   # Change this to restrict which works can be added as a child.
   self.valid_child_concerns = [EssenceTrack]
 
-  validates :title, presence: { message: 'Your work must have a title.' }
   validates :format, presence: { message: 'Your work must have a format.' }
   validates :location, presence: { message: 'Your work must have a location.' }
   validates :media_type, presence: { message: 'Your work must have a media type.' }

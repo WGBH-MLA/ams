@@ -5,6 +5,7 @@ module Hyrax
     include DisabledFields
     include ChildCreateButton
     include SingleValuedForm
+    include InheritParentTitle
 
     self.model_class = ::PhysicalInstantiation
 
@@ -31,19 +32,6 @@ module Hyrax
     self.readonly_fields = [:title]
 
     self.field_metadata_service = WGBH::MetadataService
-
-    def title
-      if @controller.params.has_key?(:parent_id)
-        parent_object = ActiveFedora::Base.find(@controller.params[:parent_id])
-        if(parent_object.title.any?)
-          return [parent_object.title.first]
-        end
-      elsif model.in_objects.any?
-        return Array(model.in_objects.first.title)
-      end
-
-      []
-    end
 
     def primary_terms
       []
