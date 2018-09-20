@@ -3,6 +3,7 @@
 module Hyrax
   class DigitalInstantiationForm < Hyrax::Forms::WorkForm
     include DisabledFields
+    include InheritParentTitle
 
     self.model_class = ::DigitalInstantiation
     self.terms -= [:description, :relative_path, :import_url, :date_created, :resource_type, :creator, :contributor,
@@ -32,20 +33,6 @@ module Hyrax
     end
 
     def secondary_terms
-      []
-    end
-
-
-    def title
-      if @controller.params.has_key?(:parent_id)
-        parent_object = ActiveFedora::Base.find(@controller.params[:parent_id])
-        if(parent_object.title.any?)
-          return [parent_object.title.first]
-        end
-      elsif model.in_objects.any?
-        return Array(model.in_objects.first.title)
-      end
-
       []
     end
 
