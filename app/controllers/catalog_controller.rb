@@ -1,10 +1,12 @@
 class CatalogController < ApplicationController
-  include BlacklightAdvancedSearch::Controller
   include Hydra::Catalog
   include Hydra::Controller::ControllerBehavior
+  include BlacklightAdvancedSearch::Controller
 
   # This filter applies the hydra access controls
   before_action :enforce_show_permissions, only: :show
+
+
 
   configure_blacklight do |config|
     # default advanced config values
@@ -21,6 +23,8 @@ class CatalogController < ApplicationController
     config.show.tile_source_field = :content_metadata_image_iiif_info_ssm
     config.show.partials.insert(1, :openseadragon)
     config.search_builder_class = AMS::SearchBuilder
+
+    config.index.search_bar_presenter_class = Blacklight::ShowPresenter
 
     # Show gallery view
     config.view.gallery.partials = [:index_header, :index]
@@ -226,7 +230,7 @@ class CatalogController < ApplicationController
       }
     end
 
-    config.add_search_field('format') do |field|
+    config.add_search_field('instantiation_format') do |field|
       solr_name = solr_name("format", :stored_searchable)
       field.solr_local_parameters = {
         qf: solr_name,
