@@ -1,3 +1,7 @@
+<%
+# This is an override of Hyrax 2.2.4 [6e1970b] [hyrax/app/views/catalog/_search_form.html.erb] 
+# WARNING: upgrading Hyrax may break this override
+%>
 <%= form_tag search_form_action, method: :get, class: "form-horizontal search-form", id: "search-form-header", role: "search" do %>
   <%= render_hash_as_hidden_fields(search_state.params_for_search.except(:q, :search_field, :qt, :page, :utf8)) %>
   <div class="form-group">
