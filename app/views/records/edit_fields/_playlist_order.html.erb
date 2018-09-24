@@ -1,0 +1,1 @@
+<%= f.input :playlist_order, as: :integer, required: f.object.required?(key), disabled:f.object.respond_to?(:disabled?) && f.object.disabled?(key) %>
