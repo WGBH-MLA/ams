@@ -11,6 +11,7 @@ module Hyrax
              :promo_description, :clip_description, :copyright_date,
              :level_of_user_access, :minimally_cataloged, :outside_url, :special_collection, :transcript_status,
              :sonyci_id, :licensing_info, :producing_organization, :series_title, :series_description,
+             :playlist_group, :playlist_order,
              to: :solr_document
 
     def filter_item_ids_to_display(solr_query)
@@ -39,7 +40,9 @@ module Hyrax
           special_collection.blank? &&
           transcript_status.blank? &&
           sonyci_id.blank? &&
-          licensing_info.blank?
+          licensing_info.blank? &&
+          playlist_group.blank? &&
+          playlist_order.blank?
         )
     end
   end
