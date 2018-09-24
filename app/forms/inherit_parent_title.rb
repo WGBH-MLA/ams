@@ -4,7 +4,7 @@ module InheritParentTitle
     def title
       #Get parent title from solr document where title logic is defined
 
-      solr_document = SolrDocument.new(find_parent_object_hash) unless find_parent_object_hash.nil?
+      solr_document = ::SolrDocument.new(find_parent_object_hash) unless find_parent_object_hash.nil?
       if(solr_document.title.any?)
         return [solr_document.title]
         []

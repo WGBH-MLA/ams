@@ -27,6 +27,9 @@ class AssetIndexer < AMS::WorkIndexer
         solr_doc['transcript_status_ssim'] = solr_doc['transcript_status_tesim'] = object.admin_data.transcript_status if !object.admin_data.transcript_status.blank?
         solr_doc['sonyci_id_ssim'] = solr_doc['sonyci_id_tesim'] = object.admin_data.sonyci_id if object.admin_data.sonyci_id.any?(&:present?)
         solr_doc['licensing_info_ssim'] = solr_doc['licensing_info_tesim'] = object.admin_data.licensing_info if !object.admin_data.licensing_info.blank?
+        solr_doc['playlist_group_tesim']  = object.admin_data.playlist_group if !object.admin_data.playlist_group.blank?
+        solr_doc['playlist_order_tesim']  = object.admin_data.playlist_order if !object.admin_data.playlist_order.blank?
+
 
         #Indexing for Facets
         solr_doc['level_of_user_access_ssim'] =  object.admin_data.level_of_user_access if !object.admin_data.level_of_user_access.blank?
