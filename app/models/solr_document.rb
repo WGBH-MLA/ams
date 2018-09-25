@@ -336,4 +336,12 @@ class SolrDocument
   def producing_organization
     self[Solrizer.solr_name('producing_organization')]
   end
+
+  def playlist_group
+    self[Solrizer.solr_name('playlist_group')]
+  end
+
+  def playlist_order
+    self[Solrizer.solr_name('playlist_order')]
+  end
 end
