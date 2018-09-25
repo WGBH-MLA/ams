@@ -6,7 +6,7 @@ class Contribution < ActiveFedora::Base
   self.indexer = ContributionIndexer
   # Change this to restrict which works can be added as a child.
   # self.valid_child_concerns = []
-  validates :title, presence: { message: 'Your work must have a title.' }
+
 
 
   property :contributor_role, predicate: ::RDF::URI.new("http://www.w3.org/2006/vcard/ns#hasRole"), multiple: false do |index|

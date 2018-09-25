@@ -14,9 +14,10 @@ module Hyrax
 
       private
       def inherit_parent_title(env)
-        #TODO: find a way to query solr, that will speed this up
         if env.curation_concern.in_objects.any?
-          env.attributes[:title] = Array(env.curation_concern.in_objects.first.title)
+          parent_object_hash = env.curation_concern.in_objects.first.to_solr
+          solr_document = ::SolrDocument.new(parent_object_hash)
+          env.attributes[:title] = Array(solr_document.title)
         end
       end
 

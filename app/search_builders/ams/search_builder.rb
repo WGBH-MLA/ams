@@ -1,8 +1,9 @@
 module AMS
   class SearchBuilder < Hyrax::CatalogSearchBuilder
+    include BlacklightAdvancedSearch::AdvancedSearchBuilder
 
     # Add date filters to the processor chain.
-    self.default_processor_chain += [:apply_date_filter]
+    self.default_processor_chain += [:apply_date_filter,:add_advanced_parse_q_to_solr]
 
     # Overrides Hyrax::FilterModels.
     def models
