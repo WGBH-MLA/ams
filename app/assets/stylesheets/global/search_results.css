@@ -1,3 +1,6 @@
 div.facets h3 {
   font-size: 1.3em;
 }
+a.advanced_search {
+    margin-left:2px !important;
+}
