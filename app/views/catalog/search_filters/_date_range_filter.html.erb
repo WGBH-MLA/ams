@@ -1,4 +1,4 @@
-<div id="facet-panel-collapse" class="collapse panel-group container">
+<div id="date_range-facet-panel-collapse" class="panel facet_limit">
   <div class="panel panel-default facet_limit blacklight-date_drsim <% if(!params['exact_or_range'].blank?) %>facet_limit-active <% end %>">
     <div class="<% if(params['exact_or_range'].blank?) %>collapsed <% end %> collapse-toggle panel-heading" data-toggle="collapse" data-target="#facet-date_drsim" aria-expanded="true">
       <h3 class="panel-title facet-field-heading">
@@ -76,8 +76,10 @@
 
           $.extend({date_range_filter:{
               reset_date: function() {
-                 $("#before_date").val("");
+                  $("#before_date").val("");
                   $("#after_date").val("");
+                  $("#before_date").prop('disabled', true);
+                  $("#after_date").prop('disabled', true);
                   $("#exact_date_option").prop('checked', false);
                   $("#date_range_option").prop('checked', false);
                   $("#date_range_filter_form").submit();
