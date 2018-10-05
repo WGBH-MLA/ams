@@ -6,12 +6,14 @@ class CatalogController < ApplicationController
   # This filter applies the hydra access controls
   before_action :enforce_show_permissions, only: :show
 
+  add_results_collection_tool :export_search_results
+
 
 
   configure_blacklight do |config|
     # default advanced config values
     config.advanced_search ||= Blacklight::OpenStructWithHashAccess.new
-    # config.advanced_search[:qt] ||= 'advanced'
+    #config.advanced_search[:qt] ||= 'advanced'
     config.advanced_search[:url_key] ||= 'advanced'
     config.advanced_search[:query_parser] ||= 'dismax'
     config.advanced_search[:form_solr_parameters] ||= {}
@@ -480,5 +482,12 @@ class CatalogController < ApplicationController
   # this method is not called in that context.
   def render_bookmarks_control?
     false
+  end
+
+  def export
+    search_params = params
+    search_params.delete :page
+    response, response_documents = search_results(search_params)
+    @documents = response_documents
   end
 end
