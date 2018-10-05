@@ -14,6 +14,8 @@ Rails.application.routes.draw do
     concerns :searchable
   end
 
+  get 'catalog_export', to: 'catalog#export'
+
   mount Hydra::RoleManagement::Engine => '/'
 
   devise_for :users

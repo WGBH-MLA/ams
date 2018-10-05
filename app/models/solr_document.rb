@@ -14,6 +14,8 @@ class SolrDocument
   # SMS uses the semantic field mappings below to generate the body of an SMS email.
   SolrDocument.use_extension(Blacklight::Document::Sms)
 
+  SolrDocument.use_extension(AMS::CsvExportExtension)
+
   # DublinCore uses the semantic field mappings below to assemble an OAI-compliant Dublin Core document
   # Semantic mappings of solr stored fields. Fields may be multi or
   # single valued. See Blacklight::Document::SemanticFields#field_semantics
@@ -281,6 +283,13 @@ class SolrDocument
     self[Solrizer.solr_name('clip_description')]
   end
 
+  def all_dates
+    concatenated_dates = [date,
+                          broadcast_date,
+                          created_date,
+                          copyright_date].flatten.select(&:present?).join('; ')
+  end
+
   def date
     self[Solrizer.solr_name('date')]
   end
@@ -299,7 +308,11 @@ class SolrDocument
 
   def holding_organization
     self[Solrizer.solr_name('holding_organization')]
-    end
+  end
+
+  def holding_organization_ssim
+    self[Solrizer.solr_name('holding_organization','ssim')]
+  end
 
   def affiliation
     self[Solrizer.solr_name('affiliation')]

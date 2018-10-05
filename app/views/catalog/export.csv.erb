@@ -1,0 +1,1 @@
+<%= AMS::CsvExportExtension.get_csv_header %><% @documents.each { |d| %><%= d.export_as_csv.html_safe %> <% } %>

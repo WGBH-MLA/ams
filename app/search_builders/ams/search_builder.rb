@@ -3,7 +3,7 @@ module AMS
     include BlacklightAdvancedSearch::AdvancedSearchBuilder
 
     # Add date filters to the processor chain.
-    self.default_processor_chain += [:apply_date_filter,:add_advanced_parse_q_to_solr]
+    self.default_processor_chain += [:apply_date_filter,:add_advanced_parse_q_to_solr,:add_advanced_search_to_solr]
 
     # Overrides Hyrax::FilterModels.
     def models
