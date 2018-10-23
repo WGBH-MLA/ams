@@ -487,6 +487,7 @@ class CatalogController < ApplicationController
   def export
     search_params = params
     search_params.delete :page
+    search_params.delete :per_page
     response, response_documents = search_results(search_params)
     @documents = response_documents
   end
