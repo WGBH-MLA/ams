@@ -129,6 +129,8 @@ GEM
     blacklight_advanced_search (6.4.1)
       blacklight (~> 6.0, >= 6.0.1)
       parslet
+    bootstrap-multiselect-rails (0.9.9)
+      rails (>= 4.0.0)
     bootstrap-sass (3.3.7)
       autoprefixer-rails (>= 5.2.1)
       sass (>= 3.3.4)
@@ -837,6 +839,7 @@ DEPENDENCIES
   aws-sdk-s3
   bixby
   blacklight_advanced_search (~> 6.4.0)
+  bootstrap-multiselect-rails
   byebug
   capybara (~> 2.18)
   capybara-screenshot
