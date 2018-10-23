@@ -56,9 +56,15 @@ RSpec.feature 'Create Asset with Asset Type', js: true, asset_form_helpers: true
 
       # wait untill all elements are visiable
       wait_for(2)
+      within('.asset_genre') do
+        find('button.multiselect').click
+        find('.multiselect-container',text:asset_attributes[:genre]).click
+      end
 
-      select = page.find('select#asset_genre')
-      select.select asset_attributes[:genre]
+
+
+
+
 
       click_link "Relationships" # define adminset relation
       find("#asset_admin_set_id option[value='#{admin_set_id}']").select_option
