@@ -71,11 +71,11 @@ GEM
     awesome_nested_set (3.1.4)
       activerecord (>= 4.0.0, < 5.3)
     aws-eventstream (1.0.1)
-    aws-partitions (1.99.0)
+    aws-partitions (1.106.0)
     aws-sdk-codedeploy (1.6.0)
       aws-sdk-core (~> 3)
       aws-sigv4 (~> 1.0)
-    aws-sdk-core (3.24.1)
+    aws-sdk-core (3.33.0)
       aws-eventstream (~> 1.0)
       aws-partitions (~> 1.0)
       aws-sigv4 (~> 1.0)
@@ -188,6 +188,10 @@ GEM
     devise-guests (0.6.1)
       devise
     diff-lcs (1.3)
+    dotenv (2.5.0)
+    dotenv-rails (2.5.0)
+      dotenv (= 2.5.0)
+      railties (>= 3.2, < 6.0)
     dropbox_api (0.1.12)
       faraday (~> 0.9, ~> 0.8)
       oauth2 (~> 1.1)
@@ -437,6 +441,8 @@ GEM
       slop
     legato (0.7.0)
       multi_json
+    letter_opener (1.6.0)
+      launchy (~> 2.2)
     link_header (0.0.8)
     linkeddata (3.0.1)
       equivalent-xml (~> 0.6)
@@ -819,6 +825,7 @@ PLATFORMS
 
 DEPENDENCIES
   aws-sdk-codedeploy
+  aws-sdk-s3
   bixby
   blacklight_advanced_search (~> 6.4.0)
   byebug
@@ -830,12 +837,14 @@ DEPENDENCIES
   database_cleaner
   devise
   devise-guests (~> 0.6)
+  dotenv-rails
   factory_bot_rails (~> 4.0)
   fcrepo_wrapper
   hydra-role-management
   hyrax (~> 2.2.4)
   jbuilder (~> 2.5)
   jquery-rails
+  letter_opener
   listen (>= 3.0.5, < 3.2)
   mysql2 (~> 0.4.10)
   nokogiri
