@@ -503,20 +503,13 @@ class CatalogController < ApplicationController
       flash[:notice] = view_context.t('blacklight.search.messages.export_will_be_emailed', application_name: view_context.application_name)
       redirect_to(search_catalog_url(params)) and return true
     end
-    
+
     respond_to do |format|
       format.csv {
         csv_export = AMS::Export::DocumentsToCsv.new(response_documents)
         csv_export.process
         export_file = File.read(csv_export.file_path)
-        send_data export_file, :type => 'text/csv; charset=utf-8; header=present', :disposition => "attachment; filename=#{a.filename}", :filename => "#{csv_export.filename}"
-        csv_export.clean
-      }
-      format.pbcore {
-        csv_export = AMS::Export::DocumentsToCsv.new(response_documents)
-        csv_export.process
-        export_file = File.read(csv_export.file_path)
-        send_data export_file, :type => 'text/csv; charset=utf-8; header=present', :disposition => "attachment; filename=#{a.filename}", :filename => "#{csv_export.filename}"
+        send_data export_file, :type => 'text/csv; charset=utf-8; header=present', :disposition => "attachment; filename=#{csv_export.filename}", :filename => "#{csv_export.filename}"
         csv_export.clean
       }
     end
