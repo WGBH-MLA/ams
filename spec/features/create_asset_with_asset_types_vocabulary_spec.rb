@@ -56,7 +56,7 @@ RSpec.feature 'Create Asset with Asset Type', js: true, asset_form_helpers: true
       
       within('.asset_asset_types') do
         find('button.multiselect').click
-        find('.multiselect-container',text:asset_attributes[:asset_type]).click
+        find('label.checkbox',text:asset_attributes[:asset_type]).click
       end
 
       click_link "Relationships" # define adminset relation

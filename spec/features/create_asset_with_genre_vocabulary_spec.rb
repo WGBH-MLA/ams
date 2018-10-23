@@ -58,7 +58,7 @@ RSpec.feature 'Create Asset with Asset Type', js: true, asset_form_helpers: true
       wait_for(2)
       within('.asset_genre') do
         find('button.multiselect').click
-        find('.multiselect-container',text:asset_attributes[:genre]).click
+        find('label.checkbox',text:asset_attributes[:genre]).click
       end
 
 
