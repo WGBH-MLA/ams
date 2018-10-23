@@ -1,0 +1,4 @@
+S3_BUCKET=ams-edge.wgbh-mla.org
+S3_DIR=$(hostname)
+AWS_ACCESS_KEY=
+AWS_SECRET_KEY=

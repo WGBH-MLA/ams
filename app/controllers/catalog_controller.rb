@@ -485,10 +485,40 @@ class CatalogController < ApplicationController
   end
 
   def export
-    search_params = params
+    search_params = params.dup
     search_params.delete :page
     search_params.delete :per_page
+    search_params.delete :action
+    search_params.delete :controller
+    search_params.delete :locale
+    search_params[:rows] = Rails.configuration.max_downloadable_export_records
     response, response_documents = search_results(search_params)
-    @documents = response_documents
+    if (response[:response][:numFound] > response[:response][:docs].size)
+      params.delete :rows
+      params.permit!
+      ExportRecordsJob.perform_later(params.to_h, current_user)
+      params.delete :action
+      params.delete :controller
+      params.delete :format
+      flash[:notice] = view_context.t('blacklight.search.messages.export_will_be_emailed', application_name: view_context.application_name)
+      redirect_to(search_catalog_url(params)) and return true
+    end
+    
+    respond_to do |format|
+      format.csv {
+        csv_export = AMS::Export::DocumentsToCsv.new(response_documents)
+        csv_export.process
+        export_file = File.read(csv_export.file_path)
+        send_data export_file, :type => 'text/csv; charset=utf-8; header=present', :disposition => "attachment; filename=#{a.filename}", :filename => "#{csv_export.filename}"
+        csv_export.clean
+      }
+      format.pbcore {
+        csv_export = AMS::Export::DocumentsToCsv.new(response_documents)
+        csv_export.process
+        export_file = File.read(csv_export.file_path)
+        send_data export_file, :type => 'text/csv; charset=utf-8; header=present', :disposition => "attachment; filename=#{a.filename}", :filename => "#{csv_export.filename}"
+        csv_export.clean
+      }
+    end
   end
 end
