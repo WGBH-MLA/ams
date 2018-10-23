@@ -384,6 +384,11 @@ GEM
       signet
       simple_form (~> 3.2, <= 3.5.0)
       tinymce-rails (~> 4.1)
+    hyrax-iiif_av (0.1.0)
+      blacklight
+      hyrax (~> 2.1)
+      iiif_manifest (~> 0.5)
+      rails (~> 5.1)
     i18n (1.1.1)
       concurrent-ruby (~> 1.0)
     ice_nine (0.11.2)
@@ -562,6 +567,8 @@ GEM
     rack (2.0.5)
     rack-protection (2.0.3)
       rack
+    rack-proxy (0.6.5)
+      rack
     rack-test (1.1.0)
       rack (>= 1.0, < 3)
     rails (5.1.6)
@@ -647,6 +654,12 @@ GEM
       rdf (~> 3.0)
     rdf-xsd (3.0.1)
       rdf (~> 3.0)
+    react-rails (2.4.7)
+      babel-transpiler (>= 0.7.0)
+      connection_pool
+      execjs
+      railties (>= 3.2)
+      tilt
     redic (1.5.0)
       hiredis
     redis (4.0.2)
@@ -820,6 +833,10 @@ GEM
       activemodel (>= 5.0)
       bindex (>= 0.4.0)
       railties (>= 5.0)
+    webpacker (3.5.5)
+      activesupport (>= 4.2)
+      rack-proxy (>= 0.6.1)
+      railties (>= 4.2)
     websocket-driver (0.6.5)
       websocket-extensions (>= 0.1.0)
     websocket-extensions (0.1.3)
@@ -852,6 +869,7 @@ DEPENDENCIES
   hydra-role-management
   hyrax (~> 2.3.3)
   hyrax-batch_ingest!
+  hyrax-iiif_av
   jbuilder (~> 2.5)
   jquery-rails
   letter_opener
@@ -863,6 +881,7 @@ DEPENDENCIES
   pry-rails
   puma (~> 3.7)
   rails (~> 5.1.5)
+  react-rails
   redis (~> 4.0)
   rsolr (>= 1.0)
   rspec (~> 3.7)
@@ -882,6 +901,7 @@ DEPENDENCIES
   tzinfo-data
   uglifier (>= 1.3.0)
   web-console (>= 3.3.0)
+  webpacker
   xray-rails
 
 BUNDLED WITH
