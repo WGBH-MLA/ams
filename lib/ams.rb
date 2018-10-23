@@ -1,5 +1,4 @@
 require 'benchmark'
-require 'dotenv/tasks'
 
 module AMS
   class << self
