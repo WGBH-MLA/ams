@@ -80,3 +80,5 @@ gem 'aws-sdk-codedeploy'
 gem 'carrierwave', '~> 1.0'
 gem 'nokogiri'
 gem 'pb_core'
+
+gem 'hyrax-batch_ingest', git: 'git@github.com:samvera-labs/hyrax-batch_ingest.git'
