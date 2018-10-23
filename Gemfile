@@ -84,3 +84,7 @@ gem 'carrierwave', '~> 1.0'
 gem 'nokogiri'
 gem 'pb_core'
 gem 'hyrax-batch_ingest', git:'https://github.com/samvera-labs/hyrax-batch_ingest'
+gem 'hyrax-iiif_av'
+
+gem 'webpacker'
+gem 'react-rails'

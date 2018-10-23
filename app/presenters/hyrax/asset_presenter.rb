@@ -2,6 +2,15 @@
 #  `rails generate hyrax:work Asset`
 module Hyrax
   class AssetPresenter < Hyrax::WorkShowPresenter
+    # Adds behaviors for hyrax-iiif_av plugin.
+    include Hyrax::IiifAv::DisplaysIiifAv
+    Hyrax::MemberPresenterFactory.file_presenter_class = Hyrax::IiifAv::IiifFileSetPresenter
+
+    # Optional override to select iiif viewer to render
+    # default :avalon for audio and video, :universal_viewer for images
+    # def iiif_viewer
+    #   :avalon
+    # end
     delegate :genre, :asset_types, :broadcast_date, :created_date, :copyright_date,
              :episode_number, :spatial_coverage, :temporal_coverage,
              :audience_level, :audience_rating, :annotation, :rights_summary, :rights_link,
