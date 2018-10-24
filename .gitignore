@@ -33,8 +33,10 @@
 dump.rdb
 .env.development
 .env.test
-.env.production/public/packs
+.env.production
+/public/packs
 /public/packs-test
 /node_modules
 yarn-debug.log*
 .yarn-integrity
+fits.log
