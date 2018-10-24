@@ -4,7 +4,8 @@
 # Gets default thumbnail from solr document instead of using default.png
 %>
 
-<% if presenter.representative_id.present? && presenter.representative_presenter.present? %>
+<%# if presenter.representative_id.present? && presenter.representative_presenter.present?%>
+<% if true %>
   <% if defined?(viewer) && viewer %>
     <%= iiif_viewer_display presenter %>
   <% else %>
