@@ -7,7 +7,7 @@
     "prop-types": "^15.6.2",
     "react": "^16.5.2",
     "react-dom": "^16.5.2",
-    "react-iiif-media-player": "^1.1.2",
+    "react-iiif-media-player": "^1.1.3",
     "react_ujs": "^2.4.4"
   },
   "devDependencies": {
