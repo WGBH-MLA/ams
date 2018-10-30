@@ -11,7 +11,7 @@ module AMS
     end
 
     def display_content
-      [video_content,video_content]
+      [video_content]
     end
 
     def video_content
