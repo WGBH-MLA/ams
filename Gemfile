@@ -85,3 +85,5 @@ gem 'nokogiri'
 gem 'pb_core'
 gem 'bootstrap-multiselect-rails'
 gem 'hyrax-batch_ingest', git:'https://github.com/samvera-labs/hyrax-batch_ingest'
+gem 'sony_ci_api', '~> 0.2.1'
+

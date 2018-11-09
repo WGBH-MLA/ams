@@ -765,6 +765,7 @@ GEM
       nokogiri
       stomp
       xml-simple
+    sony_ci_api (0.2.1)
     sparql (3.0.2)
       builder (~> 3.2)
       ebnf (~> 1.1)
@@ -878,6 +879,7 @@ DEPENDENCIES
   sidekiq
   simple_form (= 3.5.0)
   solr_wrapper (~> 2.0)
+  sony_ci_api (~> 0.2.1)
   spring
   spring-watcher-listen (~> 2.0.0)
   sqlite3
@@ -888,4 +890,4 @@ DEPENDENCIES
   xray-rails
 
 BUNDLED WITH
-   1.16.3
+   1.16.6
