@@ -1,14 +1,13 @@
 <%
-# This is an override of Hyrax 2.1.0 [b19e3f5] [app/views/hyrax/base/_representative_media.html.erb]
+# This is an override of Hyrax 2.1.0 [master] [samvera-labs/hyrax-iiif_av/blob/master/app/views/hyrax/base/_representative_media.html.erb]
 # WARNING: upgrading Hyrax may break this override.
 # Gets default thumbnail from solr document instead of using default.png
 %>
-<% if presenter.representative_id.present? && presenter.representative_presenter.present? %>
+
+<%# if presenter.representative_id.present? && presenter.representative_presenter.present?%>
+<% if true %>
   <% if defined?(viewer) && viewer %>
-    <%= PulUvRails::UniversalViewer.script_tag %>
-    <div class="viewer-wrapper">
-      <div class="uv viewer" data-uri="<%= main_app.polymorphic_path [main_app, :manifest, presenter], { locale: nil } %>"></div>
-    </div>
+    <%= iiif_viewer_display presenter %>
   <% else %>
     <%= media_display presenter.representative_presenter %>
   <% end %>

@@ -2,6 +2,10 @@
 #  `rails generate hyrax:work Asset`
 module Hyrax
   class AssetPresenter < Hyrax::WorkShowPresenter
+    # Adds behaviors for hyrax-iiif_av plugin.
+    include Hyrax::IiifAv::DisplaysIiifAv
+    Hyrax::MemberPresenterFactory.file_presenter_class = Hyrax::IiifAv::IiifFileSetPresenter
+
     delegate :genre, :asset_types, :broadcast_date, :created_date, :copyright_date,
              :episode_number, :spatial_coverage, :temporal_coverage,
              :audience_level, :audience_rating, :annotation, :rights_summary, :rights_link,
@@ -44,6 +48,44 @@ module Hyrax
           playlist_group.blank? &&
           playlist_order.blank?
         )
+    end
+
+    def iiif_version
+      if media_available?
+        3
+      else
+        2
+      end
+    end
+
+    def iiif_viewer?
+      true
+    end
+
+    def file_set_presenters
+      return [AMS::AssetFilePrescenter.new(solr_document)]
+    end
+
+    def iiif_viewer
+      :avalon
+    end
+
+    def media_available?
+      solr_document.find_child(DigitalInstantiation).each do |instantiation|
+        if  ( instantiation.fetch(:member_ids_ssim).size > 0 &&
+                    instantiation.generations.include?("Proxy") &&
+                    instantiation.holding_organization.include?("American Archive of Public Broadcasting") )
+          solr_document['media'] = []
+          instantiation.find_child(EssenceTrack).each do |track|
+            duration = DateTime.parse(track.duration.first)
+            track_duration = duration.hour*60*60 + duration.min*60 + duration.sec
+            solr_document['media'] << {:type=>track.track_type.first, :height=>track.frame_height,
+                                       :width=>track.frame_width,:duration=>track_duration}
+          end
+          return true
+        end
+      end
+      false
     end
   end
 end
