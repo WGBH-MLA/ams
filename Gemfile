@@ -70,7 +70,7 @@ end
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 
-gem 'hyrax', '~> 2.3.3'
+gem 'hyrax', '~> 2.4.0'
 gem 'blacklight_advanced_search', '~> 6.4.0'
 gem 'rsolr', '>= 1.0'
 gem 'jquery-rails'
@@ -86,4 +86,6 @@ gem 'pb_core'
 gem 'bootstrap-multiselect-rails'
 gem 'hyrax-batch_ingest', git:'https://github.com/samvera-labs/hyrax-batch_ingest'
 gem 'sony_ci_api', '~> 0.2.1'
-
+gem 'hyrax-iiif_av'
+gem 'webpacker'
+gem 'react-rails'

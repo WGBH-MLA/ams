@@ -509,14 +509,14 @@ class CatalogController < ApplicationController
         csv_export = AMS::Export::DocumentsToCsv.new(response_documents)
         csv_export.process
         export_file = File.read(csv_export.file_path)
-        send_data export_file, :type => 'text/csv; charset=utf-8; header=present', :disposition => "attachment; filename=#{a.filename}", :filename => "#{csv_export.filename}"
+        send_data export_file, :type => 'text/csv; charset=utf-8; header=present', :disposition => "attachment; filename=#{csv_export.filename}", :filename => "#{csv_export.filename}"
         csv_export.clean
       }
       format.pbcore {
         csv_export = AMS::Export::DocumentsToCsv.new(response_documents)
         csv_export.process
         export_file = File.read(csv_export.file_path)
-        send_data export_file, :type => 'text/csv; charset=utf-8; header=present', :disposition => "attachment; filename=#{a.filename}", :filename => "#{csv_export.filename}"
+        send_data export_file, :type => 'text/csv; charset=utf-8; header=present', :disposition => "attachment; filename=#{csv_export.filename}", :filename => "#{csv_export.filename}"
         csv_export.clean
       }
     end
