@@ -1,0 +1,5 @@
+username: <%= ENV[CI_USER] %>
+password: <%= ENV[CI_PASSWORD] %>
+client_id: <%= ENV[CI_CLIENT_ID] %>
+client_secret: <%= ENV[CI_CLIENT_SECRET] %>
+workspace_id: <%= ENV[CI_WORKSPACE_ID] %>
