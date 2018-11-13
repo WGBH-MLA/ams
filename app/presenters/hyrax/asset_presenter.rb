@@ -2,10 +2,7 @@
 #  `rails generate hyrax:work Asset`
 module Hyrax
   class AssetPresenter < Hyrax::WorkShowPresenter
-    # Adds behaviors for hyrax-iiif_av plugin.
-    include Hyrax::IiifAv::DisplaysIiifAv
-    Hyrax::MemberPresenterFactory.file_presenter_class = Hyrax::IiifAv::IiifFileSetPresenter
-
+    
     delegate :genre, :asset_types, :broadcast_date, :created_date, :copyright_date,
              :episode_number, :spatial_coverage, :temporal_coverage,
              :audience_level, :audience_rating, :annotation, :rights_summary, :rights_link,
@@ -72,20 +69,38 @@ module Hyrax
 
     def media_available?
       solr_document.find_child(DigitalInstantiation).each do |instantiation|
-        if  ( instantiation.fetch(:member_ids_ssim).size > 0 &&
-                    instantiation.generations.include?("Proxy") &&
-                    instantiation.holding_organization.include?("American Archive of Public Broadcasting") )
+        if  ( instantiation_have_essence_tracks(instantiation) &&
+            instantiation_have_generation_proxy(instantiation) &&
+            instantiation_have_holding_organization_aapb(instantiation) )
           solr_document['media'] = []
           instantiation.find_child(EssenceTrack).each do |track|
-            duration = DateTime.parse(track.duration.first)
-            track_duration = duration.hour*60*60 + duration.min*60 + duration.sec
+
             solr_document['media'] << {:type=>track.track_type.first, :height=>track.frame_height,
-                                       :width=>track.frame_width,:duration=>track_duration}
+                                       :width=>track.frame_width,:duration=>duration_to_sec(track.duration.first)}
           end
           return true
         end
       end
       false
     end
+
+    private
+
+      def duration_to_sec(duration)
+        durationDT = DateTime.parse(duration)
+        durationDT.hour*60*60 + durationDT.min*60 + durationDT.sec
+      end
+
+      def instantiation_have_essence_tracks(instantiation)
+        instantiation.fetch(:member_ids_ssim).size > 0
+      end
+
+      def instantiation_have_generation_proxy(instantiation)
+        ( instantiation.generations && instantiation.generations.include?("Proxy") )
+      end
+
+      def instantiation_have_holding_organization_aapb(instantiation)
+        (instantiation.holding_organization && instantiation.holding_organization.include?("American Archive of Public Broadcasting"))
+      end
   end
 end
