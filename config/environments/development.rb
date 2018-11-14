@@ -1,6 +1,12 @@
 Rails.application.configure do
+
   # Verifies that versions and hashed value of the package contents in the project's package.json
 config.webpacker.check_yarn_integrity = true
+
+  # Method for using environment variables for Booleans
+  def truthy_env_var?(val)
+    ['yes', 'true', '1'].include? val.downcase.strip
+  end
 
   # Settings specified here will take precedence over those in config/application.rb.
 
@@ -51,9 +57,21 @@ config.webpacker.check_yarn_integrity = true
   #Config background Jobs to run inline in development mode
   config.active_job.queue_adapter = :inline
 
-  config.action_mailer.delivery_method = :letter_opener
+  # For testing emails in Development
+  # Define as ENV["MAIL_DELIVERY_METHOD"] as 'smtp' to deliver
+  # emails in development environment
+  config.action_mailer.delivery_method = ENV["MAIL_DELIVERY_METHOD"].try(:to_sym) || :letter_opener
   config.action_mailer.perform_deliveries = true
 
+  # Not needed unless ENV["MAIL_DELIVERY_METHOD"] is defined
+  config.action_mailer.smtp_settings = {
+    address: ENV["SMTP_ADDRESS"],
+    port: ENV["SMTP_PORT"].to_i,
+    user_name: ENV["SMTP_USERNAME"],
+    password: ENV["SMTP_PASSWORD"],
+    authentication: ENV["SMTP_AUTHENTICATION"].to_sym,
+    enable_starttls_auto: truthy_env_var?(ENV["SMTP_ENABLE_STARTTLS"])
+  }
 
   # Raises error for missing translations
   # config.action_view.raise_on_missing_translations = true
