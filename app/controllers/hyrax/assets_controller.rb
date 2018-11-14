@@ -6,6 +6,8 @@ module Hyrax
     # Adds Hyrax behaviors to the controller.
     include Hyrax::WorksControllerBehavior
     include Hyrax::BreadcrumbsForWorks
+    # Adds behaviors for hyrax-iiif_av plugin.
+    include Hyrax::IiifAv::ControllerBehavior
     # Handle Child Work button and redirect to child work page
     include Hyrax::ChildWorkRedirect
     self.curation_concern_type = ::Asset

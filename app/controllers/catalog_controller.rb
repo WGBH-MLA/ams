@@ -512,6 +512,13 @@ class CatalogController < ApplicationController
         send_data export_file, :type => 'text/csv; charset=utf-8; header=present', :disposition => "attachment; filename=#{csv_export.filename}", :filename => "#{csv_export.filename}"
         csv_export.clean
       }
+      format.pbcore {
+        pbcore_xml_export = AMS::Export::DocumentsToPbcoreXml.new(response_documents)
+        pbcore_xml_export.process
+        export_file = File.read(pbcore_xml_export.file_path)
+        send_data export_file, :type => 'application/zip', :filename => "#{pbcore_xml_export.filename}"
+        pbcore_xml_export.clean
+      }
     end
   end
 end

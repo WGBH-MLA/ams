@@ -1,5 +1,8 @@
 Rails.application.configure do
 
+  # Verifies that versions and hashed value of the package contents in the project's package.json
+config.webpacker.check_yarn_integrity = true
+
   # Method for using environment variables for Booleans
   def truthy_env_var?(val)
     ['yes', 'true', '1'].include? val.downcase.strip

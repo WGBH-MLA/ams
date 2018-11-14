@@ -2,6 +2,7 @@
 #  `rails generate hyrax:work Asset`
 module Hyrax
   class AssetPresenter < Hyrax::WorkShowPresenter
+    
     delegate :genre, :asset_types, :broadcast_date, :created_date, :copyright_date,
              :episode_number, :spatial_coverage, :temporal_coverage,
              :audience_level, :audience_rating, :annotation, :rights_summary, :rights_link,
@@ -45,5 +46,61 @@ module Hyrax
           playlist_order.blank?
         )
     end
+
+    def iiif_version
+      if media_available?
+        3
+      else
+        2
+      end
+    end
+
+    def iiif_viewer?
+      true
+    end
+
+    def file_set_presenters
+      return [AMS::AssetFilePrescenter.new(solr_document)]
+    end
+
+    def iiif_viewer
+      :avalon
+    end
+
+    def media_available?
+      solr_document.find_child(DigitalInstantiation).each do |instantiation|
+        if  ( instantiation_have_essence_tracks(instantiation) &&
+            instantiation_have_generation_proxy(instantiation) &&
+            instantiation_have_holding_organization_aapb(instantiation) )
+          solr_document['media'] = []
+          instantiation.find_child(EssenceTrack).each do |track|
+
+            solr_document['media'] << {:type=>track.track_type.first, :height=>track.frame_height,
+                                       :width=>track.frame_width,:duration=>duration_to_sec(track.duration.first)}
+          end
+          return true
+        end
+      end
+      false
+    end
+
+    private
+
+      def duration_to_sec(duration)
+        durationDT = DateTime.parse(duration)
+        durationDT.hour*60*60 + durationDT.min*60 + durationDT.sec
+      end
+
+      def instantiation_have_essence_tracks(instantiation)
+        instantiation.fetch(:member_ids_ssim).size > 0
+      end
+
+      def instantiation_have_generation_proxy(instantiation)
+        ( instantiation.generations && instantiation.generations.include?("Proxy") )
+      end
+
+      def instantiation_have_holding_organization_aapb(instantiation)
+        (instantiation.holding_organization && instantiation.holding_organization.include?("American Archive of Public Broadcasting"))
+      end
   end
 end

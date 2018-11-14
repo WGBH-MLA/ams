@@ -2,13 +2,13 @@
 #  `rails generate hyrax:work Asset`
 class Asset < ActiveFedora::Base
   include ::Hyrax::WorkBehavior
+  include ::AMS::CreateMemberMethods
 
 
   self.indexer = AssetIndexer
-  #after_initialize :initialize_admin_data
   before_save :save_admin_data
   # Change this to restrict which works can be added as a child.
-  self.valid_child_concerns = [DigitalInstantiation,PhysicalInstantiation]
+  self.valid_child_concerns = [DigitalInstantiation,PhysicalInstantiation,Contribution]
 
   # validate :at_least_one_title
   # validate :at_least_one_description
