@@ -26,4 +26,4 @@
 
 //= require_tree ./global
 //= require hyrax
-
+//= require bootstrap-multiselect

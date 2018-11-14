@@ -503,7 +503,7 @@ class CatalogController < ApplicationController
       flash[:notice] = view_context.t('blacklight.search.messages.export_will_be_emailed', application_name: view_context.application_name)
       redirect_to(search_catalog_url(params)) and return true
     end
-    
+
     respond_to do |format|
       format.csv {
         csv_export = AMS::Export::DocumentsToCsv.new(response_documents)
