@@ -29,6 +29,9 @@
 /public/system/avatars
 /public/uploads/*
 
+# Secrets
+config/ci.yml
+
 # Redis dumps
 dump.rdb
 .env.development
