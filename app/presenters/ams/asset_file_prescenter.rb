@@ -13,12 +13,12 @@ module AMS
     def display_content
       media_content = []
       if @solr_doc['media']
-        @solr_doc['media'].each do |media|
+        @solr_doc['media'].each_with_index do |media,index|
           if media[:type] == "video"
-            media_content << video_content(uri="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+            media_content << video_content(@solr_doc.media_src(index.to_s),
                                            width=media[:width].nil??400:media[:width], height=media[:height].nil??400:media[:height], duration=media[:duration])
           elsif media[:type] == "audio"
-            media_content << audio_content(uri="https://ia802508.us.archive.org/5/items/testmp3testfile/mpthreetest.mp3",
+            media_content << audio_content(@solr_doc.media_src(index.to_s),
                                            duration=media[:duration])
 
           end
@@ -28,7 +28,7 @@ module AMS
     end
 
     def video_content(url,width,height,duration)
-      IIIFManifest::V3::DisplayContent.new("http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+      IIIFManifest::V3::DisplayContent.new(url,
                                            label: self.to_s,
                                            width: Array(width).first.try(:to_i),
                                            height: Array(height).first.try(:to_i),
