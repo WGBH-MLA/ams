@@ -2,6 +2,7 @@
 class SolrDocument
   include Blacklight::Solr::Document
   include Blacklight::Gallery::OpenseadragonSolrDocument
+  include ::AMS::Solr::CreateMemberMethods
 
   # Adds Hyrax behaviors to the SolrDocument.
   include Hyrax::SolrDocumentBehavior
@@ -15,6 +16,7 @@ class SolrDocument
   SolrDocument.use_extension(Blacklight::Document::Sms)
 
   SolrDocument.use_extension(AMS::CsvExportExtension)
+  SolrDocument.use_extension(AMS::PbcoreXmlExportExtension)
 
   # DublinCore uses the semantic field mappings below to assemble an OAI-compliant Dublin Core document
   # Semantic mappings of solr stored fields. Fields may be multi or

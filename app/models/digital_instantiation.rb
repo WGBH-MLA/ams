@@ -3,6 +3,7 @@
 require 'carrierwave/validations/active_model'
 class DigitalInstantiation < ActiveFedora::Base
   include ::Hyrax::WorkBehavior
+  include ::AMS::CreateMemberMethods
 
   extend CarrierWave::Mount
 
