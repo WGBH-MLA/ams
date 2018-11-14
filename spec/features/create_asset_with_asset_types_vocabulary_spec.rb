@@ -53,10 +53,11 @@ RSpec.feature 'Create Asset with Asset Type', js: true, asset_form_helpers: true
 
       # validated metadata without errors
       page.find("#required-metadata")[:class].include?("complete")
-
-      # Select asset type
-      select = page.find('select#asset_asset_types')
-      select.select asset_attributes[:asset_type]
+      
+      within('.asset_asset_types') do
+        find('button.multiselect').click
+        find('label.checkbox',text:asset_attributes[:asset_type]).click
+      end
 
       click_link "Relationships" # define adminset relation
       find("#asset_admin_set_id option[value='#{admin_set_id}']").select_option
