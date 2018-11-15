@@ -493,7 +493,7 @@ class CatalogController < ApplicationController
     search_params.delete :locale
     search_params[:rows] = Rails.configuration.max_downloadable_export_records
     response, response_documents = search_results(search_params)
-    if (response[:response][:numFound] > response[:response][:docs].size)
+    if (response[:response][:numFound] > Rails.configuration.export_to_browser_limit)
       params.delete :rows
       params.permit!
       ExportRecordsJob.perform_later(params.to_h, current_user)
@@ -504,20 +504,22 @@ class CatalogController < ApplicationController
       redirect_to(search_catalog_url(params)) and return true
     end
 
+
+
     respond_to do |format|
       format.csv {
-        csv_export = AMS::Export::DocumentsToCsv.new(response_documents)
-        csv_export.process
-        export_file = File.read(csv_export.file_path)
-        send_data export_file, :type => 'text/csv; charset=utf-8; header=present', :disposition => "attachment; filename=#{csv_export.filename}", :filename => "#{csv_export.filename}"
-        csv_export.clean
+        export_data = AMS::Export::DocumentsToCsv.new(response_documents)
+        export_data.process do
+          export_file = File.read(export_data.file_path)
+          send_data export_file, :type => 'text/csv; charset=utf-8; header=present', :disposition => "attachment; filename=#{export_data.filename}", :filename => "#{export_data.filename}"
+        end
       }
       format.pbcore {
-        pbcore_xml_export = AMS::Export::DocumentsToPbcoreXml.new(response_documents)
-        pbcore_xml_export.process
-        export_file = File.read(pbcore_xml_export.file_path)
-        send_data export_file, :type => 'application/zip', :filename => "#{pbcore_xml_export.filename}"
-        pbcore_xml_export.clean
+        export_data = AMS::Export::DocumentsToPbcoreXml.new(response_documents)
+        export_data.process do
+          export_file = File.read(export_data.file_path)
+          send_data export_file, :type => 'application/zip', :filename => "#{export_data.filename}"
+        end
       }
     end
   end
