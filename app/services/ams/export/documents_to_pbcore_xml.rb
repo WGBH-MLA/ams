@@ -5,9 +5,10 @@ module AMS::Export
   class DocumentsToPbcoreXml < ExportService
     def initialize(solr_documents, format = 'zip')
       super
+      puts self.format
     end
 
-    def process
+    def process_export
       tmp_hash = []
       Zip::File.open(@file_path.path, Zip::File::CREATE) do |zip_file|
         @solr_documents.each do |doc|

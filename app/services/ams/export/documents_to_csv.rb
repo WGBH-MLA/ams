@@ -1,11 +1,11 @@
 module AMS
   module Export
     class DocumentsToCsv < ExportService
-      def initialize(solr_documents, format="csv", filename = nil)
+      def initialize(solr_documents, format = "csv", filename = nil)
         super
-
       end
-      def process
+
+      def process_export
         @file_path << AMS::CsvExportExtension.get_csv_header
         @solr_documents.each do |doc|
           @file_path << doc.export_as_csv
