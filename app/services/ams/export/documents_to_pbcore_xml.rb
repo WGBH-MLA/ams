@@ -1,3 +1,4 @@
+require 'zip'
 # module AMS::Export
 # The module used to export the zip file containing PBCore XMLs
 module AMS::Export
@@ -10,7 +11,7 @@ module AMS::Export
 
     def process_export
       tmp_hash = []
-      Zip::File.open(@file_path.path, Zip::File::CREATE) do |zip_file|
+      ::Zip::File.open(@file_path.path, Zip::File::CREATE) do |zip_file|
         @solr_documents.each do |doc|
           file_name = "#{doc.id}.xml"
           tmp = Tempfile.new(file_name)
