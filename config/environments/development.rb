@@ -5,7 +5,7 @@ config.webpacker.check_yarn_integrity = true
 
   # Method for using environment variables for Booleans
   def truthy_env_var?(val)
-    ['yes', 'true', '1'].include? val.downcase.strip
+    ['yes', 'true', '1'].include? val.to_s.downcase.strip
   end
 
   # Settings specified here will take precedence over those in config/application.rb.
@@ -65,12 +65,12 @@ config.webpacker.check_yarn_integrity = true
 
   # Not needed unless ENV["MAIL_DELIVERY_METHOD"] is defined
   config.action_mailer.smtp_settings = {
-    address: ENV["SMTP_ADDRESS"],
-    port: ENV["SMTP_PORT"].to_i,
-    user_name: ENV["SMTP_USERNAME"],
-    password: ENV["SMTP_PASSWORD"],
-    authentication: ENV["SMTP_AUTHENTICATION"].to_sym,
-    enable_starttls_auto: truthy_env_var?(ENV["SMTP_ENABLE_STARTTLS"])
+    address: ENV.fetch("SMTP_ADDRESS", ''),
+    port: ENV.fetch("SMTP_PORT", '').to_i,
+    user_name: ENV.fetch("SMTP_USERNAME", ''),
+    password: ENV.fetch("SMTP_PASSWORD", ''),
+    authentication: ENV.fetch("SMTP_AUTHENTICATION", '').to_sym,
+    enable_starttls_auto: truthy_env_var?(ENV.fetch("SMTP_ENABLE_STARTTLS", ''))
   }
 
   # Raises error for missing translations
