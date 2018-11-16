@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
 
+  mount Hyrax::BatchIngest::Engine, at: '/'
   require 'sidekiq/web'
   authenticate :user, lambda { |u| u.admin? } do
     mount Sidekiq::Web => '/sidekiq'
