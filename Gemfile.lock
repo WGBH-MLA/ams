@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/samvera-labs/hyrax-batch_ingest
-  revision: 81440c8f7aab1160f7b5e032cdef5982b59da056
+  revision: 22d0e5ed88780e5f8465565ccd3ee36b41164107
   specs:
     hyrax-batch_ingest (0.1.0)
       hyrax (~> 2.2)
@@ -80,7 +80,7 @@ GEM
     awesome_nested_set (3.1.4)
       activerecord (>= 4.0.0, < 5.3)
     aws-eventstream (1.0.1)
-    aws-partitions (1.112.0)
+    aws-partitions (1.114.0)
     aws-sdk-codedeploy (1.10.0)
       aws-sdk-core (~> 3, >= 3.26.0)
       aws-sigv4 (~> 1.0)
@@ -92,7 +92,7 @@ GEM
     aws-sdk-kms (1.11.0)
       aws-sdk-core (~> 3, >= 3.26.0)
       aws-sigv4 (~> 1.0)
-    aws-sdk-s3 (1.23.1)
+    aws-sdk-s3 (1.24.0)
       aws-sdk-core (~> 3, >= 3.26.0)
       aws-sdk-kms (~> 1)
       aws-sigv4 (~> 1.0)
@@ -357,7 +357,7 @@ GEM
       hydra-file_characterization (~> 0.3, >= 0.3.3)
       hydra-pcdm (>= 0.9)
       om (~> 3.1)
-    hyrax (2.4.0)
+    hyrax (2.4.1)
       active-fedora (~> 11.5, >= 11.5.2)
       almond-rails (~> 0.1)
       awesome_nested_set (~> 3.1)
@@ -851,8 +851,8 @@ GEM
     uglifier (4.1.19)
       execjs (>= 0.3.0, < 3)
     unicode-display_width (1.4.0)
-    warden (1.2.7)
-      rack (>= 1.0)
+    warden (1.2.8)
+      rack (>= 2.0.6)
     web-console (3.7.0)
       actionview (>= 5.0)
       activemodel (>= 5.0)
