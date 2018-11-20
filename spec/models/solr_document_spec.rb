@@ -76,4 +76,19 @@ describe SolrDocument do
       end
     end
   end
+
+  describe '#media_src' do
+    let(:test_id) { 'cpb-aacip_600-fx73t9dc4n' }
+
+    before do
+      allow(solr_document).to receive(:id) { test_id }
+    end
+
+    context 'when a solr_document has an id' do
+      it 'can return an expected media_src' do
+        expect(solr_document.media_src(0.to_s)).to eq("/media/#{test_id}?part=0")
+        expect(solr_document.media_src(0)).to eq("/media/#{test_id}?part=0")
+      end
+    end
+  end
 end
