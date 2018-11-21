@@ -40,7 +40,7 @@ module AMS
       IIIFManifest::V3::DisplayContent.new(url,
                                            label: self.to_s,
                                            duration: Array(duration).first.try(:to_i) / 1000.0,
-                                           type: 'Sound')
+                                           type: 'Audio')
     end
 
     def to_s
