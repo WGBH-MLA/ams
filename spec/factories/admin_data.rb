@@ -7,5 +7,8 @@ FactoryBot.define do
     transcript_status "Indexing Only Transcript"
     sonyci_id ["Sony-1","Sony-2"]
     licensing_info "Licensing Info"
+    trait :no_sony_ci_id do
+      sonyci_id []
+    end
   end
 end
