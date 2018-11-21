@@ -11,11 +11,11 @@ terms:
     term: Drama
   - id: Educational
     term: Educational
-  - id: EventCoverage
+  - id: Event Coverage
     term: Event Coverage
   - id: Fundraiser
     term: Fundraiser
-  - id: GameShow
+  - id: Game Show
     term: Game Show
   - id: Instructional
     term: Instructional
@@ -25,31 +25,31 @@ terms:
     term: Magazine
   - id: Miniseries
     term: Miniseries
-  - id: NewsReport
+  - id: News Report
     term: News Report
-  - id: PerformanceinaStudio
+  - id: Performance in a Studio
     term: Performance in a Studio
-  - id: PerformanceforaLiveAudience
+  - id: Performance for a Live Audience
     term: Performance for a Live Audience
   - id: Performance
     term: Performance
   - id: Promo
     term: Promo
-  - id: PublicServiceAnnouncement
+  - id: Public Service Announcement
     term: Public Service Announcement
-  - id: RadioTheater
+  - id: Radio Theater
     term: Radio Theater
-  - id: RecordedMusic
+  - id: Recorded Music
     term: Recorded Music
   - id: Special
     term: Special
-  - id: Standup
+  - id: Stand-up
     term: Stand-up
-  - id: RadioTheater
-    term: RadioTheater
-  - id: TalkShow
+  - id: Radio Theater
+    term: Radio Theater
+  - id: Talk Show
     term: Talk Show
-  - id: TownHallMeeting
+  - id: Town Hall Meeting
     term: Town Hall Meeting
   - id: Unedited
     term: Unedited
