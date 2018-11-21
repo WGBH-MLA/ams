@@ -8,29 +8,40 @@ RSpec.describe WGBH::BatchIngest::ZippedPBCoreReader do
     let (:valid_source) {Rails.root.join("spec","fixtures", "sample_pbcore2_xml.zip")}
     let (:invalid_source) {Rails.root.join("spec","fixtures", "sample_instantiation_valid.xml")}
     let (:empty_zip_source) {Rails.root.join("spec","fixtures", "empty_zip.zip")}
-    let(:xml_file_name) {Zip::File.open(valid_source){|f| f.name }}
+    let(:xml_file_name) {Zip::File.open(valid_source).glob('*.xml').first.name}
 
 
 
-    it "creates random extraction directory" do
+    context "when source location is valid" do
+      subject { WGBH::BatchIngest::ZippedPBCoreReader.new(valid_source) }
+
+      it "extracts xml files into directory" do
+        subject.read
+        File.directory?(subject.extraction_path).should be true
+        expect(File).to exist("#{subject.extraction_path}/#{xml_file_name}")
+      end
+
+      it "creates batch items" do
+        subject.read
+        expect(subject.batch_items.size).to eq(1)
+        expect(subject.batch_items.first.id_within_batch).to eq(File.basename(xml_file_name,".*"))
+      end
+
+    end
+
+    context "when source location zip does not contain any xml" do
+      subject { WGBH::BatchIngest::ZippedPBCoreReader.new(empty_zip_source) }
+      it "raises error" do
+        expect { subject.read }.to raise_error(Hyrax::BatchIngest::ReaderError)
+      end
+    end
+
+    context "when source location is not a valid zip file" do
       subject { WGBH::BatchIngest::ZippedPBCoreReader.new(invalid_source) }
-      expect(subject.root_extraction_path).not_to be_empty
-      subject.read
-      File.directory?(subject.extraction_path).should be true
-    end
 
-    it "creates batch items for valid zip file with pbcore documents" do
-      subject.read
-      expect(subject.batch_items.size).to eq(1)
-      expect(subject.batch_items.first.id_within_batch).to eq(File.basename(xml_file_name,".*"))
-    end
-
-    it "rails error when source file is not zip" do
-      expect { WGBH::BatchIngest::ZippedPBCoreReader.new(invalid_source).read }.to raise_error(Hyrax::BatchIngest::ReaderError)
-    end
-
-    it "rails error when source zip file does not contains pbcore xml documents " do
-      expect { WGBH::BatchIngest::ZippedPBCoreReader.new(empty_zip_source).read }.to raise_error(Hyrax::BatchIngest::ReaderError)
+      it "raises error" do
+        expect { subject.read }.to raise_error(Hyrax::BatchIngest::ReaderError)
+      end
     end
 
   end

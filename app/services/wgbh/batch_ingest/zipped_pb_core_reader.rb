@@ -9,6 +9,7 @@ module WGBH
       def initialize(*args)
         # TODO: read extraction path from config
         @root_extraction_path = Rails.root.join("tmp", "ZipReaderExtractionPath")
+        FileUtils.mkdir_p @root_extraction_path
         super
       end
 
@@ -20,7 +21,7 @@ module WGBH
           # find files with extension zip
           pbcore_xml_documents = source_file.glob('*.xml')
           # raise exception if there are no xml files in zip
-          raise Hyrax::BatchIngest::ReaderError, I18n.t('hyrax.batch_ingest.readers.errors.invalid_batch_item_file_type', source_location: source_location) unless pbcore_xml_documents
+          raise Hyrax::BatchIngest::ReaderError, I18n.t('hyrax.batch_ingest.readers.errors.invalid_batch_item_file_type', source_location: source_location) if pbcore_xml_documents.to_a.blank?
           # initialize batch items
           @batch_items = []
           # create random dir in output dir
