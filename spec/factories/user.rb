@@ -1,10 +1,10 @@
 FactoryBot.define do
   factory :user do
     sequence(:email) { |n| "user#{n}@example.com" }
-    password 'password'
+    password { 'password' }
     guest { true }
     transient do
-      role_names []
+      role_names { [] }
     end
 
     after(:create) do |user, evaluator|
