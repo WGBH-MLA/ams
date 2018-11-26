@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/samvera-labs/hyrax-batch_ingest
-  revision: e7c72f1bc9e8f819bab43a32b122d3c8df4a48d3
+  revision: 7b87ee4321b3f3dd99011f2eaa4ab14e703da231
   specs:
     hyrax-batch_ingest (0.1.0)
       hyrax (~> 2.2)
@@ -80,7 +80,7 @@ GEM
     awesome_nested_set (3.1.4)
       activerecord (>= 4.0.0, < 5.3)
     aws-eventstream (1.0.1)
-    aws-partitions (1.115.0)
+    aws-partitions (1.116.0)
     aws-sdk-codedeploy (1.11.0)
       aws-sdk-core (~> 3, >= 3.39.0)
       aws-sigv4 (~> 1.0)
@@ -92,7 +92,7 @@ GEM
     aws-sdk-kms (1.12.0)
       aws-sdk-core (~> 3, >= 3.39.0)
       aws-sigv4 (~> 1.0)
-    aws-sdk-s3 (1.25.0)
+    aws-sdk-s3 (1.26.0)
       aws-sdk-core (~> 3, >= 3.39.0)
       aws-sdk-kms (~> 1)
       aws-sigv4 (~> 1.0)
