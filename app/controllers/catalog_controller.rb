@@ -8,8 +8,6 @@ class CatalogController < ApplicationController
 
   add_results_collection_tool :export_search_results
 
-
-
   configure_blacklight do |config|
     # default advanced config values
     config.advanced_search ||= Blacklight::OpenStructWithHashAccess.new
