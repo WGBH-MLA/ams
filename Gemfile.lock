@@ -81,8 +81,8 @@ GEM
       activerecord (>= 4.0.0, < 5.3)
     aws-eventstream (1.0.1)
     aws-partitions (1.115.0)
-    aws-sdk-codedeploy (1.10.0)
-      aws-sdk-core (~> 3, >= 3.26.0)
+    aws-sdk-codedeploy (1.11.0)
+      aws-sdk-core (~> 3, >= 3.39.0)
       aws-sigv4 (~> 1.0)
     aws-sdk-core (3.39.0)
       aws-eventstream (~> 1.0)
@@ -240,7 +240,7 @@ GEM
       dry-events (>= 0.1.0)
       dry-matcher (>= 0.7.0)
       dry-monads (>= 0.4.0)
-    dry-types (0.13.2)
+    dry-types (0.13.3)
       concurrent-ruby (~> 1.0)
       dry-container (~> 0.3)
       dry-core (~> 0.4, >= 0.4.4)
@@ -848,7 +848,7 @@ GEM
     tzinfo (1.2.5)
       thread_safe (~> 0.1)
     uber (0.1.0)
-    uglifier (4.1.19)
+    uglifier (4.1.20)
       execjs (>= 0.3.0, < 3)
     unicode-display_width (1.4.0)
     warden (1.2.8)
@@ -933,4 +933,4 @@ DEPENDENCIES
   xray-rails
 
 BUNDLED WITH
-   1.16.3
+   1.16.2
