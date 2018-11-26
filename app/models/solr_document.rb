@@ -2,6 +2,7 @@
 class SolrDocument
   include Blacklight::Solr::Document
   include Blacklight::Gallery::OpenseadragonSolrDocument
+  include ::AMS::Solr::CreateMemberMethods
 
   # Adds Hyrax behaviors to the SolrDocument.
   include Hyrax::SolrDocumentBehavior
@@ -13,6 +14,9 @@ class SolrDocument
 
   # SMS uses the semantic field mappings below to generate the body of an SMS email.
   SolrDocument.use_extension(Blacklight::Document::Sms)
+
+  SolrDocument.use_extension(AMS::CsvExportExtension)
+  SolrDocument.use_extension(AMS::PbcoreXmlExportExtension)
 
   # DublinCore uses the semantic field mappings below to assemble an OAI-compliant Dublin Core document
   # Semantic mappings of solr stored fields. Fields may be multi or
@@ -281,6 +285,13 @@ class SolrDocument
     self[Solrizer.solr_name('clip_description')]
   end
 
+  def all_dates
+    concatenated_dates = [date,
+                          broadcast_date,
+                          created_date,
+                          copyright_date].flatten.select(&:present?).join('; ')
+  end
+
   def date
     self[Solrizer.solr_name('date')]
   end
@@ -299,7 +310,11 @@ class SolrDocument
 
   def holding_organization
     self[Solrizer.solr_name('holding_organization')]
-    end
+  end
+
+  def holding_organization_ssim
+    self[Solrizer.solr_name('holding_organization','ssim')]
+  end
 
   def affiliation
     self[Solrizer.solr_name('affiliation')]
@@ -343,5 +358,9 @@ class SolrDocument
 
   def playlist_order
     self[Solrizer.solr_name('playlist_order')]
+  end
+  
+  def media_src(part)
+    "/media/#{id}?part=#{part.to_s}"
   end
 end

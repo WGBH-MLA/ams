@@ -1,3 +1,14 @@
 div.facets h3 {
   font-size: 1.3em;
 }
+
+.search-form .form-control {
+    height: 35px;
+}
+.search-form a.advanced_search {
+    margin: 0 !important;
+    border-left: 0;
+}
+.search-form .input-group-btn .scope_select {
+    border-radius: 0;
+}

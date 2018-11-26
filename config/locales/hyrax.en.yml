@@ -15,6 +15,8 @@ en:
         is_not_nestable: is not nestable
   blacklight:
     search:
+      messages:
+        export_will_be_emailed: Your export file will be sent via email.
       fields:
         facet:
           admin_set_sim: Admin Set
@@ -118,6 +120,12 @@ en:
         create: Transfer
       update: Save changes
   hyrax:
+    batch_ingest:
+      readers:
+          errors:
+              invalid_source_location: 'invalid source file submitted: %{source_location}'
+              invalid_batch_item_file_type: 'source %{source_location} missing PBCoreDescriptionDocument xml files'
+              invalid_btach_item_pbcoredocument: 'Batch Item %{file_name_in_zip} must be PBCoreDescriptionDocument'
     ams:
       toolbar:
         profile:

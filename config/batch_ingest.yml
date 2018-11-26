@@ -1,0 +1,5 @@
+ingest_types:
+  wgbh_zipped_reader_1:
+    label: "WGBH Zippeed PBCore Reader"
+    reader: "WGBH::BatchIngest::ZippedPBCoreReader"
+    ingester: "WGBH::BatchIngest::ItemIngestor"

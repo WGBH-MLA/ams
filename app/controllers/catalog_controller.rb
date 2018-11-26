@@ -6,7 +6,7 @@ class CatalogController < ApplicationController
   # This filter applies the hydra access controls
   before_action :enforce_show_permissions, only: :show
 
-
+  add_results_collection_tool :export_search_results
 
   configure_blacklight do |config|
     # default advanced config values
@@ -172,9 +172,39 @@ class CatalogController < ApplicationController
     config.add_search_field('all_fields', label: 'All Fields') do |field|
       all_names = config.show_fields.values.map(&:field).join(" ")
       title_name = solr_name("title", :stored_searchable)
+      field.include_in_advanced_search = false
       field.solr_parameters = {
         qf: "#{all_names} file_format_tesim all_text_timv",
         pf: title_name.to_s
+      }
+    end
+
+    config.add_search_field('all_titles') do |field|
+      field.label = "Titles (All)"
+      title_type_service = TitleTypesService.new
+      title_fields = title_type_service.all_ids
+      titles_qf = title_fields.map{|t| solr_name(title_type_service.model_field(t), :stored_searchable)}
+      field.solr_parameters = {
+          qf: titles_qf.join(" "),
+          pf: titles_qf.join(" ")
+      }
+    end
+
+    config.add_search_field('series_title') do |field|
+      field.solr_parameters = {
+          qf: solr_name("series_title", :stored_searchable),
+          pf: solr_name("series_title", :stored_searchable)
+      }
+    end
+
+    config.add_search_field('all_descriptions') do |field|
+      field.label = "Descriptions (All)"
+      description_type_service = DescriptionTypesService.new
+      description_fields = description_type_service.all_ids
+      description_qf = description_fields.map{|t| solr_name(description_type_service.model_field(t), :stored_searchable)}
+      field.solr_parameters = {
+          qf: description_qf.join(" "),
+          pf: description_qf.join(" ")
       }
     end
 
@@ -198,6 +228,7 @@ class CatalogController < ApplicationController
     end
 
     config.add_search_field('creator') do |field|
+      field.include_in_advanced_search = false
       solr_name = solr_name("creator", :stored_searchable)
       field.solr_local_parameters = {
         qf: solr_name,
@@ -207,6 +238,7 @@ class CatalogController < ApplicationController
 
     config.add_search_field('title') do |field|
       solr_name = solr_name("title", :stored_searchable)
+      field.include_in_advanced_search = false
       field.solr_local_parameters = {
         qf: solr_name,
         pf: solr_name
@@ -215,6 +247,7 @@ class CatalogController < ApplicationController
 
     config.add_search_field('description') do |field|
       field.label = "Abstract or Summary"
+      field.include_in_advanced_search = false
       solr_name = solr_name("description", :stored_searchable)
       field.solr_local_parameters = {
         qf: solr_name,
@@ -223,6 +256,7 @@ class CatalogController < ApplicationController
     end
 
     config.add_search_field('publisher') do |field|
+      field.include_in_advanced_search = false
       solr_name = solr_name("publisher", :stored_searchable)
       field.solr_local_parameters = {
         qf: solr_name,
@@ -231,6 +265,7 @@ class CatalogController < ApplicationController
     end
 
     config.add_search_field('date_created') do |field|
+      field.include_in_advanced_search = false
       solr_name = solr_name("created", :stored_searchable)
       field.solr_local_parameters = {
         qf: solr_name,
@@ -247,6 +282,7 @@ class CatalogController < ApplicationController
     end
 
     config.add_search_field('language') do |field|
+      field.include_in_advanced_search = false
       solr_name = solr_name("language", :stored_searchable)
       field.solr_local_parameters = {
         qf: solr_name,
@@ -255,6 +291,7 @@ class CatalogController < ApplicationController
     end
 
     config.add_search_field('resource_type') do |field|
+      field.include_in_advanced_search = false
       solr_name = solr_name("resource_type", :stored_searchable)
       field.solr_local_parameters = {
         qf: solr_name,
@@ -263,6 +300,7 @@ class CatalogController < ApplicationController
     end
 
     config.add_search_field('instantiation_format') do |field|
+      field.include_in_advanced_search = false
       solr_name = solr_name("format", :stored_searchable)
       field.solr_local_parameters = {
         qf: solr_name,
@@ -270,7 +308,7 @@ class CatalogController < ApplicationController
       }
     end
 
-    config.add_search_field('identifier') do |field|
+    config.add_search_field('Local ID') do |field|
       solr_name = solr_name("id", :stored_searchable)
       field.solr_local_parameters = {
         qf: solr_name,
@@ -278,24 +316,8 @@ class CatalogController < ApplicationController
       }
     end
 
-    config.add_search_field('based_near') do |field|
-      field.label = "Location"
-      solr_name = solr_name("based_near_label", :stored_searchable)
-      field.solr_local_parameters = {
-        qf: solr_name,
-        pf: solr_name
-      }
-    end
-
-    config.add_search_field('keyword') do |field|
-      solr_name = solr_name("keyword", :stored_searchable)
-      field.solr_local_parameters = {
-        qf: solr_name,
-        pf: solr_name
-      }
-    end
-
     config.add_search_field('depositor') do |field|
+      field.include_in_advanced_search = false
       solr_name = solr_name("depositor", :symbol)
       field.solr_local_parameters = {
         qf: solr_name,
@@ -304,6 +326,7 @@ class CatalogController < ApplicationController
     end
 
     config.add_search_field('rights_statement') do |field|
+      field.include_in_advanced_search = false
       solr_name = solr_name("rights_statement", :stored_searchable)
       field.solr_local_parameters = {
         qf: solr_name,
@@ -312,6 +335,7 @@ class CatalogController < ApplicationController
     end
 
     config.add_search_field('license') do |field|
+      field.include_in_advanced_search = false
       solr_name = solr_name("license", :stored_searchable)
       field.solr_local_parameters = {
         qf: solr_name,
@@ -319,6 +343,7 @@ class CatalogController < ApplicationController
       }
     end
     config.add_search_field('broadcast') do |field|
+      field.include_in_advanced_search = false
       solr_name = solr_name("broadcast", :stored_searchable)
       field.solr_local_parameters = {
         qf: solr_name,
@@ -326,6 +351,7 @@ class CatalogController < ApplicationController
       }
     end
     config.add_search_field('created') do |field|
+      field.include_in_advanced_search = false
       solr_name = solr_name("created", :stored_searchable)
       field.solr_local_parameters = {
         qf: solr_name,
@@ -333,6 +359,7 @@ class CatalogController < ApplicationController
       }
     end
     config.add_search_field('date') do |field|
+      field.include_in_advanced_search = false
       solr_name = solr_name("date", :stored_searchable)
       field.solr_local_parameters = {
         qf: solr_name,
@@ -340,10 +367,83 @@ class CatalogController < ApplicationController
       }
     end
     config.add_search_field('copyright_date') do |field|
+      field.include_in_advanced_search = false
       solr_name = solr_name("copyright_date", :stored_searchable)
       field.solr_local_parameters = {
         qf: solr_name,
         pf: solr_name
+      }
+    end
+
+    config.add_search_field('spatial_coverage') do |field|
+      solr_name = solr_name("spatial_coverage", :stored_searchable)
+      field.solr_local_parameters = {
+          qf: solr_name,
+          pf: solr_name
+      }
+    end
+
+    config.add_search_field('temporal_coverage') do |field|
+      solr_name = solr_name("temporal_coverage", :stored_searchable)
+      field.solr_local_parameters = {
+          qf: solr_name,
+          pf: solr_name
+      }
+    end
+
+    config.add_search_field('audience_level') do |field|
+      solr_name = solr_name("audience_level", :stored_searchable)
+      field.solr_local_parameters = {
+          qf: solr_name,
+          pf: solr_name
+      }
+    end
+
+    config.add_search_field('audience_rating') do |field|
+      solr_name = solr_name("audience_rating", :stored_searchable)
+      field.solr_local_parameters = {
+          qf: solr_name,
+          pf: solr_name
+      }
+    end
+
+    config.add_search_field('rights_summary') do |field|
+      solr_name = solr_name("rights_summary", :stored_searchable)
+      field.solr_local_parameters = {
+          qf: solr_name,
+          pf: solr_name
+      }
+    end
+
+    config.add_search_field('pbs_nola_code') do |field|
+      solr_name = solr_name("pbs_nola_code", :stored_searchable)
+      field.solr_local_parameters = {
+          qf: solr_name,
+          pf: solr_name
+      }
+    end
+
+    config.add_search_field('eidr_id') do |field|
+      solr_name = solr_name("eidr_id", :stored_searchable)
+      field.solr_local_parameters = {
+          qf: solr_name,
+          pf: solr_name
+      }
+    end
+
+    config.add_search_field('local_instantiation_identifer') do |field|
+      solr_name = solr_name("local_instantiation_identifer", :stored_searchable)
+      field.solr_local_parameters = {
+          qf: solr_name,
+          pf: solr_name
+      }
+    end
+
+    config.add_search_field('portrayal') do |field|
+      solr_name = solr_name("portrayal", :stored_searchable)
+      field.solr_local_parameters = {
+          qf: solr_name,
+          pf: solr_name
       }
     end
 
@@ -380,5 +480,45 @@ class CatalogController < ApplicationController
   # this method is not called in that context.
   def render_bookmarks_control?
     false
+  end
+
+  def export
+    search_params = params.dup
+    search_params.delete :page
+    search_params.delete :per_page
+    search_params.delete :action
+    search_params.delete :controller
+    search_params.delete :locale
+    search_params[:rows] = Rails.configuration.max_downloadable_export_records
+    response, response_documents = search_results(search_params)
+    if (response[:response][:numFound] > Rails.configuration.export_to_browser_limit)
+      params.delete :rows
+      params.permit!
+      ExportRecordsJob.perform_later(params.to_h, current_user)
+      params.delete :action
+      params.delete :controller
+      params.delete :format
+      flash[:notice] = view_context.t('blacklight.search.messages.export_will_be_emailed', application_name: view_context.application_name)
+      redirect_to(search_catalog_url(params)) and return true
+    end
+
+
+
+    respond_to do |format|
+      format.csv {
+        export_data = AMS::Export::DocumentsToCsv.new(response_documents)
+        export_data.process do
+          export_file = File.read(export_data.file_path)
+          send_data export_file, :type => 'text/csv; charset=utf-8; header=present', :disposition => "attachment; filename=#{export_data.filename}", :filename => "#{export_data.filename}"
+        end
+      }
+      format.pbcore {
+        export_data = AMS::Export::DocumentsToPbcoreXml.new(response_documents)
+        export_data.process do
+          export_file = File.read(export_data.file_path)
+          send_data export_file, :type => 'application/zip', :filename => "#{export_data.filename}"
+        end
+      }
+    end
   end
 end

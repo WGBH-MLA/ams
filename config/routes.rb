@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
 
+  mount Hyrax::BatchIngest::Engine, at: '/'
   require 'sidekiq/web'
   authenticate :user, lambda { |u| u.admin? } do
     mount Sidekiq::Web => '/sidekiq'
@@ -13,6 +14,8 @@ Rails.application.routes.draw do
   resource :catalog, only: [:index], as: 'catalog', path: '/catalog', controller: 'catalog' do
     concerns :searchable
   end
+
+  get 'catalog_export', to: 'catalog#export'
 
   mount Hydra::RoleManagement::Engine => '/'
 
@@ -41,6 +44,8 @@ Rails.application.routes.draw do
       delete 'clear'
     end
   end
+
+  resources 'media', only: [:show]
 
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
 end

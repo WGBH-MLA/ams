@@ -3,11 +3,26 @@ require 'rails_helper'
 RSpec.describe AssetIndexer do
   subject(:solr_document) { service.generate_solr_document }
   let(:service) { described_class.new(work) }
+
   let(:admin_data) { create(:admin_data) }
-  let(:work) { build(:asset, with_admin_data:admin_data.gid, date:["2010"], broadcast_date:['2011-05'], copyright_date:['2011-05'], created_date:['2011-05-11']) }
+  let(:admin_data_no_sony_ci_id) { create(:admin_data, :no_sony_ci_id)}
+
+  let(:work) { build(:asset, with_admin_data:admin_data.gid, date:["2010"], broadcast_date:['2011-05'], copyright_date:['2011-05'], created_date:['2011-05-11'], ) }
+  let(:work_no_sony_ci_id) { build(:asset_no_sonyci_id, with_admin_data:admin_data_no_sony_ci_id.gid, date:["2010"], broadcast_date:['2011-05'], copyright_date:['2011-05'], created_date:['2011-05-11'], ) }
+
   let(:asset) { create(:asset) }
+  let(:asset_no_sonyci_id) { create(:asset, with_admin_data:admin_data_no_sony_ci_id.gid) }
+
   let(:asset_solr_doc) { described_class.new(asset) }
+  let(:asset_solr_doc_no_sony_ci_id) { described_class.new(asset_no_sonyci_id) }
+
   let(:digital_instantiation_work) { create(:digital_instantiation) }
+  let(:aapb_moving_image_digital_instantiation_work) { create(:digital_instantiation, :aapb_moving_image) }
+  let(:aapb_sound_digital_instantiation_work) { create(:digital_instantiation, :aapb_sound) }
+  let(:moving_image_digital_instantiation_work) { create(:digital_instantiation, :moving_image) }
+  let(:sound_digital_instantiation_work) { create(:digital_instantiation, :sound) }
+
+
   let(:physical_instantiation_work) { create(:physical_instantiation) }
 
   context "indexes admin data" do
@@ -24,11 +39,71 @@ RSpec.describe AssetIndexer do
   end
 
   context "thumbnail" do
-    it "has work_type.png as default thumbnail when work.thumbnail_id is null" do
-      expect(work.thumbnail_id).to be_nil
-      work_type = solr_document.fetch('has_model_ssim').first.downcase
-      default_image = ActionController::Base.helpers.image_path(work_type+'.png')
-      expect(solr_document.fetch('thumbnail_path_ss')).to eq default_image
+    context "an asset that has digital_instations with AAPB defined as the organization" do
+      context "and 'Moving Image' defined as the media_type" do
+        it "has a S3 thumbnail if it has a sony_ci_id" do
+          asset.ordered_members << aapb_moving_image_digital_instantiation_work
+          asset.save
+          solr_doc = asset_solr_doc.generate_solr_document
+          default_image = ActionController::Base.helpers.image_path("http://americanarchive.org.s3.amazonaws.com/thumbnail/#{solr_doc[:id]}.jpg")
+          expect(solr_doc.fetch('thumbnail_path_ss')).to eq default_image
+        end
+        it "has the VIDEO_NOT_DIG.png as the thumbnail if it does not have a sony_ci_id" do
+          asset_no_sonyci_id.ordered_members << aapb_moving_image_digital_instantiation_work
+          asset_no_sonyci_id.save
+          solr_doc = asset_solr_doc_no_sony_ci_id.generate_solr_document
+          default_image = ActionController::Base.helpers.image_path("/thumbs/VIDEO_NOT_DIG.png")
+          expect(solr_doc.fetch('thumbnail_path_ss')).to eq default_image
+        end
+      end
+
+      context "and 'Sound' defined as the media_type" do
+        it "has the AUDIO.png as the thumbnail if it has a sonyci_id" do
+          asset.ordered_members << aapb_sound_digital_instantiation_work
+          asset.save
+          solr_doc = asset_solr_doc.generate_solr_document
+          default_image = ActionController::Base.helpers.image_path("/thumbs/AUDIO.png")
+          expect(solr_doc.fetch('thumbnail_path_ss')).to eq default_image
+        end
+
+        it "has the AUDIO_NOT_DIG.png as the thumbnail if it does not have a sony_ci_id" do
+          asset_no_sonyci_id.ordered_members << aapb_sound_digital_instantiation_work
+          asset_no_sonyci_id.save
+          solr_doc = asset_solr_doc_no_sony_ci_id.generate_solr_document
+          default_image = ActionController::Base.helpers.image_path("/thumbs/AUDIO_NOT_DIG.png")
+          expect(solr_doc.fetch('thumbnail_path_ss')).to eq default_image
+        end
+      end
+    end
+
+    context "an asset that does not have any digital_instations with AAPB defined as the organization" do
+      context "and 'Moving Image' defined as the media_type" do
+        it "has the VIDEO_NOT_DIG.png as the thumbnail" do
+          asset_no_sonyci_id.ordered_members << moving_image_digital_instantiation_work
+          asset_no_sonyci_id.save
+          solr_doc = asset_solr_doc_no_sony_ci_id.generate_solr_document
+          default_image = ActionController::Base.helpers.image_path("/thumbs/VIDEO_NOT_DIG.png")
+          expect(solr_doc.fetch('thumbnail_path_ss')).to eq default_image
+        end
+      end
+      context "and 'Sound' defined as the media_type" do
+        it "has the VIDEO_NOT_DIG.png as the thumbnail" do
+          asset_no_sonyci_id.ordered_members << sound_digital_instantiation_work
+          asset_no_sonyci_id.save
+          solr_doc = asset_solr_doc_no_sony_ci_id.generate_solr_document
+          default_image = ActionController::Base.helpers.image_path("/thumbs/AUDIO_NOT_DIG.png")
+          expect(solr_doc.fetch('thumbnail_path_ss')).to eq default_image
+        end
+      end
+    end
+
+    context "an asset with no digital instantiations" do
+      it "has work_type.png as default thumbnail when work.thumbnail_id is null" do
+        expect(work.thumbnail_id).to be_nil
+        work_type = solr_document.fetch('has_model_ssim').first.downcase
+        default_image = ActionController::Base.helpers.image_path(work_type+'.png')
+        expect(solr_document.fetch('thumbnail_path_ss')).to eq default_image
+      end
     end
   end
 

@@ -5,6 +5,7 @@ git_source(:github) do |repo_name|
   "https://github.com/#{repo_name}.git"
 end
 
+gem 'dotenv-rails'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '~> 5.1.5'
@@ -63,12 +64,13 @@ group :development do
   # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
   gem 'spring'
   gem 'spring-watcher-listen', '~> 2.0.0'
+  gem "letter_opener"
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 
-gem 'hyrax', '~> 2.2.4'
+gem 'hyrax', '~> 2.4.0'
 gem 'blacklight_advanced_search', '~> 6.4.0'
 gem 'rsolr', '>= 1.0'
 gem 'jquery-rails'
@@ -76,7 +78,15 @@ gem 'devise'
 gem 'devise-guests', '~> 0.6'
 gem 'simple_form', '3.5.0'
 gem 'mysql2', '~> 0.4.10'
+gem 'aws-sdk-s3'
 gem 'aws-sdk-codedeploy'
 gem 'carrierwave', '~> 1.0'
 gem 'nokogiri'
 gem 'pb_core'
+gem 'bootstrap-multiselect-rails'
+gem 'hyrax-batch_ingest', git:'https://github.com/samvera-labs/hyrax-batch_ingest'
+gem 'curb'
+gem 'sony_ci_api', '~> 0.2.1'
+gem 'hyrax-iiif_av', '>= 0.2.0'
+gem 'webpacker'
+gem 'react-rails'
