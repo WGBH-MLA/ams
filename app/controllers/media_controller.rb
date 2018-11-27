@@ -20,7 +20,8 @@ class MediaController < ApplicationController
     end
 
     def ci
-      @ci ||= SonyCiBasic.new(credentials_path: Rails.root + 'config/ci.yml')
+      credentials = YAML.load(ERB.new(File.read('config/ci.yml')).result)
+      @ci ||= SonyCiBasic.new(credentials:credentials)
     end
 
     def solr_document
