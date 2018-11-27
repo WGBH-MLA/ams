@@ -3,7 +3,7 @@ terms:
     term: Agriculture
   - id: Animals
     term: Animals
-  - id: AntiquesandCollectibles
+  - id: Antiques and Collectibles
     term: Antiques and Collectibles
   - id: Architecture
     term: Architecture
@@ -11,7 +11,7 @@ terms:
     term: Biography
   - id: Business
     term: Business
-  - id: ConsumerAffairsandAdvocacy
+  - id: Consumer Affairs and Advocacy
     term: Consumer Affairs and Advocacy
   - id: Crafts
     term: Crafts
@@ -27,15 +27,15 @@ terms:
     term: Exercise
   - id: Fine Arts
     term: Fine Arts
-  - id: FilmandTelevision
+  - id: Filmand Television
     term: Film and Television
-  - id: FoodandCooking
+  - id: Food and Cooking
     term: Food and Cooking
   - id: Gardening
     term: Gardening
   - id: Geography
     term: Geography
-  - id: GlobalAffairs
+  - id: Global Affairs
     term: Global Affairs
   - id: Health
     term: Health
@@ -43,23 +43,23 @@ terms:
     term: History
   - id: Holiday
     term: Holiday
-  - id: HomeImprovement
+  - id: Home Improvement
     term: Home Improvement
   - id: Humor
     term: Humor
   - id: Journalism
     term: Journalism
-  - id: LawEnforcementandCrime
+  - id: Law Enforcement and Crime
     term: Law Enforcement and Crime
   - id: LGBTQ
     term: LGBTQ
   - id: Literature
     term: Literature
-  - id: LocalCommunities
+  - id: Local Communities
     term: Local Communities
   - id: Medicine
     term: Medicine
-  - id: MilitaryForcesandArmaments
+  - id: Military Forces and Armaments
     term: Military Forces and Armaments
   - id: Music
     term: Music
@@ -69,25 +69,25 @@ terms:
     term: News
   - id: Parenting
     term: Parenting
-  - id: PerfomingArts
+  - id: Perfoming Arts
     term: Perfoming Arts
   - id: Philosophy
     term: Philosophy
-  - id: PoliticsandGovernment
+  - id: Politics and Government
     term: Politics and Government
   - id: Psychology
     term: Psychology
-  - id: PublicAffairs
+  - id: Public Affairs
     term: Public Affairs
-  - id: RaceandEthnicity
+  - id: Raceand Ethnicity
     term: Race and Ethnicity
   - id: Religion
     term: Religion
   - id: Science
     term: Science
-  - id: SocialIssues
+  - id: Social Issues
     term: Social Issues
-  - id: SpanishLanguage
+  - id: Spanish Language
     term: Spanish Language
   - id: Sports
     term: Sports
@@ -99,7 +99,7 @@ terms:
     term: Transportation
   - id: Travel
     term: Travel
-  - id: WarandConflict
+  - id: War and Conflict
     term: War and Conflict
   - id: Weather
     term: Weather
