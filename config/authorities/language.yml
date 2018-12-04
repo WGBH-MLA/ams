@@ -1,15 +1,15 @@
 terms:
   - id: eng
-    term: English
+    term: eng
   - id: spa
-    term: Spanish
+    term: spa
   - id: fra
-    term: French
+    term: fra
   - id: ger
-    term: German
+    term: ger
   - id: ypk
-    term: Yupik Languages
+    term: ypk
   - id: haw
-    term: Hawaiian
+    term: haw
   - id: heb
-    term: Hebrew
+    term: heb
