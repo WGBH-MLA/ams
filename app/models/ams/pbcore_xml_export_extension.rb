@@ -12,7 +12,7 @@ module AMS::PbcoreXmlExportExtension
 
   def pbcore_xml_builder
     Nokogiri::XML::Builder.new(encoding: 'UTF-8') do |xml|
-      xml.pbcoreDescriptionDocument('xmlns' => 'http://www.pbcore.org/PBCore/PBCoreNamespace.html', 'xmlns:xsi' => 'http://www.w3.org/2001/XMLSchema-instance', 'xsi:schemaLocation' => 'http://www.pbcore.org/PBCore/PBCoreNamespace.html http://www.pbcore.org/xsd/pbcore-2.0.xsd') do
+      xml.pbcoreDescriptionDocument('xmlns' => 'http://www.pbcore.org/PBCore/PBCoreNamespace.html', 'xmlns:xsi' => 'http://www.w3.org/2001/XMLSchema-instance', 'xsi:schemaLocation' => 'http://www.pbcore.org/PBCore/PBCoreNamespace.html http://www.pbcore.org/xsd/pbcore-2.1.xsd') do
         # Add asset information on the root node of the XML
         prepare_asset(xml)
         # Create a root instantiation node
@@ -138,7 +138,7 @@ module AMS::PbcoreXmlExportExtension
 
   def prepare_physical_instantiation(xml, instantiation)
     xml.pbcoreInstantiation do |instantiation_node|
-      instantiation_node.instantiationIdentifier { instantiation_node.text(instantiation.id) }
+      instantiation_node.instantiationIdentifier(source: 'Filename') { instantiation_node.text(instantiation.id) }
       instantiation.date.to_a.each { |date|  instantiation_node.instantiationDate { instantiation_node.text(date) } }
       instantiation.digitization_date.to_a.each { |date| instantiation_node.instantiationDate(dateType: 'digitized') { instantiation_node.text(date) } }
       instantiation.dimensions.to_a.each { |dimension| instantiation_node.instantiationDimensions { instantiation_node.text(dimension) } }
