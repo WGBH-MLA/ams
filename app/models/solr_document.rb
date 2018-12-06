@@ -359,8 +359,12 @@ class SolrDocument
   def playlist_order
     self[Solrizer.solr_name('playlist_order')]
   end
-  
+
   def media_src(part)
     "/media/#{id}?part=#{part.to_s}"
+  end
+
+  def digitized?
+    !!sonyci_id.nil? ? sonyci_id.any? : false
   end
 end
