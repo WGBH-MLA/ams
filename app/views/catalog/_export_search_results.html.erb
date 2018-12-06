@@ -4,7 +4,9 @@
     Export <span class="caret"></span>
   </button>
   <ul class="dropdown-menu">
-    <li><%= link_to("CSV",catalog_export_path({:format=>"csv"}.merge(search_state.to_h))) %></li>
+    <li><%= link_to("Asset Report",catalog_export_path({:format=>"csv", :object_type=>"asset"}.merge(search_state.to_h))) %></li>
+    <li><%= link_to("Digital Instantiation Report",catalog_export_path({:format=>"csv", :object_type=>"digital_instantiation"}.merge(search_state.to_h))) %></li>
+    <li><%= link_to("Physical Instantiation Report",catalog_export_path({:format=>"csv", :object_type=>"physical_instantiation"}.merge(search_state.to_h))) %></li>
     <li><%= link_to("PBCore XML",catalog_export_path({:format=>"pbcore"}.merge(search_state.to_h))) %></li>
   </ul>
 </div>

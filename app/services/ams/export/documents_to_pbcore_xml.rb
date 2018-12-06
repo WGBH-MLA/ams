@@ -4,7 +4,7 @@ require 'zip'
 module AMS::Export
   # Class is responsible for generating the zip file containing the PBCore xml files.
   class DocumentsToPbcoreXml < ExportService
-    def initialize(solr_documents, format = 'zip')
+    def initialize(solr_documents, options={}, format = 'zip', filename = nil)
       super
       puts self.format
     end
