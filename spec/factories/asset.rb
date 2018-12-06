@@ -50,6 +50,14 @@ FactoryBot.define do
       visibility { Hydra::AccessControls::AccessRight::VISIBILITY_TEXT_VALUE_PUBLIC }
     end
 
+    trait :with_physical_instantiation do
+      members { [create(:physical_instantiation)] }
+    end
+
+    trait :with_digital_instantiation do
+      members { [create(:digital_instantiation)] }
+    end
+
     before(:create) do |work, evaluator|
       if evaluator.admin_set
         work.admin_set_id = evaluator.admin_set.id
