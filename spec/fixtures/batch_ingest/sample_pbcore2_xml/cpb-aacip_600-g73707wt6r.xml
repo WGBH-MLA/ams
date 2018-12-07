@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pbcoreDescriptionDocument xmlns="http://www.pbcore.org/PBCore/PBCoreNamespace.html" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.pbcore.org/PBCore/PBCoreNamespace.html http://www.pbcore.org/xsd/pbcore-2.0.xsd">
+  <pbcoreAssetType>Program</pbcoreAssetType>
+  <pbcoreAssetDate dateType="created">1965</pbcoreAssetDate>
+  <pbcoreAssetDate dateType="broadcast">1965-09-24</pbcoreAssetDate>
+  <pbcoreIdentifier source="Sony Ci">234w65789087654321</pbcoreIdentifier>
+  <pbcoreIdentifier source="http://americanarchiveinventory.org">cpb-aacip_600-g73707wt6r</pbcoreIdentifier>
+  <pbcoreTitle source="Program">Fannie Lou Hamer Interview</pbcoreTitle>
+  <pbcoreDescription source="Program">Colin Edwards interviews Fannie Lou Hamer on the Mississippi Freedom Democratic Party, voting rights, human rights, and politics during an interview he taped during her visit to Berkeley. Mrs. Hamer also relates a vicious beating she received in a Winona, Mississippi, jail from two African American prisoners forced by officials. She discusses her admiration for the Deacons for Defense and her friendship with Malcolm X. For information on Mrs. Hamer, see Kay Mills, This Little Light of Mine: The Life of Fannie Lou Hamer (Lexington, KY: University Press of Kentucky, 2007).</pbcoreDescription>
+  <pbcoreGenre source="AAPB Format Genre">Interview</pbcoreGenre>
+  <pbcoreGenre source="AAPB Topical Genre">PoliticsandGovernment</pbcoreGenre>
+  <pbcoreGenre source="AAPB Topical Genre">SocialIssues</pbcoreGenre>
+  <pbcoreGenre source="AAPB Topical Genre">RaceandEthnicity</pbcoreGenre>
+  <pbcoreGenre source="AAPB Topical Genre">PublicAffairs</pbcoreGenre>
+  <pbcoreCreator>
+    <creator>KFPA</creator>
+    <creatorRole>Producing Organization</creatorRole>
+  </pbcoreCreator>
+  <pbcoreSubject>Voting--Mississippi</pbcoreSubject>
+  <pbcoreSubject>Mississippi Freedom Democratic Party</pbcoreSubject>
+  <pbcoreAnnotation annotationType="Level of User Access"><![CDATA[Online Reading Room]]></pbcoreAnnotation>
+  <pbcoreAnnotation annotationType="cataloging staus"><![CDATA[Yes]]></pbcoreAnnotation>
+  <pbcoreAnnotation annotationType="Outside URL"><![CDATA[http://americanarchive.org/catalog/cpb-aacip_28-bg2h70895r]]></pbcoreAnnotation>
+  <pbcoreAnnotation annotationType="Transcript Status"><![CDATA[Online Reading Room Transcript]]></pbcoreAnnotation>
+  <pbcoreAnnotation annotationType="special_collections"><![CDATA[naeb]]></pbcoreAnnotation>
+  <pbcoreAnnotation annotationType="Sony Ci"><![CDATA[234w65789087654321]]></pbcoreAnnotation>
+  <pbcoreInstantiation>
+    <instantiationIdentifier>cpb-aacip_600-3t9d50fw6m</instantiationIdentifier>
+    <instantiationDate dateType="digitized"></instantiationDate>
+    <instantiationPhysical>1/4 inch audio tape</instantiationPhysical>
+    <instantiationLocation>iowa</instantiationLocation>
+    <instantiationMediaType>Sound</instantiationMediaType>
+    <instantiationTimeStart></instantiationTimeStart>
+    <instantiationDuration></instantiationDuration>
+    <instantiationColors></instantiationColors>
+    <instantiationIdentifier>Hamer-1</instantiationIdentifier>
+    <instantiationTracks></instantiationTracks>
+    <instantiationChannelConfiguration></instantiationChannelConfiguration>
+    <instantiationAnnotation annotationType="Organization">Iowa Public Television</instantiationAnnotation>
+  </pbcoreInstantiation>
+  <pbcoreInstantiation>
+    <instantiationIdentifier>cpb-aacip_600-td9n29pf87</instantiationIdentifier>
+    <instantiationDate>2013-11-07</instantiationDate>
+    <instantiationStandard>TEST TEST TEST</instantiationStandard>
+    <instantiationLocation>Pacifica</instantiationLocation>
+    <instantiationMediaType>Moving Image</instantiationMediaType>
+    <instantiationGenerations>Preservation Master</instantiationGenerations>
+    <instantiationFileSize>12345</instantiationFileSize>
+    <instantiationDuration>00:26:48</instantiationDuration>
+    <instantiationLanguage>English</instantiationLanguage>
+    <instantiationTracks>2</instantiationTracks>
+    <instantiationAnnotation annotationType="Organization">Pacifica Radio Archives</instantiationAnnotation>
+    <instantiationEssenceTrack>
+      <essenceTrackType>video</essenceTrackType>
+      <essenceTrackIdentifier>1</essenceTrackIdentifier>
+      <essenceTrackStandard>NTSC</essenceTrackStandard>
+      <essenceTrackEncoding>JPEG 2000</essenceTrackEncoding>
+      <essenceTrackFrameRate>59.940</essenceTrackFrameRate>
+      <essenceTrackBitDepth>8</essenceTrackBitDepth>
+      <essenceTrackAspectRatio>4:3</essenceTrackAspectRatio>
+      <essenceTrackDuration>00:29:53</essenceTrackDuration>
+      <essenceTrackDataRate unitsOfMeasure="kb/s">5900</essenceTrackDataRate>
+      <essenceTrackAnnotation>YUV</essenceTrackAnnotation>
+    </instantiationEssenceTrack>
+    <instantiationEssenceTrack>
+      <essenceTrackType>audio</essenceTrackType>
+      <essenceTrackIdentifier>2</essenceTrackIdentifier>
+      <essenceTrackEncoding>PCM</essenceTrackEncoding>
+      <essenceTrackBitDepth>16</essenceTrackBitDepth>
+      <essenceTrackDuration>00:29:53</essenceTrackDuration>
+      <essenceTrackDataRate unitsOfMeasure="kb/s">307200</essenceTrackDataRate>
+    </instantiationEssenceTrack>
+  </pbcoreInstantiation>
+</pbcoreDescriptionDocument>
