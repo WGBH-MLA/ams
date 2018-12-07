@@ -64,8 +64,7 @@ module Hyrax
         end
 
         def extract_contributions(env)
-          contributors = env.attributes[:contributors]
-          env.attributes.delete(:contributors)
+          contributors = env.attributes.delete(:contributors) || []
           # removing element where contributor is blank, as its req field
           contributors.select { |contributor| contributor unless contributor[:contributor].first.blank? }
         end
@@ -131,8 +130,13 @@ module Hyrax
           types.each do |id|
             model_field = type_service.model_field(id)
             raise "Unable to find model property" unless env.curation_concern.respond_to?(model_field)
-            env.attributes[model_field] = get_typed_value(id, values) if !values.first['value'].blank?
+            env.attributes[model_field] = get_typed_value(id, values) if typed_value_present?(values)
           end
+        end
+
+        def typed_value_present?(values)
+          return false unless values
+          values.first.respond_to?(:[]) && values.first['value'].present?
         end
 
         def get_typed_value(type, typed_values)

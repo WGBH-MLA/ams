@@ -193,8 +193,6 @@ class Asset < ActiveFedora::Base
     index.as :stored_searchable
   end
 
-  validates :admin_data_gid, presence: true
-
   def admin_data_gid=(new_admin_data_gid)
     raise "Can't modify admin data of this asset" if persisted? && !admin_data_gid_was.nil? && admin_data_gid_was != new_admin_data_gid
     new_admin_data = AdminData.find_by_gid!(new_admin_data_gid)
@@ -211,11 +209,10 @@ class Asset < ActiveFedora::Base
   include ::Hyrax::BasicMetadata
 
   private
-    def find_or_create_admin_data
-      self.admin_data ||= AdminData.create
-    end
+
     def save_admin_data
-      find_or_create_admin_data
+      self.admin_data ||= AdminData.create
       self.admin_data.save
+      self.admin_data_gid = self.admin_data.gid
     end
 end
