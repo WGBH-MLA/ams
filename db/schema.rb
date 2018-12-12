@@ -140,7 +140,7 @@ ActiveRecord::Schema.define(version: 20181115174438) do
     t.string "source_location"
     t.string "status"
     t.text "error"
-    t.string "object_id"
+    t.string "repo_object_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["batch_id"], name: "index_hyrax_batch_ingest_batch_items_on_batch_id"
