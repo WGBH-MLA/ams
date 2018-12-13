@@ -365,6 +365,6 @@ class SolrDocument
   end
 
   def digitized?
-    !!sonyci_id.nil? ? sonyci_id.any? : false
+    sonyci_id.present?
   end
 end

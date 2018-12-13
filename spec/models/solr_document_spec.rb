@@ -91,4 +91,21 @@ describe SolrDocument do
       end
     end
   end
+
+  describe '#digitized?' do
+    it 'returns true if there are any sonci_id values' do
+      allow(solr_document).to receive(:sonyci_id).and_return(['asdf'])
+      expect(solr_document.digitized?).to eq true
+    end
+
+    it 'returns false if sonyci_id is nil' do
+      allow(solr_document).to receive(:sonyci_id).and_return(nil)
+      expect(solr_document.digitized?).to eq false
+    end
+
+    it 'returns false if sonyci_id is an empty array' do
+      allow(solr_document).to receive(:sonyci_id).and_return([])
+      expect(solr_document.digitized?).to eq false
+    end
+  end
 end
