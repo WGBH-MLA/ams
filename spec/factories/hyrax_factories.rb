@@ -13,7 +13,7 @@ hyrax_factories = [
   'workflow_actions'
 ]
 
-# Require the Hyeras factories specified in hyrax_factories
+# Require the Hyrax factories specified in hyrax_factories
 hyrax_factories.each do |hyrax_factory|
   require File.join(Hyrax::Engine.root, 'spec', 'factories', hyrax_factory)
 end
