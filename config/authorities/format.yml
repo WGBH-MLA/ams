@@ -39,10 +39,14 @@ terms:
     term: DVCPRO
   - id: DVD
     term: DVD
-  - id: "Film: 16mm"
-    term: "Film: 16mm"
-  - id: "Film: 35mm"
-    term: "Film: 35mm"
+  - id: >
+      Film: 16mm
+    term: >
+      Film: 16mm
+  - id: >
+      Film: 35mm
+    term: >
+      Film: 35mm
   - id: HDCAM
     term: HDCAM
   - id: Hi8
