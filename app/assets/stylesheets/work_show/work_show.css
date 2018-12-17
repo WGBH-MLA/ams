@@ -7,13 +7,15 @@ table.contributions {
 .work-panel .label {
     border-radius: 0px;
 }
-.work-panel .block a {
-    text-align: left;
-    border-radius: 0;
-    border: none;
+.work-panel .block a.header {
     font-size: 18px;
-    padding: 15px 20px;
-    border-bottom: 1px solid #eee;
+    font-weight: bold;
+    margin: 0 0 15px;
+    background-color: #f5f5f5;
+    padding: 5px 5px 5px 20px;
+    border-radius: 3px;
+    border: 1px #ddd;
+    text-align: left;
 }
 .work-panel .block a:hover,
 .work-panel .block a:focus,
@@ -21,24 +23,21 @@ table.contributions {
     background: #f9f9f9;
 }
 .work-panel .details {
-    border: 1px solid #eee;
     margin-top: 20px;
 }
-.work-panel .block a:after {
+.work-panel .block a.header:before {
     content: "\f0d7";
     font-family: "FontAwesome";
-    font-size: 20px;
+    font-size: 18px;
     color: #000;
-    right: 40px;
-    position: absolute;
+    padding: 10px;
 }
-.work-panel .block a.collapsed:after {
+.work-panel .block a.header.collapsed:before {
     content: "\f0da";
     font-family: "FontAwesome";
-    font-size: 20px;
+    font-size: 18px;
     color: #000;
-    right: 40px;
-    position: absolute;
+    padding: 10px;
 }
 .work-panel .block ul.tabular a {
     display: block;
@@ -50,13 +49,12 @@ table.contributions {
     display: none !important;
 }
 .work-panel .details .well {
-    border: none;
     border-radius: 0;
     background: #fff;
     margin: 0;
-    border-bottom: 1px solid #eee;
     -webkit-box-shadow: none;
     box-shadow: none;
+    border: none;
 }
 .work-panel .head {
     padding: 20px;
@@ -82,6 +80,29 @@ table.contributions {
     background: #ffffff;
     color: #000;
 }
+.work-show dt {
+    text-align: right;
+    width: 25%;
+    float: none;
+    font-weight: bold;
+    padding: 0 5px 0 0;
+    display: inline-block;
+}
+
+.work-show dd {
+    overflow: hidden;
+    background: #fff;
+    padding: 0px;
+    display: inline-block;
+    width: 60%;
+    vertical-align: top;
+    margin-left: 5%;
+}
+
+.work-type .panel-body li.attribute a {
+    background: #fff;
+}
+
 .custom-info {
     margin-top: 20px;
 }
@@ -119,27 +140,33 @@ table.contributions {
     margin: 0 auto;
 }
 .hold h2 {
-    font-size: 28px;
+    font-size: 18px;
     font-weight: bold;
     margin: 0 0 15px;
+    background-color: #f5f5f5;
+    padding: 5px 5px 5px 20px;
+    border-radius: 3px;
+    border-color: #ddd;
 }
 .hold dl {
-    margin: 0;
+    margin: 0 10% 0 10%;
 }
 .hold dt {
-    width: 20%;
+    text-align: right;
+    width: 25%;
     float: none;
     font-weight: bold;
-    padding-bottom: 10px;
+    padding: 0 5px 0 0;
     display: inline-block;
 }
 .hold dd {
     overflow: hidden;
     background: #fff;
-    padding-bottom: 10px;
+    padding: 0px;
     display: inline-block;
-    width: 75%;
+    width: 60%;
     vertical-align: top;
+    margin-left: 10%;
 }
 .related-files .thumbnail {
     width: 60px;
@@ -166,6 +193,7 @@ ul.tabular {
     .hold dt {
         width: 100%;
         float: none;
+        text-align: left;
     }
     .hold dd {
         width: 100%;

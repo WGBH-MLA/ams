@@ -1,12 +1,19 @@
 <div class="hold">
 <div class="holder">
-  <h2><%= presenter.human_readable_type + " " + t('.details') %></h2>
-  <dl class="work-show <%= dom_class(@presenter) %>" <%= presenter.microdata_type_to_html %>>
-    <%= render 'attribute_rows', presenter: @presenter %>
-    <%= presenter.attribute_to_html(:embargo_release_date, render_as: :date, html_dl: true) %>
-    <%= presenter.attribute_to_html(:lease_expiration_date, render_as: :date, html_dl: true) %>
-    <%= presenter.attribute_to_html(:license, render_as: :license, html_dl: true) %>
-  </dl>
+  <div class="block">
+    <a class="btn btn-default btn-block header collapsed" id="tab-<%= t('.details') %>" role="button" data-toggle="collapse" href="#collapse-<%= t('.details') %>" aria-expanded="false" aria-controls="collapse-<%= t('.details') %>">
+      <%= presenter.human_readable_type + " " + t('.details') %></h2>
+    </a>
+
+    <div class="collapse" id="collapse-<%= t('.details') %>">
+      <dl class="work-show <%= dom_class(@presenter) %>" <%= presenter.microdata_type_to_html %>>
+        <%= render 'attribute_rows', presenter: @presenter %>
+        <%= presenter.attribute_to_html(:embargo_release_date, render_as: :date, html_dl: true) %>
+        <%= presenter.attribute_to_html(:lease_expiration_date, render_as: :date, html_dl: true) %>
+        <%= presenter.attribute_to_html(:license, render_as: :license, html_dl: true) %>
+      </dl>
+    </div>
+
 </div>
   <div class="details">
     <%= render 'contributions', presenter: @presenter %>
