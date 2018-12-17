@@ -18,12 +18,10 @@
         </div>
 
           <%= render 'workflow_actions_widget', presenter: @presenter %>
-          <div class="col-sm-3">
-            <%= render 'relationships', presenter: @presenter %>
-          </div>
-          <div class="col-sm-9">
+          <div class="col-sm-12">
             <%= render 'metadata', presenter: @presenter %>
           </div>
+
           <div class="col-sm-12">
 
             <%= render 'instantiations', presenter: @presenter %>
@@ -32,6 +30,9 @@
             <%# = render 'user_activity', presenter: @presenter %>
           </div>
 
+          <div class="col-sm-12">
+            <%= render 'relationships', presenter: @presenter %>
+          </div>
       </div>
     </div>
   </div>

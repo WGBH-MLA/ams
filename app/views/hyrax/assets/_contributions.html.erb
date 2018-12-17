@@ -2,7 +2,7 @@
 <%  contributions = presenter.member_presenters_for(array_of_ids) %>
 <% if contributions.any? %>
 <div class="block">
-  <a class="btn btn-default btn-block collapsed" id="tab-<%= t('.credits') %>" role="button" data-toggle="collapse" href="#collapse-<%= t('.credits') %>" aria-expanded="false" aria-controls="collapse-<%= t('.credits') %>">
+  <a class="btn btn-default btn-block header collapsed" id="tab-<%= t('.credits') %>" role="button" data-toggle="collapse" href="#collapse-<%= t('.credits') %>" aria-expanded="false" aria-controls="collapse-<%= t('.credits') %>">
     <%= t('.credits') %>
   </a>
   <div class="collapse" id="collapse-<%= t('.credits') %>">
