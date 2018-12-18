@@ -144,6 +144,7 @@ RSpec.feature 'Create and Validate Asset', js: true, asset_form_helpers: true, c
 
       # open asset with detail show
       click_on main_titles.first
+      click_on('Asset Details')
       expect(page).to have_content asset_attributes[:spatial_coverage]
       expect(page).to have_content asset_attributes[:temporal_coverage]
       expect(page).to have_content asset_attributes[:audience_level]
