@@ -53,7 +53,7 @@ RSpec.feature 'Create Asset with Asset Type', js: true, asset_form_helpers: true
 
       # validated metadata without errors
       page.find("#required-metadata")[:class].include?("complete")
-      
+
       within('.asset_asset_types') do
         find('button.multiselect').click
         find('label.checkbox',text:asset_attributes[:asset_type]).click
@@ -72,6 +72,7 @@ RSpec.feature 'Create Asset with Asset Type', js: true, asset_form_helpers: true
 
       # open asset with detail show
       click_on(asset_attributes[:title])
+      click_on('Asset Details')
       expect(page).to have_content asset_attributes[:asset_type]
     end
   end
