@@ -53,7 +53,7 @@ group :development, :test do
   gem 'capybara', '~> 2.18'
   gem 'selenium-webdriver'
   gem 'fcrepo_wrapper'
-  gem 'solr_wrapper', '~> 2.0'
+  gem 'solr_wrapper', '~> 2.1'
   gem 'xray-rails'
 end
 
