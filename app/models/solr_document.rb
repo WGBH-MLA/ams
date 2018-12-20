@@ -292,6 +292,14 @@ class SolrDocument
                           copyright_date].flatten.select(&:present?).join('; ')
   end
 
+  def display_dates
+    { Solrizer.solr_name('date') => date,
+      Solrizer.solr_name('broadcast_date') => broadcast_date,
+      Solrizer.solr_name('created_date') => created_date,
+      Solrizer.solr_name('copyright_date') => copyright_date
+    }.select{ |k,v| v.present? }
+  end
+
   def date
     self[Solrizer.solr_name('date')]
   end
@@ -366,5 +374,9 @@ class SolrDocument
 
   def digitized?
     sonyci_id.present?
+  end
+
+  def identifying_data
+    { "id" => id, Solrizer.solr_name('admin_set') => admin_set }
   end
 end
