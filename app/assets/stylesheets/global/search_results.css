@@ -12,3 +12,36 @@ div.facets h3 {
 .search-form .input-group-btn .scope_select {
     border-radius: 0;
 }
+
+#sort-dropdown .dropdown-toggle, #per_page-dropdown .dropdown-toggle {
+  color: rgb(57,57,59);
+}
+
+.search-result-title a {
+  color: rgb(57,57,59);
+}
+
+.metadata h4 {
+  display: inline;
+  font-size: 14px;
+  font-weight: bold;
+  margin-left: 10px;
+}
+
+.metadata-col {
+  margin: 5px auto;
+}
+
+.metadata .metadata-desc-col p {
+  margin: 10px 0 0 10px;
+}
+
+@media screen and (max-width: 767px){
+    .metadata h4 {
+      margin-left: 0;
+    }
+
+    .metadata .metadata-desc-col p {
+      margin: 0;
+    }
+}
