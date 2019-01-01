@@ -116,15 +116,15 @@ describe SolrDocument do
       let(:asset_solr_doc) { SolrDocument.find(asset.id) }
       let(:expected_dates) {
         {
-          "date_tesim" => ["2010","2015-01","1987-10-31"],
-          "broadcast_date_tesim" => ["2010","2015-01","1987-10-31"],
-          "created_date_tesim" => ["2010","2015-01","1987-10-31"],
-          "copyright_date_tesim" => ["2010","2015-01","1987-10-31"]
+          "date_tesim" => asset.date.sort,
+          "broadcast_date_tesim" => asset.broadcast_date.sort,
+          "created_date_tesim" => asset.created_date.sort,
+          "copyright_date_tesim" => asset.copyright_date.sort
         }
       }
+
       it 'returns a hash of dates' do
         expect(asset_solr_doc.display_dates.map{ |k,v| v.sort }).to eq expected_dates.map{ |k,v| v.sort }
-        expect(asset_solr_doc.display_dates.keys.sort).to eq expected_dates.keys.sort
       end
     end
 
