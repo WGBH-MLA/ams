@@ -32,6 +32,10 @@ en:
         name:               "Asset"
         description:        "Asset works"
   simple_form:
+    labels:
+      asset:
+        pbs_nola_code: 'PBS NOLA Code'
+        eidr_id: 'EIDR ID'
     hints:
       asset:
         titles_with_types: 'A name given to an asset.'
