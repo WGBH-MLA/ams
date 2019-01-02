@@ -2,6 +2,8 @@ require 'rails_helper'
 
 describe SolrDocument do
   let(:solr_document) { described_class.new }
+  let(:asset) { create(:asset) }
+
   describe '#title' do
     context 'when other titles are present' do
       let(:other_titles) do
@@ -106,6 +108,44 @@ describe SolrDocument do
     it 'returns false if sonyci_id is an empty array' do
       allow(solr_document).to receive(:sonyci_id).and_return([])
       expect(solr_document.digitized?).to eq false
+    end
+  end
+
+  describe '#display_dates' do
+    context 'when a solr doc has dates' do
+      let(:asset_solr_doc) { SolrDocument.find(asset.id) }
+      let(:expected_dates) {
+        {
+          "date_tesim" => asset.date.sort,
+          "broadcast_date_tesim" => asset.broadcast_date.sort,
+          "created_date_tesim" => asset.created_date.sort,
+          "copyright_date_tesim" => asset.copyright_date.sort
+        }
+      }
+
+      it 'returns a hash of dates' do
+        expect(asset_solr_doc.display_dates.map{ |k,v| v.sort }).to eq expected_dates.map{ |k,v| v.sort }
+      end
+    end
+
+    context 'when a solr doc does not have dates' do
+      it 'returns an empty hash' do
+        expect(solr_document.display_dates).to eq Hash.new
+      end
+    end
+  end
+
+  describe '#identifying_data' do
+    let(:asset_solr_doc) { SolrDocument.find(asset.id) }
+    let(:expected_id_data) {
+      {
+        "id" => asset_solr_doc.id,
+        Solrizer.solr_name('admin_set') => asset_solr_doc.admin_set
+      }
+    }
+
+    it 'returns the expected identifying data' do
+      expect(asset_solr_doc.identifying_data).to eq expected_id_data
     end
   end
 end
