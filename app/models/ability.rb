@@ -29,6 +29,7 @@ class Ability
     end
     if user_groups.include? 'aapb-admin'
       can [:create], AdminData
+      can [:create], InstantiationAdminData
     end
 
     # Limits creating new objects to a specific group
