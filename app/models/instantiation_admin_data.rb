@@ -3,7 +3,7 @@ class InstantiationAdminData < ApplicationRecord
   include ::EmptyDetection
 
   # Find the admin data associated with the Global Identifier (gid)
-  # @param [String] gid - Global Identifier for this admin_data (e.g.gid://ams/admindata/1)
+  # @param [String] gid - Global Identifier for this instantiation_admin_data (e.g.gid://ams/instantiationadmindata/1)
   # @return [AdminData] if record matching gid is found, an instance of AdminData with id = the model_id portion of the gid (e.g. 1)
   # @return [False] if record matching gid is not found
   def self.find_by_gid(gid)
