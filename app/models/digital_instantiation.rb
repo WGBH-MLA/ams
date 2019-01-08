@@ -6,6 +6,7 @@ class DigitalInstantiation < ActiveFedora::Base
   include ::AMS::CreateMemberMethods
 
   extend CarrierWave::Mount
+  before_save :save_instantiation_admin_data
 
   validates_with CarrierWave::Validations::ActiveModel::IntegrityValidator,
                  attributes: %i(digital_instantiation_pbcore_xml)
@@ -116,6 +117,47 @@ class DigitalInstantiation < ActiveFedora::Base
 
   property :holding_organization, predicate: ::RDF::URI.new("http://pbcore.org#hasHoldingOrganization"), multiple: false, index_to_parent: true do |index|
     index.as :stored_searchable, :facetable
+  end
+
+  property :instantiation_admin_data_gid, predicate: ::RDF::URI.new('http://pbcore.org#hasInstantiationAdminData'), multiple: false do |index|
+    index.as :symbol
+  end
+
+
+  validates :instantiation_admin_data_gid, presence: true
+
+  def instantiation_admin_data_gid=(new_instantiation_admin_data_gid)
+    raise "Can't modify admin data of this asset" if persisted? && !instantiation_admin_data_gid_was.nil? && instantiation_admin_data_gid_was != new_instantiation_admin_data_gid
+    new_instantiation_admin_data = InstantiationAdminData.find_by_gid!(new_instantiation_admin_data_gid)
+    super
+    @instantiation_admin_data=new_instantiation_admin_data
+    instantiation_admin_data_gid
+  end
+
+  def instantiation_admin_data_gid_document_field_name
+    Solrizer.solr_name('instantiation_admin_data_gid', *index_instantiation_admin_data_gid_as)
+  end
+
+
+  def instantiation_admin_data
+    @instantiation_admin_data_gid ||= InstantiationAdminData.find_by_gid(instantiation_admin_data_gid)
+  end
+
+  def instantiation_admin_data=(new_admin_data)
+    self[:instantiation_admin_data_gid] = new_admin_data.gid
+  end
+
+  # This must be included at the end, because it finalizes the metadata if you have any further properties define above in current model
+  include ::Hyrax::BasicMetadata
+
+  private
+  def find_or_create_instantiation_admin_data
+    self.instantiation_admin_data ||= InstantiationAdminData.create
+  end
+
+  def save_instantiation_admin_data
+    find_or_create_instantiation_admin_data
+    self.instantiation_admin_data.save
   end
 
   # This must be included at the end, because it finalizes the metadata if you have any further properties define above in current model

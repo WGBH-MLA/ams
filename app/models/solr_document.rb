@@ -379,4 +379,12 @@ class SolrDocument
   def identifying_data
     { "id" => id, Solrizer.solr_name('admin_set') => admin_set }
   end
+
+  def aapb_preservation_lto
+    self[Solrizer.solr_name('aapb_preservation_lto')]
+  end
+
+  def aapb_preservation_disk
+    self[Solrizer.solr_name('aapb_preservation_disk')]
+  end
 end
