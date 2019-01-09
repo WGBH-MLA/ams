@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/samvera-labs/hyrax-batch_ingest
-  revision: 4ad099aae98b6f16b202ca6b5aa94f0ec3d89b09
+  revision: e4876fd2b894ae6bc8ed847011aa9ed1c36cb466
   specs:
     hyrax-batch_ingest (0.1.0)
       hyrax (~> 2.2)
