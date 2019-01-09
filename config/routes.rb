@@ -16,6 +16,7 @@ Rails.application.routes.draw do
   end
 
   get 'catalog_export', to: 'catalog#export'
+  get 'concern/assets/:id/download_media', to: 'hyrax/assets#download_media'
 
   mount Hydra::RoleManagement::Engine => '/'
 
