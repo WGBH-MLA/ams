@@ -185,14 +185,14 @@ RSpec.describe DigitalInstantiation do
 
   context "instantiation_admin_data_gid" do
     let(:instantiation_admin_data) { FactoryBot.create(:instantiation_admin_data) }
-    let(:digital_instantiation) { FactoryBot.build(:asset, with_admin_data:admin_data.gid) }
+    let(:digital_instantiation) { FactoryBot.build(:digital_instantiation, with_instantiation_admin_data:instantiation_admin_data.gid) }
     it "has instantiation_admin_data_gid" do
       expect(digital_instantiation).to have_property(:instantiation_admin_data_gid).with_predicate(/pbcore.org#hasInstantiationAdminData/)
       expect(digital_instantiation.instantiation_admin_data_gid).to eq(instantiation_admin_data.gid)
     end
     it "has throws ActiveRecord::RecordNotFound if cannot find instantiation_admin_data for the gid" do
       gid = 'gid://ams/instantiationadmindata/999'
-      expect { digital_instantiation.instantiation_admin_data_gid = gid }.to raise_error(ActiveRecord::RecordNotFound, "Couldn't find AdminData matching GID #{gid}")
+      expect { digital_instantiation.instantiation_admin_data_gid = gid }.to raise_error(ActiveRecord::RecordNotFound, "Couldn't find InstantiationAdminData matching GID #{gid}")
     end
   end
 end
