@@ -58,6 +58,17 @@ FactoryBot.define do
       members { [create(:digital_instantiation)] }
     end
 
+    trait :with_digital_instantiation_and_essence_track do
+      members { [create(:digital_instantiation, :aapb_moving_image_with_essence_track)] }
+    end
+
+    trait :with_two_digital_instantiations_and_essence_tracks do
+      members { [
+        create(:digital_instantiation, :aapb_moving_image_with_essence_track),
+        create(:digital_instantiation, :aapb_moving_image_with_essence_track)
+      ] }
+    end
+
     before(:create) do |work, evaluator|
       if evaluator.admin_set
         work.admin_set_id = evaluator.admin_set.id
