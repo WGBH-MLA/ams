@@ -25,6 +25,10 @@ module WGBH
           attrs[:clip_description]            = pbcore.descriptions.select { |description| description.type.to_s.downcase.strip == "clip" }.map(&:value)
           attrs[:promo_description]           = pbcore.descriptions.select { |description| description.type.to_s.downcase.strip == "promo" }.map(&:value)
           attrs[:raw_footage_description]     = pbcore.descriptions.select { |description| description.type.to_s.downcase.strip == "raw footage" }.map(&:value)
+          attrs[:audience_level]              = pbcore.audience_levels.map(&:value)
+          attrs[:audience_rating]             = pbcore.audience_ratings.map(&:value)
+          attrs[:asset_types]                 = pbcore.asset_types.map(&:value)
+          attrs[:genre]                       = pbcore.genres.map(&:value)
         end
       end
 
