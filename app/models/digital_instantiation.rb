@@ -123,8 +123,7 @@ class DigitalInstantiation < ActiveFedora::Base
     index.as :symbol
   end
 
-
-  validates :instantiation_admin_data_gid, presence: true
+  
 
   def instantiation_admin_data_gid=(new_instantiation_admin_data_gid)
     raise "Can't modify admin data of this asset" if persisted? && !instantiation_admin_data_gid_was.nil? && instantiation_admin_data_gid_was != new_instantiation_admin_data_gid
