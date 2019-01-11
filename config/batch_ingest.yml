@@ -3,3 +3,7 @@ ingest_types:
     label: "AAPB PBCore - Zipped"
     reader: "WGBH::BatchIngest::ZippedPBCoreReader"
     ingester: "WGBH::BatchIngest::PBCoreXMLItemIngester"
+  wgbh_csv_reader_1:
+    label: "WGBH CSV Reader"
+    reader: "WGBH::BatchIngest::CSVReader"
+    ingester: "WGBH::BatchIngest::CSVItemIngestor"

@@ -1,5 +1,4 @@
 require 'pbcore'
-require 'ffaker'
 
 FactoryBot.define do
   factory :pbcore_coverage, class: PBCore::Coverage, parent: :pbcore_element do
