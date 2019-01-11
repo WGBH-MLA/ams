@@ -27,6 +27,7 @@ module Hyrax
 
         def save_aapb_admin_data(env)
           env.curation_concern.admin_data = find_or_create_admin_data(env)
+          env.curation_concern.admin_data_gid = env.curation_concern.admin_data.gid
           set_admin_data_attributes(env.curation_concern.admin_data, env) if env.current_ability.can?(:create, AdminData)
           remove_admin_data_from_env_attributes(env)
         end
@@ -35,7 +36,7 @@ module Hyrax
           admin_data_attributes.each do |k|
             if [:special_collection, :sonyci_id].include?(k)
               admin_data.send("#{k}=", Array(env.attributes[k]))
-            else
+            elsif env.attributes[k].present?
               admin_data.send("#{k}=", env.attributes[k].to_s)
             end
           end
@@ -51,13 +52,13 @@ module Hyrax
         end
 
         def find_or_create_admin_data(env)
-          admin_data = if env.curation_concern.admin_data_gid.blank?
-                         AdminData.create
-                       else
-                         AdminData.find_by_gid!(env.curation_concern.admin_data_gid)
-                       end
+          admin_data = ::AdminData.create unless env.curation_concern.admin_data_gid.present?
+          Rails.logger.debug "Create AdminData at #{admin_data.gid}"
+          admin_data.save
+          env.curation_concern.admin_data_gid = admin_data.gid
           admin_data
         end
+
 
         def destroy_admin_data(env)
           env.curation_concern.admin_data.destroy if env.curation_concern.admin_data_gid
@@ -70,24 +71,26 @@ module Hyrax
         end
 
         def create_or_update_contributions(env, contributions)
-          if contributions.any? && !contributions.first["contributor"].blank?
-            contributions.each do |param_contributor|
-              actor ||= Hyrax::CurationConcern.actor
-              # Moving contributor into Array before saving object
-              param_contributor[:contributor] = Array(param_contributor[:contributor])
-              param_contributor[:admin_set_id] = env.curation_concern.admin_set_id
-              param_contributor[:title] = env.attributes["title"]
+          if contributions.present?
+            if contributions.any? && !contributions.first["contributor"].blank?
+              contributions.each do |param_contributor|
+                actor ||= Hyrax::CurationConcern.actor
+                # Moving contributor into Array before saving object
+                param_contributor[:contributor] = Array(param_contributor[:contributor])
+                param_contributor[:admin_set_id] = env.curation_concern.admin_set_id
+                param_contributor[:title] = env.attributes["title"]
 
-              if param_contributor[:id].blank?
-                param_contributor.delete(:id)
-                contributor = ::Contribution.new
-                if actor.create(Actors::Environment.new(contributor, env.current_ability, param_contributor))
-                  env.curation_concern.ordered_members << contributor
-                  env.curation_concern.save
+                if param_contributor[:id].blank?
+                  param_contributor.delete(:id)
+                  contributor = ::Contribution.new
+                  if actor.create(Actors::Environment.new(contributor, env.current_ability, param_contributor))
+                    env.curation_concern.ordered_members << contributor
+                    env.curation_concern.save
+                  end
+                elsif (contributor = Contribution.find(param_contributor[:id]))
+                  param_contributor.delete(:id)
+                  actor.update(Actors::Environment.new(contributor, env.current_ability, param_contributor))
                 end
-              elsif (contributor = Contribution.find(param_contributor[:id]))
-                param_contributor.delete(:id)
-                actor.update(Actors::Environment.new(contributor, env.current_ability, param_contributor))
               end
             end
           end
@@ -96,29 +99,35 @@ module Hyrax
         end
 
         def add_title_types(env)
-          title_type_service = TitleTypesService.new
-          fill_attributes_from_typed_values(title_type_service, env, env.attributes[:titles_with_types])
-          # Now that we're done with these attributes, remove them from the
-          # environment to avoid errors later in the save process.
-          env.attributes.delete(:titles_with_types)
+          if env.attributes[:titles_with_types].present?
+            title_type_service = TitleTypesService.new
+            fill_attributes_from_typed_values(title_type_service, env, env.attributes[:titles_with_types])
+            # Now that we're done with these attributes, remove them from the
+            # environment to avoid errors later in the save process.
+            env.attributes.delete(:titles_with_types)
+          end
         end
 
         def add_description_types(env)
-          description_type_service = DescriptionTypesService.new
-          fill_attributes_from_typed_values(description_type_service, env, env.attributes[:descriptions_with_types])
+          if env.attributes[:descriptions_with_types].present?
+            description_type_service = DescriptionTypesService.new
+            fill_attributes_from_typed_values(description_type_service, env, env.attributes[:descriptions_with_types])
 
-          # Now that we're done with these attributes, remove them from the
-          # environment to avoid errors later in the save process.
-          env.attributes.delete(:descriptions_with_types)
+            # Now that we're done with these attributes, remove them from the
+            # environment to avoid errors later in the save process.
+            env.attributes.delete(:descriptions_with_types)
+          end
         end
 
         def add_date_types(env)
-          date_type_service = DateTypesService.new
-          fill_attributes_from_typed_values(date_type_service, env, env.attributes[:dates_with_types])
+          if env.attributes[:dates_with_types].present?
+            date_type_service = DateTypesService.new
+            fill_attributes_from_typed_values(date_type_service, env, env.attributes[:dates_with_types])
 
-          # Now that we're done with these attributes, remove them from the
-          # environment to avoid errors later in the save process.
-          env.attributes.delete(:dates_with_types)
+            # Now that we're done with these attributes, remove them from the
+            # environment to avoid errors later in the save process.
+            env.attributes.delete(:dates_with_types)
+          end
         end
 
         # @param child of [AMS::TypedFieldService] type_service

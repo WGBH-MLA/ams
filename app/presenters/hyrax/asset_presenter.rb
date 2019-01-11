@@ -92,7 +92,7 @@ module Hyrax
       end
 
       def instantiation_have_essence_tracks(instantiation)
-        instantiation.fetch(:member_ids_ssim).size > 0
+        instantiation.fetch(:member_ids_ssim, []).size > 0
       end
 
       def instantiation_have_generation_proxy(instantiation)

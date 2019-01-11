@@ -1,5 +1,4 @@
 require 'pbcore'
-require 'ffaker'
 
 FactoryBot.define do
   factory :pbcore_audience_level, class: PBCore::AudienceLevel, parent: :pbcore_element do
