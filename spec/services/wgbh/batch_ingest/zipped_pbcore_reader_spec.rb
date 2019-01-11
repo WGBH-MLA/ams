@@ -4,27 +4,32 @@ require 'hyrax/batch_ingest/spec/shared_specs'
 
 RSpec.describe WGBH::BatchIngest::ZippedPBCoreReader do
   let(:reader_class) { described_class }
-  let (:source_location) { File.join(fixture_path, "sample_pbcore2_xml.zip") }
-  let (:invalid_source_location) { File.join(fixture_path, "sample_instantiation_valid.xml") }
+  # let (:source_location) { File.join(fixture_path, "sample_pbcore2_xml.zip") }
+  let(:source_location) { zip_to_tmp(File.join(fixture_path, "batch_ingest", "sample_pbcore2_xml")) }
+  let(:xml_file_name) { Dir.glob(File.join(fixture_path, "batch_ingest", "sample_pbcore2_xml", "*.xml")).first }
+  # Valid file, but not zipped.
+  let (:invalid_source_location) { File.expand_path(xml_file_name) }
   # Call the shared specs
   it_behaves_like 'a Hyrax::BatchIngest::BatchReader'
 
   describe "perform_read" do
-    let(:xml_file_name) { Zip::File.open(source_location).glob('*.xml').first.name }
+    # let(:xml_file_name) { Zip::File.open(source_location).glob('*.xml').first.name }
 
     context "when source location is valid" do
       subject { described_class.new(source_location) }
 
       it "extracts xml files into directory" do
         subject.read
-        File.directory?(subject.extraction_path).should be true
-        expect(File).to exist("#{subject.extraction_path}/#{xml_file_name}")
+        # NOTE: testing private method #extraction_path.
+        File.directory?(subject.send(:extraction_path)).should be true
+        unzipped_file_names = Dir.glob("#{subject.send(:extraction_path)}/**/*.xml").map { |f| File.basename(f) }
+        expect(unzipped_file_names).to include File.basename(xml_file_name)
       end
 
       it "creates batch items" do
         subject.read
         expect(subject.batch_items.size).to eq(1)
-        expect(subject.batch_items.first.id_within_batch).to eq(File.basename(xml_file_name,".*"))
+        expect(subject.batch_items.first.id_within_batch).to eq File.basename(xml_file_name)
       end
 
     end
