@@ -32,14 +32,13 @@ module WGBH
           attrs[:spatial_coverage]            = pbcore.coverages.select { |coverage| coverage.type.to_s.downcase.strip == "spatial" }.map(&:value)
           attrs[:temporal_coverage]           = pbcore.coverages.select { |coverage| coverage.type.to_s.downcase.strip == "temporal" }.map(&:value)
           attrs[:annotation]                  = pbcore.annotations.map(&:value)
-          attrs[:rights_summary]              = pbcore.rights_summary.map(&:value)
-          attrs[:rights_link]                 = pbcore.rights_link.map(&:value)
+          attrs[:rights_summary]              = pbcore.rights_summaries.map(&:rights_summary).map(&:value)
+          attrs[:rights_link]                 = pbcore.rights_summaries.map(&:rights_link).map(&:value)
           attrs[:local_identifier]            = pbcore.identifiers.select { |identifier| identifier.source.to_s.downcase == "local identifier" }.map(&:value)
           attrs[:pbs_nola_code]               = pbcore.identifiers.select { |identifier| identifier.source.to_s.downcase == "nola code" }.map(&:value)
           attrs[:eidr_id]                     = pbcore.identifiers.select { |identifier| identifier.source.to_s.downcase == "eidr" }.map(&:value)
           attrs[:topics]                      = pbcore.genres.select { |genre| genre.source.to_s.downcase == "aapb topical genre" }.map(&:value)
-          attrs[:subject]                     = pbcore.subject.map(&:value)
-          attrs[:contributions]               = pbcore.contributions
+          attrs[:subject]                     = pbcore.subjects.map(&:value)
         end
       end
 
