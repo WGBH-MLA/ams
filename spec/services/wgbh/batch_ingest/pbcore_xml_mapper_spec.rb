@@ -19,9 +19,9 @@ RSpec.describe WGBH::BatchIngest::PBCoreXMLMapper, :pbcore_xpath_helper do
     end
 
     let(:attrs_with_xpath_shortcuts) { attr_names - [:title, :description, :spatial_coverage, :temporal_coverage] }
+    let(:attrs) { subject.asset_attributes }
 
     it 'maps all attributes from PBCore XML' do
-      attrs = subject.asset_attributes
       # For each attribute in attr_names, make sure it has a that comes from
       # the PBCore XML factory.
       attr_names.each do |attr|
@@ -30,7 +30,6 @@ RSpec.describe WGBH::BatchIngest::PBCoreXMLMapper, :pbcore_xpath_helper do
     end
 
     it 'maps PBCore XML values to the correct attributes for AssetActor' do
-      attrs = subject.asset_attributes
 
       # For each attribute that has an xpath shortcut helper
       attrs_with_xpath_shortcuts.each do |attr|
@@ -40,6 +39,10 @@ RSpec.describe WGBH::BatchIngest::PBCoreXMLMapper, :pbcore_xpath_helper do
       # Check :title and :description separately with specific helpers.
       expect(attrs[:title]).to        eq pbcore_xpath_helper(pbcore_xml).titles_without_type
       expect(attrs[:description]).to  eq pbcore_xpath_helper(pbcore_xml).descriptions_without_type
+    end
+
+    it 'maps Contribution data from PBCore XML' do
+      expect(attrs[:contributors]).to eq pbcore_xpath_helper(pbcore_xml).contributors_attrs
     end
   end
 

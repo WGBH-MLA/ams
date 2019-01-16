@@ -66,6 +66,12 @@ FactoryBot.define do
         ]
       end
 
+      contributors do
+        [
+          build(:pbcore_contributor, :with_portrayal, :with_affiliation)
+        ]
+      end
+
     end
 
     initialize_with { new(attributes) }

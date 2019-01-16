@@ -8,6 +8,14 @@ FactoryBot.define do
     contributor { PBCore::Contributor::Contributor.new(value: Faker::FunnyName.two_word_name) }
     role { PBCore::Contributor::Role.new(value: Faker::Job.title)  }
 
+    trait :with_portrayal do
+      role { PBCore::Contributor::Role.new(value: Faker::Job.title, portrayal: Faker::GameOfThrones.character)  }      
+    end
+
+    trait :with_affiliation do
+      contributor { PBCore::Contributor::Contributor.new(value: Faker::FunnyName.two_word_name, affiliation: Faker::Company.name) }
+    end
+
     initialize_with { new(attributes) }
   end
 end
