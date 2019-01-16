@@ -116,9 +116,6 @@ module PBCoreXPathHelper
       - values_from_xpath(:episode_number)
     end
 
-    def spatial_coverages
-      c = values_from_xpath('//pbcoreCoverage')
-    end
 
     def dates_without_digitized_date_type
       values_from_xpath('//instantiationDate') - values_from_xpath(:digitization_date)
@@ -126,6 +123,17 @@ module PBCoreXPathHelper
 
     def local_instantiation_identifiers_without_ams_id
       values_from_xpath('//instantiationIdentifier') - values_from_xpath('//instantiationIdentifier[@source="ams"]')
+    end
+
+    def contributors_attrs
+      noko.xpath('//pbcoreContributor').map do |contributor|
+        {
+          contributor: contributor.xpath('//contributor').first.text,
+          affiliation: contributor.xpath('//contributor').first.attributes['affiliation'].value,
+          contributor_role: contributor.xpath('//contributorRole').first.text,
+          portrayal: contributor.xpath('//contributorRole').first.attributes['portrayal'].value,
+        }
+      end
     end
   end
 end
