@@ -27,7 +27,7 @@ module WGBH
           attrs[:raw_footage_description]     = pbcore.descriptions.select { |description| description.type.to_s.downcase.strip == "raw footage" }.map(&:value)
           attrs[:audience_level]              = pbcore.audience_levels.map(&:value)
           attrs[:audience_rating]             = pbcore.audience_ratings.map(&:value)
-          attrs[:asset_types]                 = pbcore.asset_types.map(&:value)
+          attrs[:asset_type]                  = pbcore.asset_types.map(&:value)
           attrs[:genre]                       = pbcore.genres.map(&:value)
           attrs[:spatial_coverage]            = pbcore.coverages.select { |coverage| coverage.type.value.downcase.strip == "spatial" }.map { |coverage| coverage.coverage.value }
           attrs[:temporal_coverage]           = pbcore.coverages.select { |coverage| coverage.type.value.downcase.strip == "temporal" }.map { |coverage| coverage.coverage.value }
@@ -37,7 +37,7 @@ module WGBH
           attrs[:local_identifier]            = pbcore.identifiers.select { |identifier| identifier.source.to_s.downcase == "local identifier" }.map(&:value)
           attrs[:pbs_nola_code]               = pbcore.identifiers.select { |identifier| ['nola code', 'nola'].include? identifier.source.to_s.downcase }.map(&:value)
           attrs[:eidr_id]                     = pbcore.identifiers.select { |identifier| identifier.source.to_s.downcase == "eidr" }.map(&:value)
-          attrs[:topics]                      = pbcore.genres.select { |genre| genre.source.to_s.downcase == "aapb topical genre" }.map(&:value)
+          attrs[:topic]                       = pbcore.genres.select { |genre| genre.source.to_s.downcase == "aapb topical genre" }.map(&:value)
           attrs[:subject]                     = pbcore.subjects.map(&:value)
         end
       end
