@@ -274,6 +274,8 @@ GEM
     factory_bot_rails (4.11.1)
       factory_bot (~> 4.11.1)
       railties (>= 3.0.0)
+    faker (1.9.1)
+      i18n (>= 0.7)
     faraday (0.12.2)
       multipart-post (>= 1.2, < 3)
     faraday-encoding (0.0.4)
@@ -546,7 +548,7 @@ GEM
     noid-rails (3.0.1)
       actionpack (>= 5.0.0, < 6)
       noid (~> 0.9)
-    nokogiri (1.9.1)
+    nokogiri (1.10.1)
       mini_portile2 (~> 2.4.0)
     nokogumbo (1.5.0)
       nokogiri
@@ -901,6 +903,7 @@ DEPENDENCIES
   devise-guests (~> 0.6)
   dotenv-rails
   factory_bot_rails (~> 4.0)
+  faker
   fcrepo_wrapper
   hydra-role-management
   hyrax (~> 2.4.0)
