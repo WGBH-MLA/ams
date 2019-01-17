@@ -1,0 +1,113 @@
+module PBCoreXPathHelper
+
+  def pbcore_values_from_xpath(pbcore_xml, *xpaths)
+    pbcore_xpath_helper(pbcore_xml).values_from_xpath(*xpaths)
+  end
+
+  def pbcore_xpath_helper(pbcore_xml)
+    unless @pbcore_xpath_helper && @pbcore_xpath_helper.pbcore_xml == pbcore_xml
+      @pbcore_xpath_helper = Helper.new(pbcore_xml)
+    end
+    @pbcore_xpath_helper
+  end
+
+  class Helper
+    attr_reader :pbcore_xml
+    def initialize(pbcore_xml)
+      @pbcore_xml = pbcore_xml
+    end
+
+    def noko
+      @noko ||= Nokogiri::XML(pbcore_xml).remove_namespaces!
+    end
+
+    def values_from_xpath(*xpaths)
+      # Convert args that are symbols to the xpaths given in xpath_presets
+      xpaths = xpaths.map do |xp|
+        if xp.is_a? Symbol
+          raise ArgumentError, "No xpath preset for :#{xp}" unless xpath_presets.key? xp
+          xpath_presets[xp]
+        else
+          xp
+        end
+      end
+      # Flatten xpaths to a 1-dimension array.
+      # Map the xpath strings to the Nokogiri nodes found.
+      # Filter out empty results.
+      # Flatten again, to get a flat array of Nokogiri nodes.
+      # Fially, map to #text (i.e. the value within the xml node).
+      xpaths.flatten.map { |xp| noko.xpath(xp) }.select { |found| found.count > 0 }.flatten.map(&:text).map(&:strip)
+    end
+
+    def xpath_presets
+      @xpath_presets ||= {
+        program_title:              '//pbcoreTitle[@titleType="Program"]',
+        episode_title:              '//pbcoreTitle[@titleType="Episode" or @titleType="Episode Title"]',
+        segment_title:              '//pbcoreTitle[@titleType="Segment"]',
+        clip_title:                 '//pbcoreTitle[@titleType="Clip"]',
+        promo_title:                '//pbcoreTitle[@titleType="Promo"]',
+        raw_footage_title:          '//pbcoreTitle[@titleType="Raw Footage"]',
+        episode_number:             '//pbcoreTitle[@titleType="Episode Number"]',
+        description:                '//pbcoreDescription[@descriptionType="Program"]',
+        program_description:        '//pbcoreDescription[@descriptionType="Program"]',
+        episode_description:        '//pbcoreDescription[@descriptionType="Episode" or @descriptionType="Episode Description"]',
+        segment_description:        '//pbcoreDescription[@descriptionType="Segment"]',
+        clip_description:           '//pbcoreDescription[@descriptionType="Clip"]',
+        promo_description:          '//pbcoreDescription[@descriptionType="Promo"]',
+        raw_footage_description:    '//pbcoreDescription[@descriptionType="Raw Footage"]',
+        audience_level:             '//pbcoreAudienceLevel',
+        audience_rating:            '//pbcoreAudienceRating',
+        asset_types:                '//pbcoreAssetType',
+        genre:                      '//pbcoreGenre',
+        annotation:                 '//pbcoreAnnotation',
+        rights_summary:             '//pbcoreRightsSummary/rightsSummary',
+        rights_link:                '//pbcoreRightsSummary/rightsLink',
+        local_identifier:           '//pbcoreIdentifier[@source="Local Identifier"]',
+        pbs_nola_code:              '//pbcoreIdentifier[@source="NOLA"]',
+        eidr_id:                    '//pbcoreIdentifier[@source="EIDR"]',
+        topics:                     '//pbcoreGenre[@source="AAPB Topical Genre"]',
+        subject:                    '//pbcoreSubject'
+      }
+    end
+
+    # Shortcut method to pull out all titles that don't match the other title
+    # types.
+    # Usage: In your spec, do this..
+    #   pbcore_xpath_helper(pbcore_xml).titles_without_type
+    def titles_without_type
+      values_from_xpath('//pbcoreTitle') \
+      - values_from_xpath(:program_title) \
+      - values_from_xpath(:episode_title) \
+      - values_from_xpath(:segment_title) \
+      - values_from_xpath(:clip_title) \
+      - values_from_xpath(:promo_title) \
+      - values_from_xpath(:raw_footage_title) \
+      - values_from_xpath(:episode_number)
+    end
+
+    # Shortcut method to pull out all descriptions that don't match the other description
+    # types.
+    # Usage: In your spec, do this..
+    #   pbcore_xpath_helper(pbcore_xml).descriptions_without_type
+    def descriptions_without_type
+      values_from_xpath('//pbcoreDescription') \
+      - values_from_xpath(:program_description) \
+      - values_from_xpath(:episode_description) \
+      - values_from_xpath(:segment_description) \
+      - values_from_xpath(:clip_description) \
+      - values_from_xpath(:promo_description) \
+      - values_from_xpath(:raw_footage_description) \
+      - values_from_xpath(:episode_number)
+    end
+
+    def spatial_coverages
+      c = values_from_xpath('//pbcoreCoverage')
+    end
+  end
+end
+
+# Include the helper if the :pbcore_xpath_helpers flag is set on the context
+# or example.
+RSpec.configure do |config|
+  config.include PBCoreXPathHelper, :pbcore_xpath_helper
+end
