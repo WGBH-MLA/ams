@@ -44,22 +44,27 @@ module WGBH
 
       def physical_instantiation_attributes
         @physical_instantiation_attributes ||= {}.tap do |attrs|
-        attrs[:date]                          = pbcore.dates.select { |date| date.type.to_s.downcase.strip != "digitized" }.map(&:value)
-        attrs[:digitization_date]             = pbcore.dates.select { |date| date.type.to_s.downcase.strip == "digitized" }.first.value
-        attrs[:dimensions]                    = pbcore.dimensions.map(&:value)
+          attrs[:date]                          = pbcore.dates.select { |date| date.type.to_s.downcase.strip != "digitized" }.map(&:value)
+          attrs[:digitization_date]             = pbcore.dates.select { |date| date.type.to_s.downcase.strip == "digitized" }.first.value
+          attrs[:dimensions]                    = pbcore.dimensions.map(&:value)
 
-        # format is multivalued on Physical Instantiation but
-        # instantiationPhysical is a single element in the pbcore gem
-        attrs[:format]                        = [ pbcore.physical.value || nil ]
-        attrs[:standard]                      = pbcore.standard.value || nil
-        attrs[:location]                      = pbcore.location.value || nil
-        attrs[:media_type]                    = pbcore.media_type.value || nil
-        attrs[:generations]                   = pbcore.generations.map(&:value)
-        attrs[:time_start]                    = pbcore.time_start.value || nil
-        attrs[:duration]                      = pbcore.duration.value || nil
-        attrs[:colors]                        = pbcore.colors.value || nil
-        attrs[:rights_summary]                = pbcore.rights_summaries.map(&:rights_summary).map(&:value)
-        attrs[:rights_link]                   = pbcore.rights_summaries.map(&:rights_link).map(&:value)
+          # format is multivalued on PhysicalInstantiation in AMS but
+          # instantiationPhysical is a single element in the pbcore gem
+          attrs[:format]                        = [ pbcore.physical.value || nil ]
+          attrs[:standard]                      = pbcore.standard.value || nil
+          attrs[:location]                      = pbcore.location.value || nil
+          attrs[:media_type]                    = pbcore.media_type.value || nil
+          attrs[:generations]                   = pbcore.generations.map(&:value)
+          attrs[:time_start]                    = pbcore.time_start.value || nil
+          attrs[:duration]                      = pbcore.duration.value || nil
+          attrs[:colors]                        = pbcore.colors.value || nil
+          attrs[:rights_summary]                = pbcore.rights.rights_summaries.map(&:rights_summary).map(&:value)
+          attrs[:rights_link]                   = pbcore.rights.rights_summaries.map(&:rights_link).map(&:value)
+          attrs[:local_instantiation_identifer] = pbcore.identifiers.select { |identifier| identifier.source.to_s.downcase.strip != "ams" }.map(&:value)
+          attrs[:tracks]                        = pbcore.tracks.value || nil
+          attrs[:channel_configuration]         = pbcore.channel_configuration.value || nil
+          attrs[:alternative_modes]             = pbcore.alternative_modes.value || nil
+        end
       end
 
       private
