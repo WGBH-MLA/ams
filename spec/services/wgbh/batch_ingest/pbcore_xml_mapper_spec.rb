@@ -7,8 +7,7 @@ RSpec.describe WGBH::BatchIngest::PBCoreXMLMapper do
 
   describe '#physical_instantiation_attributes' do
     it 'maps the attributes correctly' do
-      require 'pry'; binding.pry
-      expect{ mapper.physical_instantiation_attributes }
+      expect { mapper.physical_instantiation_attributes }.to_not raise_error
     end
   end
 end
