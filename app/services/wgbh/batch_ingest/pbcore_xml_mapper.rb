@@ -55,11 +55,11 @@ module WGBH
           attrs[:location]                      = pbcore.location.value || nil
           attrs[:media_type]                    = pbcore.media_type.value || nil
           attrs[:generations]                   = pbcore.generations.map(&:value)
-          attrs[:time_start]                    = pbcore.time_start.value || nil
+          attrs[:time_start]                    = pbcore.time_starts.map(&:value)
           attrs[:duration]                      = pbcore.duration.value || nil
           attrs[:colors]                        = pbcore.colors.value || nil
-          attrs[:rights_summary]                = pbcore.rights.rights_summaries.map(&:rights_summary).map(&:value)
-          attrs[:rights_link]                   = pbcore.rights.rights_summaries.map(&:rights_link).map(&:value)
+          attrs[:rights_summary]                = pbcore.rights.map(&:rights_summary).map(&:value)
+          attrs[:rights_link]                   = pbcore.rights.map(&:rights_link).map(&:value)
           attrs[:local_instantiation_identifer] = pbcore.identifiers.select { |identifier| identifier.source.to_s.downcase.strip != "ams" }.map(&:value)
           attrs[:tracks]                        = pbcore.tracks.value || nil
           attrs[:channel_configuration]         = pbcore.channel_configuration.value || nil
