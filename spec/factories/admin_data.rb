@@ -10,5 +10,8 @@ FactoryBot.define do
     trait :no_sony_ci_id do
       sonyci_id { [] }
     end
+    trait :one_sony_ci_id do
+      sonyci_id {["Sony-1"] }
+    end
   end
 end
