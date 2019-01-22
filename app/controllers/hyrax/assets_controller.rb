@@ -14,5 +14,23 @@ module Hyrax
 
     # Use this line if you want to use a custom presenter
     self.show_presenter = Hyrax::AssetPresenter
+
+    def download_media
+      respond_to do |format|
+        format.zip {
+          export_data = AMS::MediaDownload::MediaDownloadService.new(solr_document)
+          export_data.process do
+            export_file = File.read(export_data.file_path)
+            send_data export_file, :type => 'application/zip', :filename => "#{export_data.filename}"
+          end
+        }
+      end
+    end
+
+    private
+
+    def solr_document
+      ::SolrDocument.find(presenter.id)
+    end
   end
 end
