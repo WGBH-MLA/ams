@@ -27,7 +27,7 @@ module WGBH
           attrs[:raw_footage_description]     = pbcore.descriptions.select { |description| description.type.to_s.downcase.strip == "raw footage" }.map(&:value)
           attrs[:audience_level]              = pbcore.audience_levels.map(&:value)
           attrs[:audience_rating]             = pbcore.audience_ratings.map(&:value)
-          attrs[:asset_type]                  = pbcore.asset_types.map(&:value)
+          attrs[:asset_types]                 = pbcore.asset_types.map(&:value)
           attrs[:genre]                       = pbcore.genres.map(&:value)
           attrs[:spatial_coverage]            = pbcore.coverages.select { |coverage| coverage.type.value.downcase.strip == "spatial" }.map { |coverage| coverage.coverage.value }
           attrs[:temporal_coverage]           = pbcore.coverages.select { |coverage| coverage.type.value.downcase.strip == "temporal" }.map { |coverage| coverage.coverage.value }
@@ -37,33 +37,30 @@ module WGBH
           attrs[:local_identifier]            = pbcore.identifiers.select { |identifier| identifier.source.to_s.downcase == "local identifier" }.map(&:value)
           attrs[:pbs_nola_code]               = pbcore.identifiers.select { |identifier| ['nola code', 'nola'].include? identifier.source.to_s.downcase }.map(&:value)
           attrs[:eidr_id]                     = pbcore.identifiers.select { |identifier| identifier.source.to_s.downcase == "eidr" }.map(&:value)
-          attrs[:topic]                       = pbcore.genres.select { |genre| genre.source.to_s.downcase == "aapb topical genre" }.map(&:value)
+          attrs[:topics]                      = pbcore.genres.select { |genre| genre.source.to_s.downcase == "aapb topical genre" }.map(&:value)
           attrs[:subject]                     = pbcore.subjects.map(&:value)
         end
       end
 
       def physical_instantiation_attributes
         @physical_instantiation_attributes ||= {}.tap do |attrs|
-          attrs[:date]                          = pbcore.dates.select { |date| date.type.to_s.downcase.strip != "digitized" }.map(&:value)
-          attrs[:digitization_date]             = pbcore.dates.select { |date| date.type.to_s.downcase.strip == "digitized" }.first.value
-          attrs[:dimensions]                    = pbcore.dimensions.map(&:value)
-
-          # format is multivalued on PhysicalInstantiation in AMS but
-          # instantiationPhysical is a single element in the pbcore gem
-          attrs[:format]                        = [ pbcore.physical.value || nil ]
-          attrs[:standard]                      = pbcore.standard.value || nil
-          attrs[:location]                      = pbcore.location.value || nil
-          attrs[:media_type]                    = pbcore.media_type.value || nil
-          attrs[:generations]                   = pbcore.generations.map(&:value)
-          attrs[:time_start]                    = pbcore.time_starts.map(&:value)
-          attrs[:duration]                      = pbcore.duration.value || nil
-          attrs[:colors]                        = pbcore.colors.value || nil
-          attrs[:rights_summary]                = pbcore.rights.map(&:rights_summary).map(&:value)
-          attrs[:rights_link]                   = pbcore.rights.map(&:rights_link).map(&:value)
-          attrs[:local_instantiation_identifer] = pbcore.identifiers.select { |identifier| identifier.source.to_s.downcase.strip != "ams" }.map(&:value)
-          attrs[:tracks]                        = pbcore.tracks.value || nil
-          attrs[:channel_configuration]         = pbcore.channel_configuration.value || nil
-          attrs[:alternative_modes]             = pbcore.alternative_modes.value || nil
+          attrs[:date]                            = pbcore.dates.select { |date| date.type.to_s.downcase.strip != "digitized" }.map(&:value)
+          attrs[:digitization_date]               = pbcore.dates.select { |date| date.type.to_s.downcase.strip == "digitized" }.first.value
+          attrs[:dimensions]                      = pbcore.dimensions.map(&:value)
+          attrs[:standard]                        = pbcore.standard.value || nil
+          attrs[:format]                          = pbcore.physical.value || nil
+          attrs[:location]                        = pbcore.location.value || nil
+          attrs[:media_type]                      = pbcore.media_type.value || nil
+          attrs[:generations]                     = pbcore.generations.map(&:value)
+          attrs[:time_start]                      = pbcore.time_starts.map(&:value)
+          attrs[:duration]                        = pbcore.duration.value || nil
+          attrs[:colors]                          = pbcore.colors.value || nil
+          attrs[:instantiation_rights_summary]    = pbcore.rights.map(&:rights_summary).map(&:value)
+          attrs[:instantiation_rights_link]       = pbcore.rights.map(&:rights_link).map(&:value)
+          attrs[:local_instantiation_identifier]  = pbcore.identifiers.select { |identifier| identifier.source.to_s.downcase.strip != "ams" }.map(&:value)
+          attrs[:tracks]                          = pbcore.tracks.value || nil
+          attrs[:channel_configuration]           = pbcore.channel_configuration.value || nil
+          attrs[:alternative_modes]               = pbcore.alternative_modes.value || nil
         end
       end
 
