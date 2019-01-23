@@ -29,13 +29,13 @@ module WGBH
           attrs[:audience_rating]             = pbcore.audience_ratings.map(&:value)
           attrs[:asset_types]                 = pbcore.asset_types.map(&:value)
           attrs[:genre]                       = pbcore.genres.map(&:value)
-          attrs[:spatial_coverage]            = pbcore.coverages.select { |coverage| coverage.type.to_s.downcase.strip == "spatial" }.map(&:value)
-          attrs[:temporal_coverage]           = pbcore.coverages.select { |coverage| coverage.type.to_s.downcase.strip == "temporal" }.map(&:value)
+          attrs[:spatial_coverage]            = pbcore.coverages.select { |coverage| coverage.type.value.downcase.strip == "spatial" }.map { |coverage| coverage.coverage.value }
+          attrs[:temporal_coverage]           = pbcore.coverages.select { |coverage| coverage.type.value.downcase.strip == "temporal" }.map { |coverage| coverage.coverage.value }
           attrs[:annotation]                  = pbcore.annotations.map(&:value)
-          attrs[:rights_summary]              = pbcore.rights_summaries.map(&:rights_summary).map(&:value)
-          attrs[:rights_link]                 = pbcore.rights_summaries.map(&:rights_link).map(&:value)
+          attrs[:rights_summary]              = pbcore.rights_summaries.map(&:rights_summary).compact.map(&:value)
+          attrs[:rights_link]                 = pbcore.rights_summaries.map(&:rights_link).compact.map(&:value)
           attrs[:local_identifier]            = pbcore.identifiers.select { |identifier| identifier.source.to_s.downcase == "local identifier" }.map(&:value)
-          attrs[:pbs_nola_code]               = pbcore.identifiers.select { |identifier| identifier.source.to_s.downcase == "nola code" }.map(&:value)
+          attrs[:pbs_nola_code]               = pbcore.identifiers.select { |identifier| ['nola code', 'nola'].include? identifier.source.to_s.downcase }.map(&:value)
           attrs[:eidr_id]                     = pbcore.identifiers.select { |identifier| identifier.source.to_s.downcase == "eidr" }.map(&:value)
           attrs[:topics]                      = pbcore.genres.select { |genre| genre.source.to_s.downcase == "aapb topical genre" }.map(&:value)
           attrs[:subject]                     = pbcore.subjects.map(&:value)
@@ -93,7 +93,7 @@ module WGBH
         end
 
         def title_types
-          @title_types ||= ['program', 'episode', 'episode_title', 'episode_number', 'segment', 'clip', 'promo', 'raw footage']
+          @title_types ||= ['program', 'episode', 'episode title', 'episode number', 'segment', 'clip', 'promo', 'raw footage']
         end
     end
   end
