@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20181115174438) do
+ActiveRecord::Schema.define(version: 20181213114335) do
 
   create_table "admin_data", force: :cascade do |t|
     t.string "level_of_user_access"
@@ -177,6 +177,13 @@ ActiveRecord::Schema.define(version: 20181115174438) do
   create_table "hyrax_features", force: :cascade do |t|
     t.string "key", null: false
     t.boolean "enabled", default: false, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "instantiation_admin_data", force: :cascade do |t|
+    t.string "aapb_preservation_lto"
+    t.string "aapb_preservation_disk"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end

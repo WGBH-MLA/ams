@@ -26,5 +26,23 @@ FactoryBot.define do
     trait :sound do
       media_type { "Sound" }
     end
+
+    transient do
+      # Pass in InstantiationAdminData.gid or it will create one for you!
+      with_instantiation_admin_data { false }
+    end
+
+
+    after(:build) do |work, evaluator|
+
+      if evaluator.with_instantiation_admin_data
+        attributes = {}
+        work.instantiation_admin_data_gid = evaluator.with_instantiation_admin_data if !work.instantiation_admin_data_gid.present?
+      else
+        instantiation_admin_data = create(:instantiation_admin_data)
+        work.instantiation_admin_data_gid = instantiation_admin_data.gid
+        work.save
+      end
+    end
   end
 end
