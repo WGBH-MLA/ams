@@ -8,7 +8,7 @@ FactoryBot.define do
     value { Faker::Date.backward(14) }
 
     trait :digitized do
-      type { "digitized" }
+      type { "Digitized" }
     end
 
     initialize_with { new(attributes) }
