@@ -31,7 +31,7 @@ class PhysicalInstantiation < ActiveFedora::Base
     index.as :stored_searchable
   end
 
-  property :standard, predicate: ::RDF::URI.new("http://www.ebu.ch/metadata/ontologies/ebucore/ebucore#hasStandard"), multiple: true do |index|
+  property :standard, predicate: ::RDF::URI.new("http://www.ebu.ch/metadata/ontologies/ebucore/ebucore#hasStandard"), multiple: false do |index|
     index.as :stored_searchable
   end
 
@@ -47,7 +47,7 @@ class PhysicalInstantiation < ActiveFedora::Base
     index.as :stored_searchable, :facetable
   end
 
-  property :time_start, predicate: ::RDF::URI.new("http://www.ebu.ch/metadata/ontologies/ebucore/ebucore#start"), multiple: false do |index|
+  property :time_start, predicate: ::RDF::URI.new("http://www.ebu.ch/metadata/ontologies/ebucore/ebucore#start"), multiple: true do |index|
     index.as :stored_searchable
   end
 
@@ -83,7 +83,7 @@ class PhysicalInstantiation < ActiveFedora::Base
     index.as :stored_searchable
   end
 
-  property :alternative_modes, predicate: ::RDF::URI.new("http://pbcore.org#hasAlternativeModes"), multiple: true do |index|
+  property :alternative_modes, predicate: ::RDF::URI.new("http://pbcore.org#hasAlternativeModes"), multiple: false do |index|
     index.as :stored_searchable
   end
 

@@ -42,7 +42,7 @@ RSpec.describe PhysicalInstantiation do
   context "standard" do
     let(:physical_instantiation) { FactoryBot.build(:physical_instantiation) }
     it "has standard" do
-      physical_instantiation.standard = ["Test standard"]
+      physical_instantiation.standard = "Test standard"
       expect(physical_instantiation.resource.dump(:ttl)).to match(/ebucore#hasStandard/)
       expect(physical_instantiation.standard.include?("Test standard")).to be true
     end
@@ -78,7 +78,7 @@ RSpec.describe PhysicalInstantiation do
   context "time_start" do
     let(:physical_instantiation) { FactoryBot.build(:physical_instantiation) }
     it "has time_start" do
-      physical_instantiation.time_start = "Test time_start"
+      physical_instantiation.time_start = ["Test time_start"]
       expect(physical_instantiation.resource.dump(:ttl)).to match(/ebucore#start/)
       expect(physical_instantiation.time_start.include?("Test time_start")).to be true
     end
@@ -159,7 +159,7 @@ RSpec.describe PhysicalInstantiation do
   context "alternative_modes" do
     let(:physical_instantiation) { FactoryBot.build(:physical_instantiation) }
     it "has alternative_modes" do
-      physical_instantiation.alternative_modes = ["Test alternative_modes"]
+      physical_instantiation.alternative_modes = "Test alternative_modes"
       expect(physical_instantiation.resource.dump(:ttl)).to match(/pbcore.org#hasAlternativeModes/)
       expect(physical_instantiation.alternative_modes.include?("Test alternative_modes")).to be true
     end
