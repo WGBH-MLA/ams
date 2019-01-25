@@ -143,7 +143,7 @@ class CatalogController < ApplicationController
     config.add_show_field solr_name("sonyci_id", :stored_searchable)
 
     #from instantiation model
-    config.add_show_field solr_name("local_instantiation_identifer", :stored_searchable)
+    config.add_show_field solr_name("local_instantiation_identifier", :stored_searchable)
     config.add_show_field solr_name("holding_organization", :stored_searchable)
 
     #from contribution
@@ -431,8 +431,8 @@ class CatalogController < ApplicationController
       }
     end
 
-    config.add_search_field('local_instantiation_identifer') do |field|
-      solr_name = solr_name("local_instantiation_identifer", :stored_searchable)
+    config.add_search_field('local_instantiation_identifier') do |field|
+      solr_name = solr_name("local_instantiation_identifier", :stored_searchable)
       field.solr_local_parameters = {
           qf: solr_name,
           pf: solr_name
