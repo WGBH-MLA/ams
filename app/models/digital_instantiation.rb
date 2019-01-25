@@ -2,6 +2,8 @@
 #  `rails generate hyrax:work DigitalInstantiation`
 require 'carrierwave/validations/active_model'
 class DigitalInstantiation < ActiveFedora::Base
+  attr_accessor :skip_file_upload_validation
+
   include ::Hyrax::WorkBehavior
   include ::AMS::CreateMemberMethods
 
@@ -34,7 +36,7 @@ class DigitalInstantiation < ActiveFedora::Base
       schema.validate(document).each do |error|
         errors.add(:digital_instantiation_pbcore_xml, error.message)
       end
-    elsif self.new_record?
+    elsif self.new_record? && !skip_file_upload_validation
       errors.add(:digital_instantiation_pbcore_xml,"Please select pbcore xml document")
     end
   end
@@ -111,7 +113,7 @@ class DigitalInstantiation < ActiveFedora::Base
     index.as :stored_searchable
   end
 
-  property :alternative_modes, predicate: ::RDF::URI.new("http://pbcore.org#hasAlternativeModes"), multiple: true do |index|
+  property :alternative_modes, predicate: ::RDF::URI.new("http://pbcore.org#hasAlternativeModes"), multiple: false do |index|
     index.as :stored_searchable
   end
 
@@ -123,7 +125,7 @@ class DigitalInstantiation < ActiveFedora::Base
     index.as :symbol
   end
 
-  
+
 
   def instantiation_admin_data_gid=(new_instantiation_admin_data_gid)
     raise "Can't modify admin data of this asset" if persisted? && !instantiation_admin_data_gid_was.nil? && instantiation_admin_data_gid_was != new_instantiation_admin_data_gid
