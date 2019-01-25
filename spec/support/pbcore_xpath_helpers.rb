@@ -41,32 +41,48 @@ module PBCoreXPathHelper
 
     def xpath_presets
       @xpath_presets ||= {
-        program_title:              '//pbcoreTitle[@titleType="Program"]',
-        episode_title:              '//pbcoreTitle[@titleType="Episode" or @titleType="Episode Title"]',
-        segment_title:              '//pbcoreTitle[@titleType="Segment"]',
-        clip_title:                 '//pbcoreTitle[@titleType="Clip"]',
-        promo_title:                '//pbcoreTitle[@titleType="Promo"]',
-        raw_footage_title:          '//pbcoreTitle[@titleType="Raw Footage"]',
-        episode_number:             '//pbcoreTitle[@titleType="Episode Number"]',
-        description:                '//pbcoreDescription[@descriptionType="Program"]',
-        program_description:        '//pbcoreDescription[@descriptionType="Program"]',
-        episode_description:        '//pbcoreDescription[@descriptionType="Episode" or @descriptionType="Episode Description"]',
-        segment_description:        '//pbcoreDescription[@descriptionType="Segment"]',
-        clip_description:           '//pbcoreDescription[@descriptionType="Clip"]',
-        promo_description:          '//pbcoreDescription[@descriptionType="Promo"]',
-        raw_footage_description:    '//pbcoreDescription[@descriptionType="Raw Footage"]',
-        audience_level:             '//pbcoreAudienceLevel',
-        audience_rating:            '//pbcoreAudienceRating',
-        asset_types:                '//pbcoreAssetType',
-        genre:                      '//pbcoreGenre',
-        annotation:                 '//pbcoreAnnotation',
-        rights_summary:             '//pbcoreRightsSummary/rightsSummary',
-        rights_link:                '//pbcoreRightsSummary/rightsLink',
-        local_identifier:           '//pbcoreIdentifier[@source="Local Identifier"]',
-        pbs_nola_code:              '//pbcoreIdentifier[@source="NOLA"]',
-        eidr_id:                    '//pbcoreIdentifier[@source="EIDR"]',
-        topics:                     '//pbcoreGenre[@source="AAPB Topical Genre"]',
-        subject:                    '//pbcoreSubject'
+        program_title:                  '//pbcoreTitle[@titleType="Program"]',
+        episode_title:                  '//pbcoreTitle[@titleType="Episode" or @titleType="Episode Title"]',
+        segment_title:                  '//pbcoreTitle[@titleType="Segment"]',
+        clip_title:                     '//pbcoreTitle[@titleType="Clip"]',
+        promo_title:                    '//pbcoreTitle[@titleType="Promo"]',
+        raw_footage_title:              '//pbcoreTitle[@titleType="Raw Footage"]',
+        episode_number:                 '//pbcoreTitle[@titleType="Episode Number"]',
+        description:                    '//pbcoreDescription[@descriptionType="Program"]',
+        program_description:            '//pbcoreDescription[@descriptionType="Program"]',
+        episode_description:            '//pbcoreDescription[@descriptionType="Episode" or @descriptionType="Episode Description"]',
+        segment_description:            '//pbcoreDescription[@descriptionType="Segment"]',
+        clip_description:               '//pbcoreDescription[@descriptionType="Clip"]',
+        promo_description:              '//pbcoreDescription[@descriptionType="Promo"]',
+        raw_footage_description:        '//pbcoreDescription[@descriptionType="Raw Footage"]',
+        audience_level:                 '//pbcoreAudienceLevel',
+        audience_rating:                '//pbcoreAudienceRating',
+        asset_types:                    '//pbcoreAssetType',
+        genre:                          '//pbcoreGenre',
+        annotation:                     '//pbcoreAnnotation',
+        rights_summary:                 '//pbcoreRightsSummary/rightsSummary',
+        rights_link:                    '//pbcoreRightsSummary/rightsLink',
+        local_identifier:               '//pbcoreIdentifier[@source="Local Identifier"]',
+        pbs_nola_code:                  '//pbcoreIdentifier[@source="NOLA"]',
+        eidr_id:                        '//pbcoreIdentifier[@source="EIDR"]',
+        topics:                         '//pbcoreGenre[@source="AAPB Topical Genre"]',
+        subject:                        '//pbcoreSubject',
+        dimensions:                     '//instantiationDimensions',
+        standard:                       '//instantiationStandard',
+        generations:                    '//instantiationGenerations',
+        time_start:                     '//instantiationTimeStart',
+        local_instantiation_identifier: '//instantiationIdentifier',
+        alternative_modes:              '//instantiationAlternativeModes',
+        instantiation_rights_summary:   '//instantiationRights/rightsSummary',
+        instantiation_rights_link:      '//instantiationRights/rightsLink',
+        format:                         '//instantiationPhysical',
+        location:                       '//instantiationLocation',
+        media_type:                     '//instantiationMediaType',
+        duration:                       '//instantiationDuration',
+        colors:                         '//instantiationColors',
+        tracks:                         '//instantiationTracks',
+        channel_configuration:          '//instantiationChannelConfiguration',
+        digitization_date:              '//instantiationDate[@dateType="Digitized"]'
       }
     end
 
@@ -102,6 +118,14 @@ module PBCoreXPathHelper
 
     def spatial_coverages
       c = values_from_xpath('//pbcoreCoverage')
+    end
+
+    def dates_without_digitized_date_type
+      values_from_xpath('//instantiationDate') - values_from_xpath(:digitization_date)
+    end
+
+    def local_instantiation_identifiers_without_ams_id
+      values_from_xpath('//instantiationIdentifier') - values_from_xpath('//instantiationIdentifier[@source="ams"]')
     end
   end
 end
