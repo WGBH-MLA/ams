@@ -39,6 +39,18 @@ module WGBH
           attrs[:eidr_id]                     = pbcore.identifiers.select { |identifier| identifier.source.to_s.downcase == "eidr" }.map(&:value)
           attrs[:topics]                      = pbcore.genres.select { |genre| genre.source.to_s.downcase == "aapb topical genre" }.map(&:value)
           attrs[:subject]                     = pbcore.subjects.map(&:value)
+          attrs[:contributors]                = contributor_attributes(pbcore.contributors)
+        end
+      end
+
+      def contributor_attributes(contributors)
+        contributors.map do |contributor_node|
+          {
+            contributor: (contributor_node.contributor.value if contributor_node.contributor),
+            contributor_role: (contributor_node.role.value if contributor_node.role),
+            affiliation: (contributor_node.contributor.affiliation if contributor_node.contributor),
+            portrayal: (contributor_node.role.portrayal if contributor_node.role),
+          }
         end
       end
 

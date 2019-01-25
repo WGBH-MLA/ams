@@ -53,7 +53,6 @@ RSpec.feature "Ingest: AAPB PBCore - Zipped" do
     end
 
     xit "shows Batch record with accurate information"
-
     xit "successfully ingests DigitalInstantiationn records"
     xit "successfully ingests PhysicalInstantiation records"
     xit "successfully ingests EssenceTrack records"

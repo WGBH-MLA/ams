@@ -10,4 +10,24 @@ RSpec.describe WGBH::BatchIngest::PBCoreXMLItemIngester do
   let(:batch_item) { build(:batch_item, batch: batch, source_location: sample_source_location)}
 
   it_behaves_like "a Hyrax::BatchIngest::BatchItemIngester"
+
+  context 'given an Asset with Contribution data' do
+    subject { described_class.new(batch_item) }
+    let(:aapb_identifier) { build(:pbcore_identifier, :aapb) }
+    let(:contributors) { build_list(:pbcore_contributor, 5) }
+    let(:pbcore_description_document) { build(:pbcore_description_document,
+                                              identifiers: [ aapb_identifier ],
+                                              contributors: contributors ) }
+    let(:pbcore_xml) { pbcore_description_document.to_xml }
+    let(:batch_item) { build(:batch_item, batch: batch, source_location: nil, source_data: pbcore_xml)}
+
+    before do
+      @asset = subject.ingest
+    end
+
+    it 'ingests the Asset and the Contributions' do
+      contributions = @asset.members.select { |member| member.is_a? Contribution }
+      expect(contributions.count).to eq 5
+    end
+  end
 end

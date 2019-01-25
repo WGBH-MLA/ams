@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/WGBH-MLA/pbcore
-  revision: d7928719a82c93bfb29f7ff9506e33c180e1b2d2
+  revision: 624c5fb7782a49ffe4adb12dc48e7961ce2da274
   specs:
     pbcore (0.1.0)
       nokogiri
