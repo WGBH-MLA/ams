@@ -197,8 +197,8 @@ class SolrDocument
     self[Solrizer.solr_name('subject')]
   end
 
-  def local_instantiation_identifer
-    self[Solrizer.solr_name('local_instantiation_identifer')]
+  def local_instantiation_identifier
+    self[Solrizer.solr_name('local_instantiation_identifier')]
   end
 
   def tracks

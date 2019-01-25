@@ -154,7 +154,7 @@ module AMS::PbcoreXmlExportExtension
       instantiation.rights_summary.to_a.each { |rights_summary| instantiation_node.rightsSummary { instantiation_node.cdata(rights_summary) } }
       instantiation.rights_link.to_a.each { |rights_link|  instantiation_node.rightsLink { instantiation_node.text(rights_link) } }
       instantiation.annotation.to_a.each { |annTxt| instantiation_node.pbcoreAnnotation { instantiation_node.cdata(annTxt) } }
-      instantiation.local_instantiation_identifer.to_a.each { |local_instantiation_identifer| instantiation_node.instantiationIdentifier { instantiation_node.text(local_instantiation_identifer) } }
+      instantiation.local_instantiation_identifier.to_a.each { |local_instantiation_identifier| instantiation_node.instantiationIdentifier { instantiation_node.text(local_instantiation_identifier) } }
       instantiation.tracks.to_a.each { |tracks| instantiation_node.instantiationTracks { instantiation_node.text(tracks) }  }
       instantiation.channel_configuration.to_a.each { |channel_config| instantiation_node.instantiationChannelConfiguration { instantiation_node.text(channel_config) } }
       instantiation.alternative_modes.to_a.each { |alternative_mode|  instantiation_node.instantiationAlternativeModes { instantiation_node.text(alternative_mode) }  }
@@ -187,7 +187,7 @@ module AMS::PbcoreXmlExportExtension
       instantiation.rights_summary.to_a.each { |rights_summary| instantiation_node.rightsSummary { instantiation_node.cdata(rights_summary) } }
       instantiation.rights_link.to_a.each { |rights_link|  instantiation_node.rightsLink { instantiation_node.text(rights_link) } }
       instantiation.annotation.to_a.each { |annTxt| instantiation_node.pbcoreAnnotation { instantiation_node.cdata(annTxt) } }
-      instantiation.local_instantiation_identifer.to_a.each { |local_instantiation_identifer| instantiation_node.instantiationIdentifier { instantiation_node.text(local_instantiation_identifer) } }
+      instantiation.local_instantiation_identifier.to_a.each { |local_instantiation_identifier| instantiation_node.instantiationIdentifier { instantiation_node.text(local_instantiation_identifier) } }
       instantiation.tracks.to_a.each { |tracks| instantiation_node.instantiationTracks { instantiation_node.text(tracks) }  }
       instantiation.channel_configuration.to_a.each { |channel_config| instantiation_node.instantiationChannelConfiguration { instantiation_node.text(channel_config) } }
       instantiation.alternative_modes.to_a.each { |alternative_mode|  instantiation_node.instantiationAlternativeModes { instantiation_node.text(alternative_mode) }  }

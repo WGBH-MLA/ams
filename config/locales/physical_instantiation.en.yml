@@ -10,7 +10,7 @@ en:
     hints:
       physical_instantiation:
         holding_organization: 'The organization that manages this copy of the asset.'
-        local_instantiation_identifer: 'An identifier used locally for this copy of the asset.'
+        local_instantiation_identifier: 'An identifier used locally for this copy of the asset.'
         media_type: 'The high-level nature of the content of this copy of the asset.'
         format: 'The physical media on which the content is stored.'
         location: 'A description of where the item is located.'

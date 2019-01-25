@@ -24,7 +24,7 @@ en:
         visibility: Visibility
       instantiation_member:
         format:   'Format'
-        local_instantiation_identifer:   'Local ID'
+        local_instantiation_identifier:   'Local ID'
         generations:   'Generation'
         duration:   'Duration'
     select_type:
@@ -41,7 +41,7 @@ en:
         titles_with_types: 'A name given to an asset.'
         descriptions_with_types: 'A summary of the content.'
         producing_organization: 'The name of the organization(s) that produced the asset.'
-        local_identifier: 'An identifer used by a local holding institution.'
+        local_identifier: 'An identifier used by a local holding institution.'
         pbs_nola_code: 'The identifier assigned to the asset by PBS. Not relevant for all assets.'
         eidr_id: 'The identifier assigned to the asset through the <a href="https://eidr.org/" target="_blank">EIDR registry</a>. Not relevant for all assets.'
         asset_types: 'The type of content being described. To select multiple values, hold down the command button and click each term.'

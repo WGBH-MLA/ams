@@ -129,12 +129,12 @@ RSpec.describe PhysicalInstantiation do
     end
   end
 
-  context "local_instantiation_identifer" do
+  context "local_instantiation_identifier" do
     let(:physical_instantiation) { FactoryBot.build(:physical_instantiation) }
-    it "has local_instantiation_identifer" do
-      physical_instantiation.local_instantiation_identifer = ["Test local_instantiation_identifer"]
+    it "has local_instantiation_identifier" do
+      physical_instantiation.local_instantiation_identifier = ["Test local_instantiation_identifier"]
       expect(physical_instantiation.resource.dump(:ttl)).to match(/pbcore.org#localInstantiationIdentifie/)
-      expect(physical_instantiation.local_instantiation_identifer.include?("Test local_instantiation_identifer")).to be true
+      expect(physical_instantiation.local_instantiation_identifier.include?("Test local_instantiation_identifier")).to be true
     end
   end
 
