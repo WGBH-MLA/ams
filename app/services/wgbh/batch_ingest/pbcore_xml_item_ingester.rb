@@ -9,6 +9,17 @@ module WGBH
       def ingest
         if batch_item_is_asset?
           batch_item_object = ingest_asset!
+          # if has_digital_instantiations?
+          #   xml_for_digital_instantiations.each do |xml_for_digital_instantiation|
+          #     ingest_digital_instantiaton!(parent_asset: batch_item_object, xml: xml_for_digital_instantiation)
+          #   end
+          # end
+
+          # if has_physical_instantiations?
+          #   xml_for_physical_instantiations.each do |xml_for_physical_instantiation|
+          #     ingest_physical_instantiaton!(parent_asset: batch_item_object, xml: xml_for_physical_instantiation)
+          #   end
+          # end
         elsif batch_item_is_digital_instantiation?
           # TODO: implement digital instantiation ingest.
           raise "DigitalInstantiation ingest not implemented yet!"
@@ -47,7 +58,16 @@ module WGBH
         end
 
         def pbcore_xml
-          @pbcore_xml ||= File.read(@batch_item.source_location)
+          @pbcore_xml ||= if @batch_item.source_data
+            @batch_item.source_data
+          elsif @batch_item.source_location
+            File.read(@batch_item.source_location)
+          else
+            # TODO: Custom error
+            raise "No source data or source location for BatchItem id=#{@batch_item.id}"
+          end
+        rescue => e
+          raise e
         end
     end
   end

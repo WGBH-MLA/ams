@@ -60,7 +60,7 @@ module Hyrax
     end
 
     def file_set_presenters
-      return [AMS::AssetFilePrescenter.new(solr_document)]
+      return [AMS::AssetFilePresenter.new(solr_document)]
     end
 
     def iiif_viewer
