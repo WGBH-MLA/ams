@@ -51,20 +51,8 @@ RSpec.feature "Ingest: AAPB PBCore - Zipped" do
         expect(Asset.find(batch_item.repo_object_id)).to_not be_nil
       end
     end
-
-    xit "shows Batch record with accurate information"
-    xit "successfully ingests DigitalInstantiationn records"
-    xit "successfully ingests PhysicalInstantiation records"
-    xit "successfully ingests EssenceTrack records"
-    xit "successfully ingests Contributor records"
-    xit "shows BatchItem records with accurate information"
-    xit "submitter has access to records"
   end
 
-  context 'where batch contains valid Assets' do
-  end
-
-  context 'where batch contains at least 1 invalid Asset' do
-  end
+  # TODO: Tests for invalid Assets.
 
 end

@@ -1,0 +1,377 @@
+commit 96ba1530fe90085efe1b09fc0e4721874a543a35
+Merge: 0d44611 b7231c6
+Author: Henry Neels <foglaboratories@gmail.com>
+Date:   Fri Jan 25 15:00:08 2019 -0500
+
+    Allow ingest of PBCore XML digital instantiations
+
+diff --cc Gemfile.lock
+index 4eb362d,31b3443..8e3d614
+--- a/Gemfile.lock
++++ b/Gemfile.lock
+@@@ -1,6 -1,6 +1,6 @@@
+  GIT
+    remote: https://github.com/WGBH-MLA/pbcore
+-   revision: d7928719a82c93bfb29f7ff9506e33c180e1b2d2
+ -  revision: 624c5fb7782a49ffe4adb12dc48e7961ce2da274
+++  revision: 9db409d4523a3ef5457679701b49a37af4ea3e4f
+    specs:
+      pbcore (0.1.0)
+        nokogiri
+diff --cc app/actors/hyrax/actors/digital_instantiation_actor.rb
+index 3485a13,3485a13..fa38829
+--- a/app/actors/hyrax/actors/digital_instantiation_actor.rb
++++ b/app/actors/hyrax/actors/digital_instantiation_actor.rb
+@@@ -4,20 -4,20 +4,37 @@@ module Hyra
+    module Actors
+      class DigitalInstantiationActor < Hyrax::Actors::BaseActor
+        def create(env)
+--        xml_file = File.read(env.attributes[:digital_instantiation_pbcore_xml].tempfile)
+++        if file_uploaded?(env)
+++          xml_file = uploaded_xml(env)
+++        else
+++          xml_file = env.attributes.delete(:pbcore_xml)
+++        end
+          pbcore_doc = PBCore::InstantiationDocument.parse(xml_file)
+--        env = parse_pbcore_instantiation(env,pbcore_doc) if(env.attributes[:digital_instantiation_pbcore_xml])
+++        env = parse_pbcore_instantiation(env,pbcore_doc)
+          save_instantiation_aapb_admin_data(env) && super && parse_pbcore_essense_track(env,pbcore_doc)
+        end
+  
+        def update(env)
+--        xml_file = File.read(env.attributes[:digital_instantiation_pbcore_xml].tempfile)
+++        if file_uploaded?(env)
+++          xml_file = uploaded_xml(env)
+++        else
+++          xml_file = env.attributes.delete(:pbcore_xml)
+++        end
+          pbcore_doc = PBCore::InstantiationDocument.parse(xml_file)
+--        env = parse_pbcore_instantiation(env,pbcore_doc) if(env.attributes[:digital_instantiation_pbcore_xml])
+++        env = parse_pbcore_instantiation(env,pbcore_doc)
+          super && destroy_child_objects(env) && parse_pbcore_essense_track(env,pbcore_doc)
+        end
+  
+        private
+++
+++        def file_uploaded?(env)
+++          env.attributes[:digital_instantiation_pbcore_xml].respond_to?(:tempfile)
+++        end
+++
+++        def uploaded_xml(env)
+++          File.read(env.attributes[:digital_instantiation_pbcore_xml].tempfile)
+++        end
+++
+          def destroy_child_objects(env)
+            env.curation_concern.members.to_a.delete_if do |child|
+              actor = Hyrax::CurationConcern.actor
+@@@ -33,7 -33,7 +50,7 @@@
+            env.attributes[:date] = pbcore_doc.dates.map(&:value) if pbcore_doc.dates && env.attributes[:dates].blank?
+            env.attributes[:dimensions] = pbcore_doc.dimensions.map(&:value)  if pbcore_doc.dimensions && env.attributes[:dimensions].blank?
+            (env.attributes[:standard] ||= []) << pbcore_doc.standard.value  if pbcore_doc.standard && env.attributes[:standard].blank?
+--          env.attributes[:location] = pbcore_doc.location  if pbcore_doc.location && env.attributes[:location].blank?
+++          env.attributes[:location] = pbcore_doc.location.value  if pbcore_doc.location && env.attributes[:location].blank?
+            env.attributes[:media_type] = pbcore_doc.media_type.value  if pbcore_doc.media_type && env.attributes[:media_type].blank?
+            env.attributes[:generations] = pbcore_doc.generations.map(&:value)  if pbcore_doc.generations && env.attributes[:generations].blank?
+            env.attributes[:file_size] = pbcore_doc.file_size.value  if pbcore_doc.file_size && env.attributes[:file_size].blank?
+diff --cc app/models/digital_instantiation.rb
+index 862c344,862c344..4a42971
+--- a/app/models/digital_instantiation.rb
++++ b/app/models/digital_instantiation.rb
+@@@ -2,6 -2,6 +2,8 @@@
+  #  `rails generate hyrax:work DigitalInstantiation`
+  require 'carrierwave/validations/active_model'
+  class DigitalInstantiation < ActiveFedora::Base
+++  attr_accessor :skip_file_upload_validation
+++
+    include ::Hyrax::WorkBehavior
+    include ::AMS::CreateMemberMethods
+  
+@@@ -34,7 -34,7 +36,7 @@@
+        schema.validate(document).each do |error|
+          errors.add(:digital_instantiation_pbcore_xml, error.message)
+        end
+--    elsif self.new_record?
+++    elsif self.new_record? && !skip_file_upload_validation
+        errors.add(:digital_instantiation_pbcore_xml,"Please select pbcore xml document")
+      end
+    end
+@@@ -111,7 -111,7 +113,7 @@@
+      index.as :stored_searchable
+    end
+  
+--  property :alternative_modes, predicate: ::RDF::URI.new("http://pbcore.org#hasAlternativeModes"), multiple: true do |index|
+++  property :alternative_modes, predicate: ::RDF::URI.new("http://pbcore.org#hasAlternativeModes"), multiple: false do |index|
+      index.as :stored_searchable
+    end
+  
+@@@ -123,7 -123,7 +125,7 @@@
+      index.as :symbol
+    end
+  
+--  
+++
+  
+    def instantiation_admin_data_gid=(new_instantiation_admin_data_gid)
+      raise "Can't modify admin data of this asset" if persisted? && !instantiation_admin_data_gid_was.nil? && instantiation_admin_data_gid_was != new_instantiation_admin_data_gid
+diff --cc app/services/wgbh/batch_ingest/pbcore_xml_item_ingester.rb
+index dd84217,7bf0869..4c3fa7a
+--- a/app/services/wgbh/batch_ingest/pbcore_xml_item_ingester.rb
++++ b/app/services/wgbh/batch_ingest/pbcore_xml_item_ingester.rb
+@@@ -9,6 -9,17 +9,18 @@@ module WGB
+        def ingest
+          if batch_item_is_asset?
+            batch_item_object = ingest_asset!
+ -          # if has_digital_instantiations?
+ -          #   xml_for_digital_instantiations.each do |xml_for_digital_instantiation|
+ -          #     ingest_digital_instantiaton!(parent_asset: batch_item_object, xml: xml_for_digital_instantiation)
+ -          #   end
+ -          # end
+++
+++          if has_digital_instantiations?
+++            xml_for_digital_instantiations.each do |xml_for_digital_instantiation|
+++              ingest_digital_instantiation!(parent_asset: batch_item_object, xml: xml_for_digital_instantiation)
+++            end
+++          end
++ 
++           # if has_physical_instantiations?
++           #   xml_for_physical_instantiations.each do |xml_for_physical_instantiation|
++           #     ingest_physical_instantiaton!(parent_asset: batch_item_object, xml: xml_for_physical_instantiation)
++           #   end
++           # end
+          elsif batch_item_is_digital_instantiation?
+            # TODO: implement digital instantiation ingest.
+            raise "DigitalInstantiation ingest not implemented yet!"
+@@@ -22,6 -33,6 +34,14 @@@
+  
+        private
+  
+++        def has_digital_instantiations?
+++          pbcore.instantiations.any? { |inst| inst.digital }
+++        end
+++
+++        def has_physical_instantiations?
+++          pbcore.instantiations.any? { |inst| inst.physical }
+++        end
+++
+          def batch_item_is_asset?
+            pbcore_xml =~ /pbcoreDescriptionDocument/
+          end
+@@@ -30,6 -41,6 +50,10 @@@
+            pbcore_xml =~ /pbcoreInstantiationDocument/
+          end
+  
+++        def xml_for_digital_instantiations
+++          pbcore.instantiations.select { |inst| inst.digital }.map(&:to_xml)
+++        end
+++
+          def ingest_asset!
+            asset = Asset.new
+            actor = Hyrax::CurationConcern.actor
+@@@ -38,6 -49,6 +62,18 @@@
+            asset
+          end
+  
+++        def ingest_digital_instantiation!(parent_asset:, xml:)
+++          digital_instantiation = DigitalInstantiation.new
+++          digital_instantiation.skip_file_upload_validation = true
+++          actor = Hyrax::CurationConcern.actor
+++          # attrs = WGBH::BatchIngest::PBCoreXMLMapper.new(xml).digital_instantiation_attributes
+++          env = Hyrax::Actors::Environment.new(digital_instantiation, current_ability, {pbcore_xml: xml})
+++          actor.create(env)
+++          parent_asset.members << digital_instantiation
+++          parent_asset.save!
+++          digital_instantiation
+++        end
+++
+          def asset_attrs_from_pbcore
+            WGBH::BatchIngest::PBCoreXMLMapper.new(pbcore_xml).asset_attributes
+          end
+@@@ -46,8 -57,17 +82,28 @@@
+            @current_ability = Ability.new(submitter)
+          end
+  
+++        def pbcore
+++          @pbcore ||= if batch_item_is_asset?
+++            PBCore::DescriptionDocument.parse(pbcore_xml)
+++          elsif batch_item_is_digital_instantiation?
+++            PBCore::InstantiationDocument.parse(pbcore_xml)
+++          else
+++            # TODO: Better error message here?
+++            raise "Unknown PBCore XML document type"
+++          end
+++        end
+++
+          def pbcore_xml
+-           @pbcore_xml ||= File.read(@batch_item.source_location)
++           @pbcore_xml ||= if @batch_item.source_data
++             @batch_item.source_data
++           elsif @batch_item.source_location
++             File.read(@batch_item.source_location)
++           else
++             # TODO: Custom error
++             raise "No source data or source location for BatchItem id=#{@batch_item.id}"
++           end
++         rescue => e
++           raise e
+          end
+      end
+    end
+diff --cc app/services/wgbh/batch_ingest/pbcore_xml_mapper.rb
+index 49fab34,2094c2a..f740602
+--- a/app/services/wgbh/batch_ingest/pbcore_xml_mapper.rb
++++ b/app/services/wgbh/batch_ingest/pbcore_xml_mapper.rb
+@@@ -43,12 -55,12 +55,24 @@@ module WGB
+        end
+  
+        def physical_instantiation_attributes
+--        @physical_instantiation_attributes ||= {}.tap do |attrs|
+++        @physical_instantiation_attributes ||= instantiation_attributes.tap do |attrs|
+++          attrs[:format] = pbcore.physical.value || nil
+++        end
+++      end
+++
+++      def digital_instantiation_attributes
+++        @digital_instantiation_attributes ||= instantiation_attributes.tap do |attrs|
+++          attrs[:format] = pbcore.digital.value || nil
+++        end
+++      end
+++
+++
+++      def instantiation_attributes
+++        @instantiation_attributes ||= {}.tap do |attrs|
+            attrs[:date]                            = pbcore.dates.select { |date| date.type.to_s.downcase.strip != "digitized" }.map(&:value)
+            attrs[:digitization_date]               = pbcore.dates.select { |date| date.type.to_s.downcase.strip == "digitized" }.first.value
+            attrs[:dimensions]                      = pbcore.dimensions.map(&:value)
+            attrs[:standard]                        = pbcore.standard.value || nil
+--          attrs[:format]                          = pbcore.physical.value || nil
+            attrs[:location]                        = pbcore.location.value || nil
+            attrs[:media_type]                      = pbcore.media_type.value || nil
+            attrs[:generations]                     = pbcore.generations.map(&:value)
+@@@ -72,9 -84,9 +96,8 @@@
+                          PBCore::DescriptionDocument.parse(pbcore_xml)
+                        when is_instantiation_document?
+                          PBCore::InstantiationDocument.parse(pbcore_xml)
+--                      when is_collection?
+--                        # TODO: Custom error class?
+--                        raise "pbcoreCollection not yet supported"
+++                      when is_instantiation?
+++                        PBCore::Instantiation.parse(pbcore_xml)
+                        else
+                          # TODO: Custom error class?
+                          raise "XML not recognized as PBCore"
+@@@ -89,6 -101,6 +112,10 @@@
+            pbcore_xml =~ /pbcoreInstantiationDocument/
+          end
+  
+++        def is_instantiation?
+++          pbcore_xml =~ /pbcoreInstantiation/
+++        end
+++
+          def title_types
+            @title_types ||= ['program', 'episode', 'episode title', 'episode number', 'segment', 'clip', 'promo', 'raw footage']
+          end
+diff --cc spec/factories/pbcore_xml/instantiation.rb
+index 0000000,0000000..76bcf29
+new file mode 100644
+--- /dev/null
++++ b/spec/factories/pbcore_xml/instantiation.rb
+@@@ -1,0 -1,0 +1,33 @@@
+++require 'pbcore'
+++
+++FactoryBot.define do
+++  factory :pbcore_instantiation, class: PBCore::Instantiation, parent: :pbcore_element do
+++    skip_create
+++
+++    identifiers             { [ build(:pbcore_instantiation_identifier, :ams),
+++                                build(:pbcore_instantiation_identifier) ] }
+++    dates                   { [ build(:pbcore_instantiation_date), build(:pbcore_instantiation_date, :digitized) ] }
+++    dimensions              { [ build(:pbcore_instantiation_dimensions) ] }
+++    standard                { build(:pbcore_instantiation_standard) }
+++    location                { build(:pbcore_instantiation_location) }
+++    media_type              { build(:pbcore_instantiation_media_type) }
+++    generations             { [ build(:pbcore_instantiation_generations) ] }
+++    time_starts             { [ build(:pbcore_instantiation_time_start) ] }
+++    duration                { build(:pbcore_instantiation_duration) }
+++    colors                  { build(:pbcore_instantiation_colors) }
+++    rights                  { [ build(:pbcore_instantiation_rights) ] }
+++    tracks                  { build(:pbcore_instantiation_tracks) }
+++    channel_configuration   { build(:pbcore_instantiation_channel_configuration) }
+++    alternative_modes       { build(:pbcore_instantiation_alternative_modes) }
+++
+++    initialize_with { new(attributes) }
+++
+++    trait :digital do
+++      digital   { build(:pbcore_instantiation_digital) }
+++    end
+++
+++    trait :physical do
+++      physical { build(:pbcore_instantiation_physical) }
+++    end
+++  end
+++end
+diff --cc spec/factories/pbcore_xml/instantiation/digital.rb
+index 0000000,0000000..137cca2
+new file mode 100644
+--- /dev/null
++++ b/spec/factories/pbcore_xml/instantiation/digital.rb
+@@@ -1,0 -1,0 +1,11 @@@
+++require 'pbcore'
+++
+++FactoryBot.define do
+++  factory :pbcore_instantiation_digital, class: PBCore::Instantiation::Digital, parent: :pbcore_element do
+++    skip_create
+++
+++    value { Faker::Hacker.noun }
+++
+++    initialize_with { new(attributes) }
+++  end
+++end
+diff --cc spec/models/digital_instantiation_spec.rb
+index 84bce5f,84bce5f..4925393
+--- a/spec/models/digital_instantiation_spec.rb
++++ b/spec/models/digital_instantiation_spec.rb
+@@@ -168,7 -168,7 +168,7 @@@ RSpec.describe DigitalInstantiation d
+    context "alternative_modes" do
+      let(:digital_instantiation) { FactoryBot.build(:digital_instantiation) }
+      it "has alternative_modes" do
+--      digital_instantiation.alternative_modes = ["Test alternative_modes"]
+++      digital_instantiation.alternative_modes = "Test alternative_modes"
+        expect(digital_instantiation.resource.dump(:ttl)).to match(/pbcore.org#hasAlternativeModes/)
+        expect(digital_instantiation.alternative_modes.include?("Test alternative_modes")).to be true
+      end
+diff --cc spec/services/wgbh/batch_ingest/pbcore_xml_item_ingester_spec.rb
+index 1610fa0,49789d4..a8073cc
+--- a/spec/services/wgbh/batch_ingest/pbcore_xml_item_ingester_spec.rb
++++ b/spec/services/wgbh/batch_ingest/pbcore_xml_item_ingester_spec.rb
+@@@ -10,4 -10,24 +10,30 @@@ RSpec.describe WGBH::BatchIngest::PBCor
+    let(:batch_item) { build(:batch_item, batch: batch, source_location: sample_source_location)}
+  
+    it_behaves_like "a Hyrax::BatchIngest::BatchItemIngester"
++ 
++   context 'given an Asset with Contribution data' do
++     subject { described_class.new(batch_item) }
++     let(:aapb_identifier) { build(:pbcore_identifier, :aapb) }
++     let(:contributors) { build_list(:pbcore_contributor, 5) }
++     let(:pbcore_description_document) { build(:pbcore_description_document,
++                                               identifiers: [ aapb_identifier ],
+ -                                              contributors: contributors ) }
+++                                              contributors: contributors,
+++                                              instantiations: build_list(:pbcore_instantiation, 5, :digital) ) }
++     let(:pbcore_xml) { pbcore_description_document.to_xml }
++     let(:batch_item) { build(:batch_item, batch: batch, source_location: nil, source_data: pbcore_xml)}
++ 
++     before do
++       @asset = subject.ingest
++     end
++ 
++     it 'ingests the Asset and the Contributions' do
++       contributions = @asset.members.select { |member| member.is_a? Contribution }
++       expect(contributions.count).to eq 5
++     end
+++
+++    it 'ingests the Asset and the Digital Instantiations' do
+++      digital_instantiations = @asset.members.select { |member| member.is_a? DigitalInstantiation }
+++      expect(digital_instantiations.count).to eq 5
+++    end
++   end
+  end
