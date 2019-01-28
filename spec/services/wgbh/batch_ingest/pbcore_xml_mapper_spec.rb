@@ -53,8 +53,8 @@ RSpec.describe WGBH::BatchIngest::PBCoreXMLMapper, :pbcore_xpath_helper do
     let(:attr_names) { multi_value_attr_names + single_value_attr_names }
 
     let(:multi_value_attr_names) do
-      [ :dimensions, :generations, :time_start, :instantiation_rights_summary,
-        :instantiation_rights_link ]
+      [ :dimensions, :generations, :time_start, :rights_summary,
+        :rights_link ]
     end
 
     let(:single_value_attr_names) do
@@ -77,7 +77,15 @@ RSpec.describe WGBH::BatchIngest::PBCoreXMLMapper, :pbcore_xpath_helper do
       # For each attribute in attr_names, make sure it has the correct value
       # from the PBCore XML.
       multi_value_attr_names.each do |attr|
-        expect(attrs[attr]).to eq pbcore_values_from_xpath(pbcore_instantiation_xml, attr)
+        # For rights_link and rights_summary, the xpath shortcut has
+        # "instantiation_" prepended to it to distinguish from rights_summary
+        # and rights_link for pbcore description documents.
+        if [:rights_summary, :rights_link].include? attr
+          xpath_shortcut = "instantiation_#{attr}".to_sym
+        else
+          xpath_shortcut ||= attr
+        end
+        expect(attrs[attr]).to eq pbcore_values_from_xpath(pbcore_instantiation_xml, xpath_shortcut)
       end
 
       # Uses .first to pull first value from the xpath helper
