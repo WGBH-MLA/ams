@@ -55,12 +55,24 @@ module WGBH
       end
 
       def physical_instantiation_attributes
-        @physical_instantiation_attributes ||= {}.tap do |attrs|
+        @physical_instantiation_attributes ||= instantiation_attributes.tap do |attrs|
+          attrs[:format] = pbcore.physical.value || nil
+        end
+      end
+
+      def digital_instantiation_attributes
+        @digital_instantiation_attributes ||= instantiation_attributes.tap do |attrs|
+          attrs[:format] = pbcore.digital.value || nil
+        end
+      end
+
+
+      def instantiation_attributes
+        @instantiation_attributes ||= {}.tap do |attrs|
           attrs[:date]                            = pbcore.dates.select { |date| date.type.to_s.downcase.strip != "digitized" }.map(&:value)
           attrs[:digitization_date]               = pbcore.dates.select { |date| date.type.to_s.downcase.strip == "digitized" }.first.value
           attrs[:dimensions]                      = pbcore.dimensions.map(&:value)
           attrs[:standard]                        = pbcore.standard.value || nil
-          attrs[:format]                          = pbcore.physical.value || nil
           attrs[:location]                        = pbcore.location.value || nil
           attrs[:media_type]                      = pbcore.media_type.value || nil
           attrs[:generations]                     = pbcore.generations.map(&:value)
@@ -84,9 +96,8 @@ module WGBH
                         PBCore::DescriptionDocument.parse(pbcore_xml)
                       when is_instantiation_document?
                         PBCore::InstantiationDocument.parse(pbcore_xml)
-                      when is_collection?
-                        # TODO: Custom error class?
-                        raise "pbcoreCollection not yet supported"
+                      when is_instantiation?
+                        PBCore::Instantiation.parse(pbcore_xml)
                       else
                         # TODO: Custom error class?
                         raise "XML not recognized as PBCore"
@@ -99,6 +110,10 @@ module WGBH
 
         def is_instantiation_document?
           pbcore_xml =~ /pbcoreInstantiationDocument/
+        end
+
+        def is_instantiation?
+          pbcore_xml =~ /pbcoreInstantiation/
         end
 
         def title_types

@@ -168,7 +168,7 @@ RSpec.describe DigitalInstantiation do
   context "alternative_modes" do
     let(:digital_instantiation) { FactoryBot.build(:digital_instantiation) }
     it "has alternative_modes" do
-      digital_instantiation.alternative_modes = ["Test alternative_modes"]
+      digital_instantiation.alternative_modes = "Test alternative_modes"
       expect(digital_instantiation.resource.dump(:ttl)).to match(/pbcore.org#hasAlternativeModes/)
       expect(digital_instantiation.alternative_modes.include?("Test alternative_modes")).to be true
     end
