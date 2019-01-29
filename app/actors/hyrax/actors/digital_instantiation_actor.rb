@@ -4,20 +4,37 @@ module Hyrax
   module Actors
     class DigitalInstantiationActor < Hyrax::Actors::BaseActor
       def create(env)
-        xml_file = File.read(env.attributes[:digital_instantiation_pbcore_xml].tempfile)
+        if file_uploaded?(env)
+          xml_file = uploaded_xml(env)
+        else
+          xml_file = env.attributes.delete(:pbcore_xml)
+        end
         pbcore_doc = PBCore::InstantiationDocument.parse(xml_file)
-        env = parse_pbcore_instantiation(env,pbcore_doc) if(env.attributes[:digital_instantiation_pbcore_xml])
+        env = parse_pbcore_instantiation(env,pbcore_doc)
         save_instantiation_aapb_admin_data(env) && super && parse_pbcore_essense_track(env,pbcore_doc)
       end
 
       def update(env)
-        xml_file = File.read(env.attributes[:digital_instantiation_pbcore_xml].tempfile)
+        if file_uploaded?(env)
+          xml_file = uploaded_xml(env)
+        else
+          xml_file = env.attributes.delete(:pbcore_xml)
+        end
         pbcore_doc = PBCore::InstantiationDocument.parse(xml_file)
-        env = parse_pbcore_instantiation(env,pbcore_doc) if(env.attributes[:digital_instantiation_pbcore_xml])
+        env = parse_pbcore_instantiation(env,pbcore_doc)
         super && destroy_child_objects(env) && parse_pbcore_essense_track(env,pbcore_doc)
       end
 
       private
+
+        def file_uploaded?(env)
+          env.attributes[:digital_instantiation_pbcore_xml].respond_to?(:tempfile)
+        end
+
+        def uploaded_xml(env)
+          File.read(env.attributes[:digital_instantiation_pbcore_xml].tempfile)
+        end
+
         def destroy_child_objects(env)
           env.curation_concern.members.to_a.delete_if do |child|
             actor = Hyrax::CurationConcern.actor
@@ -33,7 +50,7 @@ module Hyrax
           env.attributes[:date] = pbcore_doc.dates.map(&:value) if pbcore_doc.dates && env.attributes[:dates].blank?
           env.attributes[:dimensions] = pbcore_doc.dimensions.map(&:value)  if pbcore_doc.dimensions && env.attributes[:dimensions].blank?
           (env.attributes[:standard] ||= []) << pbcore_doc.standard.value  if pbcore_doc.standard && env.attributes[:standard].blank?
-          env.attributes[:location] = pbcore_doc.location  if pbcore_doc.location && env.attributes[:location].blank?
+          env.attributes[:location] = pbcore_doc.location.value  if pbcore_doc.location && env.attributes[:location].blank?
           env.attributes[:media_type] = pbcore_doc.media_type.value  if pbcore_doc.media_type && env.attributes[:media_type].blank?
           env.attributes[:generations] = pbcore_doc.generations.map(&:value)  if pbcore_doc.generations && env.attributes[:generations].blank?
           env.attributes[:file_size] = pbcore_doc.file_size.value  if pbcore_doc.file_size && env.attributes[:file_size].blank?
