@@ -1,0 +1,19 @@
+<!-- This template is overwritten to add the batch link to the dashboard sidebar. -->
+
+  <li class="h5"><%= t('hyrax.admin.sidebar.repository_objects') %></li>
+
+  <%= menu.nav_link(hyrax.my_collections_path,
+                    also_active_for: hyrax.dashboard_collections_path) do %>
+    <span class="fa fa-folder-open" aria-hidden="true"></span> <span class="sidebar-action-text"><%= t('hyrax.admin.sidebar.collections') %></span>
+  <% end %>
+
+  <%= menu.nav_link(hyrax.my_works_path,
+                    also_active_for: hyrax.dashboard_works_path) do %>
+    <span class="fa fa-file" aria-hidden="true"></span> <span class="sidebar-action-text"><%= t('hyrax.admin.sidebar.works') %></span>
+  <% end %>
+
+  <% if can? :index, Hyrax::BatchIngest::Batch %>
+    <%= menu.nav_link(hyrax_batch_ingest.batches_path) do %>
+      <span class="fa fa-table" aria-hidden="true"></span> <span class="sidebar-action-text"><%= 'Batches' %></span>
+    <% end %>
+  <% end %>
