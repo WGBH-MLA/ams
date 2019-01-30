@@ -1,5 +1,4 @@
 require 'pbcore'
-require 'ffaker'
 
 FactoryBot.define do
   factory :pbcore_asset_type, class: PBCore::AssetType, parent: :pbcore_element do

@@ -1,5 +1,4 @@
 require 'pbcore'
-require 'ffaker'
 
 FactoryBot.define do
   factory :pbcore_genre, class: PBCore::Genre, parent: :pbcore_element do
