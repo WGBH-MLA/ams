@@ -209,7 +209,6 @@ class Asset < ActiveFedora::Base
   include ::Hyrax::BasicMetadata
 
   private
-
     def save_admin_data
       self.admin_data ||= AdminData.create
       self.admin_data.save
