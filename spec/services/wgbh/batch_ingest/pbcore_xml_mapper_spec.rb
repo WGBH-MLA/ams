@@ -98,4 +98,20 @@ RSpec.describe WGBH::BatchIngest::PBCoreXMLMapper, :pbcore_xpath_helper do
       expect(attrs[:local_instantiation_identifier]).to eq pbcore_xpath_helper(pbcore_instantiation_xml).local_instantiation_identifiers_without_ams_id
     end
   end
+
+  describe '#physical_instantiation_attributes' do
+    let(:pbcore_instantiation_xml) { build(:pbcore_instantiation_document, essence_tracks: [ build(:pbcore_instantiation_essence_track) ]).to_xml }
+    subject { described_class.new(pbcore_instantiation_xml) }
+
+
+
+    it 'maps all attributes from PBCore XML' do
+      attrs = subject.essence_track_attributes
+      # For each attribute in attr_names, make sure it has a value that comes from
+      # the PBCore XML factory.
+      attr_names.each do |attr|
+        expect(attrs[attr]).not_to be_empty
+      end
+    end
+  end
 end

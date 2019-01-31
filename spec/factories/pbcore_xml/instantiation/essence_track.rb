@@ -5,7 +5,7 @@ FactoryBot.define do
     skip_create
 
     type            { build(:pbcore_instantiation_essence_track_type) }
-    identifier      { [ build(:pbcore_instantiation_essence_track_identifier) ] }
+    identifiers     { [ build(:pbcore_instantiation_essence_track_identifier) ] }
     standard        { build(:pbcore_instantiation_essence_track_standard) }
     encoding        { build(:pbcore_instantiation_essence_track_encoding) }
     data_rate       { build(:pbcore_instantiation_essence_track_data_rate) }
