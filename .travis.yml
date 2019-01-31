@@ -7,8 +7,7 @@ services:
 jdk:
   - oraclejdk8
 rvm:
-  - 2.4.1
-  - 2.3.4
+  - 2.5.1
 addons:
   chrome: stable
 cache:
@@ -44,7 +43,7 @@ deploy:
     region: "us-east-1"
     on:
       branch: develop
-      ruby: '2.4.1'
+      ruby: '2.5.1'
   - provider: codedeploy
     access_key_id: AKIAJODP6VPR5EKCIJCQ
     secret_access_key:
@@ -55,4 +54,4 @@ deploy:
     region: "us-east-1"
     on:
       branch: master
-      ruby: '2.4.1'
+      ruby: '2.5.1'

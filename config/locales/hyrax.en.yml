@@ -132,10 +132,10 @@ en:
           edit_registration: 'Change password'
     account_label: User
     active_consent_to_agreement: I have read and agree to the
-    product_name:           "Hyrax"
+    product_name:           "AMS"
     product_twitter_handle: "@SamveraRepo"
-    institution_name:       "Institution"
-    institution_name_full:  "The Institution Name"
+    institution_name:       "AMS"
+    institution_name_full:  "Archival Management System 2.0"
     account_name:           "My Institution Account Id"
     directory:
       suffix:               "@example.org"
