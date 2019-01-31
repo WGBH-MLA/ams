@@ -89,6 +89,11 @@ module WGBH
         end
       end
 
+      def essence_track_attributes
+        @essence_track_attributes ||= {}.tap do |attrs|
+        end
+      end
+
       private
 
         def pbcore
