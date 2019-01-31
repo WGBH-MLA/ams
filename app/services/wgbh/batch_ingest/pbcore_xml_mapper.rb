@@ -90,10 +90,17 @@ module WGBH
       end
 
       def essence_track_attributes
-        require('pry');binding.pry
         @essence_track_attributes ||= {}.tap do |attrs|
-          # do dat
-
+          attrs[:track_type] = pbcore.type.value if pbcore.type
+          attrs[:track_id] = pbcore.identifiers.map(&:value) if pbcore.identifiers
+          attrs[:standard] = pbcore.standard.value if pbcore.standard
+          attrs[:encoding] = pbcore.encoding.value if pbcore.encoding
+          attrs[:data_rate] = pbcore.data_rate.value if pbcore.data_rate
+          attrs[:frame_rate] = pbcore.frame_rate.value if pbcore.frame_rate
+          attrs[:bit_depth] = pbcore.bit_depth.value if pbcore.bit_depth
+          attrs[:aspect_ratio] = Array(pbcore.aspect_ratio.value) if pbcore.aspect_ratio
+          attrs[:duration] = pbcore.duration.value if pbcore.duration
+          attrs[:annotation] =  pbcore.annotations.map(&:value) if pbcore.annotations
         end
       end
 
