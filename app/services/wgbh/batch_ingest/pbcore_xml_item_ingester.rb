@@ -1,6 +1,5 @@
 require 'wgbh/batch_ingest/batch_item_ingester'
 require 'wgbh/batch_ingest/pbcore_xml_mapper'
-# require 'hyrax/actors/batch_ingest_actor'
 
 module WGBH
   module BatchIngest
@@ -16,11 +15,11 @@ module WGBH
             end
           end
 
-          # if has_physical_instantiations?
-          #   xml_for_physical_instantiations.each do |xml_for_physical_instantiation|
-          #     ingest_physical_instantiaton!(parent_asset: batch_item_object, xml: xml_for_physical_instantiation)
-          #   end
-          # end
+          if has_physical_instantiations?
+            xml_for_physical_instantiations.each do |xml_for_physical_instantiation|
+              ingest_physical_instantiation!(parent_asset: batch_item_object, xml: xml_for_physical_instantiation)
+            end
+          end
         elsif batch_item_is_digital_instantiation?
           # TODO: implement digital instantiation ingest.
           raise "DigitalInstantiation ingest not implemented yet!"
@@ -54,10 +53,15 @@ module WGBH
           pbcore.instantiations.select { |inst| inst.digital }.map(&:to_xml)
         end
 
+        def xml_for_physical_instantiations
+          pbcore.instantiations.select { |inst| inst.physical }.map(&:to_xml)
+        end
+
         def ingest_asset!
           asset = Asset.new
           actor = Hyrax::CurationConcern.actor
-          env = Hyrax::Actors::Environment.new(asset, current_ability, asset_attrs_from_pbcore)
+          attrs = WGBH::BatchIngest::PBCoreXMLMapper.new(pbcore_xml).asset_attributes
+          env = Hyrax::Actors::Environment.new(asset, current_ability, attrs)
           actor.create(env)
           asset
         end
@@ -66,16 +70,29 @@ module WGBH
           digital_instantiation = DigitalInstantiation.new
           digital_instantiation.skip_file_upload_validation = true
           actor = Hyrax::CurationConcern.actor
-          # attrs = WGBH::BatchIngest::PBCoreXMLMapper.new(xml).digital_instantiation_attributes
-          env = Hyrax::Actors::Environment.new(digital_instantiation, current_ability, {pbcore_xml: xml})
+          attrs = {
+            pbcore_xml: xml,
+            in_works_ids: [parent_asset.id]
+          }
+          env = Hyrax::Actors::Environment.new(digital_instantiation, current_ability, attrs)
           actor.create(env)
-          parent_asset.members << digital_instantiation
-          parent_asset.save!
+          # reload the parent so that the children show up in the .members
+          # accessor
+          parent_asset.reload
           digital_instantiation
         end
 
-        def asset_attrs_from_pbcore
-          WGBH::BatchIngest::PBCoreXMLMapper.new(pbcore_xml).asset_attributes
+        def ingest_physical_instantiation!(parent_asset:, xml:)
+          physical_instantiation = PhysicalInstantiation.new
+          actor = Hyrax::CurationConcern.actor
+          attrs = WGBH::BatchIngest::PBCoreXMLMapper.new(xml).physical_instantiation_attributes
+          attrs[:in_works_ids] = [parent_asset.id]
+          env = Hyrax::Actors::Environment.new(physical_instantiation, current_ability, attrs)
+          actor.create(env)
+          # reload the parent so that the children show up in the .members
+          # accessor
+          parent_asset.reload
+          physical_instantiation
         end
 
         def current_ability

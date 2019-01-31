@@ -70,21 +70,22 @@ module WGBH
       def instantiation_attributes
         @instantiation_attributes ||= {}.tap do |attrs|
           attrs[:date]                            = pbcore.dates.select { |date| date.type.to_s.downcase.strip != "digitized" }.map(&:value)
-          attrs[:digitization_date]               = pbcore.dates.select { |date| date.type.to_s.downcase.strip == "digitized" }.first.value
+          attrs[:digitization_date]               = pbcore.dates.select { |date| date.type.to_s.downcase.strip == "digitized" }.map(&:value).first
           attrs[:dimensions]                      = pbcore.dimensions.map(&:value)
-          attrs[:standard]                        = pbcore.standard.value || nil
-          attrs[:location]                        = pbcore.location.value || nil
-          attrs[:media_type]                      = pbcore.media_type.value || nil
+          attrs[:standard]                        = pbcore.standard&.value
+          attrs[:location]                        = pbcore.location&.value
+          attrs[:media_type]                      = pbcore.media_type&.value
+          attrs[:format]                          = pbcore.physical&.value
           attrs[:generations]                     = pbcore.generations.map(&:value)
           attrs[:time_start]                      = pbcore.time_starts.map(&:value)
-          attrs[:duration]                        = pbcore.duration.value || nil
-          attrs[:colors]                          = pbcore.colors.value || nil
-          attrs[:instantiation_rights_summary]    = pbcore.rights.map(&:rights_summary).map(&:value)
-          attrs[:instantiation_rights_link]       = pbcore.rights.map(&:rights_link).map(&:value)
+          attrs[:duration]                        = pbcore.duration&.value
+          attrs[:colors]                          = pbcore.colors&.value
+          attrs[:rights_summary]                  = pbcore.rights.map(&:rights_summary).map(&:value)
+          attrs[:rights_link]                     = pbcore.rights.map(&:rights_link).map(&:value)
           attrs[:local_instantiation_identifier]  = pbcore.identifiers.select { |identifier| identifier.source.to_s.downcase.strip != "ams" }.map(&:value)
-          attrs[:tracks]                          = pbcore.tracks.value || nil
-          attrs[:channel_configuration]           = pbcore.channel_configuration.value || nil
-          attrs[:alternative_modes]               = pbcore.alternative_modes.value || nil
+          attrs[:tracks]                          = pbcore.tracks&.value
+          attrs[:channel_configuration]           = pbcore.channel_configuration&.value
+          attrs[:alternative_modes]               = pbcore.alternative_modes&.value
         end
       end
 

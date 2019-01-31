@@ -1,0 +1,193 @@
+<?xml version="1.0"?>
+<pbcoreDescriptionDocument xmlns="http://pbcore.org/PBCore/PBCoreNamespace.html" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://pbcore.org/PBCore/PBCoreNamespace.html https://raw.githubusercontent.com/WGBH/PBCore_2.1/master/pbcore-2.1.xsd">
+  <pbcoreIdentifier source="http://americanarchiveinventory.org">cpb-aacip/179-7e360ebd15</pbcoreIdentifier>
+  <pbcoreTitle>The Grapes of Wrath</pbcoreTitle>
+  <pbcoreTitle>No Longer at Ease</pbcoreTitle>
+  <pbcoreTitle>The Other Side of Silence</pbcoreTitle>
+  <pbcoreTitle titleType="Program">Dulce et Decorum Est</pbcoreTitle>
+  <pbcoreTitle titleType="Program">Dance Dance Dance</pbcoreTitle>
+  <pbcoreTitle titleType="Episode">A Passage to India</pbcoreTitle>
+  <pbcoreTitle titleType="Segment">The Road Less Traveled</pbcoreTitle>
+  <pbcoreTitle titleType="Segment">All Passion Spent</pbcoreTitle>
+  <pbcoreTitle titleType="Promo">Nectar in a Sieve</pbcoreTitle>
+  <pbcoreTitle titleType="Clip">Endless Night</pbcoreTitle>
+  <pbcoreTitle titleType="Clip">Recalled to Life</pbcoreTitle>
+  <pbcoreTitle titleType="Clip">Blood's a Rover</pbcoreTitle>
+  <pbcoreTitle titleType="Raw Footage">A Glass of Blessings</pbcoreTitle>
+  <pbcoreTitle titleType="Raw Footage">The Mermaids Singing</pbcoreTitle>
+  <pbcoreTitle titleType="Raw Footage">Ego Dominus Tuus</pbcoreTitle>
+  <pbcoreTitle titleType="Episode Number">484</pbcoreTitle>
+  <pbcoreDescription>6478According to the legends, the Magratheans lived most of their lives underground.</pbcoreDescription>
+  <pbcoreDescription>3446I've just had an unhappy love affair, so I don't see why anybody else should have a good time.</pbcoreDescription>
+  <pbcoreDescription>2674Whatever your tastes, Magrathea can cater for you. We are not proud.</pbcoreDescription>
+  <pbcoreDescription descriptionType="Program">2690If there's anything more important than my ego around, I want it caught and shot now.</pbcoreDescription>
+  <pbcoreDescription descriptionType="Program">5956Magrathea itself disappeared and its memory soon passed into the obscurity of legend. In these enlightened days, of course, no one believes a word of it.</pbcoreDescription>
+  <pbcoreDescription descriptionType="Program">8004Whatever your tastes, Magrathea can cater for you. We are not proud.</pbcoreDescription>
+  <pbcoreDescription descriptionType="Episode">9596Earth: Mostly Harmless</pbcoreDescription>
+  <pbcoreDescription descriptionType="Episode">2543I've just had an unhappy love affair, so I don't see why anybody else should have a good time.</pbcoreDescription>
+  <pbcoreDescription descriptionType="Episode">7563...they discovered only a small asteroid inhabited by a solitary old man who claimed repeatedly that nothing was true, though he was later discovered to be lying.</pbcoreDescription>
+  <pbcoreDescription descriptionType="Segment">1622Earth: Mostly Harmless</pbcoreDescription>
+  <pbcoreDescription descriptionType="Segment">2735Evolution? they said to themselves, Who needs it?</pbcoreDescription>
+  <pbcoreDescription descriptionType="Segment">9018Evolution? they said to themselves, Who needs it?</pbcoreDescription>
+  <pbcoreDescription descriptionType="Promo">4156Don&#x2019;t Panic</pbcoreDescription>
+  <pbcoreDescription descriptionType="Clip">3744Whatever your tastes, Magrathea can cater for you. We are not proud.</pbcoreDescription>
+  <pbcoreDescription descriptionType="Clip">9928On the planet Earth, man had always assumed that he was more intelligent than dolphins because he had achieved so much&#x2014;the wheel, New York, wars and so on&#x2014;whilst all the dolphins had ever done was muck about in the water having a good time. But conversely, the dolphins had always believed that they were far more intelligent than man&#x2014;for precisely the same reasons.</pbcoreDescription>
+  <pbcoreDescription descriptionType="Raw Footage">4141It&#x2019;s only half completed, I&#x2019;m afraid &#x2013; we haven&#x2019;t even finished burying the artificial dinosaur skeletons in the crust yet.</pbcoreDescription>
+  <pbcoreAssetType>Story</pbcoreAssetType>
+  <pbcoreAssetType>Moving image</pbcoreAssetType>
+  <pbcoreAssetType>Sound</pbcoreAssetType>
+  <pbcoreSubject>Hingefreel</pbcoreSubject>
+  <pbcoreSubject>Shaltanac</pbcoreSubject>
+  <pbcoreSubject>Hingefreel</pbcoreSubject>
+  <pbcoreGenre>Documentary</pbcoreGenre>
+  <pbcoreGenre source="AAPB Topical Genre">Fantasy</pbcoreGenre>
+  <pbcoreGenre source="AAPB Topical Genre">Metafiction</pbcoreGenre>
+  <pbcoreCoverage>
+    <coverage source="latitude, longitude">-62.34552570910443, -8.925322574457255</coverage>
+    <coverageType>Spatial</coverageType>
+  </pbcoreCoverage>
+  <pbcoreCoverage>
+    <coverage>1962</coverage>
+    <coverageType>Temporal</coverageType>
+  </pbcoreCoverage>
+  <pbcoreAudienceLevel>NC-17</pbcoreAudienceLevel>
+  <pbcoreAudienceLevel>NC-17</pbcoreAudienceLevel>
+  <pbcoreAudienceLevel>R</pbcoreAudienceLevel>
+  <pbcoreAudienceRating>General</pbcoreAudienceRating>
+  <pbcoreContributor>
+    <contributor>Xavier Breath</contributor>
+    <contributorRole>Real-Estate Executive</contributorRole>
+  </pbcoreContributor>
+  <pbcoreContributor>
+    <contributor>Tish Hughes</contributor>
+    <contributorRole>Product Administration Manager</contributorRole>
+  </pbcoreContributor>
+  <pbcoreContributor>
+    <contributor>Rex Karrs</contributor>
+    <contributorRole>Healthcare Engineer</contributorRole>
+  </pbcoreContributor>
+  <pbcoreContributor>
+    <contributor>Bud Weiser</contributor>
+    <contributorRole>Design Executive</contributorRole>
+  </pbcoreContributor>
+  <pbcoreContributor>
+    <contributor>Val Lay</contributor>
+    <contributorRole>Dynamic Marketing Associate</contributorRole>
+  </pbcoreContributor>
+  <pbcoreRightsSummary>
+    <rightsSummary>Rhetoric is the art of ruling the minds of men.</rightsSummary>
+  </pbcoreRightsSummary>
+  <pbcoreRightsSummary>
+    <rightsLink>http://greenfelder.org/frederick</rightsLink>
+  </pbcoreRightsSummary>
+  <pbcoreAnnotation>I want your bunk!</pbcoreAnnotation>
+  <pbcoreAnnotation>I love you too, honey. Good luck with your show.</pbcoreAnnotation>
+  <pbcoreInstantiation>
+    <instantiationIdentifier source="ams">cpb-blah-blah-blah</instantiationIdentifier>
+    <instantiationIdentifier source="Shields Group">277-38-6736</instantiationIdentifier>
+    <instantiationDate dateType="alias">2019-01-22</instantiationDate>
+    <instantiationDate dateType="Digitized">2019-01-18</instantiationDate>
+    <instantiationDimensions unitsOfMeasure="feet">6x6</instantiationDimensions>
+    <instantiationDigital>feed</instantiationDigital>
+    <instantiationStandard profile="system">card</instantiationStandard>
+    <instantiationLocation>Lake Springville</instantiationLocation>
+    <instantiationMediaType>Moving Image</instantiationMediaType>
+    <instantiationGenerations>Proxy</instantiationGenerations>
+    <instantiationTimeStart>10:22:38</instantiationTimeStart>
+    <instantiationDuration>10:22:38</instantiationDuration>
+    <instantiationColors>plum</instantiationColors>
+    <instantiationTracks>Ukelele</instantiationTracks>
+    <instantiationChannelConfiguration>Country</instantiationChannelConfiguration>
+    <instantiationAlternativeModes>enim</instantiationAlternativeModes>
+  </pbcoreInstantiation>
+  <pbcoreInstantiation>
+    <instantiationIdentifier source="ams">cpb-blah-blah-blah</instantiationIdentifier>
+    <instantiationIdentifier source="Lesch-Fadel">087-65-9083</instantiationIdentifier>
+    <instantiationDate dateType="cumque">2019-01-20</instantiationDate>
+    <instantiationDate dateType="Digitized">2019-01-28</instantiationDate>
+    <instantiationDimensions unitsOfMeasure="inches">0x6</instantiationDimensions>
+    <instantiationDigital>hard drive</instantiationDigital>
+    <instantiationStandard profile="panel">array</instantiationStandard>
+    <instantiationLocation>East Bernieceborough</instantiationLocation>
+    <instantiationMediaType>Moving Image</instantiationMediaType>
+    <instantiationGenerations>Master</instantiationGenerations>
+    <instantiationTimeStart>10:22:38</instantiationTimeStart>
+    <instantiationDuration>10:22:38</instantiationDuration>
+    <instantiationColors>silver</instantiationColors>
+    <instantiationTracks>Violin</instantiationTracks>
+    <instantiationChannelConfiguration>Non Music</instantiationChannelConfiguration>
+    <instantiationAlternativeModes>autem</instantiationAlternativeModes>
+  </pbcoreInstantiation>
+  <pbcoreInstantiation>
+    <instantiationIdentifier source="ams">cpb-blah-blah-blah</instantiationIdentifier>
+    <instantiationIdentifier source="Schoen Inc">321-34-0636</instantiationIdentifier>
+    <instantiationDate dateType="minima">2019-01-25</instantiationDate>
+    <instantiationDate dateType="Digitized">2019-01-24</instantiationDate>
+    <instantiationDimensions unitsOfMeasure="feet">1x7</instantiationDimensions>
+    <instantiationDigital>firewall</instantiationDigital>
+    <instantiationStandard profile="sensor">transmitter</instantiationStandard>
+    <instantiationLocation>West Sudie</instantiationLocation>
+    <instantiationMediaType>Sound</instantiationMediaType>
+    <instantiationGenerations>Mezzanine</instantiationGenerations>
+    <instantiationTimeStart>10:22:38</instantiationTimeStart>
+    <instantiationDuration>10:22:38</instantiationDuration>
+    <instantiationColors>blue</instantiationColors>
+    <instantiationTracks>Clarinet</instantiationTracks>
+    <instantiationChannelConfiguration>Folk</instantiationChannelConfiguration>
+    <instantiationAlternativeModes>tempora</instantiationAlternativeModes>
+  </pbcoreInstantiation>
+  <pbcoreInstantiation>
+    <instantiationIdentifier source="ams">cpb-blah-blah-blah</instantiationIdentifier>
+    <instantiationIdentifier source="Pagac, Dibbert and Heathcote">006-55-3178</instantiationIdentifier>
+    <instantiationDate dateType="ea">2019-01-27</instantiationDate>
+    <instantiationDate dateType="Digitized">2019-01-17</instantiationDate>
+    <instantiationDimensions unitsOfMeasure="feet">9x2</instantiationDimensions>
+    <instantiationDigital>circuit</instantiationDigital>
+    <instantiationStandard profile="circuit">array</instantiationStandard>
+    <instantiationLocation>Olsonview</instantiationLocation>
+    <instantiationMediaType>Moving Image</instantiationMediaType>
+    <instantiationGenerations>Proxy</instantiationGenerations>
+    <instantiationTimeStart>10:22:38</instantiationTimeStart>
+    <instantiationDuration>10:22:38</instantiationDuration>
+    <instantiationColors>gold</instantiationColors>
+    <instantiationTracks>Xylophone</instantiationTracks>
+    <instantiationChannelConfiguration>Funk</instantiationChannelConfiguration>
+    <instantiationAlternativeModes>ipsa</instantiationAlternativeModes>
+  </pbcoreInstantiation>
+  <pbcoreInstantiation>
+    <instantiationIdentifier source="ams">cpb-blah-blah-blah</instantiationIdentifier>
+    <instantiationIdentifier source="Corwin, Fisher and Kulas">587-65-9493</instantiationIdentifier>
+    <instantiationDate dateType="ducimus">2019-01-20</instantiationDate>
+    <instantiationDate dateType="Digitized">2019-01-22</instantiationDate>
+    <instantiationDimensions unitsOfMeasure="inches">9x0</instantiationDimensions>
+    <instantiationDigital>application</instantiationDigital>
+    <instantiationStandard profile="feed">sensor</instantiationStandard>
+    <instantiationLocation>West Rodneybury</instantiationLocation>
+    <instantiationMediaType>Moving Image</instantiationMediaType>
+    <instantiationGenerations>Preservation Master</instantiationGenerations>
+    <instantiationTimeStart>10:22:38</instantiationTimeStart>
+    <instantiationDuration>10:22:38</instantiationDuration>
+    <instantiationColors>blue</instantiationColors>
+    <instantiationTracks>Trumpet</instantiationTracks>
+    <instantiationChannelConfiguration>Rock</instantiationChannelConfiguration>
+    <instantiationAlternativeModes>in</instantiationAlternativeModes>
+  </pbcoreInstantiation>
+  <pbcoreInstantiation>
+    <instantiationIdentifier source="ams">cpb-blah-blah-blah</instantiationIdentifier>
+    <instantiationIdentifier source="Nitzsche Inc">892-96-1363</instantiationIdentifier>
+    <instantiationDate dateType="est">2019-01-25</instantiationDate>
+    <instantiationDate dateType="Digitized">2019-01-21</instantiationDate>
+    <instantiationDimensions unitsOfMeasure="inches">4x1</instantiationDimensions>
+    <instantiationPhysical>monitor</instantiationPhysical>
+    <instantiationStandard profile="transmitter">program</instantiationStandard>
+    <instantiationLocation>Lake Carie</instantiationLocation>
+    <instantiationMediaType>Sound</instantiationMediaType>
+    <instantiationGenerations>Preservation Master</instantiationGenerations>
+    <instantiationTimeStart>10:22:38</instantiationTimeStart>
+    <instantiationDuration>10:22:38</instantiationDuration>
+    <instantiationColors>violet</instantiationColors>
+    <instantiationTracks>Trumpet</instantiationTracks>
+    <instantiationChannelConfiguration>Hip Hop</instantiationChannelConfiguration>
+    <instantiationAlternativeModes>doloremque</instantiationAlternativeModes>
+  </pbcoreInstantiation>
+</pbcoreDescriptionDocument>

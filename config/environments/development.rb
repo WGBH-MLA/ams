@@ -59,6 +59,7 @@ config.webpacker.check_yarn_integrity = true
   # For testing emails in Development
   # Define as ENV["MAIL_DELIVERY_METHOD"] as 'smtp' to deliver
   # emails in development environment
+  config.action_mailer.default_url_options = { host: 'localhost' }
   config.action_mailer.delivery_method = ENV["MAIL_DELIVERY_METHOD"].try(:to_sym) || :letter_opener
   config.action_mailer.perform_deliveries = true
 
