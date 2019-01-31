@@ -90,7 +90,10 @@ module WGBH
       end
 
       def essence_track_attributes
+        require('pry');binding.pry
         @essence_track_attributes ||= {}.tap do |attrs|
+          # do dat
+
         end
       end
 
