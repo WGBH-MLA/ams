@@ -74,7 +74,7 @@ FactoryBot.define do
 
       instantiations do
         [
-          # build(:digital_instantiation, :aapb_moving_image_with_essence_track)
+          build(:pbcore_instantiation, :digital)
         ]
       end
 

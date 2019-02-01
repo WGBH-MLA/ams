@@ -118,4 +118,28 @@ RSpec.describe WGBH::BatchIngest::PBCoreXMLMapper, :pbcore_xpath_helper do
       end
     end
   end
+
+
+  describe '#essence_track_attributes' do
+    let(:essence_track_xml) { build(:pbcore_instantiation_essence_track).to_xml }
+    subject { described_class.new(essence_track_xml) }
+
+    let(:attr_names) do
+      [:track_type,:track_id,:standard,:encoding,:data_rate,:frame_rate,:playback_inch_per_sec,:playback_frame_per_sec,:sample_rate,:bit_depth,:frame_width,:frame_height,:aspect_ratio,:time_start,:duration,:annotation]
+    end
+
+
+    it 'maps all attributes from PBCore XML' do
+      attrs = subject.essence_track_attributes
+
+      require('pry');binding.pry
+      # xpath helper!
+
+      # For each attribute in attr_names, make sure it has a value that comes from
+      # the PBCore XML factory.
+      attr_names.each do |attr|
+        expect(attrs[attr]).not_to be_empty
+      end
+    end
+  end
 end
