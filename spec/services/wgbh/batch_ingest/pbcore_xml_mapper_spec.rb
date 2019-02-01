@@ -107,6 +107,10 @@ RSpec.describe WGBH::BatchIngest::PBCoreXMLMapper, :pbcore_xpath_helper do
 
     it 'maps all attributes from PBCore XML' do
       attrs = subject.essence_track_attributes
+
+
+      # xpath helper!
+
       # For each attribute in attr_names, make sure it has a value that comes from
       # the PBCore XML factory.
       attr_names.each do |attr|

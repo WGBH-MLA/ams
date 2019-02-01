@@ -5,6 +5,6 @@ instance_dir: tmp/solr-test
 verbose: true
 managed: true
 collection:
-    persist: false
+    persist: true
     dir: solr/config
     name: hydra-test
