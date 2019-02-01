@@ -72,6 +72,12 @@ FactoryBot.define do
         ]
       end
 
+      instantiations do
+        [
+          # build(:digital_instantiation, :aapb_moving_image_with_essence_track)
+        ]
+      end
+
     end
 
     initialize_with { new(attributes) }
