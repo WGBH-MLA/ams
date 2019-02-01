@@ -82,9 +82,30 @@ module PBCoreXPathHelper
         colors:                         '//instantiationColors',
         tracks:                         '//instantiationTracks',
         channel_configuration:          '//instantiationChannelConfiguration',
-        digitization_date:              '//instantiationDate[@dateType="Digitized"]'
+        digitization_date:              '//instantiationDate[@dateType="Digitized"]',
+
+        track_type:                     '//essenceTrackType',
+
+#                                         
+# '//essenceTrackPlaybackSpeed'
+        track_id:                       '//essenceTrackIdentifier',
+        standard:                       '//essenceTrackStandard',
+        encoding:                       '//essenceTrackEncoding',
+        data_rate:                      '//essenceTrackDataRate',
+        frame_rate:                     '//essenceTrackFrameRate',
+        sampling_rate:                  '//essenceTrackSamplingRate',
+        bit_depth:                      '//essenceTrackBitDepth',
+        aspect_ratio:                   '//essenceTrackAspectRatio',
+        duration:                       '//essenceTrackDuration',
+        annotation:                     '//essenceTrackAnnotation',
+        time_start:                     '//essenceTrackTimeStart'
       }
     end
+
+
+
+# essenceTrackFrameSize
+# essenceTrackLanguage
 
     # Shortcut method to pull out all titles that don't match the other title
     # types.
