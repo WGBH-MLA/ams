@@ -90,19 +90,21 @@ module PBCoreXPathHelper
         ess_encoding:                   '//essenceTrackEncoding',
         ess_data_rate:                  '//essenceTrackDataRate',
         ess_frame_rate:                 '//essenceTrackFrameRate',
-        ess_sampling_rate:              '//essenceTrackSamplingRate',
+        ess_sample_rate:              '//essenceTrackSamplingRate',
         ess_bit_depth:                  '//essenceTrackBitDepth',
         ess_aspect_ratio:               '//essenceTrackAspectRatio',
         ess_duration:                   '//essenceTrackDuration',
         ess_annotation:                 '//essenceTrackAnnotation',
         ess_time_start:                 '//essenceTrackTimeStart'
+
+        # pending unitsOfMeasure renaming
+        # playback_inch_per_sec
+        # playback_frame_per_sec
+
+        # essenceTrackLanguage
       }
     end
 
-
-
-# essenceTrackFrameSize
-# essenceTrackLanguage
 
     # Shortcut method to pull out all titles that don't match the other title
     # types.
@@ -134,7 +136,6 @@ module PBCoreXPathHelper
       - values_from_xpath(:episode_number)
     end
 
-
     def dates_without_digitized_date_type
       values_from_xpath('//instantiationDate') - values_from_xpath(:digitization_date)
     end
@@ -153,6 +154,15 @@ module PBCoreXPathHelper
         }
       end
     end
+
+    def frame_width
+      noko.xpath('//essenceTrackFrameSize').first.text.split('x').first
+    end
+
+    def frame_height
+      noko.xpath('//essenceTrackFrameSize').first.text.split('x').last
+    end
+
   end
 end
 
