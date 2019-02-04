@@ -84,21 +84,18 @@ module PBCoreXPathHelper
         channel_configuration:          '//instantiationChannelConfiguration',
         digitization_date:              '//instantiationDate[@dateType="Digitized"]',
 
-        track_type:                     '//essenceTrackType',
-
-#                                         
-# '//essenceTrackPlaybackSpeed'
-        track_id:                       '//essenceTrackIdentifier',
-        standard:                       '//essenceTrackStandard',
-        encoding:                       '//essenceTrackEncoding',
-        data_rate:                      '//essenceTrackDataRate',
-        frame_rate:                     '//essenceTrackFrameRate',
-        sampling_rate:                  '//essenceTrackSamplingRate',
-        bit_depth:                      '//essenceTrackBitDepth',
-        aspect_ratio:                   '//essenceTrackAspectRatio',
-        duration:                       '//essenceTrackDuration',
-        annotation:                     '//essenceTrackAnnotation',
-        time_start:                     '//essenceTrackTimeStart'
+        ess_track_type:                 '//essenceTrackType',
+        ess_track_id:                   '//essenceTrackIdentifier',
+        ess_standard:                   '//essenceTrackStandard',
+        ess_encoding:                   '//essenceTrackEncoding',
+        ess_data_rate:                  '//essenceTrackDataRate',
+        ess_frame_rate:                 '//essenceTrackFrameRate',
+        ess_sampling_rate:              '//essenceTrackSamplingRate',
+        ess_bit_depth:                  '//essenceTrackBitDepth',
+        ess_aspect_ratio:               '//essenceTrackAspectRatio',
+        ess_duration:                   '//essenceTrackDuration',
+        ess_annotation:                 '//essenceTrackAnnotation',
+        ess_time_start:                 '//essenceTrackTimeStart'
       }
     end
 
