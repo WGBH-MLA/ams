@@ -118,25 +118,32 @@ RSpec.describe WGBH::BatchIngest::PBCoreXMLMapper, :pbcore_xpath_helper do
     end
   end
 
-
   describe '#essence_track_attributes' do
-    let(:essence_track_xml) { build(:pbcore_instantiation_essence_track).to_xml }
-    subject { described_class.new(essence_track_xml) }
+    
+    let(:pbcore_xml) { FactoryBot.build(:pbcore_instantiation_essence_track).to_xml }
+    let(:essence_track_attributes) { WGBH::BatchIngest::PBCoreXMLMapper.new(pbcore_xml).essence_track_attributes }
+    it "maps all attributes from Essence Track XML" do
 
-    let(:attr_names) do
-      [:track_type,:track_id,:standard,:encoding,:data_rate,:frame_rate,:playback_inch_per_sec,:playback_frame_per_sec,:sample_rate,:bit_depth,:frame_width,:frame_height,:aspect_ratio,:time_start,:duration,:annotation]
-    end
-
-    attrs = subject.essence_track_attributes
-    attr_names.each do |attr|
-
-      it "maps the #{attr} attribute from PBCore XML" do
-
-      # For each attribute in attr_names, make sure it has a value that comes from
-      # the PBCore XML factory.
-        expect(attrs[attr]).to eq pbcore_values_from_xpath(essence_track_xml, %(ess_#{attr}).to_sym)
-        expect(attrs[attr]).not_to be_empty
-      end
+      # first for single-value fields
+      expect(essence_track_attributes[:track_type]).to eq pbcore_values_from_xpath(pbcore_xml, :ess_track_type).first
+      expect(essence_track_attributes[:track_id]).to eq pbcore_values_from_xpath(pbcore_xml, :ess_track_id)
+      expect(essence_track_attributes[:standard]).to eq pbcore_values_from_xpath(pbcore_xml, :ess_standard).first
+      expect(essence_track_attributes[:encoding]).to eq pbcore_values_from_xpath(pbcore_xml, :ess_encoding).first
+      expect(essence_track_attributes[:data_rate]).to eq pbcore_values_from_xpath(pbcore_xml, :ess_data_rate).first
+      expect(essence_track_attributes[:frame_rate]).to eq pbcore_values_from_xpath(pbcore_xml, :ess_frame_rate).first
+      # need decision on unitsOfMeasure
+      # expect(essence_track_attributes[:playback_inch_per_sec]).to eq pbcore_values_from_xpath(pbcore_xml, :ess_playback_inch_per_sec).first
+      # expect(essence_track_attributes[:playback_frame_per_sec]).to eq pbcore_values_from_xpath(pbcore_xml, :ess_playback_frame_per_sec).first
+      expect(essence_track_attributes[:sample_rate]).to eq pbcore_values_from_xpath(pbcore_xml, :ess_sample_rate).first
+      expect(essence_track_attributes[:bit_depth]).to eq pbcore_values_from_xpath(pbcore_xml, :ess_bit_depth).first
+      
+      expect(essence_track_attributes[:frame_width]).to eq pbcore_xpath_helper(pbcore_xml).frame_width
+      expect(essence_track_attributes[:frame_height]).to eq pbcore_xpath_helper(pbcore_xml).frame_height
+      require('pry');binding.pry
+      expect(essence_track_attributes[:aspect_ratio]).to eq pbcore_values_from_xpath(pbcore_xml, :ess_aspect_ratio).first
+      expect(essence_track_attributes[:time_start]).to eq pbcore_values_from_xpath(pbcore_xml, :ess_time_start).first
+      expect(essence_track_attributes[:duration]).to eq pbcore_values_from_xpath(pbcore_xml, :ess_duration).first
+      expect(essence_track_attributes[:annotation]).to eq pbcore_values_from_xpath(pbcore_xml, :ess_annotation).first
     end
   end
 end

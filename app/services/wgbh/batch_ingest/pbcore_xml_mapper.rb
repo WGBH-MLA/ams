@@ -105,10 +105,9 @@ module WGBH
 
           # frame size becomes:
           frame_width, frame_height = pbcore.frame_size.value.split('x') if pbcore.frame_size
-require('pry');binding.pry          
           attrs[:frame_width] = frame_width
           attrs[:frame_height] = frame_height
-          attrs[:aspect_ratio] = Array(pbcore.aspect_ratio.value) if pbcore.aspect_ratio
+          attrs[:aspect_ratio] = pbcore.aspect_ratio.value if pbcore.aspect_ratio
           attrs[:time_start] = pbcore.time_start.value if pbcore.time_start
           attrs[:duration] = pbcore.duration.value if pbcore.duration
           attrs[:annotation] = pbcore.annotations.map(&:value) if pbcore.annotations
