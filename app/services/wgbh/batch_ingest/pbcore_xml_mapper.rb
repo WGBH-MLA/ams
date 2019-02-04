@@ -90,7 +90,6 @@ module WGBH
       end
 
       def essence_track_attributes
-        require('pry');binding.pry
         @essence_track_attributes ||= {}.tap do |attrs|
 
           attrs[:track_type] = pbcore.type.value if pbcore.type
@@ -106,6 +105,7 @@ module WGBH
 
           # frame size becomes:
           frame_width, frame_height = pbcore.frame_size.value.split('x') if pbcore.frame_size
+require('pry');binding.pry          
           attrs[:frame_width] = frame_width
           attrs[:frame_height] = frame_height
           attrs[:aspect_ratio] = Array(pbcore.aspect_ratio.value) if pbcore.aspect_ratio
