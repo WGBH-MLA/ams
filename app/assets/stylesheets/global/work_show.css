@@ -1,9 +1,9 @@
 .canonical-image {
-    display: block;
-    padding: 0.5em 0;
-    width: 100%;
+  display: block;
+  padding: 0.5em 0;
+  width: 100%;
 }
-.mejs__container
-{
-	width:100% !important;
+
+.mejs__container {
+	margin: 0 auto;
 }

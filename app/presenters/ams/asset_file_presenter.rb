@@ -1,5 +1,5 @@
 module AMS
-  class AssetFilePrescenter
+  class AssetFilePresenter
     attr_accessor :solr_doc
 
     def initialize(solr_doc)
