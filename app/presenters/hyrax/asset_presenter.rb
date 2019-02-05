@@ -67,6 +67,19 @@ module Hyrax
       :avalon
     end
 
+    def ranges
+      unless solr_document['media'].nil?
+        [
+          Hyrax::IiifAv::ManifestRange.new(
+            label: { '@none'.to_sym => title.first },
+            items: file_set_presenters.collect(&:range)
+          )
+        ]
+      else
+        return [ ]
+      end
+    end
+
     def media_available?
       solr_document.find_child(DigitalInstantiation).each do |instantiation|
         if  ( instantiation_have_essence_tracks(instantiation) &&
@@ -74,9 +87,17 @@ module Hyrax
             instantiation_have_holding_organization_aapb(instantiation) )
           solr_document['media'] = []
           instantiation.find_child(EssenceTrack).each do |track|
-
-            solr_document['media'] << {:type=>track.track_type.first, :height=>track.frame_height,
-                                       :width=>track.frame_width,:duration=>duration_to_sec(track.duration.first)}
+            if track.track_type.first == "video"
+              solr_document['media'] << {
+                :type => track.track_type.first,
+                :height => track.frame_height.first,
+                :width => track.frame_width.first,
+                :duration => duration_to_sec(track.duration.first) }
+            else
+              solr_document['media'] << {
+                :type => track.track_type.first,
+                :duration => duration_to_sec(track.duration.first) }
+            end
           end
           return true
         end

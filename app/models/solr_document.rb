@@ -158,7 +158,7 @@ class SolrDocument
   end
 
   def frame_height
-    self[Solrizer.solr_name('frame_hight')]
+    self[Solrizer.solr_name('frame_height')]
   end
 
   def aspect_ratio
