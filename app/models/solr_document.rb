@@ -137,12 +137,12 @@ class SolrDocument
     self[Solrizer.solr_name('frame_rate')]
   end
 
-  def playback_inch_per_sec
-    self[Solrizer.solr_name('playback_inch_per_sec')]
+  def playback_speed
+    self[Solrizer.solr_name('playback_speed')]
   end
 
-  def playback_frame_per_sec
-    self[Solrizer.solr_name('playback_frame_per_sec')]
+  def playback_speed_units
+    self[Solrizer.solr_name('playback_speed_units')]
   end
 
   def sample_rate
