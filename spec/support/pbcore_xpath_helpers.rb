@@ -90,11 +90,11 @@ module PBCoreXPathHelper
         ess_encoding:                   '//essenceTrackEncoding',
         ess_data_rate:                  '//essenceTrackDataRate',
         ess_frame_rate:                 '//essenceTrackFrameRate',
-        ess_sample_rate:              '//essenceTrackSamplingRate',
+        ess_sample_rate:                '//essenceTrackSamplingRate',
         ess_bit_depth:                  '//essenceTrackBitDepth',
         ess_aspect_ratio:               '//essenceTrackAspectRatio',
         ess_duration:                   '//essenceTrackDuration',
-        ess_annotation:                 '//essenceTrackAnnotation',
+        ess_annotations:                '//essenceTrackAnnotation',
         ess_time_start:                 '//essenceTrackTimeStart'
 
         # pending unitsOfMeasure renaming

@@ -98,8 +98,8 @@ module WGBH
           attrs[:encoding] = pbcore.encoding.value if pbcore.encoding
           attrs[:data_rate] = pbcore.data_rate.value if pbcore.data_rate
           attrs[:frame_rate] = pbcore.frame_rate.value if pbcore.frame_rate
-          attrs[:playback_inch_per_sec] = pbcore.playback_speed.value if pbcore.playback_speed
-          attrs[:playback_frame_per_sec] = pbcore.playback_speed.value if pbcore.playback_speed
+          # attrs[:playback_inch_per_sec] = pbcore.playback_speed.value if pbcore.playback_speed
+          # attrs[:playback_frame_per_sec] = pbcore.playback_speed.value if pbcore.playback_speed
           attrs[:sample_rate] = pbcore.sampling_rate.value if pbcore.sampling_rate
           attrs[:bit_depth] = pbcore.bit_depth.value if pbcore.bit_depth
 
@@ -110,7 +110,7 @@ module WGBH
           attrs[:aspect_ratio] = pbcore.aspect_ratio.value if pbcore.aspect_ratio
           attrs[:time_start] = pbcore.time_start.value if pbcore.time_start
           attrs[:duration] = pbcore.duration.value if pbcore.duration
-          attrs[:annotation] = pbcore.annotations.map(&:value) if pbcore.annotations
+          attrs[:annotations] = pbcore.annotations.map(&:value) if pbcore.annotations
         end
       end
 

@@ -17,7 +17,7 @@ FactoryBot.define do
     aspect_ratio    { build(:pbcore_instantiation_essence_track_aspect_ratio) }
     time_start      { build(:pbcore_instantiation_essence_track_time_start) }
     duration        { build(:pbcore_instantiation_essence_track_duration) }
-    annotation      { build(:pbcore_instantiation_essence_track_annotation) }
+    annotations     { [build(:pbcore_instantiation_essence_track_annotation)] }
 
     initialize_with { new(attributes) }
   end
