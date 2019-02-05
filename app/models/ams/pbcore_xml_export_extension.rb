@@ -213,8 +213,7 @@ module AMS::PbcoreXmlExportExtension
       essence_track_node.essenceTrackDuration { essence_track_node.text(essence_track.duration.first) } if content?(essence_track.duration)
       essence_track_node.essenceTrackDataRate(unitsOfMeasure: 'kb/s') { essence_track_node.text(essence_track.data_rate.first) } if content?(essence_track.data_rate)
       essence_track_node.essenceTrackFrameSize { essence_track_node.text("#{essence_track.frame_width} x #{essence_track.frame_height}") } if essence_track.frame_width && essence_track.frame_height
-      essence_track_node.essenceTrackPlaybackSpeed(unitsOfMeasure: 'inches per second') { essence_track_node.text(essence_track.playback_inch_per_sec.first) } if content?(essence_track.playback_inch_per_sec)
-      essence_track_node.essenceTrackPlaybackSpeed(unitsOfMeasure: 'frames per second') { essence_track_node.text(essence_track.playback_frame_per_sec.first) } if content?(essence_track.playback_frame_per_sec)
+      essence_track_node.essenceTrackPlaybackSpeed(unitsOfMeasure: essence_track.playback_speed_units) { essence_track_node.text(essence_track.playback_speed) } if content?(essence_track.playback_speed)
       essence_track_node.essenceTrackSamplingRate { essence_track_node.text(essence_track.sample_rate.first) } if content?(essence_track.sample_rate)
       essence_track_node.essenceTrackTimeStart { essence_track_node.text(essence_track.time_start.first) } if content?(essence_track.time_start)
       essence_track.language.to_a.each { |lang| essence_track_node.essenceTrackLanguage { essence_track_node.text(lang) } }
