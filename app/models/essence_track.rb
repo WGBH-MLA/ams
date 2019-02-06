@@ -36,11 +36,11 @@ class EssenceTrack < ActiveFedora::Base
     index.as :stored_searchable
   end
 
-  property :playback_inch_per_sec, predicate: ::RDF::URI.new("http://www.ebu.ch/metadata/ontologies/ebucore/ebucore#inchesPerSecond"), multiple: false do |index|
+  property :playback_speed, predicate: ::RDF::URI.new("http://www.ebu.ch/metadata/ontologies/ebucore/ebucore#playbackSpeed"), multiple: false do |index|
     index.as :stored_searchable
   end
 
-  property :playback_frame_per_sec, predicate: ::RDF::URI.new("http://www.ebu.ch/metadata/ontologies/ebucore/ebucore#framesPerSecond"), multiple: false do |index|
+  property :playback_speed_units, predicate: ::RDF::URI.new('http://pbcore.org#hasPlaybackSpeedUnits'), multiple: false do |index|
     index.as :stored_searchable
   end
 

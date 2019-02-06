@@ -67,21 +67,21 @@ RSpec.describe EssenceTrack do
     end
   end
 
-  context "playback_inch_per_sec" do
+  context "playback_speed" do
     let(:essence_track) { FactoryBot.build(:essence_track) }
-    it "has playback_inch_per_sec" do
-      essence_track.playback_inch_per_sec = "Test playback_inch_per_sec"
-      expect(essence_track.resource.dump(:ttl)).to match(/ebucore#inchesPerSecond/)
-      expect(essence_track.playback_inch_per_sec.include?("Test playback_inch_per_sec")).to be true
+    it "has playback_speed" do
+      essence_track.playback_speed = "24"
+      expect(essence_track.resource.dump(:ttl)).to match(/ebucore#playbackSpeed/)
+      expect(essence_track.playback_speed).to eq "24"
     end
   end
 
-  context "playback_frame_per_sec" do
+  context "playback_speed_units" do
     let(:essence_track) { FactoryBot.build(:essence_track) }
-    it "has playback_frame_per_sec" do
-      essence_track.playback_frame_per_sec = "Test playback_frame_per_sec"
-      expect(essence_track.resource.dump(:ttl)).to match(/ebucore#framesPerSecond/)
-      expect(essence_track.playback_frame_per_sec.include?("Test playback_frame_per_sec")).to be true
+    it "has playback_speed_units" do
+      essence_track.playback_speed_units = "fps"
+      expect(essence_track.resource.dump(:ttl)).to match(/pbcore\.org#hasPlaybackSpeedUnits/)
+      expect(essence_track.playback_speed_units).to eq "fps"
     end
   end
 
