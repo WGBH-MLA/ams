@@ -100,12 +100,12 @@ module Hyrax
               e[:access_control_id] = env.curation_concern.access_control_id
               actor = Hyrax::CurationConcern.actor
               essence_track = ::EssenceTrack.new
-                if actor.create(Actors::Environment.new(essence_track, env.current_ability, e))
-                  #add essence track as child work to digital instantiation
-                  env.curation_concern.ordered_members << essence_track
-                  env.curation_concern.save
-                end
+              if actor.create(Actors::Environment.new(essence_track, env.current_ability, e))
+                #add essence track as child work to digital instantiation
+                env.curation_concern.ordered_members << essence_track
+                env.curation_concern.save
               end
+            end
           end
           true
         end
