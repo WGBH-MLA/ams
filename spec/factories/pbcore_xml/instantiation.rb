@@ -26,10 +26,6 @@ FactoryBot.define do
       digital   { build(:pbcore_instantiation_digital) }
     end
 
-    trait :digital_with_essence do
-      digital   { build(:pbcore_instantiation_digital, :aapb_moving_image_with_essence_track) }
-    end
-
     trait :physical do
       physical { build(:pbcore_instantiation_physical) }
     end
