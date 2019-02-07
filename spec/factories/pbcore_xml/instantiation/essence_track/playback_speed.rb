@@ -5,16 +5,8 @@ FactoryBot.define do
     skip_create
 
     value { rand(1..50).to_s }
-    units_of_measure { Faker::Hacker.abbreviation }
+    units_of_measure { ['RPM', 'IPS'].sample }
 
     initialize_with { new(attributes) }
-
-    trait :inches_per_second do
-      units_of_measure { 'inches per second' }
-    end
-
-    trait :frames_per_second do
-      units_of_measure { 'frames per second' }
-    end
   end
 end

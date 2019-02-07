@@ -5,7 +5,7 @@ module WGBH
       #
 
       def delete_manifest
-        # I will do nothing of the sort (overrides BatchScanner method we dont use)!
+        # I will do nothing of the sort (overrides BatchReader method we dont use)!
         true 
       end
     end
