@@ -82,9 +82,29 @@ module PBCoreXPathHelper
         colors:                         '//instantiationColors',
         tracks:                         '//instantiationTracks',
         channel_configuration:          '//instantiationChannelConfiguration',
-        digitization_date:              '//instantiationDate[@dateType="Digitized"]'
+        digitization_date:              '//instantiationDate[@dateType="Digitized"]',
+
+        ess_track_type:                 '//essenceTrackType',
+        ess_track_id:                   '//essenceTrackIdentifier',
+        ess_standard:                   '//essenceTrackStandard',
+        ess_encoding:                   '//essenceTrackEncoding',
+        ess_data_rate:                  '//essenceTrackDataRate',
+        ess_frame_rate:                 '//essenceTrackFrameRate',
+        ess_sample_rate:                '//essenceTrackSamplingRate',
+        ess_bit_depth:                  '//essenceTrackBitDepth',
+        ess_aspect_ratio:               '//essenceTrackAspectRatio',
+        ess_duration:                   '//essenceTrackDuration',
+        ess_annotations:                '//essenceTrackAnnotation',
+        ess_time_start:                 '//essenceTrackTimeStart'
+
+        # pending unitsOfMeasure renaming
+        # playback_inch_per_sec
+        # playback_frame_per_sec
+
+        # essenceTrackLanguage
       }
     end
+
 
     # Shortcut method to pull out all titles that don't match the other title
     # types.
@@ -116,7 +136,6 @@ module PBCoreXPathHelper
       - values_from_xpath(:episode_number)
     end
 
-
     def dates_without_digitized_date_type
       values_from_xpath('//instantiationDate') - values_from_xpath(:digitization_date)
     end
@@ -135,6 +154,15 @@ module PBCoreXPathHelper
         }
       end
     end
+
+    def frame_width
+      noko.xpath('//essenceTrackFrameSize').first.text.split('x').first
+    end
+
+    def frame_height
+      noko.xpath('//essenceTrackFrameSize').first.text.split('x').last
+    end
+
   end
 end
 

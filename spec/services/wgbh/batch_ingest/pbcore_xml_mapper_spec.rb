@@ -98,4 +98,31 @@ RSpec.describe WGBH::BatchIngest::PBCoreXMLMapper, :pbcore_xpath_helper do
       expect(attrs[:local_instantiation_identifier]).to eq pbcore_xpath_helper(pbcore_instantiation_xml).local_instantiation_identifiers_without_ams_id
     end
   end
+
+  describe '#essence_track_attributes' do
+    
+    let(:pbcore_xml) { FactoryBot.build(:pbcore_instantiation_essence_track).to_xml }
+    let(:essence_track_attributes) { WGBH::BatchIngest::PBCoreXMLMapper.new(pbcore_xml).essence_track_attributes }
+    it "maps all attributes from Essence Track XML" do
+
+      # first for single-value fields
+      expect(essence_track_attributes[:track_type]).to eq pbcore_values_from_xpath(pbcore_xml, :ess_track_type).first
+      expect(essence_track_attributes[:track_id]).to eq pbcore_values_from_xpath(pbcore_xml, :ess_track_id)
+      expect(essence_track_attributes[:standard]).to eq pbcore_values_from_xpath(pbcore_xml, :ess_standard).first
+      expect(essence_track_attributes[:encoding]).to eq pbcore_values_from_xpath(pbcore_xml, :ess_encoding).first
+      expect(essence_track_attributes[:data_rate]).to eq pbcore_values_from_xpath(pbcore_xml, :ess_data_rate).first
+      expect(essence_track_attributes[:frame_rate]).to eq pbcore_values_from_xpath(pbcore_xml, :ess_frame_rate).first
+      # expect(essence_track_attributes[:playback_speed]).to eq pbcore_values_from_xpath(pbcore_xml, :ess_playback_speed).first
+      # expect(essence_track_attributes[:playback_speed_units_of_measure]).to eq pbcore_values_from_xpath(pbcore_xml, :ess_playback_speed_units_of_measure).first
+      expect(essence_track_attributes[:sample_rate]).to eq pbcore_values_from_xpath(pbcore_xml, :ess_sample_rate).first
+      expect(essence_track_attributes[:bit_depth]).to eq pbcore_values_from_xpath(pbcore_xml, :ess_bit_depth).first
+      
+      expect(essence_track_attributes[:frame_width]).to eq pbcore_xpath_helper(pbcore_xml).frame_width
+      expect(essence_track_attributes[:frame_height]).to eq pbcore_xpath_helper(pbcore_xml).frame_height
+      expect(essence_track_attributes[:aspect_ratio]).to eq pbcore_values_from_xpath(pbcore_xml, :ess_aspect_ratio).first
+      expect(essence_track_attributes[:time_start]).to eq pbcore_values_from_xpath(pbcore_xml, :ess_time_start).first
+      expect(essence_track_attributes[:duration]).to eq pbcore_values_from_xpath(pbcore_xml, :ess_duration).first
+      expect(essence_track_attributes[:annotations]).to eq pbcore_values_from_xpath(pbcore_xml, :ess_annotations)
+    end
+  end
 end

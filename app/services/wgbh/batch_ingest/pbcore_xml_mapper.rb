@@ -89,6 +89,31 @@ module WGBH
         end
       end
 
+      def essence_track_attributes
+        @essence_track_attributes ||= {}.tap do |attrs|
+
+          attrs[:track_type] = pbcore.type.value if pbcore.type
+          attrs[:track_id] = pbcore.identifiers.map(&:value) if pbcore.identifiers
+          attrs[:standard] = pbcore.standard.value if pbcore.standard
+          attrs[:encoding] = pbcore.encoding.value if pbcore.encoding
+          attrs[:data_rate] = pbcore.data_rate.value if pbcore.data_rate
+          attrs[:frame_rate] = pbcore.frame_rate.value if pbcore.frame_rate
+          # attrs[:playback_inch_per_sec] = pbcore.playback_speed.value if pbcore.playback_speed
+          # attrs[:playback_frame_per_sec] = pbcore.playback_speed.value if pbcore.playback_speed
+          attrs[:sample_rate] = pbcore.sampling_rate.value if pbcore.sampling_rate
+          attrs[:bit_depth] = pbcore.bit_depth.value if pbcore.bit_depth
+
+          # frame size becomes:
+          frame_width, frame_height = pbcore.frame_size.value.split('x') if pbcore.frame_size
+          attrs[:frame_width] = frame_width
+          attrs[:frame_height] = frame_height
+          attrs[:aspect_ratio] = pbcore.aspect_ratio.value if pbcore.aspect_ratio
+          attrs[:time_start] = pbcore.time_start.value if pbcore.time_start
+          attrs[:duration] = pbcore.duration.value if pbcore.duration
+          attrs[:annotations] = pbcore.annotations.map(&:value) if pbcore.annotations
+        end
+      end
+
       private
 
         def pbcore
@@ -99,6 +124,8 @@ module WGBH
                         PBCore::InstantiationDocument.parse(pbcore_xml)
                       when is_instantiation?
                         PBCore::Instantiation.parse(pbcore_xml)
+                      when is_essence_track?
+                        PBCore::Instantiation::EssenceTrack.parse(pbcore_xml)
                       else
                         # TODO: Custom error class?
                         raise "XML not recognized as PBCore"
@@ -115,6 +142,10 @@ module WGBH
 
         def is_instantiation?
           pbcore_xml =~ /pbcoreInstantiation/
+        end
+
+        def is_essence_track?
+          pbcore_xml =~ /instantiationEssenceTrack/
         end
 
         def title_types
