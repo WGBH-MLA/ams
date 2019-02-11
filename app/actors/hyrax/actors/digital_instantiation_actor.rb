@@ -88,6 +88,8 @@ module Hyrax
               e[:data_rate] = track.data_rate.value if track.data_rate
               e[:frame_rate] = track.frame_rate.value if track.frame_rate
               e[:bit_depth] = track.bit_depth.value if track.bit_depth
+              e[:frame_height] = parse_frame_height(track.frame_size.value) if track.frame_size
+              e[:frame_width] = parse_frame_width(track.frame_size.value) if track.frame_size
               e[:aspect_ratio] = Array(track.aspect_ratio.value) if track.aspect_ratio
               e[:duration] = track.duration.value if track.duration
               e[:annotation] =  track.annotations.map(&:value) if track.annotations
@@ -98,49 +100,57 @@ module Hyrax
               e[:access_control_id] = env.curation_concern.access_control_id
               actor = Hyrax::CurationConcern.actor
               essence_track = ::EssenceTrack.new
-                if actor.create(Actors::Environment.new(essence_track, env.current_ability, e))
-                  #add essence track as child work to digital instantiation
-                  env.curation_concern.ordered_members << essence_track
-                  env.curation_concern.save
-                end
+              if actor.create(Actors::Environment.new(essence_track, env.current_ability, e))
+                #add essence track as child work to digital instantiation
+                env.curation_concern.ordered_members << essence_track
+                env.curation_concern.save
               end
+            end
           end
           true
         end
 
-      def save_instantiation_aapb_admin_data(env)
-        env.curation_concern.instantiation_admin_data = find_or_create_instantiation_admin_data(env)
-        set_instantiation_admin_data_attributes(env.curation_concern.instantiation_admin_data, env) if env.current_ability.can?(:create, InstantiationAdminData)
-        remove_instantiation_admin_data_from_env_attributes(env)
-      end
-
-      def set_instantiation_admin_data_attributes(instantiation_admin_data, env)
-        instantiation_admin_data_attributes.each do |k|
-          instantiation_admin_data.send("#{k}=", env.attributes[k].to_s)
+        def parse_frame_width(frame_size)
+          frame_size.split('x')[0].strip
         end
-      end
 
-      def remove_instantiation_admin_data_from_env_attributes(env)
-        instantiation_admin_data_attributes.each { |k| env.attributes.delete(k) }
-      end
+        def parse_frame_height(frame_size)
+          frame_size.split('x')[1].strip
+        end
 
-      def instantiation_admin_data_attributes
-        # removing id, created_at & updated_at from attributes
-        (InstantiationAdminData.attribute_names.dup - ['id', 'created_at', 'updated_at']).map &:to_sym
-      end
+        def save_instantiation_aapb_admin_data(env)
+          env.curation_concern.instantiation_admin_data = find_or_create_instantiation_admin_data(env)
+          set_instantiation_admin_data_attributes(env.curation_concern.instantiation_admin_data, env) if env.current_ability.can?(:create, InstantiationAdminData)
+          remove_instantiation_admin_data_from_env_attributes(env)
+        end
 
-      def find_or_create_instantiation_admin_data(env)
-        instantiation_admin_data = if env.curation_concern.instantiation_admin_data_gid.blank?
-                                     InstantiationAdminData.create
-                                   else
-                                     InstantiationAdminData.find_by_gid!(env.curation_concern.instantiation_admin_data_gid)
-                                   end
-        instantiation_admin_data
-      end
+        def set_instantiation_admin_data_attributes(instantiation_admin_data, env)
+          instantiation_admin_data_attributes.each do |k|
+            instantiation_admin_data.send("#{k}=", env.attributes[k].to_s)
+          end
+        end
 
-      def destroy_instantiation_admin_data(env)
-        env.curation_concern.instantiation_admin_data.destroy if env.curation_concern.instantiation_admin_data_gid
-      end
+        def remove_instantiation_admin_data_from_env_attributes(env)
+          instantiation_admin_data_attributes.each { |k| env.attributes.delete(k) }
+        end
+
+        def instantiation_admin_data_attributes
+          # removing id, created_at & updated_at from attributes
+          (InstantiationAdminData.attribute_names.dup - ['id', 'created_at', 'updated_at']).map &:to_sym
+        end
+
+        def find_or_create_instantiation_admin_data(env)
+          instantiation_admin_data = if env.curation_concern.instantiation_admin_data_gid.blank?
+                                       InstantiationAdminData.create
+                                     else
+                                       InstantiationAdminData.find_by_gid!(env.curation_concern.instantiation_admin_data_gid)
+                                     end
+          instantiation_admin_data
+        end
+
+        def destroy_instantiation_admin_data(env)
+          env.curation_concern.instantiation_admin_data.destroy if env.curation_concern.instantiation_admin_data_gid
+        end
     end
   end
 end

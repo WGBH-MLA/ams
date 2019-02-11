@@ -72,6 +72,12 @@ FactoryBot.define do
         ]
       end
 
+      instantiations do
+        [
+          build(:pbcore_instantiation, :digital)
+        ]
+      end
+
     end
 
     initialize_with { new(attributes) }
