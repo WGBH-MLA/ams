@@ -53,10 +53,14 @@ module Hyrax
 
         def find_or_create_admin_data(env)
           admin_data = ::AdminData.create unless env.curation_concern.admin_data_gid.present?
-          Rails.logger.debug "Create AdminData at #{admin_data.gid}"
-          admin_data.save
-          env.curation_concern.admin_data_gid = admin_data.gid
-          admin_data
+          if admin_data
+            Rails.logger.debug "Create AdminData at #{admin_data.gid}"
+            admin_data.save
+            env.curation_concern.admin_data_gid = admin_data.gid
+            return admin_data
+          else
+            return env.curation_concern.admin_data
+          end
         end
 
 
