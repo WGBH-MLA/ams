@@ -7,10 +7,15 @@ class EssenceTrack < ActiveFedora::Base
   # Change this to restrict which works can be added as a child.
   self.valid_child_concerns = []
 
-  validates :track_type, presence: { message: 'Your work must have track type.' }
-  validates :track_id, presence: { message: 'Your work must have track ID.' }
-  validates :duration, format: { with: AMS::TimeCodeService.regex, allow_blank: true, message: "Invalid format for duration. Use HH:MM:SS, H:MM:SS, MM:SS, M:SS, or HH:MM:SS" }
-  validates :time_start, format: { with: AMS::TimeCodeService.regex, allow_blank: true, message: "Invalid format for time start. Use HH:MM:SS, H:MM:SS, MM:SS, MM:SS or HH::MM::SS;FF" }
+  validates :track_type, presence: true
+  validates :track_id, presence: true
+
+  validates_each :duration, :time_start, allow_blank: true do |record, attr, value|
+    if value !~ AMS::TimeCodeService.regex
+      record.errors.add(:base, "Invalid format for #{attr.to_s.humanize}. Use HH:MM:SS, H:MM:SS, MM:SS, M:SS, or HH:MM:SS")
+      record.errors.add(attr, "Invalid format for #{attr.to_s.humanize}. Use HH:MM:SS, H:MM:SS, MM:SS, M:SS, or HH:MM:SS")
+    end
+  end
 
   property :track_type, predicate: ::RDF::URI.new("http://www.ebu.ch/metadata/ontologies/ebucore/ebucore#trackType"), multiple: false do |index|
     index.as :stored_searchable
@@ -36,11 +41,11 @@ class EssenceTrack < ActiveFedora::Base
     index.as :stored_searchable
   end
 
-  property :playback_inch_per_sec, predicate: ::RDF::URI.new("http://www.ebu.ch/metadata/ontologies/ebucore/ebucore#inchesPerSecond"), multiple: false do |index|
+  property :playback_speed, predicate: ::RDF::URI.new("http://www.ebu.ch/metadata/ontologies/ebucore/ebucore#playbackSpeed"), multiple: false do |index|
     index.as :stored_searchable
   end
 
-  property :playback_frame_per_sec, predicate: ::RDF::URI.new("http://www.ebu.ch/metadata/ontologies/ebucore/ebucore#framesPerSecond"), multiple: false do |index|
+  property :playback_speed_units, predicate: ::RDF::URI.new('http://pbcore.org#hasPlaybackSpeedUnits'), multiple: false do |index|
     index.as :stored_searchable
   end
 
