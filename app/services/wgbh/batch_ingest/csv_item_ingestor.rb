@@ -1,7 +1,6 @@
 module WGBH
   module BatchIngest
     class CSVItemIngestor < Hyrax::BatchIngest::BatchItemIngester
-
       def ingest
         @works_ingested = []
         set_options
@@ -9,47 +8,41 @@ module WGBH
         ingest_object_at options, @source_data
         @works_ingested.first
       end
+
       private
 
-        def ingest_object_at node, with_data, with_parent = nil
-
+        def ingest_object_at(node, with_data, with_parent = nil)
           actor = ::Hyrax::CurationConcern.actor
-          ability = ::Ability.new(User.find_by_email @batch_item.submitter_email)
+          ability = ::Ability.new(User.find_by_email(@batch_item.submitter_email))
 
-
-          attributes = {}
-
-          if with_parent.nil?
-            attributes = with_data[node.object_class]
-          else
-            attributes = with_data
-          end
+          attributes = if with_parent.nil?
+                         with_data[node.object_class]
+                       else
+                         solr_doc = SolrDocument.new(with_parent.to_solr)
+                         with_data.merge({:in_works_ids => [with_parent.id],:title => solr_doc.title})
+                       end
 
           attributes["admin_set_id"] = @batch_item.batch.admin_set_id
 
           if node.ingest_type == "new"
             model_object = node.object_class.constantize.new
             actor_stack_status = actor.create(::Hyrax::Actors::Environment.new(model_object, ability, attributes))
-            attributes["in_works_ids"] ||= []
-            attributes["in_works_ids"] << with_parent
+
           elsif node.ingest_type == "update"
             object_id = attributes.delete("id")
-
-
-            if ! model_object = node.object_class.constantize.find(object_id)
-              raise("Unable to find object #{} for `id` #{object_id}")
+            unless model_object = node.object_class.constantize.find(object_id)
+              raise("Unable to find object  for `id` #{object_id}")
             end
-
             actor_stack_status = actor.update(::Hyrax::Actors::Environment.new(model_object, ability, attributes))
           end
 
           begin
             if actor_stack_status
-              @batch_item.repo_object_id = model_object.id if !with_parent.nil?
+              @batch_item.repo_object_id = model_object.id unless with_parent.nil?
               @works_ingested << model_object.dup
 
               node.children.each do |c_node|
-                with_data[c_node.object_class].each {|c_data| ingest_object_at c_node, c_data, model_object.id}
+                with_data[c_node.object_class].each { |c_data| ingest_object_at c_node, c_data, @works_ingested.last.dup }
               end
 
             end
@@ -58,14 +51,13 @@ module WGBH
           end
         end
 
-
         def set_options
-          @options = WGBH::BatchIngest::CSVParser.validate_config (reader_options)
+          @options = WGBH::BatchIngest::CSVConfigParser.validate_config reader_options
         end
 
         def reader_options
           config = Hyrax::BatchIngest::Config.new
-          config.ingest_types[@batch_item.batch.ingest_type.to_sym].reader_options.dup
+          config.ingest_types[@batch_item.batch.ingest_type.to_sym].reader_options.deep_dup
         end
     end
   end
