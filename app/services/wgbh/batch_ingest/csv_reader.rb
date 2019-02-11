@@ -12,7 +12,6 @@ module WGBH
 
       def perform_read
         begin
-
           @workbook = Roo::Spreadsheet.open(@source_location)
           @workbook.default_sheet = @workbook.sheets[0]
           @header = @workbook.row(1)
@@ -21,12 +20,12 @@ module WGBH
           read_and_create_batch_items
 
         rescue StandardError => e
-          raise Hyrax::BatchIngest::ReaderError, I18n.t('hyrax.batch_ingest.readers.errors.invalid_source_location', source_location: source_location + " " + e.message + e.backtrace.to_s)
+          raise Hyrax::BatchIngest::ReaderError, I18n.t('hyrax.batch_ingest.readers.errors.invalid_source_location', source_location: source_location + " " + e.message)
         end
       end
 
       def validate_options
-        @options_structure = WGBH::BatchIngest::CSVParser.validate_config(@options.dup).dup
+        @options_structure = WGBH::BatchIngest::CSVConfigParser.validate_config(@options)
       end
 
       def validate_csv_header
@@ -76,7 +75,7 @@ module WGBH
               model_hash[model] ||= [{}]
 
             else
-              value = value.first if model.capitalize == "Contribution"
+
               last_hash = model_hash[model].last
               last_hash[attribute] = value unless value.empty?
             end
