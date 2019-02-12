@@ -19,4 +19,5 @@ source /etc/profile
 fi
 DEPLOYMENT_ID=$DEPLOYMENT_ID ruby bin/deploy/create_deployment_details_page.rb
 sudo service httpd restart
-sudo /etc/init.d/sidekiq restart
+# taking it off for now.
+#sudo /etc/init.d/sidekiq restart
