@@ -5,20 +5,14 @@ FactoryBot.define do
     skip_create
 
     trait :full_aapb do
+      # NOTE: Additional identifiers may be added with :other_identifiers.
+      # See transient attribute below.
+      identifiers       { [ build(:pbcore_identifier, :aapb) ] }
       audience_levels   { build_list(:pbcore_audience_level, rand(1..3)) }
       audience_ratings  { build_list(:pbcore_audience_rating, rand(1..3)) }
       asset_types       { build_list(:pbcore_asset_type, rand(1..3)) }
       annotations       { build_list(:pbcore_annotation, rand(1..3)) }
       subjects          { build_list(:pbcore_subject, rand(1..3)) }
-
-      identifiers do
-        [
-          build(:pbcore_identifier, :aapb),
-          build(:pbcore_identifier, :nola_code),
-          build(:pbcore_identifier, :eidr),
-          build(:pbcore_identifier, :local)
-        ]
-      end
 
       titles do
         [
@@ -78,6 +72,16 @@ FactoryBot.define do
         ]
       end
 
+      transient do
+        other_identifiers { [:nola_code, :eidr, :local] }
+      end
+
+      after(:build) do |pbcore_description_document, evaluator|
+        # Add identifiers
+        Array(evaluator.other_identifiers).each do |identifier_trait|
+          pbcore_description_document.identifiers << build(:pbcore_identifier, identifier_trait)
+        end
+      end
     end
 
     initialize_with { new(attributes) }

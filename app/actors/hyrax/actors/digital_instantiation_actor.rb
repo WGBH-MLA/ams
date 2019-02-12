@@ -10,7 +10,7 @@ module Hyrax
           xml_file = env.attributes.delete(:pbcore_xml)
         end
         pbcore_doc = PBCore::InstantiationDocument.parse(xml_file)
-        env = parse_pbcore_instantiation(env,pbcore_doc)
+        set_env_attributes_from_pbcore(env, pbcore_doc)
         save_instantiation_aapb_admin_data(env) && super && parse_pbcore_essense_track(env,pbcore_doc)
       end
 
@@ -46,7 +46,7 @@ module Hyrax
           env.curation_concern.reload
         end
 
-        def parse_pbcore_instantiation(env,pbcore_doc)
+        def set_env_attributes_from_pbcore(env, pbcore_doc)
           if !pbcore_doc.blank?
             env.attributes[:date] = pbcore_doc.dates.map(&:value) if pbcore_doc.dates && env.attributes[:dates].blank?
             env.attributes[:dimensions] = pbcore_doc.dimensions.map(&:value)  if pbcore_doc.dimensions && env.attributes[:dimensions].blank?
@@ -66,6 +66,12 @@ module Hyrax
             env.attributes[:tracks] = pbcore_doc.tracks.value if pbcore_doc.tracks  && env.attributes[:tracks].blank?
             env.attributes[:alternative_modes] = pbcore_doc.alternative_modes.value if pbcore_doc.alternative_modes  && env.attributes[:alternative_modes].blank?
             env.attributes[:channel_configuration] = pbcore_doc.channel_configuration.value if pbcore_doc.channel_configuration  && env.attributes[:channel_configuration].blank?
+
+            # Do not set holding organization if it's already there (i.e. came in from the UI).
+            unless env.attributes[:holding_organization]
+              env.attributes[:holding_organization] = pbcore_doc.annotations.select { |annotation| annotation.type.downcase == 'organization' }.first&.value
+            end
+
             env.attributes[:digital_format] = pbcore_doc.digital.value  if pbcore_doc.digital && env.attributes[:digital].blank?
             if pbcore_doc.identifiers
               pbcore_doc.identifiers.each do |id|
@@ -73,7 +79,6 @@ module Hyrax
               end
             end
           end
-          env
         end
 
         def parse_pbcore_essense_track(env,pbcore_doc)

@@ -27,6 +27,11 @@ FactoryBot.define do
       value { (('A'..'Z').to_a + (0..9).to_a).sample(rand(5..10)).join }
     end
 
+    trait :sony_ci_video do
+      source { "Sony Ci" }
+      value { "e8eb953ef72244d8a711035754d36d5c" }
+    end
+
     initialize_with { new(attributes) }
   end
 end
