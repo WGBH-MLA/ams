@@ -11,15 +11,15 @@ module WGBH
 
       private
 
-        def ingest_object_at(node, with_data, with_parent = nil)
+        def ingest_object_at(node, with_data, with_parent = false)
           actor = ::Hyrax::CurationConcern.actor
           ability = ::Ability.new(User.find_by_email(@batch_item.submitter_email))
 
-          attributes = if with_parent.nil?
+          attributes = if !with_parent
                          with_data[node.object_class]
                        else
                          solr_doc = SolrDocument.new(with_parent.to_solr)
-                         with_data.merge({:in_works_ids => [with_parent.id],:title => solr_doc.title})
+                         with_data.merge(in_works_ids: [with_parent.id], title: solr_doc.title)
                        end
 
           attributes["admin_set_id"] = @batch_item.batch.admin_set_id
@@ -38,13 +38,20 @@ module WGBH
 
           begin
             if actor_stack_status
-              @batch_item.repo_object_id = model_object.id unless with_parent.nil?
+              @batch_item.repo_object_id = model_object.id unless !with_parent
               @works_ingested << model_object.dup
 
-              node.children.each do |c_node|
-                with_data[c_node.object_class].each { |c_data| ingest_object_at c_node, c_data, @works_ingested.last.dup }
-              end
+              parent_node = if !with_parent
+                              @works_ingested.last
+                            else
+                              with_parent
+                            end
 
+              node.children.each do |c_node|
+                with_data[c_node.object_class].each do |c_data|
+                  ingest_object_at(c_node,c_data,parent_node)
+                end
+              end
             end
           else
             @batch_item.error = model_object.errors.messages.to_s
