@@ -4,7 +4,7 @@ ingest_types:
     reader: "WGBH::BatchIngest::ZippedPBCoreReader"
     ingester: "WGBH::BatchIngest::PBCoreXMLItemIngester"
   wgbh_csv_reader_1:
-    label: "WGBH CSV Ingester"
+    label: "WGBH Spreadsheet Ingester"
     reader: "WGBH::BatchIngest::CSVReader"
     ingester: "WGBH::BatchIngest::CSVItemIngestor"
     reader_options:
@@ -17,7 +17,7 @@ ingest_types:
         - object_class: PhysicalInstantiation
           ingest_type: new
   wgbh_csv_reader_2:
-    label: "WGBH Physical Instantiation CSV Ingester"
+    label: "WGBH Physical Instantiation Spreadsheet Ingester"
     reader: "WGBH::BatchIngest::CSVReader"
     ingester: "WGBH::BatchIngest::CSVItemIngestor"
     reader_options:
