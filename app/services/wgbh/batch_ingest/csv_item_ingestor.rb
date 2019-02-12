@@ -1,60 +1,64 @@
 module WGBH
   module BatchIngest
     class CSVItemIngestor < Hyrax::BatchIngest::BatchItemIngester
-
       def ingest
-        source_data = JSON.parse(@batch_item.source_data)
-        # create asset first
+        @works_ingested = []
+        set_options
+        @source_data = JSON.parse(@batch_item.source_data)
+        ingest_object_at options, @source_data
+        @works_ingested.first
+      end
 
-        actor = ::Hyrax::CurationConcern.actor
-        asset = ::Asset.new
-        ability = ::Ability.new(User.find_by_email "wgbh_admin@wgbh-mla.org")
-        begin
-        if actor.create(::Hyrax::Actors::Environment.new(asset, ability,source_data["Asset"]))
-          @batch_item.repo_object_id = asset.id
-        else
-          @batch_item.error = asset.errors.messages.to_s
-        end
+      private
 
-        asset.save
+        def ingest_object_at(node, with_data, with_parent = nil)
+          actor = ::Hyrax::CurationConcern.actor
+          ability = ::Ability.new(User.find_by_email(@batch_item.submitter_email))
 
-        # create any other model
-        #
-        source_data.delete("Asset")
+          attributes = if with_parent.nil?
+                         with_data[node.object_class]
+                       else
+                         solr_doc = SolrDocument.new(with_parent.to_solr)
+                         with_data.merge({:in_works_ids => [with_parent.id],:title => solr_doc.title})
+                       end
 
-        source_data.each_pair do |model,model_objects|
+          attributes["admin_set_id"] = @batch_item.batch.admin_set_id
 
-          #raise "Invalid child type #{model} for Asset" unless model == "Contribution" or ::Asset.valid_child_concerns.include?(model.constantize)
+          if node.ingest_type == "new"
+            model_object = node.object_class.constantize.new
+            actor_stack_status = actor.create(::Hyrax::Actors::Environment.new(model_object, ability, attributes))
 
-          model_objects.each do |attribute_array|
-            attr = attribute_array.first
-            #skip empty objects
-            next if attr.except("admin_set_id").blank?
-
-            modelObject = model.constantize.new
-            actor = ::Hyrax::CurationConcern.actor
-
-            # Enforcing parent title
-            asset_solr_doc = SolrDocument.new(asset.to_solr)
-            attr["title"] = asset_solr_doc.title
-            attr["in_works_ids"] = [asset.id]
-
-            if actor.create(::Hyrax::Actors::Environment.new(modelObject, ability,attr))
-              next
-            else
-              @batch_item.error = @batch_item.error.to_s + "\n#{model} ==> " + modelObject.errors.messages.to_s
+          elsif node.ingest_type == "update"
+            object_id = attributes.delete("id")
+            unless model_object = node.object_class.constantize.find(object_id)
+              raise("Unable to find object  for `id` #{object_id}")
             end
-
+            actor_stack_status = actor.update(::Hyrax::Actors::Environment.new(model_object, ability, attributes))
           end
 
+          begin
+            if actor_stack_status
+              @batch_item.repo_object_id = model_object.id unless with_parent.nil?
+              @works_ingested << model_object.dup
+
+              node.children.each do |c_node|
+                with_data[c_node.object_class].each { |c_data| ingest_object_at c_node, c_data, @works_ingested.last.dup }
+              end
+
+            end
+          else
+            @batch_item.error = model_object.errors.messages.to_s
+          end
         end
 
-        rescue StandardError => e
-          raise Hyrax::BatchIngest::ReaderError,"Unable to process item, error: #{e.message} at #{e.backtrace_locations}"
+        def set_options
+          @options = WGBH::BatchIngest::CSVConfigParser.validate_config reader_options
         end
 
-        return asset
-      end
+        def reader_options
+          config = Hyrax::BatchIngest::Config.new
+          config.ingest_types[@batch_item.batch.ingest_type.to_sym].reader_options.deep_dup
+        end
     end
   end
 end
