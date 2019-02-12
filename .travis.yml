@@ -53,5 +53,5 @@ deploy:
     deployment_group: "AMS2Staging-DG"
     region: "us-east-1"
     on:
-      branch: master
+      branch: develop
       ruby: '2.5.1'
