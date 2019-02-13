@@ -16,7 +16,7 @@ module Hyrax
 
     self.readonly_fields = [:title]
 
-    self.field_metadata_service = WGBH::MetadataService
+    self.field_metadata_service = AAPB::MetadataService
 
     def self.model_attributes(form_params)
       clean_params = sanitize_params(form_params)

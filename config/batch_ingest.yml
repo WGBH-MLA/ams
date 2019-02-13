@@ -1,12 +1,12 @@
 ingest_types:
   aapb_pbcore_zipped:
     label: "AAPB PBCore - Zipped"
-    reader: "WGBH::BatchIngest::ZippedPBCoreReader"
-    ingester: "WGBH::BatchIngest::PBCoreXMLItemIngester"
-  wgbh_csv_reader_1:
-    label: "WGBH Spreadsheet Ingester"
-    reader: "WGBH::BatchIngest::CSVReader"
-    ingester: "WGBH::BatchIngest::CSVItemIngestor"
+    reader: "AAPB::BatchIngest::ZippedPBCoreReader"
+    ingester: "AAPB::BatchIngest::PBCoreXMLItemIngester"
+  aapb_csv_reader_1:
+    label: "AAPB Spreadsheet Ingester"
+    reader: "AAPB::BatchIngest::CSVReader"
+    ingester: "AAPB::BatchIngest::CSVItemIngestor"
     reader_options:
       schema:
       - object_class: Asset
@@ -16,10 +16,10 @@ ingest_types:
           ingest_type: new
         - object_class: PhysicalInstantiation
           ingest_type: new
-  wgbh_csv_reader_2:
-    label: "WGBH Physical Instantiation Spreadsheet Ingester"
-    reader: "WGBH::BatchIngest::CSVReader"
-    ingester: "WGBH::BatchIngest::CSVItemIngestor"
+  aapb_csv_reader_2:
+    label: "AAPB Physical Instantiation Spreadsheet Ingester"
+    reader: "AAPB::BatchIngest::CSVReader"
+    ingester: "AAPB::BatchIngest::CSVItemIngestor"
     reader_options:
       schema:
       - object_class: Asset

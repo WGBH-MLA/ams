@@ -1,6 +1,6 @@
 require 'rails_helper'
 # TODO: Need to require this in more general location.
-require 'wgbh/batch_ingest'
+require 'aapb/batch_ingest'
 
 RSpec.feature "Ingest: AAPB PBCore - Zipped" do
 
