@@ -1,4 +1,4 @@
-module WGBH
+module AAPB
   module BatchIngest
     class CSVItemIngestor < Hyrax::BatchIngest::BatchItemIngester
       def ingest
@@ -59,7 +59,7 @@ module WGBH
         end
 
         def set_options
-          @options = WGBH::BatchIngest::CSVConfigParser.validate_config reader_options
+          @options = AAPB::BatchIngest::CSVConfigParser.validate_config reader_options
         end
 
         def reader_options

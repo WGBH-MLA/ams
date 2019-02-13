@@ -1,8 +1,8 @@
 require 'zip'
 
-module WGBH
+module AAPB
   module BatchIngest
-    class ZippedPBCoreReader < WGBH::BatchIngest::BatchReader
+    class ZippedPBCoreReader < AAPB::BatchIngest::BatchReader
       protected
         def perform_read
           @batch_items = unzipped_xml_file_paths.map do |unzipped_xml_file_path|

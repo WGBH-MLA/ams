@@ -1,4 +1,4 @@
-module WGBH
+module AAPB
   module BatchIngest
     class CSVConfigTree < Struct.new(:object_class, :ingest_type, :attributes, :children)
       include Enumerable
