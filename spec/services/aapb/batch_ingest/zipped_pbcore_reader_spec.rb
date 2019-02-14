@@ -2,7 +2,7 @@ require 'rails_helper'
 require 'zip'
 require 'hyrax/batch_ingest/spec/shared_specs'
 
-RSpec.describe WGBH::BatchIngest::ZippedPBCoreReader do
+RSpec.describe AAPB::BatchIngest::ZippedPBCoreReader do
   let(:reader_class) { described_class }
   # let (:source_location) { File.join(fixture_path, "sample_pbcore2_xml.zip") }
   let(:source_location) { zip_to_tmp(File.join(fixture_path, "batch_ingest", "sample_pbcore2_xml")) }

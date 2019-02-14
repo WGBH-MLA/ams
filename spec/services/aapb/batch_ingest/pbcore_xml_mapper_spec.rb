@@ -1,7 +1,7 @@
 require 'rails_helper'
-require 'wgbh/batch_ingest/pbcore_xml_mapper'
+require 'aapb/batch_ingest/pbcore_xml_mapper'
 
-RSpec.describe WGBH::BatchIngest::PBCoreXMLMapper, :pbcore_xpath_helper do
+RSpec.describe AAPB::BatchIngest::PBCoreXMLMapper, :pbcore_xpath_helper do
   describe '#asset_attributes' do
     let(:pbcore_xml) { build(:pbcore_description_document, :full_aapb).to_xml }
 
@@ -100,9 +100,9 @@ RSpec.describe WGBH::BatchIngest::PBCoreXMLMapper, :pbcore_xpath_helper do
   end
 
   describe '#essence_track_attributes' do
-    
+
     let(:pbcore_xml) { FactoryBot.build(:pbcore_instantiation_essence_track).to_xml }
-    let(:essence_track_attributes) { WGBH::BatchIngest::PBCoreXMLMapper.new(pbcore_xml).essence_track_attributes }
+    let(:essence_track_attributes) { AAPB::BatchIngest::PBCoreXMLMapper.new(pbcore_xml).essence_track_attributes }
     it "maps all attributes from Essence Track XML" do
 
       # first for single-value fields
@@ -116,7 +116,7 @@ RSpec.describe WGBH::BatchIngest::PBCoreXMLMapper, :pbcore_xpath_helper do
       # expect(essence_track_attributes[:playback_speed_units_of_measure]).to eq pbcore_values_from_xpath(pbcore_xml, :ess_playback_speed_units_of_measure).first
       expect(essence_track_attributes[:sample_rate]).to eq pbcore_values_from_xpath(pbcore_xml, :ess_sample_rate).first
       expect(essence_track_attributes[:bit_depth]).to eq pbcore_values_from_xpath(pbcore_xml, :ess_bit_depth).first
-      
+
       expect(essence_track_attributes[:frame_width]).to eq pbcore_xpath_helper(pbcore_xml).frame_width
       expect(essence_track_attributes[:frame_height]).to eq pbcore_xpath_helper(pbcore_xml).frame_height
       expect(essence_track_attributes[:aspect_ratio]).to eq pbcore_values_from_xpath(pbcore_xml, :ess_aspect_ratio).first

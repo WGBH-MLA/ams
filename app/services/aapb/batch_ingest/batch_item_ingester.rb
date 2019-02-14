@@ -1,8 +1,8 @@
 require 'hyrax/batch_ingest'
 
-module WGBH
+module AAPB
   module BatchIngest
-    # Base class for all WGBH item ingester objects.
+    # Base class for all AAPB item ingester objects.
     class BatchItemIngester < Hyrax::BatchIngest::BatchItemIngester
       # Returns the submitter User.
       # @return [User] the batch submitter

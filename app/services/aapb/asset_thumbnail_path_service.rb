@@ -1,4 +1,4 @@
-module WGBH
+module AAPB
   class AssetThumbnailPathService < Hyrax::WorkThumbnailPathService
     class << self
       S3_THUMBNAIL_BASE = 'http://americanarchive.org.s3.amazonaws.com/thumbnail'.freeze

@@ -1,8 +1,8 @@
 require 'roo'
 
-module WGBH
+module AAPB
   module BatchIngest
-    class CSVReader < WGBH::BatchIngest::BatchReader
+    class CSVReader < AAPB::BatchIngest::BatchReader
 
       def delete_manifest
         File.delete(@source_location) if File.exist?(@source_location)
@@ -25,7 +25,7 @@ module WGBH
       end
 
       def validate_options
-        @options_structure = WGBH::BatchIngest::CSVConfigParser.validate_config(@options)
+        @options_structure = AAPB::BatchIngest::CSVConfigParser.validate_config(@options)
       end
 
       def validate_csv_header

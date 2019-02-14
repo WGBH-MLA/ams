@@ -31,7 +31,7 @@ module Hyrax
     self.disabled_fields = self.terms - ( [:title, :location, :generations, :language, :date, :annotation, :rights_link, :rights_summary, :holding_organization] + instantiation_admin_data_attributes )
     self.readonly_fields = [:title]
 
-    self.field_metadata_service = WGBH::MetadataService
+    self.field_metadata_service = AAPB::MetadataService
 
     def primary_terms
       [:digital_instantiation_pbcore_xml]

@@ -1,4 +1,4 @@
-module WGBH
+module AAPB
   class WorkThumbnailPathService < Hyrax::WorkThumbnailPathService
     class << self
       class_attribute :object_type

@@ -31,7 +31,7 @@ module Hyrax
 
     self.readonly_fields = [:title]
 
-    self.field_metadata_service = WGBH::MetadataService
+    self.field_metadata_service = AAPB::MetadataService
 
     def primary_terms
       []
