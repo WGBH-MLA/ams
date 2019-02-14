@@ -1,6 +1,7 @@
 require 'rails_helper'
 require 'zip'
 require 'hyrax/batch_ingest/spec/shared_specs'
+require 'aapb/batch_ingest/zipped_pbcore_reader'
 
 RSpec.describe AAPB::BatchIngest::ZippedPBCoreReader do
   let(:reader_class) { described_class }

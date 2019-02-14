@@ -5,7 +5,7 @@ FactoryBot.define do
     skip_create
 
     type { Faker::Types.rb_string }
-    value { Faker::Date.backward(14) }
+    value { Faker::Date.unique.backward(14) }
 
     trait :digitized do
       type { "Digitized" }
