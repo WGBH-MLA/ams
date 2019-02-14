@@ -9,7 +9,7 @@ class AssetIndexer < AMS::WorkIndexer
   # this behavior
   include Hyrax::IndexesLinkedMetadata
 
-  self.thumbnail_path_service = WGBH::AssetThumbnailPathService
+  self.thumbnail_path_service = AAPB::AssetThumbnailPathService
 
   def generate_solr_document
     super.tap do |solr_doc|

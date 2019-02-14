@@ -1,9 +1,9 @@
-require 'wgbh/batch_ingest/batch_item_ingester'
-require 'wgbh/batch_ingest/pbcore_xml_mapper'
+require 'aapb/batch_ingest/batch_item_ingester'
+require 'aapb/batch_ingest/pbcore_xml_mapper'
 
-module WGBH
+module AAPB
   module BatchIngest
-    class PBCoreXMLItemIngester < WGBH::BatchIngest::BatchItemIngester
+    class PBCoreXMLItemIngester < AAPB::BatchIngest::BatchItemIngester
 
       def ingest
         if batch_item_is_asset?
@@ -60,7 +60,7 @@ module WGBH
         def ingest_asset!
           asset = Asset.new
           actor = Hyrax::CurationConcern.actor
-          attrs = WGBH::BatchIngest::PBCoreXMLMapper.new(pbcore_xml).asset_attributes
+          attrs = AAPB::BatchIngest::PBCoreXMLMapper.new(pbcore_xml).asset_attributes
           env = Hyrax::Actors::Environment.new(asset, current_ability, attrs)
           actor.create(env)
           asset
@@ -85,7 +85,7 @@ module WGBH
         def ingest_physical_instantiation!(parent_asset:, xml:)
           physical_instantiation = PhysicalInstantiation.new
           actor = Hyrax::CurationConcern.actor
-          attrs = WGBH::BatchIngest::PBCoreXMLMapper.new(xml).physical_instantiation_attributes
+          attrs = AAPB::BatchIngest::PBCoreXMLMapper.new(xml).physical_instantiation_attributes
           attrs[:in_works_ids] = [parent_asset.id]
           env = Hyrax::Actors::Environment.new(physical_instantiation, current_ability, attrs)
           actor.create(env)

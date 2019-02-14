@@ -1,4 +1,4 @@
-module WGBH
+module AAPB
   module BatchIngest
     class PBCoreXMLMapper
 

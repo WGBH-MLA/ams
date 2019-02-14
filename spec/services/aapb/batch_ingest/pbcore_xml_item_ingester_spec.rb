@@ -1,8 +1,8 @@
 require 'rails_helper'
 require 'hyrax/batch_ingest/spec/shared_specs'
-require 'wgbh/batch_ingest/pbcore_xml_item_ingester'
+require 'aapb/batch_ingest/pbcore_xml_item_ingester'
 
-RSpec.describe WGBH::BatchIngest::PBCoreXMLItemIngester, reset_data: false do
+RSpec.describe AAPB::BatchIngest::PBCoreXMLItemIngester, reset_data: false do
   let(:ingester_class) { described_class }
   let(:submitter) { create(:user) }
   let(:batch) { build(:batch, submitter_email: submitter.email) }

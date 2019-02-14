@@ -1,4 +1,4 @@
-module WGBH
+module AAPB
   module BatchIngest
     class BatchReader < Hyrax::BatchIngest::BatchReader
       # Add any custom code here.
@@ -6,7 +6,7 @@ module WGBH
 
       def delete_manifest
         # I will do nothing of the sort (overrides BatchReader method we dont use)!
-        true 
+        true
       end
     end
   end
