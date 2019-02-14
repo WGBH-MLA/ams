@@ -19,10 +19,10 @@
         <tbody>
         <% contributions.each  do |contribution|  %>
         <tr>
-          <td><%= contribution.solr_document.try(:contributor_role) %></td>
-          <td><%= contribution.solr_document.try(:contributor).first %></td>
-          <td><%= contribution.solr_document.try(:affiliation) %></td>
-          <td><%= contribution.solr_document.try(:portrayal) %></td>
+          <td><%= contribution.solr_document.try(:contributor_role).try(:first) %></td>
+          <td><%= contribution.solr_document.try(:contributor).try(:first) %></td>
+          <td><%= contribution.solr_document.try(:affiliation).try(:first) %></td>
+          <td><%= contribution.solr_document.try(:portrayal).try(:first) %></td>
         </tr>
         <% end %>
         </tbody>
