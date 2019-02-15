@@ -57,6 +57,14 @@ RSpec.describe Asset do
     end
   end
 
+  context "create asset with existing ID" do
+    subject { build(:asset, :with_existing_id ) }
+
+    it "has the expected id" do
+      expect(subject.id).to eq("cpb-100-123456")
+    end
+  end
+
   context "date format validation" do
     let(:asset) { FactoryBot.build(:asset) }
     it "is valid with year only as date format" do

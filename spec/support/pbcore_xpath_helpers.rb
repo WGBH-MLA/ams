@@ -136,6 +136,10 @@ module PBCoreXPathHelper
       - values_from_xpath(:episode_number)
     end
 
+    def ams_id
+      values_from_xpath('//pbcoreIdentifier[@source="http://americanarchiveinventory.org"]').first.gsub('cpb-aacip/', 'cpb-aacip_')
+    end
+
     def dates_without_digitized_date_type
       values_from_xpath('//instantiationDate') - values_from_xpath(:digitization_date)
     end
