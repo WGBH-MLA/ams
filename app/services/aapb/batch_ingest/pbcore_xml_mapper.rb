@@ -37,6 +37,7 @@ module AAPB
           attrs[:local_identifier]            = pbcore.identifiers.select { |identifier| identifier.source.to_s.downcase == "local identifier" }.map(&:value)
           attrs[:pbs_nola_code]               = pbcore.identifiers.select { |identifier| ['nola code', 'nola'].include? identifier.source.to_s.downcase }.map(&:value)
           attrs[:eidr_id]                     = pbcore.identifiers.select { |identifier| identifier.source.to_s.downcase == "eidr" }.map(&:value)
+          attrs[:sonyci_id]                   = pbcore.identifiers.select { |identifier| identifier.source.to_s.downcase == "sony ci" }.map(&:value)
           attrs[:topics]                      = pbcore.genres.select { |genre| genre.source.to_s.downcase == "aapb topical genre" }.map(&:value)
           attrs[:subject]                     = pbcore.subjects.map(&:value)
           attrs[:contributors]                = contributor_attributes(pbcore.contributors)

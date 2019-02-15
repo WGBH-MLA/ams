@@ -29,5 +29,9 @@ FactoryBot.define do
     trait :physical do
       physical { build(:pbcore_instantiation_physical) }
     end
+
+    trait :aapb_holding do
+      annotations { [ build(:pbcore_instantiation_annotation, type: "Organization", value: "American Archive of Public Broadcasting") ] }
+    end
   end
 end
