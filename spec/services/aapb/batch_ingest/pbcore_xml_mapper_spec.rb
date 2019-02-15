@@ -8,7 +8,7 @@ RSpec.describe AAPB::BatchIngest::PBCoreXMLMapper, :pbcore_xpath_helper do
     subject { described_class.new(pbcore_xml) }
 
     let(:attr_names) do
-      [:title, :program_title, :episode_title, :segment_title, :clip_title,
+      [:id, :title, :program_title, :episode_title, :segment_title, :clip_title,
       :promo_title, :raw_footage_title, :episode_number, :description,
       :program_description, :episode_description, :segment_description,
       :clip_description, :promo_description, :raw_footage_description,
@@ -18,7 +18,7 @@ RSpec.describe AAPB::BatchIngest::PBCoreXMLMapper, :pbcore_xpath_helper do
       :subject]
     end
 
-    let(:attrs_with_xpath_shortcuts) { attr_names - [:title, :description, :spatial_coverage, :temporal_coverage] }
+    let(:attrs_with_xpath_shortcuts) { attr_names - [:title, :description, :spatial_coverage, :temporal_coverage, :id] }
     let(:attrs) { subject.asset_attributes }
 
     it 'maps all attributes from PBCore XML' do
@@ -30,15 +30,15 @@ RSpec.describe AAPB::BatchIngest::PBCoreXMLMapper, :pbcore_xpath_helper do
     end
 
     it 'maps PBCore XML values to the correct attributes for AssetActor' do
-
       # For each attribute that has an xpath shortcut helper
       attrs_with_xpath_shortcuts.each do |attr|
         expect(attrs[attr]).to eq pbcore_values_from_xpath(pbcore_xml, attr)
       end
 
-      # Check :title and :description separately with specific helpers.
+      # Check :title, :description, :id separately with specific helpers.
       expect(attrs[:title]).to        eq pbcore_xpath_helper(pbcore_xml).titles_without_type
       expect(attrs[:description]).to  eq pbcore_xpath_helper(pbcore_xml).descriptions_without_type
+      expect(attrs[:id]). to          eq pbcore_xpath_helper(pbcore_xml).ams_id
     end
 
     it 'maps Contribution data from PBCore XML' do
