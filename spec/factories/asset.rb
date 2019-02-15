@@ -69,10 +69,6 @@ FactoryBot.define do
       ] }
     end
 
-    trait :with_existing_id do
-      id { 'cpb-100-123456'}
-    end
-
     before(:create) do |work, evaluator|
       if evaluator.admin_set
         work.admin_set_id = evaluator.admin_set.id
