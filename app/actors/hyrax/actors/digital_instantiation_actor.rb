@@ -95,7 +95,7 @@ module Hyrax
               e[:bit_depth] = track.bit_depth.value if track.bit_depth
               e[:frame_height] = parse_frame_height(track.frame_size.value) if track.frame_size
               e[:frame_width] = parse_frame_width(track.frame_size.value) if track.frame_size
-              e[:aspect_ratio] = Array(track.aspect_ratio.value) if track.aspect_ratio
+              e[:aspect_ratio] = track.aspect_ratio.value if track.aspect_ratio
               e[:duration] = track.duration.value if track.duration
               e[:annotation] =  track.annotations.map(&:value) if track.annotations
               e[:admin_set_id] = env.curation_concern.admin_set_id

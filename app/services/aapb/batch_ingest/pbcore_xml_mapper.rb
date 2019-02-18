@@ -111,7 +111,7 @@ module AAPB
           attrs[:aspect_ratio] = pbcore.aspect_ratio.value if pbcore.aspect_ratio
           attrs[:time_start] = pbcore.time_start.value if pbcore.time_start
           attrs[:duration] = pbcore.duration.value if pbcore.duration
-          attrs[:annotations] = pbcore.annotations.map(&:value) if pbcore.annotations
+          attrs[:annotation] = pbcore.annotations.map(&:value) if pbcore.annotations
         end
       end
 
