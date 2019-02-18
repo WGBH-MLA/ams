@@ -27,8 +27,10 @@ RSpec.describe AAPB::BatchIngest::PBCoreXMLItemIngester, reset_data: false do
           ],
           contributors: build_list(:pbcore_contributor, 5),
           instantiations: [
-            build_list(:pbcore_instantiation, 5, :digital),
-            build(:pbcore_instantiation, :physical)
+            build_list(:pbcore_instantiation, 5, :digital,
+                       essence_tracks: build_list(:pbcore_instantiation_essence_track, 2)),
+            build(:pbcore_instantiation, :physical,
+                  essence_tracks: build_list(:pbcore_instantiation_essence_track, 2))
           ].flatten
         ).to_xml
 
@@ -41,22 +43,31 @@ RSpec.describe AAPB::BatchIngest::PBCoreXMLItemIngester, reset_data: false do
         )
 
         # Ingest the BatchItem and use the returned Asset instance for testing.
+
+        # require "pry"; binding.pry
+
         @asset = described_class.new(batch_item).ingest
+        @contributions = @asset.members.select { |member| member.is_a? Contribution }
+        @digital_instantiations = @asset.members.select { |member| member.is_a? DigitalInstantiation }
+        @physical_instantiations = @asset.members.select { |member| member.is_a? PhysicalInstantiation }
+        @essence_tracks = @digital_instantiations.map(&:members).flatten.select { |member| member.is_a? EssenceTrack }
+        @essence_tracks += @physical_instantiations.map(&:members).flatten.select { |member| member.is_a? EssenceTrack }
       end
 
       it 'ingests the Asset and the Contributions' do
-        contributions = @asset.members.select { |member| member.is_a? Contribution }
-        expect(contributions.count).to eq 5
+        expect(@contributions.count).to eq 5
       end
 
       it 'ingests the Asset and the Digital Instantiations' do
-        digital_instantiations = @asset.members.select { |member| member.is_a? DigitalInstantiation }
-        expect(digital_instantiations.count).to eq 5
+        expect(@digital_instantiations.count).to eq 5
       end
 
       it 'ingests the Asset and the Physical Instantiations' do
-        digital_instantiations = @asset.members.select { |member| member.is_a? PhysicalInstantiation }
-        expect(digital_instantiations.count).to eq 1
+        expect(@physical_instantiations.count).to eq 1
+      end
+
+      it 'ingests the Essence Tracks of Digital and Physical Instantiations' do
+        expect(@essence_tracks.count).to eq 12
       end
     end
   end
