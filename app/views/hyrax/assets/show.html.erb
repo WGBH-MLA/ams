@@ -1,6 +1,7 @@
 <% provide :page_title, @presenter.page_title %>
 <% content_for :head do %>
   <%= stylesheet_link_tag 'work_show/work_show' -%>
+  <meta name="turbolinks-visit-control" content="reload">
 <% end %>
 <div class="row work-type">
   <div class="col-xs-12">
