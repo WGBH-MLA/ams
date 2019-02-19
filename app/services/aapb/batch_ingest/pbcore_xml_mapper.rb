@@ -10,8 +10,8 @@ module AAPB
 
       def asset_attributes
         @asset_attributes ||= {}.tap do |attrs|
-          attrs[:id]                          = normalized_id( pbcore.identifiers.select { |id|
-            id.source == "http://americanarchiveinventory.org"}.map(&:value).first)
+          # Saves Asset with AAPB ID if present
+          attrs[:id]                          = normalized_aapb_id(aapb_id) if aapb_id
           attrs[:title]                       = pbcore.titles.select { |title| title_types.none? { |t| t == title.type.to_s.downcase.strip } }.map(&:value)
           attrs[:program_title]               = pbcore.titles.select { |title| title.type.to_s.downcase.strip == "program" }.map(&:value)
           attrs[:episode_title]               = pbcore.titles.select { |title| ["episode", "episode title"].include? title.type.to_s.downcase.strip }.map(&:value)
@@ -45,8 +45,13 @@ module AAPB
         end
       end
 
-      def normalized_id(id)
-        id.gsub('cpb-aacip/', 'cpb-aacip_')
+      def aapb_id
+        @aapb_id ||= pbcore.identifiers.select { |id|
+            id.source == "http://americanarchiveinventory.org"}.map(&:value).first
+      end
+
+      def normalized_aapb_id(id)
+        id.gsub('cpb-aacip/', 'cpb-aacip_') if id
       end
 
       def contributor_attributes(contributors)
