@@ -122,7 +122,7 @@ RSpec.describe AAPB::BatchIngest::PBCoreXMLMapper, :pbcore_xpath_helper do
       expect(essence_track_attributes[:aspect_ratio]).to eq pbcore_values_from_xpath(pbcore_xml, :ess_aspect_ratio).first
       expect(essence_track_attributes[:time_start]).to eq pbcore_values_from_xpath(pbcore_xml, :ess_time_start).first
       expect(essence_track_attributes[:duration]).to eq pbcore_values_from_xpath(pbcore_xml, :ess_duration).first
-      expect(essence_track_attributes[:annotations]).to eq pbcore_values_from_xpath(pbcore_xml, :ess_annotations)
+      expect(essence_track_attributes[:annotation]).to eq pbcore_values_from_xpath(pbcore_xml, :ess_annotations)
     end
   end
 end
