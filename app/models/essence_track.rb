@@ -65,7 +65,7 @@ class EssenceTrack < ActiveFedora::Base
     index.as :stored_searchable
   end
 
-  property :aspect_ratio, predicate: ::RDF::URI.new("http://www.ebu.ch/metadata/ontologies/ebucore/ebucore#aspectRatio"), multiple: true do |index|
+  property :aspect_ratio, predicate: ::RDF::URI.new("http://www.ebu.ch/metadata/ontologies/ebucore/ebucore#aspectRatio"), multiple: false do |index|
     index.as :stored_searchable
   end
 
