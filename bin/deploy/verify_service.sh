@@ -1,5 +1,5 @@
 #!/bin/bash
-
+source /etc/profile
 sidekiq_pid_file=/var/www/ams/tmp/pids/sidekiq-ams.pid
 process_id=-1
 sidekiq_status=false
