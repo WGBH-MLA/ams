@@ -1,0 +1,41 @@
+<!--
+  Overwrites view from hyrax-batch_ingest to add link to view all
+  Assets associated with the batch.
+-->
+<h1><span class="fa fa-copy"></span>Batch Details</h1>
+
+<dl>
+  <dt>Ingest Type:</dt>
+  <dd><%= @presenter.ingest_type %></dd>
+  <dt>Submitter:</dt>
+  <dd><%= @presenter.submitter_email %></dd>
+  <dt>Source Location:</dt>
+  <dd><%= @presenter.source_location %></dd>
+  <dt>Error:</dt>
+  <dd><%= @presenter.error %></dd>
+  <dt>Admin Set:</dt>
+  <dd><%= @presenter.admin_set_title %></dd>
+</dl>
+
+<dl>
+  <dt><%= link_to "View All Assets", "/catalog?f[hyrax_batch_ingest_batch_id_tesim][]=#{@presenter.id}&locale=en&q=&search_field=all_fields" %></dt>
+</dl>
+
+<div class='table-responsive'>
+  <table class='table table-condensed'>
+    <thead>
+      <tr>
+        <th scope='col'>Status</th>
+        <th scope='col'>ID Within Batch</th>
+        <th scope='col'>Source Location</th>
+        <th scope='col'>Repository ID</th>
+        <th scope='col'>Error</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @presenter.batch_item_presenters.each_with_index do |batch_item_presenter, index| %>
+        <%= render 'batch_item', presenter: batch_item_presenter, index: index %>
+      <% end %>
+    </tbody>
+  </table>
+</div>

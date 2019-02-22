@@ -35,6 +35,7 @@ en:
           created_sim: Created
           copyright_date_sim: Copyright Date
           episode_number_sim: Episode Number
+          hyrax_batch_ingest_batch_id_tesim: Batch ID
         index:
           broadcast_tesim: Broadcast
           created_tesim: Created
@@ -55,6 +56,7 @@ en:
           publisher_tesim: Publisher
           rights_statement_tesim: Rights Statement
           subject_tesim: Subject
+          hyrax_batch_ingest_batch_id_tesim: Batch ID
         show:
           id: 'GUID'
           admin_set: 'In Administrative Set:'
@@ -77,6 +79,7 @@ en:
           rights_statement_tesim: Rights Statement
           subject_tesim: Subject
           title_tesim: Title
+          hyrax_batch_ingest_batch_id_tesim: Batch ID
       filters:
         title: 'Filtering by:'
       start_over: Start Over

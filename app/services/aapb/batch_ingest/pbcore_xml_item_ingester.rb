@@ -52,6 +52,7 @@ module AAPB
           asset = Asset.new
           actor = Hyrax::CurationConcern.actor
           attrs = AAPB::BatchIngest::PBCoreXMLMapper.new(pbcore_xml).asset_attributes
+          attrs[:hyrax_batch_ingest_batch_id] = batch_id
           env = Hyrax::Actors::Environment.new(asset, current_ability, attrs)
           actor.create(env)
           asset
