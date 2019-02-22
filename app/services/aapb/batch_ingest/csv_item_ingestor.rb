@@ -1,6 +1,8 @@
+require 'aapb/batch_ingest/batch_item_ingester'
+
 module AAPB
   module BatchIngest
-    class CSVItemIngestor < Hyrax::BatchIngest::BatchItemIngester
+    class CSVItemIngestor < AAPB::BatchIngest::BatchItemIngester
       def ingest
         @works_ingested = []
         set_options
@@ -26,6 +28,22 @@ module AAPB
 
           if node.ingest_type == "new"
             model_object = node.object_class.constantize.new
+
+            # If ingest is new add batch_id to Asset for tracking
+            if model_object.is_a?(Asset)
+              attributes["batch_id"] = batch_id
+            elsif attributes[:in_works_ids].present?
+              attributes[:in_works_ids].each do |work_id|
+                unless asset = Asset.find(work_id)
+                  raise 'Cannot find Asset with ID: #{work_id}.'
+                end
+                asset_actor = ::Hyrax::CurationConcern.actor
+                asset_attrs = { batch_id: batch_id }
+                asset_env = Hyrax::Actors::Environment.new(asset, ability, asset_attrs)
+                asset_actor.update(asset_env)
+              end
+            end
+
             actor_stack_status = actor.create(::Hyrax::Actors::Environment.new(model_object, ability, attributes))
 
           elsif node.ingest_type == "update"

@@ -1,0 +1,15 @@
+<% if presenter.batch_id.present? %>
+  <dt>Batch</dt>
+  <dd>
+    <ul class="tabular">
+      <li class="attribute attribute-batch">
+        <%= link_to "View Batch", presenter.batch_url %>
+      </li>
+      <li class="attribute attribute-batch">
+        <%= presenter.batch_ingest_label %>
+      </li>
+      <li class="attribute attribute-batch">
+        <%= presenter.batch_ingest_date %>
+      </li>
+    </ul>
+<% end %>

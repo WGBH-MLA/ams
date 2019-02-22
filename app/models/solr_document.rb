@@ -387,4 +387,8 @@ class SolrDocument
   def aapb_preservation_disk
     self[Solrizer.solr_name('aapb_preservation_disk')]
   end
+
+  def batch_id
+    self[Solrizer.solr_name('batch_id')]
+  end
 end

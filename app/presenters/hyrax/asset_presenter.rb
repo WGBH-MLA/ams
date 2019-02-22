@@ -12,8 +12,25 @@ module Hyrax
              :promo_description, :clip_description, :copyright_date,
              :level_of_user_access, :minimally_cataloged, :outside_url, :special_collection, :transcript_status,
              :sonyci_id, :licensing_info, :producing_organization, :series_title, :series_description,
-             :playlist_group, :playlist_order,
+             :playlist_group, :playlist_order, :batch_id,
              to: :solr_document
+
+    def batch
+      raise 'No Batch ID associated with this Asset' unless batch_id.first.present?
+      @batch ||= Hyrax::BatchIngest::Batch.find(batch_id.first)
+    end
+
+    def batch_url
+      @batch_url ||= "/batches/#{batch.id}"
+    end
+
+    def batch_ingest_label
+      @batch_ingest_label ||= Hyrax::BatchIngest.config.ingest_types[batch.ingest_type.to_sym].label
+    end
+
+    def batch_ingest_date
+      @batch_ingest_date ||= Date.parse(batch.created_at.to_s)
+    end
 
     def filter_item_ids_to_display(solr_query)
       return [] if authorized_item_ids.empty?
@@ -43,7 +60,8 @@ module Hyrax
           sonyci_id.blank? &&
           licensing_info.blank? &&
           playlist_group.blank? &&
-          playlist_order.blank?
+          playlist_order.blank? &&
+          batch_id.blank?
         )
     end
 

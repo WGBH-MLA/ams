@@ -12,6 +12,10 @@ module AAPB
       def submitter
         @submitter ||= User.find_by_email(@batch_item.batch.submitter_email)
       end
+
+      def batch_id
+        @batch_id ||= @batch_item.batch.id
+      end
     end
   end
 end
