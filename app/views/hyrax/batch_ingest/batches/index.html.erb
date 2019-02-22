@@ -1,0 +1,42 @@
+<!--
+  Overwrites view from hyrax-batch_ingest to add an empty column for
+  a "View All Assets" link in _batch.html.erb.
+-->
+
+<!-- TODO: find a way to move this css into correct place -->
+<style type="text/css">
+  .batch_sort_asc::after {
+    content: ' ▲';
+  }
+  .batch_sort_desc::after {
+    content: ' ▼';
+  }
+</style>
+
+<h1><span class="fa fa-copy"></span>Batches</h1>
+
+<a href="/batches/new" title="Upload New Batch">Upload New Batch</a>
+
+<% if @presenters.count > 0 %>
+  <div class='table-responsive'>
+    <table class='table table-condensed'>
+      <thead>
+        <th scope='col'><%= sort_link_to('Status', 'status') %></th>
+        <th scope='col'><%= sort_link_to('Date', 'created_at') %></th>
+        <th scope='col'><%= sort_link_to('Items', 'batch_item_count') %></th>
+        <th scope='col'><%= sort_link_to('Submitter email address', 'submitter_email') %></th>
+        <th scope='col'><%= sort_link_to('Admin Set', 'admin_set_title') %></th>
+        <th scope='col'></th>
+      </thead>
+      <tbody>
+        <% @batches.each do |batch| %>
+          <%= render 'batch', presenter: Hyrax::BatchIngest::BatchPresenter.new(batch) %>
+        <% end %>
+      </tbody>
+    </table>
+    <%= paginate @batches %>
+  </div>
+<% else %>
+  <br />
+  <h4>Batches?!... Batches?!... We don't need no stinking Batches!</h4><br />
+<% end %>
