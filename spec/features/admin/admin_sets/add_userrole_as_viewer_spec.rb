@@ -40,6 +40,7 @@ RSpec.feature 'AssignRoleViewer.', js: true do
 
       # Check other user viewer search permissions exist
       visit '/admin/admin_sets'
+      sleep 5
       expect(page).to have_content 'You are not authorized to access this page.'
     end
   end
