@@ -72,6 +72,12 @@ module Hyrax
       field_groups[group]
     end
 
+    def disabled?(field)
+      disabled_fields = self.disabled_fields.dup
+      disabled_fields += self.field_groups[:instantiation_admin_data] if current_ability.cannot?(:create, InstantiationAdminData)
+      disabled_fields.include?(field)
+    end
+
     def self.model_attributes(form_params)
       clean_params = sanitize_params(form_params)
       terms.each do |key|

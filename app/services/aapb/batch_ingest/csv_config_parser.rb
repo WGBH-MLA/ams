@@ -31,7 +31,14 @@ module AAPB
         attr = if attributes.any?
                  attributes.deep_dup
                else
-                 object_class.constantize.properties.collect { |p| p.first.dup }
+                 extra_attr=[]
+                 if object_class == "Asset"
+                   extra_attr=(AdminData.attribute_names.dup - ['id', 'created_at', 'updated_at'])
+                 elsif object_class.include?("Instantiation")
+                   extra_attr=(InstantiationAdminData.attribute_names.dup - ['id', 'created_at', 'updated_at'])
+                 end
+                 fedora_attr=object_class.constantize.properties.collect { |p| p.first.dup }
+                 fedora_attr.concat(extra_attr.deep_dup)
                end
 
         attr.collect { |a| a.prepend(object_class + ".") }
