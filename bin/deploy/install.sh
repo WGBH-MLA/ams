@@ -6,7 +6,7 @@ echo "Running Deployment for ID: $DEPLOYMENT_ID"
 export APP_HOME=/var/www/ams
 sudo chown -R ec2-user:ec2-user $APP_HOME
 cd $APP_HOME
-bundle install --deployment
+bundle install --deployment --without development test
 echo "ruby version:`ruby -v`"
 echo "rails versions:`bundle exec rails -v`"
 echo "node version:`node -v`"

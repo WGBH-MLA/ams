@@ -47,7 +47,6 @@ group :development, :test do
   gem 'pry-byebug', platforms: [:mri, :mingw, :x64_mingw]
   gem 'pry-rails'
   gem 'capybara-screenshot'
-  gem 'database_cleaner'
   gem 'rspec', "~> 3.7"
   gem 'rspec-rails', "~> 3.7"
   gem 'rspec-activemodel-mocks'
@@ -94,3 +93,4 @@ gem 'hyrax-iiif_av', '>= 0.2.0'
 gem 'webpacker'
 gem 'react-rails'
 gem 'faker'
+gem 'database_cleaner'
