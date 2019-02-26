@@ -22,7 +22,11 @@ module Hyrax
         end
         pbcore_doc = PBCore::InstantiationDocument.parse(xml_file)
         env = parse_pbcore_instantiation(env,pbcore_doc)
-        super && destroy_child_objects(env) && parse_pbcore_essense_track(env,pbcore_doc)
+        save_instantiation_aapb_admin_data(env) && super && destroy_child_objects(env) && parse_pbcore_essense_track(env,pbcore_doc)
+      end
+
+      def destroy(env)
+        destroy_instantiation_admin_data(env) && super
       end
 
       private
