@@ -120,6 +120,8 @@ en:
         create: Transfer
       update: Save changes
   hyrax:
+    aapb_admindata:
+      aapb_admin: 'AAPB Admin'
     batch_ingest:
       readers:
           errors:

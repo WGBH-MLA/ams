@@ -25,6 +25,9 @@
             <div class="hold">
               <div class="holder">
                 <%= render 'metadata', presenter: @presenter %>
+                <% if @presenter.respond_to?(:display_admin_data?) %>
+                  <%= render 'instantiation_admin_data', presenter: @presenter %>
+                <% end %>
               </div>
             </div>
           </div>
