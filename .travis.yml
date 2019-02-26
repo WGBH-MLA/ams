@@ -43,7 +43,7 @@ deploy:
     region: "us-east-1"
     on:
       branch: develop
-      ruby: '2.5.1'
+      ruby: '2.5.3'
   - provider: codedeploy
     access_key_id: AKIAJODP6VPR5EKCIJCQ
     secret_access_key:
@@ -54,4 +54,4 @@ deploy:
     region: "us-east-1"
     on:
       branch: develop
-      ruby: '2.5.1'
+      ruby: '2.5.3'
