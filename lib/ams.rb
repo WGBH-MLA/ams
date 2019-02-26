@@ -62,7 +62,7 @@ module AMS
       end
 
       def flush_redis_cache!
-        Redis.new(port: '6379').flushall
+        Redis.new(host: ENV.fetch('REDIS_SERVER', 'localhost'), port: '6379').flushall
       end
 
 
