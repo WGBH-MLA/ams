@@ -1,0 +1,7 @@
+<% rights_link_service = RightsLinkService.new %>
+<%= f.input :rights_link, as: :select,
+            collection: rights_link_service.select_all_options,
+            include_blank: true,
+            disabled:f.object.respond_to?(:disabled?) && f.object.disabled?(key),
+            input_html: { class: 'form-control'}
+%>
