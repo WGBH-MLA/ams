@@ -1,3 +1,7 @@
+<!--
+  Overrides view from hyrax-batch_ingest gem
+  Hides submitter_email field and autopopulates with the current user
+-->
 <h1><%= t('.header') %></h1>
 <%= simple_form_for @presenter.batch do |f| %>
   <%= f.input :submitter_email, as: :hidden, input_html: { value: current_user.email } %>
