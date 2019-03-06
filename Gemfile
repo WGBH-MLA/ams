@@ -59,18 +59,21 @@ group :development, :test do
   gem 'selenium-webdriver'
   gem 'fcrepo_wrapper'
   gem 'solr_wrapper', '~> 2.1'
-  gem 'xray-rails'
 end
 
 group :development do
   # Access an IRB console on exception pages or by using <%= console %> anywhere in the code.
   gem 'web-console', '>= 3.3.0'
   gem 'listen', '>= 3.0.5', '< 3.2'
+  # NOTE: Spring was intentionally removed because it's suspected of causing
+  # issues with concurrent job processing using Sidekiq. This could be a red
+  # herring, but we're leaving it out for now, until we have more time to debug.
   # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
-  gem 'spring'
-  gem 'spring-watcher-listen', '~> 2.0.0'
+  # gem 'spring'
+  # gem 'spring-watcher-listen', '~> 2.0.0'
   gem "letter_opener"
   gem 'faker'
+  gem 'xray-rails'
 end
 
 gem 'hyrax', '~> 2.4.0'
