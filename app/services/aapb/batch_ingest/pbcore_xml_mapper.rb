@@ -6,6 +6,7 @@ module AAPB
 
       def initialize(pbcore_xml)
         @pbcore_xml = pbcore_xml
+        @admindata_field_names = ["level of user access", "cataloging status", "outside url", "special_collections", "transcript status", "licensing info", "playlist group", "playlist order"]
       end
 
       def asset_attributes
@@ -14,19 +15,27 @@ module AAPB
 
           annotations, admindata = separate_admindata(pbcore.annotations)
 
-          # bring along the ol' admin data, to be removed in the actor
-          attrs[:level_of_user_access] = admindata.select {|anno| anno.type }.map(&:value)
-          attrs[:minimally_cataloged] = admindata.select {|anno| anno.type }.map(&:value)
-          attrs[:outside_url] = admindata.select {|anno| anno.type }.map(&:value)
-          attrs[:special_collection] = admindata.select {|anno| anno.type }.map(&:value)
-          attrs[:transcript_status] = admindata.select {|anno| anno.type }.map(&:value)
-          attrs[:sonyci_id] = admindata.select {|anno| anno.type }.map(&:value)
-          attrs[:licensing_info] = admindata.select {|anno| anno.type }.map(&:value)
-          attrs[:created_at] = admindata.select {|anno| anno.type }.map(&:value)
-          attrs[:updated_at] = admindata.select {|anno| anno.type }.map(&:value)
-          attrs[:playlist_group] = admindata.select {|anno| anno.type }.map(&:value)
-          attrs[:playlist_order] = admindata.select {|anno| anno.type }.map(&:value)
+          admindata = admindata.group_by {|anno| anno.type.to_s.downcase.strip }
 
+          # bring along the ol' admin data, to be removed in the actor
+          # attrs[:level_of_user_access] = admindata.select {|anno| anno.type }.map(&:value)
+          # attrs[:minimally_cataloged] = admindata.select {|anno| anno.type }.map(&:value)
+          # attrs[:outside_url] = admindata.select {|anno| anno.type }.map(&:value)
+          # attrs[:special_collection] = admindata.select {|anno| anno.type }.map(&:value)
+          # attrs[:transcript_status] = admindata.select {|anno| anno.type }.map(&:value)
+          # attrs[:sonyci_id] = admindata.select {|anno| anno.type }.map(&:value)
+          # attrs[:licensing_info] = admindata.select {|anno| anno.type }.map(&:value)
+          # attrs[:created_at] = admindata.select {|anno| anno.type }.map(&:value)
+          # attrs[:updated_at] = admindata.select {|anno| anno.type }.map(&:value)
+          # attrs[:playlist_group] = admindata.select {|anno| anno.type }.map(&:value)
+          # attrs[:playlist_order] = admindata.select {|anno| anno.type }.map(&:value)
+
+          # assign
+          @admindata_field_names.each do |field_name|
+            attrs[:"#{field_name}"]           = admindata[field_name].map(&:value)
+          end
+
+          attrs[:annotation]                  = annotations.map(&:value)
 
           attrs[:id]                          = normalized_aapb_id(aapb_id) if aapb_id
           attrs[:title]                       = pbcore.titles.select { |title| title_types.none? { |t| t == title.type.to_s.downcase.strip } }.map(&:value)
@@ -50,7 +59,7 @@ module AAPB
           attrs[:genre]                       = pbcore.genres.map(&:value)
           attrs[:spatial_coverage]            = pbcore.coverages.select { |coverage| coverage.type.value.downcase.strip == "spatial" }.map { |coverage| coverage.coverage.value }
           attrs[:temporal_coverage]           = pbcore.coverages.select { |coverage| coverage.type.value.downcase.strip == "temporal" }.map { |coverage| coverage.coverage.value }
-          attrs[:annotation]                  = annotations.map(&:value)
+          
           attrs[:rights_summary]              = pbcore.rights_summaries.map(&:rights_summary).compact.map(&:value)
           attrs[:rights_link]                 = pbcore.rights_summaries.map(&:rights_link).compact.map(&:value)
           attrs[:local_identifier]            = pbcore.identifiers.select { |identifier| identifier.source.to_s.downcase == "local identifier" }.map(&:value)
@@ -64,8 +73,7 @@ module AAPB
       end
 
       def separate_admindata(annotations)
-        require('pry');binding.pry
-        annotations.partition {|anno| ["Level of User Access","Cataloging Status","Outside URL","special_collections","Transcript Status","Licensing Info","Playlist Group","Playlist Order"].exclude?(anno.type) }
+        annotations.partition {|anno| @admindata_field_names.exclude?(anno.type) }
       end
 
       def aapb_id
