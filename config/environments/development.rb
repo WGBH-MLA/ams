@@ -54,7 +54,8 @@ config.webpacker.check_yarn_integrity = true
   config.assets.quiet = true
 
   #Config background Jobs to run inline in development mode
-  config.active_job.queue_adapter = :inline
+  config.active_job.queue_adapter = :sidekiq
+  # config.active_job.queue_adapter = :inline
 
   # For testing emails in Development
   # Define as ENV["MAIL_DELIVERY_METHOD"] as 'smtp' to deliver
