@@ -11,7 +11,6 @@
 # It's strongly recommended that you check this file into your version control system.
 
 ActiveRecord::Schema.define(version: 20190308015530) do
-
   create_table "admin_data", force: :cascade do |t|
     t.string "level_of_user_access"
     t.string "minimally_cataloged"
@@ -138,7 +137,7 @@ ActiveRecord::Schema.define(version: 20190308015530) do
   create_table "hyrax_batch_ingest_batch_items", force: :cascade do |t|
     t.integer "batch_id"
     t.string "id_within_batch"
-    t.string "source_data"
+    t.text "source_data"
     t.string "source_location"
     t.string "status"
     t.text "error"

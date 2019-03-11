@@ -7,3 +7,4 @@ test:
 production:
   host: <%= ENV['REDIS_SERVER'] %>
   port: 6379
+  network_timeout: 5
