@@ -14,25 +14,13 @@ module AAPB
           # Saves Asset with AAPB ID if present
 
           annotations, admindata = separate_admindata(pbcore.annotations)
-
           admindata = admindata.group_by {|anno| anno.type.to_s.downcase.strip }
 
           # bring along the ol' admin data, to be removed in the actor
-          # attrs[:level_of_user_access] = admindata.select {|anno| anno.type }.map(&:value)
-          # attrs[:minimally_cataloged] = admindata.select {|anno| anno.type }.map(&:value)
-          # attrs[:outside_url] = admindata.select {|anno| anno.type }.map(&:value)
-          # attrs[:special_collection] = admindata.select {|anno| anno.type }.map(&:value)
-          # attrs[:transcript_status] = admindata.select {|anno| anno.type }.map(&:value)
-          # attrs[:sonyci_id] = admindata.select {|anno| anno.type }.map(&:value)
-          # attrs[:licensing_info] = admindata.select {|anno| anno.type }.map(&:value)
-          # attrs[:created_at] = admindata.select {|anno| anno.type }.map(&:value)
-          # attrs[:updated_at] = admindata.select {|anno| anno.type }.map(&:value)
-          # attrs[:playlist_group] = admindata.select {|anno| anno.type }.map(&:value)
-          # attrs[:playlist_order] = admindata.select {|anno| anno.type }.map(&:value)
-
-          # assign
           @admindata_field_names.each do |field_name|
-            attrs[:"#{field_name}"]           = admindata[field_name].map(&:value)
+
+            field_name = 'minimally_cataloged' if field_name == 'cataloging status'
+            attrs[:"#{field_name}"]           = admindata[field_name].map(&:value) if admindata[field_name]
           end
 
           attrs[:annotation]                  = annotations.map(&:value)
