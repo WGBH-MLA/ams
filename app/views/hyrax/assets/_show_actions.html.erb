@@ -2,6 +2,10 @@
 # Overwrites Hyrax Gem's version of
 # app/views/hyrax/base/_show_actions.html.erb to explicitly show a
 # download button for Assets that have media available for download.
+
+# Also removes the File Manager link as this feature is not in use
+# in th AMS.
+
 # NOTE: if Hyrax's version of _show_actions.html.erb changes, then this
 # view will have to be updated to reflect those changes if so desired.
 %>
@@ -13,8 +17,8 @@
   <% if presenter.editor? %>
       <%= link_to "Edit", edit_polymorphic_path([main_app, presenter]), class: 'btn btn-default' %>
       <%= link_to "Delete", [main_app, presenter], class: 'btn btn-danger', data: { confirm: "Delete this #{presenter.human_readable_type}?" }, method: :delete %>
-      <% if presenter.member_presenters.size > 1 %>
-          <%= link_to t("hyrax.file_manager.link_text"), polymorphic_path([main_app, :file_manager, presenter]), class: 'btn btn-default' %>
+      <% if presenter.media_available? %>
+        <%= link_to "Download Media", "/concern/assets/#{presenter.id}/download_media.zip", class: 'btn btn-default' %>
       <% end %>
       <% if presenter.valid_child_concerns.length > 0 %>
         <div class="btn-group">
@@ -28,9 +32,6 @@
               <% end %>
             </ul>
         </div>
-      <% end %>
-      <% if presenter.media_available? %>
-        <%= link_to "Download Media", "/concern/assets/#{presenter.id}/download_media.zip", class: 'btn btn-default' %>
       <% end %>
   <% end %>
   <% if presenter.show_deposit_for?(collections: @user_collections) %>

@@ -2,7 +2,13 @@ table.contributions {
     margin:0px;
 }
 .work-panel button {
-    margin-right: 5px;
+    margin: 0 0 5px 0;
+}
+.show-actions {
+    padding: 15px 10px;
+}
+.work-panel .dropdown-menu{
+    margin: -5px 0 0 0;
 }
 .work-panel .label {
     border-radius: 0px;
