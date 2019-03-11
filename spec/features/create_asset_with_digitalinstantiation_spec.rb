@@ -23,7 +23,7 @@ RSpec.feature 'Create and Validate Asset,Digital Instantiation, EssenseTrack', j
       {
         location: 'Test Location',
         rights_summary: 'My Test Rights summary',
-        rights_link: 'Test link',
+        rights_link: 'In Copyright',
         holding_organization: 'WGBH',
         pbcore_xml_doc: "#{Rails.root}/spec/fixtures/sample_instantiation_valid.xml"
       }
@@ -126,8 +126,14 @@ RSpec.feature 'Create and Validate Asset,Digital Instantiation, EssenseTrack', j
       select.select digital_instantiation_attributes[:holding_organization]
 
       fill_in('Rights summary', with: digital_instantiation_attributes[:rights_summary])
-      fill_in('Rights link', with: digital_instantiation_attributes[:rights_link])
 
+      # fill_in('Rights link', with: digital_instantiation_attributes[:rights_link])
+      # select(digital_instantiation_attributes[:rights_link], from: 'Rights link')
+
+      within('.digital_instantiation_rights_link') do
+        find('button.multiselect').click
+        find('label.checkbox', text: digital_instantiation_attributes[:rights_link]).click
+      end
 
       # set it public
       find('body').click
@@ -146,7 +152,9 @@ RSpec.feature 'Create and Validate Asset,Digital Instantiation, EssenseTrack', j
       expect(page).to have_content digital_instantiation_attributes[:location]
       expect(page).to have_content pbcore_xml_doc.digital.value
       expect(page).to have_content pbcore_xml_doc.media_type.value
-      expect(page).to have_content digital_instantiation_attributes[:rights_link]
+
+      # rights link
+      expect(page).to have_content "http://rightsstatements.org/page/InC/1.0/?language=en"
       expect(page).to have_content digital_instantiation_attributes[:rights_summary]
       expect(page).to have_content digital_instantiation_attributes[:holding_organization]
       expect(page).to have_current_path(guid_regex)

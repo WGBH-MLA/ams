@@ -20,7 +20,7 @@ module AAPB
           read_and_create_batch_items
 
         rescue StandardError => e
-          raise Hyrax::BatchIngest::ReaderError, I18n.t('hyrax.batch_ingest.readers.errors.invalid_source_location', source_location: source_location + " " + e.message)
+          raise Hyrax::BatchIngest::ReaderError, I18n.t('hyrax.batch_ingest.readers.errors.invalid_source_location', source_location: source_location + " \n" + e.message + "\n" +  e.backtrace.to_s)
         end
       end
 
@@ -59,7 +59,7 @@ module AAPB
 
 
           value = element.strip
-          if !attribute.nil? && attribute != "id" && model.constantize.properties[attribute].multiple?
+          if multi_value_attr?(attribute,@options_structure.object_class)
             value = Array(value) unless element.strip.empty?
           end
 
@@ -83,6 +83,23 @@ module AAPB
 
         end
         validate_row_data model_hash, @options_structure
+      end
+
+      def multi_value_attr?(attribute,klass)
+        if !attribute.nil? && attribute != "id" && ( instantiation_multi_attr?(attribute,klass) || multi_value_fedora_attribute?(attribute,klass) )
+          return true
+        end
+        false
+      end
+
+      def multi_value_fedora_attribute?(attribute,klass)
+        klass.constantize.properties[attribute] && klass.constantize.properties[attribute].multiple?
+      end
+
+      def instantiation_multi_attr?(attribute,klass)
+        asset_multi_value_admin_data_attr = [:special_collection, :sonyci_id]
+        return true if klass == "Asset" && asset_multi_value_admin_data_attr.include?(attribute.to_sym)
+        false
       end
 
       def validate_row_data row, node, child_node = nil
