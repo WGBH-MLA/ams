@@ -28,6 +28,9 @@ module AAPB
             attrs[:"#{field_name}"]           = admindata[field_name].map(&:value) if admindata[field_name]
           end
 
+
+require('pry');binding.pry
+
           # Saves Asset with AAPB ID if present
           attrs[:id]                          = normalized_aapb_id(aapb_id) if aapb_id
 
