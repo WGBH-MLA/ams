@@ -37,7 +37,7 @@ module AAPB
           # grouped by title type
           grouped_titles = categorize(pbcore.titles)
           # pull out no-type titles, removing from grouped_titles
-          titles_no_type = grouped_titles.except!(title_types)
+          titles_no_type = grouped_titles.slice!(*title_types)
           attrs[:title]                       = titles_no_type.values.flatten.map(&:value)
           attrs[:episode_title]               = (grouped_titles.fetch("episode title", []) + grouped_titles.fetch("episode", [])).map(&:value)
           attrs[:program_title]               = grouped_titles["program"].map(&:value) if grouped_titles["program"]
@@ -49,7 +49,7 @@ module AAPB
 
           grouped_descriptions = categorize(pbcore.descriptions)
           # pull out no-type descs, removing from grouped_descs
-          descriptions_no_type = grouped_descriptions.except!(desc_types)
+          descriptions_no_type = grouped_descriptions.slice!(*desc_types)
           attrs[:description]                 = descriptions_no_type.values.flatten.map(&:value)
           attrs[:episode_description]         = (grouped_descriptions.fetch("episode", []) + grouped_descriptions.fetch("episode description", [])).map(&:value)
           attrs[:program_description]         = grouped_descriptions["program"].map(&:value) if grouped_descriptions["program"]
