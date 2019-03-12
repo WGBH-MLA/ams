@@ -63,7 +63,6 @@ module Hyrax
           end
         end
 
-
         def destroy_admin_data(env)
           env.curation_concern.admin_data.destroy if env.curation_concern.admin_data_gid
         end

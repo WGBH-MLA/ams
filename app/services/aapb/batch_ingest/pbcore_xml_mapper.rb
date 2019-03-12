@@ -6,11 +6,25 @@ module AAPB
 
       def initialize(pbcore_xml)
         @pbcore_xml = pbcore_xml
+        @admindata_field_names = ["level of user access", "cataloging status", "outside url", "special_collections", "transcript status", "licensing info", "playlist group", "playlist order"]
       end
 
       def asset_attributes
         @asset_attributes ||= {}.tap do |attrs|
           # Saves Asset with AAPB ID if present
+
+          annotations, admindata = separate_admindata(pbcore.annotations)
+          admindata = admindata.group_by {|anno| anno.type.to_s.downcase.strip }
+
+          # bring along the ol' admin data, to be removed in the actor
+          @admindata_field_names.each do |field_name|
+
+            field_name = 'minimally_cataloged' if field_name == 'cataloging status'
+            attrs[:"#{field_name}"]           = admindata[field_name].map(&:value) if admindata[field_name]
+          end
+
+          attrs[:annotation]                  = annotations.map(&:value)
+
           attrs[:id]                          = normalized_aapb_id(aapb_id) if aapb_id
           attrs[:title]                       = pbcore.titles.select { |title| title_types.none? { |t| t == title.type.to_s.downcase.strip } }.map(&:value)
           attrs[:program_title]               = pbcore.titles.select { |title| title.type.to_s.downcase.strip == "program" }.map(&:value)
@@ -33,7 +47,7 @@ module AAPB
           attrs[:genre]                       = pbcore.genres.map(&:value)
           attrs[:spatial_coverage]            = pbcore.coverages.select { |coverage| coverage.type.value.downcase.strip == "spatial" }.map { |coverage| coverage.coverage.value }
           attrs[:temporal_coverage]           = pbcore.coverages.select { |coverage| coverage.type.value.downcase.strip == "temporal" }.map { |coverage| coverage.coverage.value }
-          attrs[:annotation]                  = pbcore.annotations.map(&:value)
+          
           attrs[:rights_summary]              = pbcore.rights_summaries.map(&:rights_summary).compact.map(&:value)
           attrs[:rights_link]                 = pbcore.rights_summaries.map(&:rights_link).compact.map(&:value)
           attrs[:local_identifier]            = pbcore.identifiers.select { |identifier| identifier.source.to_s.downcase == "local identifier" }.map(&:value)
@@ -44,6 +58,10 @@ module AAPB
           attrs[:subject]                     = pbcore.subjects.map(&:value)
           attrs[:contributors]                = contributor_attributes(pbcore.contributors)
         end
+      end
+
+      def separate_admindata(annotations)
+        annotations.partition {|anno| @admindata_field_names.exclude?(anno.type) }
       end
 
       def aapb_id
