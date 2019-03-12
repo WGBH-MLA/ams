@@ -43,9 +43,6 @@ RSpec.describe AAPB::BatchIngest::PBCoreXMLItemIngester, reset_data: false do
         )
 
         # Ingest the BatchItem and use the returned Asset instance for testing.
-
-        # require "pry"; binding.pry
-
         @asset = described_class.new(batch_item).ingest
         @contributions = @asset.members.select { |member| member.is_a? Contribution }
         @digital_instantiations = @asset.members.select { |member| member.is_a? DigitalInstantiation }
