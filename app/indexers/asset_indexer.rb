@@ -39,6 +39,9 @@ class AssetIndexer < AMS::WorkIndexer
         solr_doc['transcript_status_ssim'] = object.admin_data.transcript_status if !object.admin_data.transcript_status.blank?
         solr_doc['sonyci_id_ssim'] = object.admin_data.sonyci_id if object.admin_data.sonyci_id.any?(&:present?)
         solr_doc['licensing_info_ssim'] = object.admin_data.licensing_info if !object.admin_data.licensing_info.blank?
+
+        #Indexing for search by batch_id
+        solr_doc['hyrax_batch_ingest_batch_id_tesim'] = object.admin_data.hyrax_batch_ingest_batch_id if !object.admin_data.hyrax_batch_ingest_batch_id.blank?
       end
     end
   end

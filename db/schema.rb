@@ -10,8 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190307145823) do
-
+ActiveRecord::Schema.define(version: 20190308015530) do
   create_table "admin_data", force: :cascade do |t|
     t.string "level_of_user_access"
     t.string "minimally_cataloged"
@@ -24,6 +23,8 @@ ActiveRecord::Schema.define(version: 20190307145823) do
     t.datetime "updated_at", null: false
     t.string "playlist_group"
     t.integer "playlist_order"
+    t.integer "hyrax_batch_ingest_batch_id"
+    t.index ["hyrax_batch_ingest_batch_id"], name: "index_admin_data_on_hyrax_batch_ingest_batch_id"
   end
 
   create_table "bookmarks", force: :cascade do |t|
