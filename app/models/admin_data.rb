@@ -1,4 +1,6 @@
 class AdminData < ApplicationRecord
+  belongs_to :hyrax_batch_ingest_batch, optional: true
+
   self.table_name = "admin_data"
   include ::EmptyDetection
 
