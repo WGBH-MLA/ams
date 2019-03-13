@@ -53,8 +53,9 @@ module AAPB
                 end
               end
             end
-          else
-            @batch_item.error = model_object.errors.messages.to_s
+            if model_object.errors.any?
+              @batch_item.error = model_object.errors.messages.to_s
+            end
           end
         end
 
