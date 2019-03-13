@@ -111,14 +111,10 @@ module PBCoreXPathHelper
     # Usage: In your spec, do this..
     #   pbcore_xpath_helper(pbcore_xml).titles_without_type
     def titles_without_type
-      values_from_xpath('//pbcoreTitle') \
-      - values_from_xpath(:program_title) \
-      - values_from_xpath(:episode_title) \
-      - values_from_xpath(:segment_title) \
-      - values_from_xpath(:clip_title) \
-      - values_from_xpath(:promo_title) \
-      - values_from_xpath(:raw_footage_title) \
-      - values_from_xpath(:episode_number)
+      all_titles = values_from_xpath('//pbcoreTitle')
+      with_types = values_from_xpath(:program_title) + values_from_xpath(:episode_title) + values_from_xpath(:segment_title) + values_from_xpath(:clip_title) + values_from_xpath(:promo_title) + values_from_xpath(:raw_footage_title) + values_from_xpath(:episode_number)
+      with_types.each {|title| dex = all_titles.index(title); all_titles.slice!( dex ) if dex }
+      all_titles
     end
 
     # Shortcut method to pull out all descriptions that don't match the other description
@@ -126,14 +122,10 @@ module PBCoreXPathHelper
     # Usage: In your spec, do this..
     #   pbcore_xpath_helper(pbcore_xml).descriptions_without_type
     def descriptions_without_type
-      values_from_xpath('//pbcoreDescription') \
-      - values_from_xpath(:program_description) \
-      - values_from_xpath(:episode_description) \
-      - values_from_xpath(:segment_description) \
-      - values_from_xpath(:clip_description) \
-      - values_from_xpath(:promo_description) \
-      - values_from_xpath(:raw_footage_description) \
-      - values_from_xpath(:episode_number)
+      all_descs = values_from_xpath('//pbcoreDescription')
+      with_types = values_from_xpath(:program_description) + values_from_xpath(:episode_description) + values_from_xpath(:segment_description) + values_from_xpath(:clip_description) + values_from_xpath(:promo_description) + values_from_xpath(:raw_footage_description) + values_from_xpath(:episode_number)
+      with_types.each {|desc| dex = all_descs.index(desc); all_descs.slice!( dex ) if dex  }
+      all_descs
     end
 
     def ams_id
