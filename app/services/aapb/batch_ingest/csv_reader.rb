@@ -57,7 +57,6 @@ module AAPB
           (col, element) = val
           (model, attribute) = col.split(".", 2)
 
-
           value = element.strip
           if multi_value_attr?(attribute,@options_structure.object_class)
             value = Array(value) unless element.strip.empty?
@@ -66,6 +65,9 @@ module AAPB
           if model.include?(@options_structure.object_class)
             if attribute.nil?
               model_hash[model] ||= {}
+            elsif multi_value_attr?(attribute,@options_structure.object_class)
+              model_hash[model][attribute] ||= []
+              model_hash[model][attribute] << value.first
             else
               model_hash[model][attribute] = value unless value.empty?
             end
