@@ -1,7 +1,7 @@
 terms:
-  - id: Indexing Only Transcript
-    term: Indexing Only Transcript
-  - id: Online Reading Room Transcript
-    term: Online Reading Room Transcript
-  - id: On Location Transcript
-    term: On Location Transcript
+  - id: Uncorrected
+    term: Uncorrected
+  - id: Correcting
+    term: Correcting
+  - id: Correct
+    term: Correct
