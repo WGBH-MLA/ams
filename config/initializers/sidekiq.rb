@@ -7,5 +7,9 @@ Sidekiq.configure_server do |s|
 end
 
 Sidekiq.configure_client do |s|
+  Sidekiq::Logging.logger.level = Logger::DEBUG
   s.redis = redis_conn
 end
+
+
+Sidekiq::Logging.logger.level = Logger::DEBUG

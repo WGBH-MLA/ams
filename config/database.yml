@@ -1,24 +1,21 @@
-# SQLite version 3.x
-#   gem install sqlite3
-#
-#   Ensure the SQLite 3 gem is defined in your Gemfile
-#   gem 'sqlite3'
-#
-default: &default
+test:
   adapter: sqlite3
+  database: db/test.sqlite3
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 50 } %>
   timeout: 5000
 
 development:
-  <<: *default
-  database: db/development.sqlite3
-
-# Warning: The database defined as "test" will be erased and
-# re-generated from your development database when you run "rake".
-# Do not set this db to the same as development or production.
-test:
-  <<: *default
-  database: db/test.sqlite3
+  adapter: mysql2
+  encoding: utf8
+  database: ams_development
+  username: ams_development
+  password: password
+  host: localhost
+  port: 3306
+  # The time that MySQL2 lib will try to get a db connection.
+  # Default is 5.
+  # checkout_timeout: 10
+  pool: 12
 
 production:
   adapter: mysql2
