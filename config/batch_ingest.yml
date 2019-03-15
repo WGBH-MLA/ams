@@ -29,3 +29,25 @@ ingest_types:
         children:
         - object_class: PhysicalInstantiation
           ingest_type: new
+  aapb_csv_reader_3:
+    label: "AAPB Asset Update Spreadsheet Ingester"
+    reader: "AAPB::BatchIngest::CSVReader"
+    ingester: "AAPB::BatchIngest::CSVItemIngestor"
+    reader_options:
+      schema:
+      - object_class: Asset
+        ingest_type: update
+        attributes:
+          - id
+          - topics
+  aapb_csv_reader_4:
+    label: "AAPB Asset Multivalue Attribute Addition Spreadsheet Ingester"
+    reader: "AAPB::BatchIngest::CSVReader"
+    ingester: "AAPB::BatchIngest::CSVItemIngestor"
+    reader_options:
+      schema:
+      - object_class: Asset
+        ingest_type: add
+        attributes:
+          - id
+          - topics

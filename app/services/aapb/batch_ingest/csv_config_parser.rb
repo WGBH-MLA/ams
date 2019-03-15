@@ -23,7 +23,7 @@ module AAPB
       end
 
       def self.valid_ingest_type
-        ["new", "update"]
+        ["new", "update", "add"]
       end
 
       def header_keys
