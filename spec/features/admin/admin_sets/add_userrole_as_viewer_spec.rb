@@ -33,17 +33,6 @@ RSpec.feature 'AssignRoleViewer.', js: true do
       # open record in search result check it dont have other records edit permissions
       click_on(work.title[0])
       expect(page).not_to have_content 'Edit'
-
-      # Login other user to check viewer permissions
-      logout(user_with_role)
-      login_as(user)
-
-      # Check other user viewer search permissions exist
-      visit '/admin/admin_sets'
-      # For some reason, it occasionally takes forever to load
-      # /admin/admin_sets on Travis. To avoid intermittent errors, we wait a
-      # long time.
-      expect(page).to have_content'You are not authorized to access this page.', wait: 120
     end
   end
 end
