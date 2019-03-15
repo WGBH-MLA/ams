@@ -51,6 +51,18 @@ module AAPB
             unless model_object = node.object_class.constantize.find(object_id)
               raise("Unable to find object  for `id` #{object_id}")
             end
+
+            actor_stack_status = actor.update(::Hyrax::Actors::Environment.new(model_object, ability, attributes))
+          elsif node.ingest_type == "add"
+            object_id = attributes.delete("id")
+            unless model_object = node.object_class.constantize.find(object_id)
+              raise("Unable to find object  for `id` #{object_id}")
+            end
+            attributes.keys.each do |k|
+              if @options.attributes.include?(k)
+                attributes[k] = (attributes[k] + model_object.try(k).to_a).uniq
+              end
+            end
             actor_stack_status = actor.update(::Hyrax::Actors::Environment.new(model_object, ability, attributes))
           end
 

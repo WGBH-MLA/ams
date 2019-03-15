@@ -106,7 +106,7 @@ module AAPB
 
       def validate_row_data row, node, child_node = nil
         fail_row = false
-        if node.ingest_type == "update"
+        if node.ingest_type == "update" || node.ingest_type == "add"
           if child_node
             row[node.object_class].each do |c_data|
               if c_data.to_a.flatten.exclude?("id")
