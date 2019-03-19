@@ -39,7 +39,40 @@ ingest_types:
         ingest_type: update
         attributes:
           - id
+          - asset_types
+          - genre
+          - date
+          - broadcast_date
+          - created_date
+          - copyright_date
+          - episode_number
+          - spatial_coverage
+          - temporal_coverage
+          - audience_level
+          - audience_rating
+          - annotation
+          - rights_summary
+          - rights_link
+          - local_identifier
+          - pbs_nola_code
+          - eidr_id
           - topics
+          - subject
+          - program_title
+          - episode_title
+          - segment_title
+          - raw_footage_title
+          - promo_title
+          - clip_title
+          - program_description
+          - episode_description
+          - segment_description
+          - raw_footage_description
+          - promo_description
+          - clip_description
+          - series_title
+          - series_description
+          - producing_organization
   aapb_csv_reader_4:
     label: "AAPB Asset Multivalue Attribute Addition Spreadsheet Ingester"
     reader: "AAPB::BatchIngest::CSVReader"
@@ -69,4 +102,18 @@ ingest_types:
           - eidr_id
           - topics
           - subject
+          - program_title
+          - episode_title
+          - segment_title
+          - raw_footage_title
+          - promo_title
+          - clip_title
+          - program_description
+          - episode_description
+          - segment_description
+          - raw_footage_description
+          - promo_description
+          - clip_description
+          - series_title
+          - series_description
           - producing_organization
