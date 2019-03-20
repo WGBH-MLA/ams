@@ -1,3 +1,10 @@
+# Use a different schema file for test environment. When RAILS_ENV=test is set
+# for database tasks (e.g. db:migrate, db:schema:dump, db:schema:load, db:reset,
+# etc.), then it will use this file instead of db/schema.rb. The schema files
+# will be different as long as the database adapters differ between
+# environments. (Currently development uses MySQL and test uses SQLite3).
+ENV['SCHEMA'] ||= 'db/schema.test.rb'
+
 Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
 
@@ -40,7 +47,7 @@ Rails.application.configure do
   #   user_name: '',
   #   password: '',
   #   authentication: '',
-  #   enable_starttls_auto: 
+  #   enable_starttls_auto:
   # }
 
   # Print deprecation notices to the stderr.

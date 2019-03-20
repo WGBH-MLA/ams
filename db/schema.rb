@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190307145823) do
+ActiveRecord::Schema.define(version: 20190308015530) do
 
   create_table "admin_data", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci" do |t|
     t.string "level_of_user_access"
@@ -24,7 +24,7 @@ ActiveRecord::Schema.define(version: 20190307145823) do
     t.datetime "updated_at", null: false
     t.string "playlist_group"
     t.integer "playlist_order"
-    t.integer "hyrax_batch_ingest_batch_id"
+    t.bigint "hyrax_batch_ingest_batch_id"
     t.index ["hyrax_batch_ingest_batch_id"], name: "index_admin_data_on_hyrax_batch_ingest_batch_id"
   end
 
@@ -616,6 +616,7 @@ ActiveRecord::Schema.define(version: 20190307145823) do
     t.index ["work_id"], name: "index_work_view_stats_on_work_id"
   end
 
+  add_foreign_key "admin_data", "hyrax_batch_ingest_batches"
   add_foreign_key "collection_type_participants", "hyrax_collection_types"
   add_foreign_key "curation_concerns_operations", "users"
   add_foreign_key "hyrax_batch_ingest_batch_items", "hyrax_batch_ingest_batches", column: "batch_id"
