@@ -73,6 +73,15 @@ ingest_types:
           - series_title
           - series_description
           - producing_organization
+          - level_of_user_access
+          - minimally_cataloged
+          - outside_url
+          - special_collection
+          - transcript_status
+          - sonyci_id
+          - licensing_info
+          - playlist_group
+          - playlist_order
   aapb_csv_reader_4:
     label: "AAPB Asset Multivalue Attribute Addition Spreadsheet Ingester"
     reader: "AAPB::BatchIngest::CSVReader"
@@ -117,3 +126,5 @@ ingest_types:
           - series_title
           - series_description
           - producing_organization
+          - sonyci_id
+          - special_collection

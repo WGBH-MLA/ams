@@ -2,6 +2,8 @@ module AAPB
   module BatchIngest
     class CSVConfigTree < Struct.new(:object_class, :ingest_type, :attributes, :children)
       include Enumerable
+
+
       def self.new_from_hash(hash)
         model = hash.fetch("object_class")
         if klass = model.constantize
@@ -10,7 +12,17 @@ module AAPB
 
           attr = (hash["attributes"] || [])
           attr.each do |attr|
-            raise("Unknown attribute #{attr} configured for object class #{model}") unless attr == "id" || klass.properties.include?(attr)
+            # Look for admin_data accessors from assets or physical_nstantiations.
+            # If one of them is there, add their attribute names to the whitelisted properties.
+            whitelisted_properties = klass.properties.keys
+
+            if klass.instance_methods.include?(:admin_data)
+              whitelisted_properties += AdminData.attribute_names
+            elsif klass.instance_methods.include?(:instantiation_admin_data)
+              whitelisted_properties += InstantiationAdminData.attribute_names
+            end
+
+            raise("Unknown attribute #{attr} configured for object class #{model}") unless attr == "id" || whitelisted_properties.include?(attr)
           end
           children = [] if children.nil?
 
