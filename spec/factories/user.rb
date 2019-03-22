@@ -45,6 +45,13 @@ FactoryBot.define do
       guest { false }
     end
 
+    factory :aapb_admin_user do
+      # groups ['admin']
+      sequence(:email) { |n| "admin#{n}@example.com"}
+      role_names { ['aapb-admin'] }
+      guest { false }
+    end
+
     factory :user_with_mail do
       after(:create) do |user|
         # Create examples of single file successes and failures
