@@ -3,7 +3,6 @@ module AAPB
     class CSVConfigTree < Struct.new(:object_class, :ingest_type, :attributes, :children)
       include Enumerable
 
-
       def self.new_from_hash(hash)
         model = hash.fetch("object_class")
         if klass = model.constantize

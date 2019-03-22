@@ -1,8 +1,8 @@
-require 'aapb/batch_ingest/batch_item_ingester'
+require 'aapb/batch_ingest'
 
 module AAPB
   module BatchIngest
-    class CSVItemIngestor < AAPB::BatchIngest::BatchItemIngester
+    class CSVItemIngester < AAPB::BatchIngest::BatchItemIngester
       def ingest
         @works_ingested = []
         set_options
@@ -32,7 +32,9 @@ module AAPB
             # If ingest is new add batch_id to Asset for tracking
             if model_object.is_a?(Asset)
               attributes["hyrax_batch_ingest_batch_id"] = batch_id
-            elsif attributes[:in_works_ids].present?
+            end
+
+            if attributes[:in_works_ids].present?
               attributes[:in_works_ids].each do |work_id|
                 unless asset = Asset.find(work_id)
                   raise 'Cannot find Asset with ID: #{work_id}.'

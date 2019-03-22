@@ -3,7 +3,6 @@
 module Hyrax
   module Actors
     class AssetActor < Hyrax::Actors::BaseActor
-
       def create(env)
         contributions = extract_contributions(env)
         add_title_types(env)
