@@ -7,17 +7,25 @@ module AAPB
 
       def ingest
         if batch_item_is_asset?
+
           batch_item_object = ingest_asset!
+          
+          # Everybody's item
+          cool_batch_json = self.batch_item.to_json
 
           pbcore_digital_instantiations.each do |pbcore_digital_instantiation|
-            ingest_digital_instantiation!(parent: batch_item_object, xml: pbcore_digital_instantiation.to_xml)
+            CoolDigitalWorker.perform_async(batch_item_object.id, pbcore_digital_instantiation.to_xml, cool_batch_json)
+            # ingest_digital_instantiation!(parent: batch_item_object, xml: pbcore_digital_instantiation.to_xml)
           end
 
           pbcore_physical_instantiations.each do |pbcore_physical_instantiation|
-            physical_instantiation = ingest_physical_instantiation!(parent: batch_item_object, xml: pbcore_physical_instantiation.to_xml)
-            pbcore_physical_instantiation.essence_tracks.each do |pbcore_essence_track|
-              ingest_essence_track!(parent: physical_instantiation, xml: pbcore_essence_track.to_xml)
-            end
+            CoolPhysicalWorker.perform_async(batch_item_object.id, pbcore_physical_instantiation.to_xml, cool_batch_json)
+            # physical_instantiation = ingest_physical_instantiation!(parent: batch_item_object, xml: pbcore_physical_instantiation.to_xml)
+
+            # I LIVE IN PhysicalWorker NOW
+            # pbcore_physical_instantiation.essence_tracks.each do |pbcore_essence_track|
+              # ingest_essence_track!(parent: physical_instantiation, xml: pbcore_essence_track.to_xml)
+            # end
           end
         elsif batch_item_is_digital_instantiation?
           # TODO: implement digital instantiation ingest.
@@ -30,7 +38,8 @@ module AAPB
         batch_item_object
       end
 
-      private
+      # show your privates
+      # private
 
         def batch_item_is_asset?
           pbcore_xml =~ /pbcoreDescriptionDocument/
