@@ -73,9 +73,12 @@ module AAPB
           actor = Hyrax::CurationConcern.actor
           attrs = {
             pbcore_xml: xml,
-            in_works_ids: [parent.id]
+            in_works_ids: [parent.id],
           }
           env = Hyrax::Actors::Environment.new(digital_instantiation, current_ability, attrs)
+
+          env.attributes[:title] = parent.title
+
           actor.create(env)
           # reload the parent so that the children show up in the .members
           # accessor
@@ -89,6 +92,9 @@ module AAPB
           attrs = AAPB::BatchIngest::PBCoreXMLMapper.new(xml).physical_instantiation_attributes
           attrs[:in_works_ids] = [parent.id]
           env = Hyrax::Actors::Environment.new(physical_instantiation, current_ability, attrs)
+
+          env.attributes[:title] = parent.title
+
           actor.create(env)
           # reload the parent so that the children show up in the .members
           # accessor
@@ -101,7 +107,11 @@ module AAPB
           actor = Hyrax::CurationConcern.actor
           attrs = AAPB::BatchIngest::PBCoreXMLMapper.new(xml).essence_track_attributes
           attrs[:in_works_ids] = [parent.id]
+          
           env = Hyrax::Actors::Environment.new(essence_track, current_ability, attrs)
+
+          env.attributes[:title] = parent.title
+          
           actor.create(env)
           parent.reload
           essence_track
