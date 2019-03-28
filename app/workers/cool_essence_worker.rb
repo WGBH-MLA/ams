@@ -6,10 +6,11 @@ class CoolEssenceWorker
   include Sidekiq::Worker
   include AAPB::BatchIngest
 
-  def perform(parent_id, pbcore_essence_xml, batch_item_json)
+  def perform(parent_id, pbcore_essence_xml, batch_item_json, parent_type)
     # we only do essoes round here
     batch_item = Hyrax::BatchIngest::BatchItem.new(JSON.parse(batch_item_json))
-    parent = PhysicalInstantiation.find(parent_id)
+    parent_class = parent_type == 'physical' ? PhysicalInstantiation : DigitalInstantiation
+    parent = parent_class.find(parent_id)
     AAPB::BatchIngest::PBCoreXMLItemIngester.new(batch_item, {}).ingest_essence_track!(parent: parent, xml: pbcore_essence_xml)
   end
 end
