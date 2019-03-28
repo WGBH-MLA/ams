@@ -75,14 +75,16 @@ module AAPB
             pbcore_xml: xml,
             in_works_ids: [parent.id],
           }
+
           env = Hyrax::Actors::Environment.new(digital_instantiation, current_ability, attrs)
 
-          env.attributes[:title] = parent.title
+          env.attributes[:title] = ::SolrDocument.new(parent.to_solr).title
 
-          actor.create(env)
           # reload the parent so that the children show up in the .members
           # accessor
           parent.reload
+
+          actor.create(env)
           digital_instantiation
         end
 
@@ -93,12 +95,14 @@ module AAPB
           attrs[:in_works_ids] = [parent.id]
           env = Hyrax::Actors::Environment.new(physical_instantiation, current_ability, attrs)
 
-          env.attributes[:title] = parent.title
+          env.attributes[:title] = ::SolrDocument.new(parent.to_solr).title
 
-          actor.create(env)
           # reload the parent so that the children show up in the .members
           # accessor
           parent.reload
+
+          actor.create(env)
+
           physical_instantiation
         end
 
