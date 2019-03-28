@@ -27,10 +27,14 @@ module AAPB
       end
 
       def separate_admindata(all_annotations)
-        annotations, admindata = all_annotations.partition {|anno| admindata_field_names.exclude?(anno.type.to_s.downcase.strip) }
-        # group by type
-        admindata = categorize(admindata)
-        return annotations, admindata
+        # annotations, admindata = all_annotations.partition {|anno| admindata_field_names.exclude?(anno.type.to_s.downcase.strip) }
+        # # group by type
+        # admindata = categorize(admindata)
+        # return annotations, admindata
+        annotations = categorize(all_annotations)
+        no_type = annotations[""]
+        admindata = annotations.except("")
+        return [no_type, admindata]
       end
 
       def asset_attributes
@@ -41,7 +45,7 @@ module AAPB
           # bring along the ol' admin data, to be removed in the actor
           admindata_field_names.each do |field_name|
             field_name = 'minimally_cataloged' if field_name == 'cataloging status'
-            attrs[:"#{field_name}"]           = admindata[field_name].map(&:value) if admindata[field_name]
+            attrs[:"#{field_name}"]           = admindata[field_name] if admindata[field_name]
           end
 
           require('pry');binding.pry
