@@ -26,17 +26,25 @@ module AAPB
         @admindata_field_names ||= ["level of user access", "cataloging status", "outside url", "special_collections", "transcript status", "licensing info", "playlist group", "playlist order"]
       end
 
+      def separate_admindata(all_annotations)
+        annotations, admindata = all_annotations.partition {|anno| admindata_field_names.exclude?(anno.type.to_s.downcase.strip) }
+        # group by type
+        admindata = categorize(admindata)
+        return annotations, admindata
+      end
+
       def asset_attributes
         @asset_attributes ||= {}.tap do |attrs|
 
           annotations, admindata = separate_admindata(pbcore.annotations)
-          admindata = admindata.group_by {|anno| anno.type.to_s.downcase.strip }
 
           # bring along the ol' admin data, to be removed in the actor
           admindata_field_names.each do |field_name|
             field_name = 'minimally_cataloged' if field_name == 'cataloging status'
             attrs[:"#{field_name}"]           = admindata[field_name].map(&:value) if admindata[field_name]
           end
+
+          require('pry');binding.pry
 
           # Saves Asset with AAPB ID if present
           attrs[:id]                          = normalized_aapb_id(aapb_id) if aapb_id
@@ -91,10 +99,6 @@ module AAPB
           attrs[:subject]                     = pbcore.subjects.map(&:value)
           attrs[:contributors]                = contributor_attributes(pbcore.contributors)
         end
-      end
-
-      def separate_admindata(annotations)
-        annotations.partition {|anno| admindata_field_names.exclude?(anno.type) }
       end
 
       def aapb_id
