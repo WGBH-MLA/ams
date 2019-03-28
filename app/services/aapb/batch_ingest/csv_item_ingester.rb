@@ -1,8 +1,8 @@
-require 'aapb/batch_ingest/batch_item_ingester'
+require 'aapb/batch_ingest'
 
 module AAPB
   module BatchIngest
-    class CSVItemIngestor < AAPB::BatchIngest::BatchItemIngester
+    class CSVItemIngester < AAPB::BatchIngest::BatchItemIngester
       def ingest
         @works_ingested = []
         set_options
@@ -32,7 +32,9 @@ module AAPB
             # If ingest is new add batch_id to Asset for tracking
             if model_object.is_a?(Asset)
               attributes["hyrax_batch_ingest_batch_id"] = batch_id
-            elsif attributes[:in_works_ids].present?
+            end
+
+            if attributes[:in_works_ids].present?
               attributes[:in_works_ids].each do |work_id|
                 unless asset = Asset.find(work_id)
                   raise 'Cannot find Asset with ID: #{work_id}.'
@@ -43,13 +45,27 @@ module AAPB
                 asset_actor.update(asset_env)
               end
             end
-
             actor_stack_status = actor.create(::Hyrax::Actors::Environment.new(model_object, ability, attributes))
-
           elsif node.ingest_type == "update"
             object_id = attributes.delete("id")
             unless model_object = node.object_class.constantize.find(object_id)
               raise("Unable to find object  for `id` #{object_id}")
+            end
+
+            actor_stack_status = actor.update(::Hyrax::Actors::Environment.new(model_object, ability, attributes))
+          elsif node.ingest_type == "add"
+            object_id = attributes.delete("id")
+            unless model_object = node.object_class.constantize.find(object_id)
+              raise("Unable to find object  for `id` #{object_id}")
+            end
+
+            attributes.keys.each do |k|
+              if @options.attributes.include?(k)
+                if model_object.is_a?(Asset)
+                  admin_data_object = model_object.admin_data
+                  attributes[k] = (attributes[k] + model_object.try(k).to_a + admin_data_object.try(k).to_a ).uniq
+                end
+              end
             end
             actor_stack_status = actor.update(::Hyrax::Actors::Environment.new(model_object, ability, attributes))
           end

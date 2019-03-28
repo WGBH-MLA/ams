@@ -4,9 +4,9 @@ ingest_types:
     reader: "AAPB::BatchIngest::ZippedPBCoreReader"
     ingester: "AAPB::BatchIngest::PBCoreXMLItemIngester"
   aapb_csv_reader_1:
-    label: "AAPB Spreadsheet Ingester"
+    label: "AAPB CSV Ingester"
     reader: "AAPB::BatchIngest::CSVReader"
-    ingester: "AAPB::BatchIngest::CSVItemIngestor"
+    ingester: "AAPB::BatchIngest::CSVItemIngester"
     reader_options:
       schema:
       - object_class: Asset
@@ -17,9 +17,9 @@ ingest_types:
         - object_class: PhysicalInstantiation
           ingest_type: new
   aapb_csv_reader_2:
-    label: "AAPB Physical Instantiation Spreadsheet Ingester"
+    label: "AAPB CSV Physical Instantiation Ingester"
     reader: "AAPB::BatchIngest::CSVReader"
-    ingester: "AAPB::BatchIngest::CSVItemIngestor"
+    ingester: "AAPB::BatchIngest::CSVItemIngester"
     reader_options:
       schema:
       - object_class: Asset
@@ -29,3 +29,102 @@ ingest_types:
         children:
         - object_class: PhysicalInstantiation
           ingest_type: new
+  aapb_csv_reader_3:
+    label: "AAPB CSV Asset Attribute Update Ingester"
+    reader: "AAPB::BatchIngest::CSVReader"
+    ingester: "AAPB::BatchIngest::CSVItemIngester"
+    reader_options:
+      schema:
+      - object_class: Asset
+        ingest_type: update
+        attributes:
+          - id
+          - asset_types
+          - genre
+          - date
+          - broadcast_date
+          - created_date
+          - copyright_date
+          - episode_number
+          - spatial_coverage
+          - temporal_coverage
+          - audience_level
+          - audience_rating
+          - annotation
+          - rights_summary
+          - rights_link
+          - local_identifier
+          - pbs_nola_code
+          - eidr_id
+          - topics
+          - subject
+          - program_title
+          - episode_title
+          - segment_title
+          - raw_footage_title
+          - promo_title
+          - clip_title
+          - program_description
+          - episode_description
+          - segment_description
+          - raw_footage_description
+          - promo_description
+          - clip_description
+          - series_title
+          - series_description
+          - producing_organization
+          - level_of_user_access
+          - minimally_cataloged
+          - outside_url
+          - special_collection
+          - transcript_status
+          - sonyci_id
+          - licensing_info
+          - playlist_group
+          - playlist_order
+  aapb_csv_reader_4:
+    label: "AAPB CSV Asset Multivalue Attribute Addition Ingester"
+    reader: "AAPB::BatchIngest::CSVReader"
+    ingester: "AAPB::BatchIngest::CSVItemIngester"
+    reader_options:
+      schema:
+      - object_class: Asset
+        ingest_type: add
+        attributes:
+          - id
+          - asset_types
+          - genre
+          - date
+          - broadcast_date
+          - created_date
+          - copyright_date
+          - episode_number
+          - spatial_coverage
+          - temporal_coverage
+          - audience_level
+          - audience_rating
+          - annotation
+          - rights_summary
+          - rights_link
+          - local_identifier
+          - pbs_nola_code
+          - eidr_id
+          - topics
+          - subject
+          - program_title
+          - episode_title
+          - segment_title
+          - raw_footage_title
+          - promo_title
+          - clip_title
+          - program_description
+          - episode_description
+          - segment_description
+          - raw_footage_description
+          - promo_description
+          - clip_description
+          - series_title
+          - series_description
+          - producing_organization
+          - sonyci_id
+          - special_collection
