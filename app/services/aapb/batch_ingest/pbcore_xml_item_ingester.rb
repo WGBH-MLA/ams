@@ -7,18 +7,13 @@ module AAPB
 
       def ingest
         if batch_item_is_asset?
-
           asset = ingest_asset!
-          
-          # Everybody's item
-          cool_batchitem_json = self.batch_item.to_json
-
           pbcore_digital_instantiations.each do |pbcore_digital_instantiation|
-            CoolDigitalWorker.perform_async(asset.id, pbcore_digital_instantiation.to_xml, cool_batchitem_json)
+            CoolDigitalJob.perform_later(asset.id, pbcore_digital_instantiation.to_xml, batch_item)
           end
 
           pbcore_physical_instantiations.each do |pbcore_physical_instantiation|
-            CoolPhysicalWorker.perform_async(asset.id, pbcore_physical_instantiation.to_xml, cool_batchitem_json)
+            CoolPhysicalJob.perform_later(asset.id, pbcore_physical_instantiation.to_xml, batch_item)
           end
         elsif batch_item_is_digital_instantiation?
           # TODO: implement digital instantiation ingest.
@@ -69,15 +64,8 @@ module AAPB
           }
 
           env = Hyrax::Actors::Environment.new(digital_instantiation, current_ability, attrs)
-
           env.attributes[:title] = ::SolrDocument.new(parent.to_solr).title
-
-          # reload the parent so that the children show up in the .members
-          # accessor
-          parent.reload
-
           actor.create(env)
-          digital_instantiation
         end
 
         def ingest_physical_instantiation!(parent:, xml:)
@@ -86,15 +74,8 @@ module AAPB
           attrs = AAPB::BatchIngest::PBCoreXMLMapper.new(xml).physical_instantiation_attributes
           attrs[:in_works_ids] = [parent.id]
           env = Hyrax::Actors::Environment.new(physical_instantiation, current_ability, attrs)
-
           env.attributes[:title] = ::SolrDocument.new(parent.to_solr).title
-
-          # reload the parent so that the children show up in the .members
-          # accessor
-          parent.reload
-
           actor.create(env)
-
           physical_instantiation
         end
 
@@ -103,14 +84,9 @@ module AAPB
           actor = Hyrax::CurationConcern.actor
           attrs = AAPB::BatchIngest::PBCoreXMLMapper.new(xml).essence_track_attributes
           attrs[:in_works_ids] = [parent.id]
-          
           env = Hyrax::Actors::Environment.new(essence_track, current_ability, attrs)
-
           env.attributes[:title] = parent.title
-          
           actor.create(env)
-          parent.reload
-          essence_track
         end
 
         def current_ability
