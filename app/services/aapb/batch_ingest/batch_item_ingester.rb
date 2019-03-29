@@ -10,7 +10,7 @@ module AAPB
       #       It Should handle the error case where submitter_email is not
       #       found.
       def submitter
-        @submitter ||= User.find_by_email(@batch_item.batch.submitter_email)
+        @submitter ||= User.find_by_email(@batch_item.submitter_email)
       end
 
       def batch_id
