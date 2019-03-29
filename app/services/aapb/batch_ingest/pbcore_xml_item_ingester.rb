@@ -85,7 +85,7 @@ module AAPB
           attrs = AAPB::BatchIngest::PBCoreXMLMapper.new(xml).essence_track_attributes
           attrs[:in_works_ids] = [parent.id]
           env = Hyrax::Actors::Environment.new(essence_track, current_ability, attrs)
-          env.attributes[:title] = parent.title
+          env.attributes[:title] = ::SolrDocument.new(parent.to_solr).title
           actor.create(env)
         end
 
