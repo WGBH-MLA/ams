@@ -28,21 +28,19 @@ module AAPB
 
       def asset_attributes
         @asset_attributes ||= {}.tap do |attrs|
-
           annotations, admindata = separate_admindata(pbcore.annotations)
-          admindata = admindata.group_by {|anno| anno.type.to_s.downcase.strip }
 
           # bring along the ol' admin data, to be removed in the actor
           admindata_field_names.each do |field_name|
             field_name = 'minimally_cataloged' if field_name == 'cataloging status'
-            attrs[:"#{field_name}"]           = admindata[field_name].map(&:value) if admindata[field_name]
+            attrs[:"#{field_name.gsub(" ", '_')}"] = admindata[field_name] if admindata[field_name]
           end
 
           # Saves Asset with AAPB ID if present
           attrs[:id]                          = normalized_aapb_id(aapb_id) if aapb_id
 
           # map the non admindata annotations
-          attrs[:annotation]                  = annotations.map(&:value)
+          attrs[:annotation]                  = annotations
 
           # grouped by title type
           grouped_titles = categorize(pbcore.titles)
@@ -67,18 +65,17 @@ module AAPB
           attrs[:clip_description]            = grouped_descriptions["clip"] if grouped_descriptions["clip"]
           attrs[:promo_description]           = grouped_descriptions["promo"] if grouped_descriptions["promo"]
           attrs[:raw_footage_description]     = grouped_descriptions["raw footage"] if grouped_descriptions["raw footage"]
-          
+
           attrs[:audience_level]              = pbcore.audience_levels.map(&:value)
           attrs[:audience_rating]             = pbcore.audience_ratings.map(&:value)
           attrs[:asset_types]                 = pbcore.asset_types.map(&:value)
-
           attrs[:genre]                       = pbcore.genres.map(&:value)
           attrs[:topics]                      = pbcore.genres.select { |genre| genre.source.to_s.downcase == "aapb topical genre" }.map(&:value)
 
           grouped_coverages = categorize(pbcore.coverages, criteria: [:type,:value,:downcase,:strip], accessor: [:coverage, :value])
           attrs[:spatial_coverage]            = grouped_coverages["spatial"] if grouped_coverages["spatial"]
           attrs[:temporal_coverage]           = grouped_coverages["temporal"] if grouped_coverages["temporal"]
-          
+
           attrs[:rights_summary]              = pbcore.rights_summaries.map(&:rights_summary).compact.map(&:value)
           attrs[:rights_link]                 = pbcore.rights_summaries.map(&:rights_link).compact.map(&:value)
 
@@ -93,8 +90,11 @@ module AAPB
         end
       end
 
-      def separate_admindata(annotations)
-        annotations.partition {|anno| admindata_field_names.exclude?(anno.type) }
+      def separate_admindata(all_annotations)
+        annotations = categorize(all_annotations)
+        no_type = annotations[""]
+        admindata = annotations.except("")
+        return [no_type, admindata]
       end
 
       def aapb_id
