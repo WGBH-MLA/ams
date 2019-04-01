@@ -33,6 +33,7 @@ module AAPB
           # bring along the ol' admin data, to be removed in the actor
           admindata_field_names.each do |field_name|
             field_name = 'minimally_cataloged' if field_name == 'cataloging status'
+            field_name = 'special_collection' if field_name == 'special_collections'
             attrs[:"#{field_name.gsub(" ", '_')}"] = admindata[field_name] if admindata[field_name]
           end
 
