@@ -47,6 +47,21 @@ module AMS
         end
         @s3_path = obj.public_url
       end
+
+      def scp_to_aapb
+        # @file_path is tmp file location
+        #TODO: do that ^
+
+        aapb_key_path = '/home/ec2-user/.ssh/aapb-zip-key.pem'
+        filepath = @file_path.path
+        filename = File.basename(@file_path.path)
+        aapb_host = 'ec2-18-213-230-80.compute-1.amazonaws.com'        
+        # config aapb host
+        if aapb_key_path && aapb_host.present? && filepath.present?
+          `scp -i #{aapb_key_path} #{filepath} ec2-user@#{aapb_host}:/home/ec2-user/#{filepath}`
+        end
+        # raise "YAY"
+      end
     end
   end
 end

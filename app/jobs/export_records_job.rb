@@ -20,14 +20,22 @@ class ExportRecordsJob < ApplicationJob
       export_data = AMS::Export::DocumentsToCsv.new(response_documents)
     elsif search_params[:format] == "pbcore"
       export_data = AMS::Export::DocumentsToPbcoreXml.new(response_documents)
+    elsif search_params[:format] == 'zip-pbcore'
+      export_data = AMS::Export::DocumentsToZippedPbcore.new(response_documents)
     else
       raise "Unknown export format"
     end
 
-    export_data.process do
-      export_data.upload_to_s3
+    # new zip method
+    if search_params[:format] == 'zip-pbcore'
+      # TODO: add notification for aapb copy
+      # use @file_path var to send zip from tmp location to aapb
+      export_data export_data.scp_to_aapb
+    else
+      # upload zip to s3 for download
+      export_data export_data.upload_to_s3
+      Ams2Mailer.export_notification(user, export_data.s3_path).deliver_later
     end
 
-    Ams2Mailer.export_notification(user, export_data.s3_path).deliver_later
   end
 end

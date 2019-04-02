@@ -482,6 +482,45 @@ class CatalogController < ApplicationController
     false
   end
 
+  # def validate_id_input(input)
+  #   raise "NO" unless input =~ /[a-z0-9-_\/\n]/
+  #   ids = input.split("\n")
+  #   raise "NO" unless ids.all? {|id| id.count == #guid length }
+
+  # end
+
+  # def pb_to_aapb_form
+  # end
+
+  def pb_to_aapb
+    # -get set of ids from form + click 'push to aapb'
+    # -pull solr_documents from list of ids
+    # -render xml for each, and zip dat
+    # -return zip
+    ids = params[:id_field].split('\n')  #= [many ids....]
+    # sanitize ids!
+
+    inner_query = ""
+    ids.each do |id|
+      inner_query += %(id: "#{id}" OR )
+    end
+    # require allathese ids
+    query = %(+(#{inner_query}))
+    query_params = {fq: query}
+    query_params[:format] = 'zip-pbcore'
+    query_params.delete :page
+    query_params.delete :per_page
+    query_params.delete :action
+    query_params.delete :controller
+    query_params.delete :locale
+    ExportRecordsJob.perform_later(query_params, current_user)
+    # running process method first runs DocumentsToZippedPBCore#process_export method, and this block after
+    # export_data.process do
+    #   export_file = File.read(export_data.file_path)
+    #   send_data export_file, :type => 'text/csv; charset=utf-8; header=present', :disposition => "attachment; filename=#{export_data.filename}", :filename => "#{export_data.filename}"
+    # end
+  end
+
   def export
     search_params = params.dup
     search_params.delete :page
