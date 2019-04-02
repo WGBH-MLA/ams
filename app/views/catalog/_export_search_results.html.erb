@@ -10,3 +10,7 @@
     <li><%= link_to("PBCore XML",catalog_export_path({:format=>"pbcore"}.merge(search_state.to_h))) %></li>
   </ul>
 </div>
+
+<% if request.env['QUERY_STRING'] && request.env['QUERY_STRING'].present? %>
+  <a class="aapb-push-button" href="/pushes/transfer_query?<%= request.env['QUERY_STRING'] %>">Push To AAPB</a>
+<% end %>
