@@ -7,6 +7,10 @@ module AAPB
 
       def ingest
         if batch_item_is_asset?
+          # This is a bit of a workaround. Errors will be raised from deep within
+          # the stack if the user cannot be conveted to a Sipity::Entity.
+          raise "Could not find or create Sipity Agent for user #{submitter}" unless sipity_agent
+
           asset = ingest_asset!
           pbcore_digital_instantiations.each do |pbcore_digital_instantiation|
             CoolDigitalJob.perform_later(asset.id, pbcore_digital_instantiation.to_xml, batch_item)
@@ -115,6 +119,20 @@ module AAPB
           end
         rescue => e
           raise e
+        end
+
+        # Returns a Sipity::Agent for the submitter User.
+        # NOTE: Using PowerConverter is how Hyrax does it, so that's how we
+        # do it here. This method was created because doing a batch ingest from
+        # a new submitter was causing batch items to fail with
+        # "Validation error: Agent must exist", due to trying to create a new
+        # Sipity::Agent instance using a User instance from within multiple
+        # concurrent threads; in one thread it succeeds, but in all other
+        # concurrent threads it fails because the Agent cannot be retrieved nor
+        # created. So we go ahead and just create it synchronously before hand
+        # to avoid that issue.
+        def sipity_agent
+          PowerConverter.convert_to_sipity_agent(submitter)
         end
     end
   end
