@@ -3,3 +3,5 @@ terms:
     term: Moving Image
   - id: Sound
     term: Sound
+  - id: Other
+    term: Other
