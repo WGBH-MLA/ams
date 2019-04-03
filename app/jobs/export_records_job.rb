@@ -15,7 +15,7 @@ class ExportRecordsJob < ApplicationJob
 
     search_params[:rows] = 1_000_000_000
     response, response_documents = search_results(search_params)
-
+    
     if search_params[:format] == "csv"
       export_data = AMS::Export::DocumentsToCsv.new(response_documents)
     elsif search_params[:format] == "pbcore"

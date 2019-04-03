@@ -12,15 +12,17 @@ module AMS::Export
 
     def process_export
       Sidekiq::Logging.logger.warn "Making Zip File right NOW"
-      ::Zip::File.open(@file_path.path, Zip::File::CREATE) do |zip_file|
+
+      Dir.mktmpdir do |dir|
+
         @solr_documents.each do |doc|
           file_name = "#{doc.id}.xml"
-          tmp = Tempfile.new(file_name)
-          tmp << doc.export_as_pbcore
-          tmp.flush
-          zip_file.add(file_name, tmp.path)
-          tmp.close
+          File.open("#{dir}/#{file_name}", 'w') do |f|
+            f << doc.export_as_pbcore
+          end
         end
+
+        `cd #{File.dirname(dir)} && zip -r #{dir} #{@file_path.path}`
       end
     end
 

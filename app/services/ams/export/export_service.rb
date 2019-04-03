@@ -61,7 +61,7 @@ module AMS
         if aapb_key_path && aapb_host.present? && filepath.present?
             Sidekiq::Logging.logger.warn "Trying to run this -- scp #{aapb_key_path} #{filepath} scp-guy@#{aapb_host}:/home/scp-guy/#{filename}"
           `scp #{aapb_key_path} #{filepath} scp-guy@#{aapb_host}:/home/scp-guy/#{filename}`
-          `ssh #{aapb_key_path} scp-guy@#{aapb_host} 'cd /home/scp-guy/' 'unzip #{filename}' 'cd /var/www/aapb/current/' 'RAILS_ENV=production bundle exec ruby scripts/download_clean_ingest.rb '`
+          `ssh #{aapb_key_path} scp-guy@#{aapb_host} 'cd /home/scp-guy/' 'unzip #{filename}' 'cd /var/www/aapb/current/' 'RAILS_ENV=production bundle exec ruby scripts/download_clean_ingest.rb --dirs /home/scp-guy'`
         end
         # raise "YAY"
       end
