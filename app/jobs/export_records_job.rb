@@ -32,10 +32,15 @@ class ExportRecordsJob < ApplicationJob
       # TODO: add notification for aapb copy
       # use @file_path var to send zip from tmp location to aapb
       Sidekiq::Logging.logger.warn "Ready to run scp_to_aapb"
-      export_data.scp_to_aapb
+
+      export_data.process do
+        export_data.scp_to_aapb
+      end
     else
       # upload zip to s3 for download
-      export_data.upload_to_s3
+      export_data.process do
+        export_data.upload_to_s3
+      end
       Ams2Mailer.export_notification(user, export_data.s3_path).deliver_later
     end
 
