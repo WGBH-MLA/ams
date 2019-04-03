@@ -11,6 +11,7 @@ module AMS::Export
     end
 
     def process_export
+      Sidekiq::Logging.logger.warn "Making Zip File right NOW"
       ::Zip::File.open(@file_path.path, Zip::File::CREATE) do |zip_file|
         @solr_documents.each do |doc|
           file_name = "#{doc.id}.xml"

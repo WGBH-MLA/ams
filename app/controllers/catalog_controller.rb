@@ -497,6 +497,8 @@ class CatalogController < ApplicationController
     # -pull solr_documents from list of ids
     # -render xml for each, and zip dat
     # -return zip
+    Sidekiq::Logging.logger.warn "Received IDS #{params[:id_field]}"
+    logger.warn "hey dummy Received IDS #{params[:id_field]}"
     ids = params[:id_field].split('\n')  #= [many ids....]
     # sanitize ids!
 

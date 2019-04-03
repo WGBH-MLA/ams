@@ -21,6 +21,7 @@ class ExportRecordsJob < ApplicationJob
     elsif search_params[:format] == "pbcore"
       export_data = AMS::Export::DocumentsToPbcoreXml.new(response_documents)
     elsif search_params[:format] == 'zip-pbcore'
+      Sidekiq::Logging.logger.warn "Generating ZIPP PBCORE THING"
       export_data = AMS::Export::DocumentsToZippedPbcore.new(response_documents)
     else
       raise "Unknown export format"
@@ -30,10 +31,11 @@ class ExportRecordsJob < ApplicationJob
     if search_params[:format] == 'zip-pbcore'
       # TODO: add notification for aapb copy
       # use @file_path var to send zip from tmp location to aapb
-      export_data export_data.scp_to_aapb
+      Sidekiq::Logging.logger.warn "Ready to run scp_to_aapb"
+      export_data.scp_to_aapb
     else
       # upload zip to s3 for download
-      export_data export_data.upload_to_s3
+      export_data.upload_to_s3
       Ams2Mailer.export_notification(user, export_data.s3_path).deliver_later
     end
 
