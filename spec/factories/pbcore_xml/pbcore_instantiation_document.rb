@@ -8,6 +8,7 @@ FactoryBot.define do
                                 build(:pbcore_instantiation_identifier) ] }
     dates                   { [ build(:pbcore_instantiation_date), build(:pbcore_instantiation_date, :digitized) ] }
     dimensions              { [ build(:pbcore_instantiation_dimensions) ] }
+    digital                 { build(:pbcore_instantiation_digital) }
     physical                { build(:pbcore_instantiation_physical) }
     standard                { build(:pbcore_instantiation_standard) }
     location                { build(:pbcore_instantiation_location) }
@@ -22,5 +23,10 @@ FactoryBot.define do
     alternative_modes       { build(:pbcore_instantiation_alternative_modes) }
 
     initialize_with { new(attributes) }
+
+    trait :media_info do
+      physical      { }
+      generations   { }
+    end
   end
 end
