@@ -1,15 +1,43 @@
 terms:
+  - id: abk
+    term: abk
   - id: eng
     term: eng
-  - id: spa
-    term: spa
-  - id: fra
-    term: fra
+  - id: fre
+    term: fre
   - id: ger
     term: ger
+  - id: hrv
+    term: hrv
+  - id: jpn
+    term: jpn
+  - id: khm
+    term: khm
+  - id: kor
+    term: kor
+  - id: lat
+    term: lat
+  - id: nav
+    term: nav
+  - id: pol
+    term: pol
+  - id: por
+    term: por
+  - id: rad
+    term: rad
+  - id: rus
+    term: rus
+  - id: spa
+    term: spa
+  - id: srp
+    term: srp
+  - id: tgl
+    term: tgl
+  - id: uzb
+    term: uzb
+  - id: vie
+    term: vie
   - id: ypk
     term: ypk
-  - id: haw
-    term: haw
-  - id: heb
-    term: heb
+  - id: zxx
+    term: zxx
