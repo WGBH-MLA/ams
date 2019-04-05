@@ -13,14 +13,16 @@ class ExportRecordsJob < ApplicationJob
   def perform(search_params, user)
     self.current_ability = Ability.new(user)
 
-    search_params[:rows] = 1_000_000_000
+    format = search_params[:format]
+    search_params.delete(:format)
+    Sidekiq::Logging.logger.warn "Searching wiht searchdparam #{search_params}"
     response, response_documents = search_results(search_params)
     
-    if search_params[:format] == "csv"
+    if format == "csv"
       export_data = AMS::Export::DocumentsToCsv.new(response_documents)
-    elsif search_params[:format] == "pbcore"
+    elsif format == "pbcore"
       export_data = AMS::Export::DocumentsToPbcoreXml.new(response_documents)
-    elsif search_params[:format] == 'zip-pbcore'
+    elsif format == 'zip-pbcore'
       Sidekiq::Logging.logger.warn "Generating ZIPP PBCORE THING"
       export_data = AMS::Export::DocumentsToZippedPbcore.new(response_documents)
     else
@@ -28,7 +30,7 @@ class ExportRecordsJob < ApplicationJob
     end
 
     # new zip method
-    if search_params[:format] == 'zip-pbcore'
+    if format == 'zip-pbcore'
       # TODO: add notification for aapb copy
       # use @file_path var to send zip from tmp location to aapb
       Sidekiq::Logging.logger.warn "Ready to run scp_to_aapb"

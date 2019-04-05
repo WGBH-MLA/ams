@@ -49,20 +49,22 @@ module AMS
       end
 
       def scp_to_aapb
-        # @file_path is tmp file location
-        #TODO: do that ^
-
         # aapb_key_path = '-i /home/ec2-user/.ssh/aapb-zip-key.pem'
         aapb_key_path = ""
         filepath = @file_path.path
         filename = File.basename(@file_path.path)
-        aapb_host = 'ec2-18-213-230-80.compute-1.amazonaws.com'        
+        aapb_host = 'ec2-18-213-230-80.compute-1.amazonaws.com'
         # config aapb host
         if aapb_key_path && aapb_host.present? && filepath.present?
-            Sidekiq::Logging.logger.warn "Trying to run this -- scp #{aapb_key_path} #{filepath} scp-guy@#{aapb_host}:/home/scp-guy/#{filename}"
-          `scp #{aapb_key_path} #{filepath} scp-guy@#{aapb_host}:/home/scp-guy/#{filename}`
-          `ssh #{aapb_key_path} scp-guy@#{aapb_host} 'cd /home/scp-guy/ && unzip #{filename}'`
-          `ssh #{aapb_key_path} ec2-user@#{aapb_host} 'cd /var/www/aapb/current && RAILS_ENV=production bundle exec ruby scripts/download_clean_ingest.rb --dirs #{filename}'`
+          Sidekiq::Logging.logger.warn "Trying to run this -- ssh -t #{aapb_key_path} ec2-user@#{aapb_host} 'cd /home/ec2-user/ingest_zips && unzip #{filename} && cd /var/www/aapb/current && RAILS_ENV=production bundle exec ruby scripts/download_clean_ingest.rb --files /home/ec2-user/ingest_zips/*.xml'"
+
+          # `scp #{aapb_key_path} #{filepath} scp-guy@#{aapb_host}:/home/scp-guy/#{filename}`
+          # `ssh #{aapb_key_path} scp-guy@#{aapb_host} 'cd /home/scp-guy/ && unzip #{filename} && cd /var/www/aapb/current && RAILS_ENV=production bundle exec ruby scripts/download_clean_ingest.rb --dirs #{filename}'`
+          
+
+          `scp #{aapb_key_path} #{filepath} ec2-user@#{aapb_host}:/home/ec2-user/ingest_zips/#{filename}`
+          # source /home/ec2-user/.bash_profile && source /home/ec2-user/.bashrc
+          `ssh -t #{aapb_key_path} ec2-user@#{aapb_host} 'cd /home/ec2-user/ingest_zips && unzip #{filename} && cd /var/www/aapb/current && RAILS_ENV=production bundle exec ruby scripts/download_clean_ingest.rb --files /home/ec2-user/ingest_zips/*.xml &'`
 
         end
         # raise "YAY"

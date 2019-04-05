@@ -48,7 +48,8 @@ module AAPB
           # pull out no-type titles, removing from grouped_titles
           titles_no_type = grouped_titles.slice!(*title_types)
           attrs[:title]                       = titles_no_type.values.flatten
-          attrs[:episode_title]               = (grouped_titles.fetch("episode title", []) + grouped_titles.fetch("episode", []))
+          # attrs[:episode_title]               = (grouped_titles.fetch("episode title", []) + grouped_titles.fetch("episode", []))
+          attrs[:episode_title]               = grouped_titles["episode"] if grouped_titles["episode"]
           attrs[:program_title]               = grouped_titles["program"] if grouped_titles["program"]
           attrs[:segment_title]               = grouped_titles["segment"] if grouped_titles["segment"]
           attrs[:clip_title]                  = grouped_titles["clip"] if grouped_titles["clip"]
@@ -61,11 +62,19 @@ module AAPB
           descriptions_no_type = grouped_descriptions.slice!(*desc_types)
           attrs[:description]                 = descriptions_no_type.values.flatten
           attrs[:episode_description]         = (grouped_descriptions.fetch("episode", []) + grouped_descriptions.fetch("episode description", []))
-          attrs[:program_description]         = grouped_descriptions["program"] if grouped_descriptions["program"]
-          attrs[:segment_description]         = grouped_descriptions["segment"] if grouped_descriptions["segment"]
-          attrs[:clip_description]            = grouped_descriptions["clip"] if grouped_descriptions["clip"]
-          attrs[:promo_description]           = grouped_descriptions["promo"] if grouped_descriptions["promo"]
-          attrs[:raw_footage_description]     = grouped_descriptions["raw footage"] if grouped_descriptions["raw footage"]
+          attrs[:series_description]          = (grouped_descriptions.fetch("series", []) + grouped_descriptions.fetch("series description", []))
+          attrs[:program_description]         = (grouped_descriptions.fetch("program", []) + grouped_descriptions.fetch("program description", []))
+          attrs[:segment_description]         = (grouped_descriptions.fetch("segment", []) + grouped_descriptions.fetch("segment description", []))
+          attrs[:clip_description]            = (grouped_descriptions.fetch("clip", []) + grouped_descriptions.fetch("clip description", []))
+          attrs[:promo_description]           = (grouped_descriptions.fetch("promo", []) + grouped_descriptions.fetch("promo description", []))
+          attrs[:raw_footage_description]     = (grouped_descriptions.fetch("raw footage", []) + grouped_descriptions.fetch("raw footage description", []))
+          # attrs[:episode_description]         = grouped_descriptions["episode description"] if grouped_descriptions["episode description"]
+          # attrs[:series_description]          = grouped_descriptions["series description"] if grouped_descriptions["series description"]
+          # attrs[:program_description]         = grouped_descriptions["program description"] if grouped_descriptions["program description"]
+          # attrs[:segment_description]         = grouped_descriptions["segment description"] if grouped_descriptions["segment description"]
+          # attrs[:clip_description]            = grouped_descriptions["clip description"] if grouped_descriptions["clip description"]
+          # attrs[:promo_description]           = grouped_descriptions["promo description"] if grouped_descriptions["promo description"]
+          # attrs[:raw_footage_description]     = grouped_descriptions["raw footage description"] if grouped_descriptions["raw footage description"]
 
           attrs[:audience_level]              = pbcore.audience_levels.map(&:value)
           attrs[:audience_rating]             = pbcore.audience_ratings.map(&:value)
@@ -129,7 +138,6 @@ module AAPB
           attrs[:format] = pbcore.digital.value || nil
         end
       end
-
 
       def instantiation_attributes
         @instantiation_attributes ||= {}.tap do |attrs|
@@ -213,11 +221,11 @@ module AAPB
         end
 
         def title_types
-          @title_types ||= ['program', 'episode', 'episode title', 'episode number', 'segment', 'clip', 'promo', 'raw footage']
+          @title_types ||= ['program', 'episode', 'episode title', 'episode number', 'segment', 'clip', 'promo', 'raw footage', 'series']
         end
 
         def desc_types
-          @desc_types ||= ["program","segment","clip","promo","raw footage","episode","episode description",]
+          @desc_types ||= ["program","segment","clip","promo","footage","episode","series","program description","segment description","clip description","promo description","raw footage description","episode description","series description",]
         end
     end
   end

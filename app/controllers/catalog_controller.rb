@@ -497,14 +497,17 @@ class CatalogController < ApplicationController
     # -pull solr_documents from list of ids
     # -render xml for each, and zip dat
     # -return zip
-    Sidekiq::Logging.logger.warn "Received IDS #{params[:id_field]}"
     logger.warn "hey dummy Received IDS #{params[:id_field]}"
-    ids = params[:id_field].split('\n')  #= [many ids....]
+    ids = params[:id_field].split(/\s/).reject(&:empty?)
     # sanitize ids!
 
     inner_query = ""
-    ids.each do |id|
-      inner_query += %(id: "#{id}" OR )
+    if ids.count > 1
+      ids.each do |id|
+        inner_query += %(id: "#{id}" OR )
+      end
+    else
+      inner_query = %(id: "#{ids.first}")
     end
     # require allathese ids
     query = %(+(#{inner_query}))
@@ -515,12 +518,8 @@ class CatalogController < ApplicationController
     query_params.delete :action
     query_params.delete :controller
     query_params.delete :locale
+    logger.warn "hey dummy sending query_carams #{query_params}"
     ExportRecordsJob.perform_later(query_params, current_user)
-    # running process method first runs DocumentsToZippedPBCore#process_export method, and this block after
-    # export_data.process do
-    #   export_file = File.read(export_data.file_path)
-    #   send_data export_file, :type => 'text/csv; charset=utf-8; header=present', :disposition => "attachment; filename=#{export_data.filename}", :filename => "#{export_data.filename}"
-    # end
   end
 
   def export

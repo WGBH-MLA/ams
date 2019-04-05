@@ -49,7 +49,7 @@ module AMS::PbcoreXmlExportExtension
     raw_footage_title.to_a.each { |title| xml.pbcoreTitle(source: 'Raw Footage') { xml.text(title) } }
 
     # Descriptions
-    self['description'].to_a.each { |description| xml.pbcoreDescription { xml.text(description) } }
+    description.to_a.each { |description| xml.pbcoreDescription { xml.text(description) } }
     series_description.to_a.each { |description| xml.pbcoreDescription(source: 'Series') { xml.text(description) } }
     program_description.to_a.each { |description| xml.pbcoreDescription(source: 'Program') { xml.text(description) } }
     episode_description.to_a.each { |description| xml.pbcoreDescription(source: 'Episode') { xml.text(description) } }
