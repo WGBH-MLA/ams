@@ -125,4 +125,15 @@ RSpec.describe AAPB::BatchIngest::PBCoreXMLMapper, :pbcore_xpath_helper do
       expect(essence_track_attributes[:annotation]).to eq pbcore_values_from_xpath(pbcore_xml, :ess_annotations)
     end
   end
+
+  describe '#digital_instantiation_attributes' do
+
+    let(:pbcore_xml) { FactoryBot.build(:pbcore_instantiation_document, :media_info).to_xml }
+    let(:source_location) { Dir.glob(File.join(fixture_path, "batch_ingest", "digital_instantiation_manifest", "*.xlsx")).first }
+    let(:digital_instantiation_attributes) { AAPB::BatchIngest::PBCoreXMLMapper.new(pbcore_xml, source_location).digital_instantiation_attributes }
+    it "maps all attributes from Digital Instantiation XML and Manifest" do
+
+      expect(digital_instantiation_attributes[:generations]).to eq (["Proxy"])
+    end
+  end
 end

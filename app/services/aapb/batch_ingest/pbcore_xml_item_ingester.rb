@@ -21,6 +21,7 @@ module AAPB
           end
         elsif batch_item_is_digital_instantiation?
           # TODO: implement digital instantiation ingest.
+
           raise "DigitalInstantiation ingest not implemented yet!"
         else
           # TODO: More specific error?

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Generated at 2019-04-03T18:08:38Z by MediaInfoLib - v18.12 -->
+<pbcoreInstantiationDocument xsi:schemaLocation="http://www.pbcore.org/PBCore/PBCoreNamespace.html https://raw.githubusercontent.com/WGBH/PBCore_2.1/master/pbcore-2.1.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.pbcore.org/PBCore/PBCoreNamespace.html">
+	<instantiationIdentifier source="File Name">cpb-aacip-138-74cnpdc8.mp3</instantiationIdentifier>
+	<instantiationDate dateType="recorded">0</instantiationDate>
+	<instantiationDate dateType="file modification">2019-04-03T18:07:00Z</instantiationDate>
+	<instantiationDigital>audio/mpeg</instantiationDigital>
+	<instantiationStandard>MPEG Audio</instantiationStandard>
+	<instantiationLocation>/Users/sadie_roosa/Downloads/cpb-aacip-138-74cnpdc8.mp3</instantiationLocation>
+	<instantiationMediaType>Sound</instantiationMediaType>
+	<instantiationFileSize unitsOfMeasure="byte">95258508</instantiationFileSize>
+	<instantiationDuration>01:06:09.100</instantiationDuration>
+	<instantiationDataRate unitsOfMeasure="bit/second" annotation="CBR">192000</instantiationDataRate>
+	<instantiationTracks>1</instantiationTracks>
+	<instantiationChannelConfiguration>Track : 2 channels</instantiationChannelConfiguration>
+	<instantiationEssenceTrack>
+		<essenceTrackType>Audio</essenceTrackType>
+		<essenceTrackIdentifier source="StreamKindID (MediaInfo)">0</essenceTrackIdentifier>
+		<essenceTrackEncoding version="Version 1" annotation="profile:Layer 3 compression_mode:Lossy">MPEG Audio</essenceTrackEncoding>
+		<essenceTrackDataRate unitsOfMeasure="bit/second" annotation="CBR">192000</essenceTrackDataRate>
+		<essenceTrackSamplingRate unitsOfMeasure="Hz">44100</essenceTrackSamplingRate>
+		<essenceTrackDuration>01:06:38:18</essenceTrackDuration>
+		<essenceTrackAnnotation annotationType="Format_Settings_Mode">Joint stereo</essenceTrackAnnotation>
+		<essenceTrackAnnotation annotationType="Format_Settings_ModeExtension">MS Stereo</essenceTrackAnnotation>
+		<essenceTrackAnnotation annotationType="SamplesPerFrame">1152</essenceTrackAnnotation>
+		<essenceTrackAnnotation annotationType="FrameCount">151942</essenceTrackAnnotation>
+		<essenceTrackAnnotation annotationType="StreamSize">95258420</essenceTrackAnnotation>
+	</instantiationEssenceTrack>
+	<instantiationAnnotation annotationType="Track/Position">0</instantiationAnnotation>
+	<instantiationAnnotation annotationType="EncodedBy">Fraunhofer IIS MP3 v04.01.02 (high quality)</instantiationAnnotation>
+</pbcoreInstantiationDocument>
+
