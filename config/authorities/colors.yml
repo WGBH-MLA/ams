@@ -7,6 +7,8 @@ terms:
     term: Color
   - id: Grayscale
     term: Grayscale
+  - id: Mixed (Color & B&W)
+    term: Mixed (Color & B&W)
   - id: RGB
     term: RGB
   - id: Tinted-Toned
