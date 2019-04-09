@@ -8,6 +8,7 @@ module AAPB
           @batch_items = unzipped_xml_file_paths.map do |unzipped_xml_file_path|
             Hyrax::BatchIngest::BatchItem.new(id_within_batch: File.basename(unzipped_xml_file_path),
                                               source_location: unzipped_manifest_path,
+                                              source_data: File.read(unzipped_xml_file_path),
                                               status: :initialized)
           end
         ensure

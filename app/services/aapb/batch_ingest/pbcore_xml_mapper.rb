@@ -1,23 +1,11 @@
-require 'roo'
-
 module AAPB
   module BatchIngest
     class PBCoreXMLMapper
 
-      attr_reader :pbcore_xml, :source_location
+      attr_reader :pbcore_xml
 
-      def initialize(pbcore_xml, source_location = '')
+      def initialize(pbcore_xml)
         @pbcore_xml = pbcore_xml
-        @source_location = source_location
-
-        require 'pry'; binding.pry
-
-        @workbook = Roo::Spreadsheet.open(@source_location)
-        @workbook.default_sheet = @workbook.sheets[0]
-        @header = @workbook.row(1)
-        ((@workbook.first_row + 1)..@workbook.last_row).each do |row|
-          rowData = []
-        end
       end
 
       def categorize(collection, criteria: [:type,:to_s,:downcase,:strip])
@@ -69,7 +57,7 @@ module AAPB
           attrs[:clip_description]            = grouped_descriptions["clip"].map(&:value) if grouped_descriptions["clip"]
           attrs[:promo_description]           = grouped_descriptions["promo"].map(&:value) if grouped_descriptions["promo"]
           attrs[:raw_footage_description]     = grouped_descriptions["raw footage"].map(&:value) if grouped_descriptions["raw footage"]
-
+          
           attrs[:audience_level]              = pbcore.audience_levels.map(&:value)
           attrs[:audience_rating]             = pbcore.audience_ratings.map(&:value)
           attrs[:asset_types]                 = pbcore.asset_types.map(&:value)
@@ -80,7 +68,7 @@ module AAPB
           grouped_coverages = categorize(pbcore.coverages, criteria: [:type,:value,:downcase,:strip])
           attrs[:spatial_coverage]            = grouped_coverages["spatial"].map { |coverage| coverage.coverage.value } if grouped_coverages["spatial"]
           attrs[:temporal_coverage]           = grouped_coverages["temporal"].map { |coverage| coverage.coverage.value } if grouped_coverages["temporal"]
-
+          
           attrs[:rights_summary]              = pbcore.rights_summaries.map(&:rights_summary).compact.map(&:value)
           attrs[:rights_link]                 = pbcore.rights_summaries.map(&:rights_link).compact.map(&:value)
 
@@ -141,11 +129,7 @@ module AAPB
           attrs[:location]                        = pbcore.location&.value
           attrs[:media_type]                      = pbcore.media_type&.value
           attrs[:format]                          = pbcore.physical&.value
-
-
-
           attrs[:generations]                     = pbcore.generations.map(&:value)
-
           attrs[:time_start]                      = pbcore.time_starts.map(&:value)
           attrs[:duration]                        = pbcore.duration&.value
           attrs[:colors]                          = pbcore.colors&.value
