@@ -54,7 +54,7 @@ module Hyrax
           if !pbcore_doc.blank?
             env.attributes[:date] = pbcore_doc.dates.map(&:value) if pbcore_doc.dates && env.attributes[:dates].blank?
             env.attributes[:dimensions] = pbcore_doc.dimensions.map(&:value)  if pbcore_doc.dimensions && env.attributes[:dimensions].blank?
-            (env.attributes[:standard] ||= []) << pbcore_doc.standard.value  if pbcore_doc.standard && env.attributes[:standard].blank?
+            env.attributes[:standard] = pbcore_doc.standard.value  if pbcore_doc.standard && env.attributes[:standard].blank?
             env.attributes[:location] = pbcore_doc.location.value  if pbcore_doc.location && env.attributes[:location].blank?
             env.attributes[:media_type] = pbcore_doc.media_type.value  if pbcore_doc.media_type && env.attributes[:media_type].blank?
             env.attributes[:generations] = pbcore_doc.generations.map(&:value)  if pbcore_doc.generations && env.attributes[:generations].blank?

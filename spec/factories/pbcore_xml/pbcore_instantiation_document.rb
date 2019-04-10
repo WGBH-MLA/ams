@@ -27,7 +27,6 @@ FactoryBot.define do
     trait :media_info do
       physical      { }
       generations   { }
-      location      { }
     end
   end
 end

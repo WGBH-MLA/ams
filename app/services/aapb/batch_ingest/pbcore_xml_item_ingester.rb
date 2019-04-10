@@ -1,5 +1,6 @@
 require 'aapb/batch_ingest/batch_item_ingester'
 require 'aapb/batch_ingest/pbcore_xml_mapper'
+require 'aapb/batch_ingest/zipped_pbcore_digital_instantiation_mapper'
 
 module AAPB
   module BatchIngest
@@ -21,13 +22,11 @@ module AAPB
           end
         elsif batch_item_is_digital_instantiation?
           # TODO: implement digital instantiation ingest.
-
-          raise "DigitalInstantiation ingest not implemented yet!"
+          batch_item_object = ingest_digital_inst!
         else
           # TODO: More specific error?
           raise "PBCore XML ingest does not know how to ingest the given XML"
         end
-
         batch_item_object
       end
 
@@ -57,6 +56,18 @@ module AAPB
           env = Hyrax::Actors::Environment.new(asset, current_ability, attrs)
           actor.create(env)
           asset
+        end
+
+        # Thoughts for alternate implementation
+        def ingest_digital_inst!
+          digital_instantiation = DigitalInstantiation.new
+          digital_instantiation.skip_file_upload_validation = true
+          actor = Hyrax::CurationConcern.actor
+          attrs = AAPB::BatchIngest::ZippedPBCoreDigitalInstantiationMapper.new(@batch_item).digital_instantiation_attributes
+          env = Hyrax::Actors::Environment.new(digital_instantiation, current_ability, attrs)
+          actor.create(env)
+          Asset.find(attrs[:in_works_ids][0]).reload
+          digital_instantiation
         end
 
         def ingest_digital_instantiation!(parent:, xml:)
