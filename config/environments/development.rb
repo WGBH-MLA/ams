@@ -55,7 +55,7 @@ config.webpacker.check_yarn_integrity = true
 
   # Config background Jobs to use Sidekiq queue, so we can do production-like
   # testing of concurrent background jobs during batch ingests.
-  config.active_job.queue_adapter = :sidekiq
+  config.active_job.queue_adapter = :inline
 
   # For testing emails in Development
   # Define as ENV["MAIL_DELIVERY_METHOD"] as 'smtp' to deliver
