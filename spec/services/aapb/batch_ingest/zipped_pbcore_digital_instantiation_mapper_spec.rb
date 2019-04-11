@@ -15,15 +15,18 @@ RSpec.describe AAPB::BatchIngest::ZippedPBCoreDigitalInstantiationMapper, :pbcor
 
     context "when batch_item is valid" do
       subject { described_class.new(batch_item) }
+      let(:asset_id) { '123456' }
 
-      it 'maps attributes from PBCore XML and Manifest' do
-        # For each attribute in attr_names, make sure it has a that comes from
-        # the PBCore XML factory.
-        attr_names.each do |attr|
-          expect(attrs[attr]).not_to be_empty
-        end
+      before(:each) do
+        create(:asset, id: asset_id)
+      end
+
+      it 'maps attributes from Manifest' do
+        expect(attrs[:pbcore_xml]).to eq(pbcore_xml)
+        expect(attrs[:title]).to eq(Asset.find(asset_id).title)
+        expect(attrs[:in_works_ids]).to include(asset_id)
         expect(attrs[:generations]).to eq(["Proxy", "Master"])
-        expect(attrs[:location]).to eq("American Archive of Public Broadcasting")
+        expect(attrs[:holding_organization]).to eq("American Archive of Public Broadcasting")
         expect(attrs[:aapb_preservation_lto]).to eq("fhqwhgads")
         expect(attrs[:aapb_preservation_disk]).to eq("disky mc diskface")
       end

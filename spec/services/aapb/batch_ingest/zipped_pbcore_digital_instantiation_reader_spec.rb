@@ -7,7 +7,7 @@ RSpec.describe AAPB::BatchIngest::ZippedPBCoreDigitalInstantiationReader do
   let(:reader_class) { described_class }
   let(:source_location) { zip_to_tmp(File.join(fixture_path, "batch_ingest", "sample_pbcore_digital_instantiation")) }
   let(:xml_file_name) { Dir.glob(File.join(fixture_path, "batch_ingest", "sample_pbcore_digital_instantiation", "*.xml")).first }
-  let(:xlxs_file_name) { Dir.glob(File.join(fixture_path, "batch_ingest", "digital_instantiation_manifest", "*.xlsx")).first }
+  let(:xlxs_file_name) { Dir.glob(File.join(fixture_path, "batch_ingest", "sample_pbcore_digital_instantiation", "*.xlsx")).first }
   # Valid file, but not zipped.
   let (:invalid_source_location) { File.expand_path(xml_file_name) }
 
@@ -29,6 +29,7 @@ RSpec.describe AAPB::BatchIngest::ZippedPBCoreDigitalInstantiationReader do
         subject.read
         expect(subject.batch_items.size).to eq(1)
         expect(subject.batch_items.first.id_within_batch).to eq File.basename(xml_file_name)
+        expect(subject.batch_items.first.source_location).to include File.basename(xlxs_file_name)
       end
 
     end

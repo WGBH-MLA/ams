@@ -12,13 +12,13 @@ module AAPB
           # the stack if the user cannot be conveted to a Sipity::Entity.
           raise "Could not find or create Sipity Agent for user #{submitter}" unless sipity_agent
 
-          asset = ingest_asset!
+          batch_item_object = ingest_asset!
           pbcore_digital_instantiations.each do |pbcore_digital_instantiation|
-            CoolDigitalJob.perform_later(asset.id, pbcore_digital_instantiation.to_xml, batch_item)
+            CoolDigitalJob.perform_later(batch_item_object.id, pbcore_digital_instantiation.to_xml, batch_item)
           end
 
           pbcore_physical_instantiations.each do |pbcore_physical_instantiation|
-            CoolPhysicalJob.perform_later(asset.id, pbcore_physical_instantiation.to_xml, batch_item)
+            CoolPhysicalJob.perform_later(batch_item_object.id, pbcore_physical_instantiation.to_xml, batch_item)
           end
         elsif batch_item_is_digital_instantiation?
           batch_item_object = ingest_digital_instiation_and_manifest!
@@ -26,7 +26,7 @@ module AAPB
           # TODO: More specific error?
           raise "PBCore XML ingest does not know how to ingest the given XML"
         end
-        asset
+        batch_item_object
       end
 
       # private
@@ -57,7 +57,6 @@ module AAPB
           asset
         end
 
-        # Thoughts for alternate implementation
         def ingest_digital_instiation_and_manifest!
           digital_instantiation = DigitalInstantiation.new
           digital_instantiation.skip_file_upload_validation = true
