@@ -35,15 +35,16 @@ RSpec.describe AAPB::BatchIngest::PBCoreXMLItemIngester, reset_data: false do
         ).to_xml
 
         # Use the PBCore XML as the source data for a BatchItem.
-        batch_item = build(
+        batch_item = create(
           :batch_item,
-          batch: build(:batch, submitter_email: create(:user).email),
+          batch: create(:batch, submitter_email: create(:user).email),
           source_location: nil,
           source_data: pbcore_xml
         )
 
         # Ingest the BatchItem and use the returned Asset instance for testing.
         @asset = described_class.new(batch_item).ingest
+        @asset.reload
         @contributions = @asset.members.select { |member| member.is_a? Contribution }
         @digital_instantiations = @asset.members.select { |member| member.is_a? DigitalInstantiation }
         @physical_instantiations = @asset.members.select { |member| member.is_a? PhysicalInstantiation }
