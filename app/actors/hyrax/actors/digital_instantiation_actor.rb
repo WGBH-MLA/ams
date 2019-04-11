@@ -91,7 +91,7 @@ module Hyrax
               e = {}
               e[:title] = Array(env.curation_concern.title)
               e[:track_type] = track.type.value  if track.type
-              e[:track_id] = track.identifiers.map(&:value)  if track.identifiers
+              e[:track_id] = track.identifiers.map(&:value) if track.identifiers
               e[:standard] = track.standard.value if track.standard
               e[:encoding] = track.encoding.value if track.encoding
               e[:data_rate] = track.data_rate.value if track.data_rate

@@ -25,8 +25,9 @@ FactoryBot.define do
     initialize_with { new(attributes) }
 
     trait :media_info do
-      physical      { }
-      generations   { }
+      physical          { }
+      generations       { }
+      essence_tracks    { [ build(:pbcore_instantiation_essence_track) ] }
     end
   end
 end
