@@ -8,17 +8,17 @@ module AAPB
 
       def ingest
         if batch_item_is_asset?
-          batch_item_object = ingest_asset!
+          # This is a bit of a workaround. Errors will be raised from deep within
+          # the stack if the user cannot be conveted to a Sipity::Entity.
+          raise "Could not find or create Sipity Agent for user #{submitter}" unless sipity_agent
 
+          asset = ingest_asset!
           pbcore_digital_instantiations.each do |pbcore_digital_instantiation|
-            ingest_digital_instantiation!(parent: batch_item_object, xml: pbcore_digital_instantiation.to_xml)
+            CoolDigitalJob.perform_later(asset.id, pbcore_digital_instantiation.to_xml, batch_item)
           end
 
           pbcore_physical_instantiations.each do |pbcore_physical_instantiation|
-            physical_instantiation = ingest_physical_instantiation!(parent: batch_item_object, xml: pbcore_physical_instantiation.to_xml)
-            pbcore_physical_instantiation.essence_tracks.each do |pbcore_essence_track|
-              ingest_essence_track!(parent: physical_instantiation, xml: pbcore_essence_track.to_xml)
-            end
+            CoolPhysicalJob.perform_later(asset.id, pbcore_physical_instantiation.to_xml, batch_item)
           end
         elsif batch_item_is_digital_instantiation?
           batch_item_object = ingest_digital_instiation_and_manifest!
@@ -26,10 +26,10 @@ module AAPB
           # TODO: More specific error?
           raise "PBCore XML ingest does not know how to ingest the given XML"
         end
-        batch_item_object
+        asset
       end
 
-      private
+      # private
 
         def batch_item_is_asset?
           pbcore_xml =~ /pbcoreDescriptionDocument/
@@ -75,14 +75,12 @@ module AAPB
           actor = Hyrax::CurationConcern.actor
           attrs = {
             pbcore_xml: xml,
-            in_works_ids: [parent.id]
+            in_works_ids: [parent.id],
           }
+
           env = Hyrax::Actors::Environment.new(digital_instantiation, current_ability, attrs)
+          env.attributes[:title] = ::SolrDocument.new(parent.to_solr).title
           actor.create(env)
-          # reload the parent so that the children show up in the .members
-          # accessor
-          parent.reload
-          digital_instantiation
         end
 
         def ingest_physical_instantiation!(parent:, xml:)
@@ -91,10 +89,8 @@ module AAPB
           attrs = AAPB::BatchIngest::PBCoreXMLMapper.new(xml).physical_instantiation_attributes
           attrs[:in_works_ids] = [parent.id]
           env = Hyrax::Actors::Environment.new(physical_instantiation, current_ability, attrs)
+          env.attributes[:title] = ::SolrDocument.new(parent.to_solr).title
           actor.create(env)
-          # reload the parent so that the children show up in the .members
-          # accessor
-          parent.reload
           physical_instantiation
         end
 
@@ -104,9 +100,8 @@ module AAPB
           attrs = AAPB::BatchIngest::PBCoreXMLMapper.new(xml).essence_track_attributes
           attrs[:in_works_ids] = [parent.id]
           env = Hyrax::Actors::Environment.new(essence_track, current_ability, attrs)
+          env.attributes[:title] = ::SolrDocument.new(parent.to_solr).title
           actor.create(env)
-          parent.reload
-          essence_track
         end
 
         def current_ability
@@ -135,6 +130,20 @@ module AAPB
           end
         rescue => e
           raise e
+        end
+
+        # Returns a Sipity::Agent for the submitter User.
+        # NOTE: Using PowerConverter is how Hyrax does it, so that's how we
+        # do it here. This method was created because doing a batch ingest from
+        # a new submitter was causing batch items to fail with
+        # "Validation error: Agent must exist", due to trying to create a new
+        # Sipity::Agent instance using a User instance from within multiple
+        # concurrent threads; in one thread it succeeds, but in all other
+        # concurrent threads it fails because the Agent cannot be retrieved nor
+        # created. So we go ahead and just create it synchronously before hand
+        # to avoid that issue.
+        def sipity_agent
+          PowerConverter.convert_to_sipity_agent(submitter)
         end
     end
   end

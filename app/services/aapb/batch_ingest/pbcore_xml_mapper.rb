@@ -8,8 +8,18 @@ module AAPB
         @pbcore_xml = pbcore_xml
       end
 
-      def categorize(collection, criteria: [:type,:to_s,:downcase,:strip])
-        collection.group_by {|mem| criteria.inject(mem) {|obj, meth| obj.send(meth) }  }
+      def categorize(collection, criteria: [:type,:to_s,:downcase,:strip], accessor: [:value])
+        grouped = {}
+        collection.each do |anno|
+          cat_name = criteria.inject(anno) {|object, method| object.send(method) }
+          value = accessor.inject(anno) {|object, method| object.send(method) }
+
+          if value
+            grouped[ cat_name ] ||= []
+            grouped[ cat_name ] << value
+          end
+        end
+        grouped
       end
 
       def admindata_field_names
@@ -18,73 +28,74 @@ module AAPB
 
       def asset_attributes
         @asset_attributes ||= {}.tap do |attrs|
-
           annotations, admindata = separate_admindata(pbcore.annotations)
-          admindata = admindata.group_by {|anno| anno.type.to_s.downcase.strip }
 
           # bring along the ol' admin data, to be removed in the actor
           admindata_field_names.each do |field_name|
             field_name = 'minimally_cataloged' if field_name == 'cataloging status'
-            attrs[:"#{field_name}"]           = admindata[field_name].map(&:value) if admindata[field_name]
+            field_name = 'special_collection' if field_name == 'special_collections'
+            attrs[:"#{field_name.gsub(" ", '_')}"] = admindata[field_name] if admindata[field_name]
           end
 
           # Saves Asset with AAPB ID if present
           attrs[:id]                          = normalized_aapb_id(aapb_id) if aapb_id
 
           # map the non admindata annotations
-          attrs[:annotation]                  = annotations.map(&:value)
+          attrs[:annotation]                  = annotations
 
           # grouped by title type
           grouped_titles = categorize(pbcore.titles)
           # pull out no-type titles, removing from grouped_titles
           titles_no_type = grouped_titles.slice!(*title_types)
-          attrs[:title]                       = titles_no_type.values.flatten.map(&:value)
-          attrs[:episode_title]               = (grouped_titles.fetch("episode title", []) + grouped_titles.fetch("episode", [])).map(&:value)
-          attrs[:program_title]               = grouped_titles["program"].map(&:value) if grouped_titles["program"]
-          attrs[:segment_title]               = grouped_titles["segment"].map(&:value) if grouped_titles["segment"]
-          attrs[:clip_title]                  = grouped_titles["clip"].map(&:value) if grouped_titles["clip"]
-          attrs[:promo_title]                 = grouped_titles["promo"].map(&:value) if grouped_titles["promo"]
-          attrs[:raw_footage_title]           = grouped_titles["raw footage"].map(&:value) if grouped_titles["raw footage"]
-          attrs[:episode_number]              = grouped_titles["episode number"].map(&:value) if grouped_titles["episode number"]
+          attrs[:title]                       = titles_no_type.values.flatten
+          attrs[:episode_title]               = (grouped_titles.fetch("episode title", []) + grouped_titles.fetch("episode", []))
+          attrs[:program_title]               = grouped_titles["program"] if grouped_titles["program"]
+          attrs[:segment_title]               = grouped_titles["segment"] if grouped_titles["segment"]
+          attrs[:clip_title]                  = grouped_titles["clip"] if grouped_titles["clip"]
+          attrs[:promo_title]                 = grouped_titles["promo"] if grouped_titles["promo"]
+          attrs[:raw_footage_title]           = grouped_titles["raw footage"] if grouped_titles["raw footage"]
+          attrs[:episode_number]              = grouped_titles["episode number"] if grouped_titles["episode number"]
 
           grouped_descriptions = categorize(pbcore.descriptions)
           # pull out no-type descs, removing from grouped_descs
           descriptions_no_type = grouped_descriptions.slice!(*desc_types)
-          attrs[:description]                 = descriptions_no_type.values.flatten.map(&:value)
-          attrs[:episode_description]         = (grouped_descriptions.fetch("episode", []) + grouped_descriptions.fetch("episode description", [])).map(&:value)
-          attrs[:program_description]         = grouped_descriptions["program"].map(&:value) if grouped_descriptions["program"]
-          attrs[:segment_description]         = grouped_descriptions["segment"].map(&:value) if grouped_descriptions["segment"]
-          attrs[:clip_description]            = grouped_descriptions["clip"].map(&:value) if grouped_descriptions["clip"]
-          attrs[:promo_description]           = grouped_descriptions["promo"].map(&:value) if grouped_descriptions["promo"]
-          attrs[:raw_footage_description]     = grouped_descriptions["raw footage"].map(&:value) if grouped_descriptions["raw footage"]
-          
+          attrs[:description]                 = descriptions_no_type.values.flatten
+          attrs[:episode_description]         = (grouped_descriptions.fetch("episode", []) + grouped_descriptions.fetch("episode description", []))
+          attrs[:program_description]         = grouped_descriptions["program"] if grouped_descriptions["program"]
+          attrs[:segment_description]         = grouped_descriptions["segment"] if grouped_descriptions["segment"]
+          attrs[:clip_description]            = grouped_descriptions["clip"] if grouped_descriptions["clip"]
+          attrs[:promo_description]           = grouped_descriptions["promo"] if grouped_descriptions["promo"]
+          attrs[:raw_footage_description]     = grouped_descriptions["raw footage"] if grouped_descriptions["raw footage"]
+
           attrs[:audience_level]              = pbcore.audience_levels.map(&:value)
           attrs[:audience_rating]             = pbcore.audience_ratings.map(&:value)
           attrs[:asset_types]                 = pbcore.asset_types.map(&:value)
-
           attrs[:genre]                       = pbcore.genres.map(&:value)
           attrs[:topics]                      = pbcore.genres.select { |genre| genre.source.to_s.downcase == "aapb topical genre" }.map(&:value)
 
-          grouped_coverages = categorize(pbcore.coverages, criteria: [:type,:value,:downcase,:strip])
-          attrs[:spatial_coverage]            = grouped_coverages["spatial"].map { |coverage| coverage.coverage.value } if grouped_coverages["spatial"]
-          attrs[:temporal_coverage]           = grouped_coverages["temporal"].map { |coverage| coverage.coverage.value } if grouped_coverages["temporal"]
-          
+          grouped_coverages = categorize(pbcore.coverages, criteria: [:type,:value,:downcase,:strip], accessor: [:coverage, :value])
+          attrs[:spatial_coverage]            = grouped_coverages["spatial"] if grouped_coverages["spatial"]
+          attrs[:temporal_coverage]           = grouped_coverages["temporal"] if grouped_coverages["temporal"]
+
           attrs[:rights_summary]              = pbcore.rights_summaries.map(&:rights_summary).compact.map(&:value)
           attrs[:rights_link]                 = pbcore.rights_summaries.map(&:rights_link).compact.map(&:value)
 
           grouped_identifiers = categorize(pbcore.identifiers, criteria: [:source,:to_s,:downcase])
-          attrs[:pbs_nola_code]               = (grouped_identifiers.fetch("nola code", []) + grouped_identifiers.fetch("nola", [])).map(&:value)
-          attrs[:local_identifier]            = grouped_identifiers["local identifier"].map(&:value) if grouped_identifiers["local identifier"]
-          attrs[:eidr_id]                     = grouped_identifiers["eidr"].map(&:value) if grouped_identifiers["eidr"]
-          attrs[:sonyci_id]                   = grouped_identifiers["sony ci"].map(&:value) if grouped_identifiers["sony ci"]
+          attrs[:pbs_nola_code]               = (grouped_identifiers.fetch("nola code", []) + grouped_identifiers.fetch("nola", []))
+          attrs[:local_identifier]            = grouped_identifiers["local identifier"] if grouped_identifiers["local identifier"]
+          attrs[:eidr_id]                     = grouped_identifiers["eidr"] if grouped_identifiers["eidr"]
+          attrs[:sonyci_id]                   = grouped_identifiers["sony ci"] if grouped_identifiers["sony ci"]
 
           attrs[:subject]                     = pbcore.subjects.map(&:value)
           attrs[:contributors]                = contributor_attributes(pbcore.contributors)
         end
       end
 
-      def separate_admindata(annotations)
-        annotations.partition {|anno| admindata_field_names.exclude?(anno.type) }
+      def separate_admindata(all_annotations)
+        annotations = categorize(all_annotations)
+        no_type = annotations[""]
+        admindata = annotations.except("")
+        return [no_type, admindata]
       end
 
       def aapb_id
