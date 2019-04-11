@@ -297,6 +297,8 @@ terms:
     term: Film
   - id: Flexi Disc
     term: Flexi Disc
+  - id: Floppy Disk
+    term: Floppy Disk
   - id: Grooved Dictabelt
     term: Grooved Dictabelt
   - id: Grooved analog disc
@@ -311,6 +313,8 @@ terms:
     term: HDV
   - id: Hi8
     term: Hi8
+  - id: Jaz Drive
+    term: Jaz Drive
   - id: Lacquer disc
     term: Lacquer disc
   - id: LaserDisc
@@ -327,8 +331,18 @@ terms:
       LaserDisc: CAA
     term: >
       LaserDisc: CAA
+  - id: LTO-3
+    term: LTO-3
+  - id: LTO-4
+    term: LTO-4
+  - id: LTO-5
+    term: LTO-5
   - id: Magnetic Dictabelt
     term: Magnetic Dictabelt
+  - id: Memory Card
+    term: Memory Card
+  - id: Microcassette
+    term: Microcassette
   - id: MII
     term: MII
   - id: Mini-cassette
@@ -336,15 +350,19 @@ terms:
   - id: MiniDisc
     term: MiniDisc
   - id: >
-      MiniDisc: Hi-MD
+      MiniDisc: HiMD
     term: >
-      MiniDisc: Hi-MD
+      MiniDisc: HiMD
   - id: MiniDV
     term: MiniDV
   - id: Open reel audiotape
     term: Open reel audiotape
   - id: Open reel videotape
     term: Open reel videotape
+  - id: Optical Disc
+    term: Optical Disc
+  - id: Optical Disc Cartridge
+    term: Optical Disc Cartridge
   - id: Optical video disc
     term: Optical video disc
   - id: PCM Betamax
@@ -359,6 +377,8 @@ terms:
     term: Piano roll
   - id: Plastic cylinder
     term: Plastic cylinder
+  - id: Quarter-inch Cartridge
+    term: Quarter-inch Cartridge
   - id: Shellac disc
     term: Shellac disc
   - id: Super 16mm film
@@ -398,6 +418,10 @@ terms:
     term: >
       VHS: S-VHS
   - id: >
+      VHS: S-VHS-C
+    term: >
+      VHS: S-VHS-C
+  - id: >
       VHS: VHS-C
     term: >
       VHS: VHS-C
@@ -433,5 +457,7 @@ terms:
     term: Wax cylinder
   - id: Wire recording
     term: Wire recording
+  - id: XDCAM
+    term: XDCAM
   - id: Zip drive
     term: Zip drive
