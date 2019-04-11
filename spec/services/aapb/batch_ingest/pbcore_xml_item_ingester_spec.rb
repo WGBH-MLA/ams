@@ -91,11 +91,15 @@ RSpec.describe AAPB::BatchIngest::PBCoreXMLItemIngester, reset_data: false do
 
         # Ingest the BatchItem and use the returned Asset instance for testing.
         @instantiation = described_class.new(batch_item).ingest
+        @essence_tracks = @instantiation.essence_tracks
       end
 
       it 'creates a DigitalInstantiation' do
-        require 'pry'; binding.pry
         expect(@instantiation).to be_instance_of(DigitalInstantiation)
+      end
+
+      it 'creates an associated EssenceTrack' do
+        expect(@essence_tracks.count).to eq(1)
       end
 
     end

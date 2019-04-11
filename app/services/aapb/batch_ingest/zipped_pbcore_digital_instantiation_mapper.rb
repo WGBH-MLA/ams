@@ -33,9 +33,10 @@ module AAPB
       def digital_instantiation_attributes
         @instantiation_attributes ||= {}.tap do |attrs|
           # DigitalInstantiationActor will handle the PBCore
-          attrs[:pbcore_xml]                        = batch_item.source_data
+          attrs[:pbcore_xml]                      = batch_item.source_data
 
           # manifest attributes
+          attrs[:title]                           = asset.title unless asset.title.nil?
           attrs[:in_works_ids]                    = row_data[:id] unless row_data[:id].nil?
           attrs[:generations]                     = row_data[:generations] unless row_data[:generations].nil?
           attrs[:holding_organization]            = row_data[:holding_organization][0]unless row_data[:holding_organization].nil?
@@ -52,12 +53,13 @@ module AAPB
                         PBCore::InstantiationDocument.parse(batch_item.source_data)
                       when is_instantiation?
                         PBCore::Instantiation.parse(batch_item.source_data)
-                      when is_essence_track?
-                        PBCore::Instantiation::EssenceTrack.parse(batch_item.source_data)
-                      else
                         # TODO: Custom error class?
                         raise "XML not recognized as DigitalInstantiationPBCore"
                       end
+        end
+
+        def asset
+          @asset ||= Asset.find(row_data[:id]).first unless row_data[:id].nil?
         end
 
         def is_instantiation_document?
