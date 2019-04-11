@@ -1,25 +1,124 @@
 terms:
-  - id: Proxy
-    term: Proxy
-  - id: Mezzanine
-    term: Mezzanine
-  - id: Master
-    term: Master
-  - id: Preservation Master
-    term: Preservation Master
-  - id: Original footage
-    term: Original footage
-  - id: Clip reel
-    term: Clip reel
+  - id: A-B rolls
+    term: A-B rolls
+  - id: Air check
+    term: Air check
+  - id: Air version
+    term: Air version
+  - id: Answer print
+    term: Answer print
+  - id: Color reversal intermediate
+  - id: Composite
+    term: Composite
+  - id: Copy
+    term: Copy
+  - id: >
+      Copy: Access
+    term: >
+      Copy: Access
   - id: Dub
     term: Dub
+  - id: Duplicate
+    term: Duplicate
+  - id: Edit
+    term: Edit
+  - id: Element
+    term: Element
+  - id: Fine cut
+    term: Fine cut
+  - id: Graphics
+    term: Graphics
+  - id: >
+      Graphics: animation
+    term: >
+      Graphics: animation
+  - id: Intermediate
+    term: Intermediate
+  - id: Internegative
+    term: Internegative
+  - id: Interpositive
+    term: Interpositive
+  - id: Kinescope
+    term: Kinescope
+  - id: Line cut
+    term: Line cut
+  - id: Live feed
+    term: Live feed
+  - id: Magnetic track
+    term: Magnetic track
+  - id: Master
+    term: Master
+  - id: >
+      Master: caption
+    term: >
+      Master: caption
+  - id: >
+      Master: distribution
+    term: >
+      Master: distribution
+  - id: >
+      Master: production
+    term: >
+      Master: production
+  - id: Mezzanine
+    term: Mezzanine
+  - id: Mix
+    term: Mix
+  - id: Mix element
+    term: Mix element
+  - id: Mix-minus
+    term: Mix-minus
+  - id: Mix-plus
+    term: Mix-plus
+  - id: Narration
+    term: Narration
+  - id: Negative
+    term: Negative
+  - id: Open - Close
+    term: Open - Close
+  - id: Optical track
+    term: Optical track
+  - id: Original
+    term: Original
+  - id: Original footage
+    term: Original footage
+  - id: Original recording
+    term: Original recording
+  - id: Outs and trims
+    term: Outs and trims
+  - id: Picture lock
+    term: Picture lock
+  - id: Positive
+    term: Positive
+  - id: Preservation
+    term: Preservation
+  - id: Print
+    term: Print
+  - id: Proxy
+    term: Proxy
+  - id: Re-Master
+    term: Re-Master
+  - id: Reversal
+    term: Reversal
   - id: Rough cut
     term: Rough cut
-  - id: Screening tape
-    term: Screening tape
+  - id: Separation master
+    term: Separation master
+  - id: Sound effects
+    term: Sound effects
   - id: Stock footage
     term: Stock footage
+  - id: Submaster
+    term: Submaster
+  - id: Transcription disc
+    term: Transcription disc
+  - id: Voiceover
+    term: Voiceover
+  - id: Window dub
+    term: Window dub
   - id: Work print
     term: Work print
-  - id: Work tape
-    term: Work tape
+  - id: Work tapes
+    term: Work tapes
+  - id: Work track
+    term: Work track
