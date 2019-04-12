@@ -1,9 +1,13 @@
 require 'aapb/batch_ingest/pbcore_xml_item_ingester'
 
 class CoolEssenceJob < ApplicationJob
-  def perform(parent_id, pbcore_essence_xml, batch_item)
+  def perform(parent_id:, xml:, batch_item:)
     # we only do essoes round here
     parent = ActiveFedora::Base.find(parent_id)
-    AAPB::BatchIngest::PBCoreXMLItemIngester.new(batch_item, {}).ingest_essence_track!(parent: parent, xml: pbcore_essence_xml)
+    # Need to set @work to the ingested EssenceTrack in order for
+    # the `after_perform` hook of Hyrax::BatchIngest::BatchItemProcessingJob
+    # to properly set BatchItem#repo_object_id. If that sounds a bit convoluted
+    # it's because it is.
+    @work = AAPB::BatchIngest::PBCoreXMLItemIngester.new(batch_item, {}).ingest_essence_track!(parent: parent, xml: xml)
   end
 end

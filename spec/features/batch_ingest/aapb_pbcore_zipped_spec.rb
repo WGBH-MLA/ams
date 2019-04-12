@@ -31,7 +31,10 @@ RSpec.feature "Ingest: AAPB PBCore - Zipped" do
     before { @batch.reload }
 
     it 'creates the correct number of batch item records' do
-      expect(@batch.batch_items.to_a.count).to eq 12
+      # Why 24? Because the fixture used in these tests has a total of 24
+      # pbcoreDescriptionDocument and pbcoreInstantiation elements, each of
+      # which are represented by a BatchItem within the Batch.
+      expect(@batch.batch_items.to_a.count).to eq 24
     end
 
     it 'has a status of completed' do
@@ -46,9 +49,9 @@ RSpec.feature "Ingest: AAPB PBCore - Zipped" do
       expect(@batch.batch_items.map(&:status)).to all( eq 'completed' )
     end
 
-    it "saves Asset records" do
+    it "saves all records" do
       @batch.batch_items.each do |batch_item|
-        expect(Asset.find(batch_item.repo_object_id)).to_not be_nil
+        expect(ActiveFedora::Base.find(batch_item.repo_object_id)).to_not be_nil
       end
     end
   end
