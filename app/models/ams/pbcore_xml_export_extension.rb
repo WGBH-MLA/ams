@@ -139,7 +139,6 @@ module AMS::PbcoreXmlExportExtension
     # Anotations
     annotation.to_a.each { |annotation| xml.pbcoreAnnotation { xml.cdata(annotation) } }
 
-
     # AAPB Admin Data
     level_of_user_access.to_a.each { |annotation| xml.pbcoreAnnotation(annotationType: 'Level of User Access') { xml.cdata(annotation) } }
     minimally_cataloged.to_a.each { |annotation| xml.pbcoreAnnotation(annotationType: 'cataloging staus') { xml.cdata(annotation) } }
