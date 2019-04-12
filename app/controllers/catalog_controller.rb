@@ -2,6 +2,7 @@ class CatalogController < ApplicationController
   include Hydra::Catalog
   include Hydra::Controller::ControllerBehavior
   include BlacklightAdvancedSearch::Controller
+  include ApplicationHelper
 
   # This filter applies the hydra access controls
   before_action :enforce_show_permissions, only: :show
@@ -482,13 +483,6 @@ class CatalogController < ApplicationController
     false
   end
 
-  # def validate_id_input(input)
-  #   raise "NO" unless input =~ /[a-z0-9-_\/\n]/
-  #   ids = input.split("\n")
-  #   raise "NO" unless ids.all? {|id| id.count == #guid length }
-
-  # end
-
   # def pb_to_aapb_form
   # end
 
@@ -497,9 +491,12 @@ class CatalogController < ApplicationController
     # -pull solr_documents from list of ids
     # -render xml for each, and zip dat
     # -return zip
-    logger.warn "hey dummy Received IDS #{params[:id_field]}"
-    ids = params[:id_field].split(/\s/).reject(&:empty?)
-    # sanitize ids!
+    # ids = params[:id_field].split(/\s/).reject(&:empty?)
+    ids = split_and_validate_ids(params[:id_field])
+    unless ids
+      flash[:error] = "That was not good."
+      redirect_to '/pb_to_aapb' && return
+    end
 
     inner_query = ""
     if ids.count > 1
@@ -518,8 +515,8 @@ class CatalogController < ApplicationController
     query_params.delete :action
     query_params.delete :controller
     query_params.delete :locale
-    logger.warn "hey dummy sending query_carams #{query_params}"
     ExportRecordsJob.perform_later(query_params, current_user)
+    redirect_to '/pb_to_aapb'
   end
 
   def export
