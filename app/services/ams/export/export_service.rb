@@ -63,9 +63,8 @@ module AMS
           
 
           `scp #{aapb_key_path} #{filepath} ec2-user@#{aapb_host}:/home/ec2-user/ingest_zips/#{filename}`
-          # `ssh -t #{aapb_key_path} ec2-user@#{aapb_host} 'cd /home/ec2-user/ingest_zips && unzip #{filename} && cd /var/www/aapb/current && RAILS_ENV=production /usr/bin/ruby scripts/download_clean_ingest.rb --files /home/ec2-user/ingest_zips/*.xml &'`
           # `ssh -t #{aapb_key_path} ec2-user@#{aapb_host}  "ruby -e'print :hello'"`
-          puts `ssh -t #{aapb_key_path} ec2-user@#{aapb_host} 'cd /home/ec2-user/ingest_zips && unzip #{filename} && cd /var/www/aapb/current && RAILS_ENV=production /usr/bin/ruby scripts/download_clean_ingest.rb --files /home/ec2-user/ingest_zips/*.xml --stdout-log'`
+          puts `ssh -t #{aapb_key_path} ec2-user@#{aapb_host} 'cd /home/ec2-user/ingest_zips && unzip #{filename} && cd /var/www/aapb/current && RAILS_ENV=production /usr/bin/ruby scripts/download_clean_ingest.rb --files /home/ec2-user/ingest_zips/*.xml'`
 
         end
         # raise "YAY"

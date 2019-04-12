@@ -98,31 +98,37 @@ module AMS::PbcoreXmlExportExtension
       end
     end
 
-    people_with_types = find_child.sort_by {|peep| peep.contributor_role }
-
-    # Creators
-    people_with_types['creator'].each do |contributor|
+    find_child(Contribution).each do |contributor|
       xml.pbcoreContributor do |creator_node|
         creator_node.creator { creator_node.text(contribution.contributor.first) }
         creator_node.creatorRole { creator_node.text(contribution.contributor_role.first) }
       end
     end
+    # people_with_types = find_child(Contribution).sort_by {|peep| peep.contributor_role }
 
-    # Contributors
-    people_with_types['contributor'].each do |contributor|
-      xml.pbcoreContributor do |contributor_node|
-        contributor_node.contributor { contributor_node.text(contribution.contributor.first) }
-        contributor_node.contributorRole { contributor_node.text(contribution.contributor_role.first) }
-      end
-    end
+    # Creators
+    # people_with_types['creator'].each do |contributor|
+    #   xml.pbcoreContributor do |creator_node|
+    #     creator_node.creator { creator_node.text(contribution.contributor.first) }
+    #     creator_node.creatorRole { creator_node.text(contribution.contributor_role.first) }
+    #   end
+    # end
 
-    # Publishers
-    people_with_types['publisher'].each do |contributor|
-      xml.pbcoreContributor do |publisher_node|
-        publisher_node.publisher { publisher_node.text(contribution.contributor.first) }
-        publisher_node.publisherRole { publisher_node.text(contribution.contributor_role.first) }
-      end
-    end
+    # # Contributors
+    # people_with_types['contributor'].each do |contributor|
+    #   xml.pbcoreContributor do |contributor_node|
+    #     contributor_node.contributor { contributor_node.text(contribution.contributor.first) }
+    #     contributor_node.contributorRole { contributor_node.text(contribution.contributor_role.first) }
+    #   end
+    # end
+
+    # # Publishers
+    # people_with_types['publisher'].each do |contributor|
+    #   xml.pbcoreContributor do |publisher_node|
+    #     publisher_node.publisher { publisher_node.text(contribution.contributor.first) }
+    #     publisher_node.publisherRole { publisher_node.text(contribution.contributor_role.first) }
+    #   end
+    # end
 
     # Rights Summary
     rights_summary.to_a.each { |rights_summary| xml.rightsSummary { xml.cdata(rights_summary) } }
