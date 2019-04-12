@@ -13,12 +13,15 @@ module AAPB
           raise "Could not find or create Sipity Agent for user #{submitter}" unless sipity_agent
 
           batch_item_object = ingest_asset!
+
           pbcore_digital_instantiations.each do |pbcore_digital_instantiation|
-            CoolDigitalJob.perform_later(batch_item_object.id, pbcore_digital_instantiation.to_xml, batch_item)
+            di_batch_item = Hyrax::BatchIngest::BatchItem.create!(batch: batch_item.batch, status: 'initialized')
+            CoolDigitalJob.perform_later(parent_id: batch_item_object.id, xml: pbcore_digital_instantiation.to_xml, batch_item: di_batch_item)
           end
 
           pbcore_physical_instantiations.each do |pbcore_physical_instantiation|
-            CoolPhysicalJob.perform_later(batch_item_object.id, pbcore_physical_instantiation.to_xml, batch_item)
+            pi_batch_item = Hyrax::BatchIngest::BatchItem.create!(batch: batch_item.batch, status: 'initialized')
+            CoolPhysicalJob.perform_later(parent_id: batch_item_object.id, xml: pbcore_physical_instantiation.to_xml, batch_item: pi_batch_item)
           end
         elsif batch_item_is_digital_instantiation?
           batch_item_object = ingest_digital_instiation_and_manifest!
@@ -80,6 +83,7 @@ module AAPB
           env = Hyrax::Actors::Environment.new(digital_instantiation, current_ability, attrs)
           env.attributes[:title] = ::SolrDocument.new(parent.to_solr).title
           actor.create(env)
+          digital_instantiation
         end
 
         def ingest_physical_instantiation!(parent:, xml:)
@@ -101,6 +105,7 @@ module AAPB
           env = Hyrax::Actors::Environment.new(essence_track, current_ability, attrs)
           env.attributes[:title] = ::SolrDocument.new(parent.to_solr).title
           actor.create(env)
+          essence_track
         end
 
         def current_ability

@@ -34,10 +34,12 @@ RSpec.describe AAPB::BatchIngest::PBCoreXMLItemIngester, reset_data: false do
           ].flatten
         ).to_xml
 
+        @batch = create(:batch, submitter_email: create(:user).email)
+
         # Use the PBCore XML as the source data for a BatchItem.
         batch_item = create(
           :batch_item,
-          batch: create(:batch, submitter_email: create(:user).email),
+          batch: @batch,
           source_location: nil,
           source_data: pbcore_xml
         )
@@ -66,6 +68,13 @@ RSpec.describe AAPB::BatchIngest::PBCoreXMLItemIngester, reset_data: false do
 
       it 'ingests the Essence Tracks of Digital and Physical Instantiations' do
         expect(@essence_tracks.count).to eq 12
+      end
+
+      it 'propagates additional batch items as part of the batch' do
+        # This number reflects the Asset, the Digital Instantiations, the
+        # Physical Instantiations, and the Essence Tracks coming from Physical
+        # Instnatiations.
+        expect(@batch.batch_items.count).to eq 7
       end
     end
 
