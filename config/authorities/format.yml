@@ -3,59 +3,461 @@ terms:
     term: 1 inch audio tape
   - id: 1 inch videotape
     term: 1 inch videotape
-  - id: 1/2 inch digital audio tape
-    term: 1/2 inch digital audio tape
+  - id: >
+      1 inch videotape: BVH-1000
+    term: >
+      1 inch videotape: BVH-1000
+  - id: >
+      1 inch videotape: BVH-2000
+    term: >
+      1 inch videotape: BVH-2000
+  - id: >
+      1 inch videotape: EV-200
+    term: >
+      1 inch videotape: EV-200
+  - id: >
+      1 inch videotape: EV-210
+    term: >
+      1 inch videotape: EV-210
+  - id: >
+      1 inch videotape: EL-3400
+    term: >
+      1 inch videotape: EL-3400
+  - id: >
+      1 inch videotape: HDD-1000
+    term: >
+      1 inch videotape: HDD-1000
+  - id: >
+      1 inch videotape: HDV-1000
+    term: >
+      1 inch videotape: HDV-1000
+  - id: >
+      1 inch videotape: IVC-700
+    term: >
+      1 inch videotape: IVC-700
+  - id: >
+      1 inch videotape: IVC-800
+    term: >
+      1 inch videotape: IVC-800
+  - id: >
+      1 inch videotape: IVC-900
+    term: >
+      1 inch videotape: IVC-900
+  - id: >
+      1 inch videotape: MVC-10
+    term: >
+      1 inch videotape: MVC-10
+  - id: >
+      1 inch videotape: PI-3V
+    term: >
+      1 inch videotape: PI-3V
+  - id: >
+      1 inch videotape: SMPTE Type A
+    term: >
+      1 inch videotape: SMPTE Type A
+  - id: >
+      1 inch videotape: SMPTE Type B
+    term: >
+      1 inch videotape: SMPTE Type B
+  - id: >
+      1 inch videotape: SMPTE Type C
+    term: >
+      1 inch videotape: SMPTE Type C
+  - id: >
+      1 inch videotape: UV-340
+    term: >
+      1 inch videotape: UV-340
+  - id: 1/2 inch audio tape
+    term: 1/2 inch audio tape
+  - id: 1/2 inch videotape
+    term: 1/2 inch videotape
+  - id: >
+      1/2 inch videotape: CV
+    term: >
+      1/2 inch videotape: CV
+  - id: >
+      1/2 inch videotape: EIAJ Type 1
+    term: >
+      1/2 inch videotape: EIAJ Type 1
+  - id: >
+      1/2 inch videotape: Hawkeye
+    term: >
+      1/2 inch videotape: Hawkeye
+  - id: >
+      1/2 inch videotape: Recam
+    term: >
+      1/2 inch videotape: Recam
+  - id: >
+      1/2 inch videotape: V200
+    term: >
+      1/2 inch videotape: V200
+  - id: >
+      1/2 inch videotape: VCR
+    term: >
+      1/2 inch videotape: VCR
+  - id: 1/4 inch audio cassette
+    term: 1/4 inch audio casette
   - id: 1/4 inch audio tape
     term: 1/4 inch audio tape
-  - id: 1 inch videotape
-    term: 1 inch videotape
-  - id: 3/4 inch videotape
-    term: 3/4 inch videotape
+  - id: 1/4 inch videotape
+    term: 1/4 inch videotape
+  - id: 16mm film
+    term: 16mm film
+  - id: 2 inch audio tape
+    term: 2 inch audio tape
+  - id: 2 inch videotape
+    term: 2 inch videotape
+  - id: >
+      2 inch videotape: ACR 25
+    term: >
+      2 inch videotape: ACR 25
+  - id: >
+      2 inch videotape: Helical SV-201
+    term: >
+      2 inch videotape: Helical SV-201
+  - id: >
+      2 inch videotape: IVC-9000
+    term: >
+      2 inch videotape: IVC-9000
+  - id: >
+      2 inch videotape: Octaplex
+    term: >
+      2 inch videotape: Octaplex
+  - id: >
+      2 inch videotape: Quadruplex
+    term: >
+      2 inch videotape: Quadruplex
+  - id: >
+      2 inch videotape: VR-1500
+    term: >
+      2 inch videotape: VR-1500
+  - id: >
+      2 inch videotape: VR-1600
+    term: >
+      2 inch videotape: VR-1600
+  - id: 22mm film
+    term: 22mm film
+  - id: 28mm film
+  - term: 28mm film
+  - id: 35mm film
+    term: 35mm film
+  - id: 70mm film
+    term: 70mm film
+  - id: 8-track
+    term: 8-track
+  - id: 8mm film
+    term: 8mm film
+  - id: 9.5mm film
+    term: 9.5mm film
+  - id: Alumninum disc
+    term: Alumninum disc
   - id: Audio cassette
     term: Audio cassette
+  - id: Audio CD
+    term: Audio CD
+  - id: Bernoulli Disk
+    term: Bernoulli Disk
   - id: Betacam
     term: Betacam
-  - id: Betacam Digital (Digi-Beta)
-    term: Betacam Digital (Digi Beta)
-  - id: Betacam SP
-    term: Betacam SP
+  - id: >
+      Betacam: SP
+    term: >
+      Betacam: SP
   - id: Betacam SX
     term: Betacam SX
+  - id: Betamax
+    term: Betamax
+  - id: >
+      Betamax: ED
+    term: >
+      Betamax: ED
+  - id: >
+      Betamax: Hi-Fi
+    term: >
+      Betamax: Hi-Fi
+  - id: >
+      Betamax: Super
+    term: >
+      Betamax: Super
+  - id: Blu-ray disc
+    term: Blu-ray disc
+  - id: Cartivision
+    term: Cartivision
   - id: CD
     term: CD
+  - id: D1
+    term: D1
   - id: D2
     term: D2
   - id: D3
     term: D3
   - id: D5
     term: D5
+  - id: >
+      D5: HD
+    term: >
+      D5: HD
+  - id: D6
+    term: D6
   - id: D9
     term: D9
+  - id: >
+      D9: HD
+    term: >
+      D9: HD
   - id: DAT
     term: DAT
+  - id: Data CD
+    term: Data CD
+  - id: >
+      Data CD: CD-R
+    term: >
+      Data CD: CD-R
+  - id: >
+      Data CD: CD-ROM
+    term: >
+      Data CD: CD-ROM
+  - id: >
+      Data CD: CD-RW
+    term: >
+      Data CD: CD-RW
+  - id: Data8
+    term: Data8
+  - id: DCT
+    term: DCT
+  - id: DDS
+    term: DDS
+  - id: Digital Betacam
+    term: Digital Betacam
+  - id: Digital Linear Tape
+    term: Digital Linear Tape
+  - id: Digital Multitrack Tape
+    term: Digital Multitrack Tape
+  - id: Digital8
+    term: Digital8
+  - id: DTRS
+    term: DTRS
+  - id: >
+      DTRS: DA-78
+    term: >
+      DTRS: DA-78
+  - id: >
+      DTRS: DA-88
+    term: >
+      DTRS: DA-88
+  - id: DV
+    term: DV
   - id: DVCAM
     term: DVCAM
   - id: DVCPRO
     term: DVCPRO
+  - id: >
+      DVCPRO: 25
+    term: >
+      DVCPRO: 25
+  - id: >
+      DVCPRO: 50
+    term: >
+      DVCPRO: 50
+  - id: >
+      DVCPRO: HD
+    term: >
+      DVCPRO: HD
+  - id: >
+      DVCPRO: Progressive
+    term: >
+      DVCPRO: Progressive
   - id: DVD
     term: DVD
   - id: >
-      Film: 16mm
+      DVD: DVD+R
     term: >
-      Film: 16mm
+      DVD: DVD+R
   - id: >
-      Film: 35mm
+      DVD: DVD+R DL
     term: >
-      Film: 35mm
+      DVD: DVD+R DL
+  - id: >
+      DVD: DVD+RW
+    term: >
+      DVD: DVD+RW
+  - id: >
+      DVD: DVD-R
+    term: >
+      DVD: DVD-R
+  - id: >
+      DVD: DVD-RW
+    term: >
+      DVD: DVD-RW
+  - id: EIAJ
+    term: EIAJ
+  - id: EVD
+    term: EVD
+  - id: Film
+    term: Film
+  - id: Flexi Disc
+    term: Flexi Disc
+  - id: Floppy Disk
+    term: Floppy Disk
+  - id: Grooved Dictabelt
+    term: Grooved Dictabelt
+  - id: Grooved analog disc
+    term: Grooved analog disc
   - id: HDCAM
     term: HDCAM
+  - id: >
+      HDCAM: SR
+    term: >
+      HDCAM: SR
+  - id: HDV
+    term: HDV
   - id: Hi8
     term: Hi8
+  - id: Jaz Drive
+    term: Jaz Drive
+  - id: Lacquer disc
+    term: Lacquer disc
+  - id: LaserDisc
+    term: LaserDisc
+  - id: >
+      LaserDisc: CAV
+    term: >
+      LaserDisc: CAV
+  - id: >
+      LaserDisc: CLV
+    term: >
+      LaserDisc: CLV
+  - id: >
+      LaserDisc: CAA
+    term: >
+      LaserDisc: CAA
+  - id: LTO-3
+    term: LTO-3
+  - id: LTO-4
+    term: LTO-4
+  - id: LTO-5
+    term: LTO-5
+  - id: Magnetic Dictabelt
+    term: Magnetic Dictabelt
+  - id: Memory Card
+    term: Memory Card
+  - id: Microcassette
+    term: Microcassette
+  - id: MII
+    term: MII
+  - id: Mini-cassette
+    term: Mini-casette
+  - id: MiniDisc
+    term: MiniDisc
+  - id: >
+      MiniDisc: HiMD
+    term: >
+      MiniDisc: HiMD
   - id: MiniDV
     term: MiniDV
-  - id: Minidisc
-    term: Minidisc
-  - id: S-VHS
-    term: S-VHS
+  - id: Open reel audiotape
+    term: Open reel audiotape
+  - id: Open reel videotape
+    term: Open reel videotape
+  - id: Optical Disc
+    term: Optical Disc
+  - id: Optical Disc Cartridge
+    term: Optical Disc Cartridge
+  - id: Optical video disc
+    term: Optical video disc
+  - id: PCM Betamax
+    term: PCM Betamax
+  - id: PCM U-matic
+    term: PCM U-matic
+  - id: PCM VHS
+    term: PCM VHS
+  - id: PCM Hi8
+    term: PCM Hi8
+  - id: Piano roll
+    term: Piano roll
+  - id: Plastic cylinder
+    term: Plastic cylinder
+  - id: Quarter-inch Cartridge
+    term: Quarter-inch Cartridge
+  - id: Shellac disc
+    term: Shellac disc
+  - id: Super 16mm film
+    term: Super 16mm film
+  - id: Super 8mm film
+    term: Super 8mm film
+  - id: Super Audio CD
+    term: Super Audio CD
+  - id: Super Video CD
+    term: Super Video CD
+  - id: U-matic
+    term: U-matic
+  - id: >
+      U-matic: S
+    term: >
+      U-matic: S
+  - id: >
+      U-matic: SP
+    term: >
+      U-matic: SP
+  - id: Universal Media Disc
+    term: Universal Media Disc
+  - id: V-Cord
+    term: V-Cord
+  - id: >
+      V-Cord: I
+    term: >
+      V-Cord: I
+  - id: >
+      V-Cord: II
+    term: >
+      V-Cord: II
   - id: VHS
     term: VHS
+  - id: >
+      VHS: S-VHS
+    term: >
+      VHS: S-VHS
+  - id: >
+      VHS: S-VHS-C
+    term: >
+      VHS: S-VHS-C
+  - id: >
+      VHS: VHS-C
+    term: >
+      VHS: VHS-C
+  - id: >
+      VHS: W-VHS
+    term: >
+      VHS: W-VHS
+  - id: Video8
+    term: Video8
+  - id: Videocassette
+    term: Videocassette
+  - id: Vinyl recording
+    term: Vinyl recording
+  - id: >
+      Vinyl recording: 45
+    term: >
+      Vinyl recording: 45
+  - id: >
+      Vinyl recording: 78
+    term: >
+      Vinyl recording: 78
+  - id: >
+      Vinyl recording: EP
+    term: >
+      Vinyl recording: EP
+  - id: >
+      Vinyl recording: LP
+    term: >
+      Vinyl recording: LP
+  - id: VX
+    term: VX
+  - id: Wax cylinder
+    term: Wax cylinder
+  - id: Wire recording
+    term: Wire recording
+  - id: XDCAM
+    term: XDCAM
+  - id: Zip drive
+    term: Zip drive

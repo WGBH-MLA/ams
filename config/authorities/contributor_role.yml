@@ -1,10 +1,22 @@
 terms:
   - id: Actor
     term: Actor
+  - id: Adapter
+    term: Adapter
+  - id: Anchor
+    term: Anchor
   - id: Artist
     term: Artist
   - id: Artistic Director
     term: Artistic Director
+  - id: Artistic Supervisor
+    term: Artistic Supervisor
+  - id: Assistant Director
+    term: Assistant Director
+  - id: Assistant Producer
+    term: Assistant Producer
+  - id: Associate Director
+    term: Associate Director
   - id: Associate Producer
     term: Associate Producer
   - id: Author
@@ -27,10 +39,20 @@ terms:
     term: Commentator
   - id: Composer
     term: Composer
+  - id: Concept
+    term: Concept
   - id: Concept Artist
     term: Concept Artist
   - id: Conductor
     term: Conductor
+  - id: Content Supervision
+    term: Content Supervision
+  - id: Coordinating Director
+    term: Coordinating Director
+  - id: Coordinating Producer
+    term: Coordinating Producer
+  - id: Copyright Holder
+    term: Copyright Holder
   - id: Costume Designer
     term: Costume Designer
   - id: Describer
@@ -39,8 +61,14 @@ terms:
     term: Director
   - id: Director of Photographer
     term: Director of Photographer
+  - id: Distributor
+    term: Distributor
   - id: Editor
     term: Editor
+  - id: Engineer
+    term: Engineer
+  - id: Executive Director
+    term: Executive Director
   - id: Executive Producer
     term: Executive Producer
   - id: Filmmaker
@@ -55,6 +83,8 @@ terms:
     term: Guest
   - id: Host
     term: Host
+  - id: Illustrator
+    term: Illustrator
   - id: Interviewee
     term: Interviewee
   - id: Interviewer
@@ -79,20 +109,44 @@ terms:
     term: Performing Group
   - id: Photographer
     term: Photographer
-  - id: Producers
+  - id: Presenter
+    term: Presenter
+  - id: Producer
     term: Producer
+  - id: Production Manager
+    term: Production Manager
   - id: Production Unit
     term: Production Unit
+  - id: Program Associate
+    term: Program Associate
+  - id: Project Coordinator
+    term: Project Coordinator
+  - id: Project Director
+    term: Project Director
+  - id: Project Supervisor
+    term: Project Supervisor
+  - id: Publisher
+    term: Publisher
   - id: Recoding Engineer
     term: Recoding Engineer
   - id: Reporter
     term: Reporter
+  - id: Screenwriter
+    term: Screenwriter
   - id: Set Designer
     term: Set Designer
+  - id: Sound Designer
+    term: Sound Designer
   - id: Sound Editor
     term: Sound Editor
   - id: Speaker
     term: Speaker
+  - id: Sponsor
+    term: Sponsor
+  - id: Story Supervisor
+    term: Story Supervisor
+  - id: Supervisory Producer
+    term: Supervisory Producer
   - id: Technical Director
     term: Technical Director
   - id: Video Engineer

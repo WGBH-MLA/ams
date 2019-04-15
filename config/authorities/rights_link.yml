@@ -2,7 +2,7 @@ terms:
   - id: http://rightsstatements.org/page/InC/1.0/?language=en
     term: In Copyright
   - id: http://rightsstatements.org/page/CNE/1.0/?language=en
-    term: Copyright Not Evaluation
+    term: Copyright Not Evaluated
   - id: https://creativecommons.org/licenses/by-nc-nd/2.0/
     term: CC BY-NC-ND
   - id: https://creativecommons.org/licenses/by-nc-sa/2.0/
@@ -11,5 +11,5 @@ terms:
     term: CC BY-NC
   - id: https://creativecommons.org/licenses/by/2.0/
     term: CC BY
-  - id: https://creativecommons.org/publicdomain/zero/1.0/    
+  - id: https://creativecommons.org/publicdomain/zero/1.0/
     term: CC0
