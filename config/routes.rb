@@ -50,6 +50,6 @@ Rails.application.routes.draw do
 
   get 'pb_to_aapb', to: 'catalog#pb_to_aapb_form'
   post 'pb_to_aapb', to: 'catalog#pb_to_aapb'
-
+  post 'validate_ids', to: 'catalog#validate_ids'
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
 end

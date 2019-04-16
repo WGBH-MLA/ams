@@ -486,6 +486,34 @@ class CatalogController < ApplicationController
   # def pb_to_aapb_form
   # end
 
+  def validate_ids
+
+    requested_ids = split_and_validate_ids(params[:id_field])
+    # bad input
+    render json: {error: "There was a problem parsing your IDs. Please check your input and try again."} unless requested_ids
+
+    query = ""
+    if requested_ids.count > 1
+      requested_ids.each_with_index do |id, index|
+        next if index == (requested_ids.count-1)
+        query += %(#{id} OR )
+      end
+    end
+
+    query += %(#{requested_ids.last})
+
+    response, response_documents = search_results({q: query})
+
+    found_ids = Set.new(response_documents.map(&:id))
+    requested_ids = Set.new(requested_ids)
+    missing_ids = requested_ids ^ found_ids
+
+    all_valid = missing_ids.count == 0 ? true : false
+    id_response = {all_valid: all_valid}
+    id_response[:missing_ids] = missing_ids unless missing_ids.empty?
+    render json: id_response
+  end
+
   def pb_to_aapb
     # -get set of ids from form + click 'push to aapb'
     # -pull solr_documents from list of ids
@@ -498,17 +526,26 @@ class CatalogController < ApplicationController
       return render 'pb_to_aapb_form'
     end
 
-    inner_query = ""
+    # inner_query = ""
+    # if ids.count > 1
+    #   ids.each do |id|
+    #     inner_query += %(id: "#{id}" OR )
+    #   end
+    # else
+    #   inner_query = %(id: "#{ids.first}")
+    # end
+    # # require allathese ids
+    # query = %(+(#{inner_query}))
+    query = ""
     if ids.count > 1
-      ids.each do |id|
-        inner_query += %(id: "#{id}" OR )
+      ids.each_with_index do |id, index|
+        next if index == (ids.count-1)
+        query += %(#{id} OR )
       end
-    else
-      inner_query = %(id: "#{ids.first}")
     end
-    # require allathese ids
-    query = %(+(#{inner_query}))
-    query_params = {fq: query}
+    query += %(#{ids.last})
+    query_params = {q: query}
+
     query_params[:format] = 'zip-pbcore'
     query_params.delete :page
     query_params.delete :per_page

@@ -1,0 +1,37 @@
+<form action="/pb_to_aapb" method="post">
+  <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
+  <textarea id="id_field" type="text" name="id_field" placeholder="GUIDs (one per line)">
+    <%= params[:id_field] %>
+  </textarea>
+  <input type="submit" value="Send To AAPB" name="">
+</form>
+
+<div id="valid-box">
+</div>
+
+<script type="text/javascript">
+  
+  $(document).ready(function() {
+    $('#id_field').on('change textInput input', function() {
+      
+      $.post('/validate_ids', { id_field: $(this).val() }, function(resp) {
+        console.log(resp)
+
+        var message;
+        if(resp.all_valid) {
+          message = "All Clear, Chief!";
+          $('#valid-box').addClass("green").removeClass("red");
+        } else if(resp.error) {
+          message = error;
+          $('#valid-box').addClass("green").removeClass("red");     
+        } else {
+          message = "The following IDs were not found (" + resp.missing_ids.length + "): " + resp.missing_ids;
+          $('#valid-box').addClass("red").removeClass("green");
+        }
+
+        $('#valid-box').text(message);
+      })
+    });
+  });
+
+</script>
