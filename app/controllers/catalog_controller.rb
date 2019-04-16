@@ -494,8 +494,8 @@ class CatalogController < ApplicationController
     # ids = params[:id_field].split(/\s/).reject(&:empty?)
     ids = split_and_validate_ids(params[:id_field])
     unless ids
-      flash[:error] = "That was not good."
-      redirect_to '/pb_to_aapb' && return
+      flash[:error] = "There was a problem with your IDs, please try again."
+      render 'pb_to_aapb_form'
     end
 
     inner_query = ""
