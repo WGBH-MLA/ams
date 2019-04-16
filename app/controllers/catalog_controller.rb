@@ -490,7 +490,7 @@ class CatalogController < ApplicationController
 
     requested_ids = split_and_validate_ids(params[:id_field])
     # bad input
-    render json: {error: "There was a problem parsing your IDs. Please check your input and try again."} unless requested_ids
+    return render json: {error: "There was a problem parsing your IDs. Please check your input and try again."} unless requested_ids
 
     query = ""
     if requested_ids.count > 1
@@ -511,6 +511,7 @@ class CatalogController < ApplicationController
     all_valid = missing_ids.count == 0 ? true : false
     id_response = {all_valid: all_valid}
     id_response[:missing_ids] = missing_ids unless missing_ids.empty?
+    id_response[:id_query] = query
     render json: id_response
   end
 
@@ -526,16 +527,6 @@ class CatalogController < ApplicationController
       return render 'pb_to_aapb_form'
     end
 
-    # inner_query = ""
-    # if ids.count > 1
-    #   ids.each do |id|
-    #     inner_query += %(id: "#{id}" OR )
-    #   end
-    # else
-    #   inner_query = %(id: "#{ids.first}")
-    # end
-    # # require allathese ids
-    # query = %(+(#{inner_query}))
     query = ""
     if ids.count > 1
       ids.each_with_index do |id, index|

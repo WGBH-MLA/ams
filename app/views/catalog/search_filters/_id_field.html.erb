@@ -15,12 +15,15 @@
     $('#id_field').on('change textInput input', function() {
       
       $.post('/validate_ids', { id_field: $(this).val() }, function(resp) {
-        console.log(resp)
 
         var message;
         if(resp.all_valid) {
           message = "All Clear, Chief!";
           $('#valid-box').addClass("green").removeClass("red");
+
+          // var url = window.location.href;
+          // window.location.href = url + '?' + resp.id_query;
+
         } else if(resp.error) {
           message = error;
           $('#valid-box').addClass("green").removeClass("red");     
