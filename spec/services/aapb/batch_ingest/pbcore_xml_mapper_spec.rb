@@ -18,7 +18,7 @@ RSpec.describe AAPB::BatchIngest::PBCoreXMLMapper, :pbcore_xpath_helper do
       :subject]
     end
 
-    let(:attrs_with_xpath_shortcuts) { attr_names - [:title, :description, :spatial_coverage, :temporal_coverage, :id] }
+    let(:attrs_with_xpath_shortcuts) { attr_names - [:title, :description, :spatial_coverage, :temporal_coverage, :id, :holding_organization] }
     let(:attrs) { subject.asset_attributes }
 
     it 'maps all attributes from PBCore XML' do
@@ -38,7 +38,7 @@ RSpec.describe AAPB::BatchIngest::PBCoreXMLMapper, :pbcore_xpath_helper do
       # Check :title, :description, :id separately with specific helpers.
       expect(attrs[:title]).to        eq pbcore_xpath_helper(pbcore_xml).titles_without_type
       expect(attrs[:description]).to  eq pbcore_xpath_helper(pbcore_xml).descriptions_without_type
-      expect(attrs[:id]). to          eq pbcore_xpath_helper(pbcore_xml).ams_id
+      expect(attrs[:id]).to           eq pbcore_xpath_helper(pbcore_xml).ams_id
     end
 
     it 'maps Contribution data from PBCore XML' do
@@ -59,7 +59,7 @@ RSpec.describe AAPB::BatchIngest::PBCoreXMLMapper, :pbcore_xpath_helper do
 
     let(:single_value_attr_names) do
       [ :standard, :format, :location, :media_type, :duration, :colors, :tracks,
-        :channel_configuration, :alternative_modes, :digitization_date ]
+        :channel_configuration, :alternative_modes, :digitization_date, :holding_organization ]
     end
 
     it 'maps all attributes from PBCore XML' do

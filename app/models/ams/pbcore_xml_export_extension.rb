@@ -38,7 +38,7 @@ module AMS::PbcoreXmlExportExtension
     xml.pbcoreIdentifier(source: 'http://americanarchiveinventory.org') { xml.text(id) }
 
     # Titles
-    self['title'].to_a.each { |title| xml.pbcoreTitle { xml.text(title) } }
+    self['title_tesim'].to_a.each { |title| xml.pbcoreTitle { xml.text(title) } }
     series_title.to_a.each { |title| xml.pbcoreTitle(source: 'Series') { xml.text(title) } }
     program_title.to_a.each { |title| xml.pbcoreTitle(source: 'Program') { xml.text(title) } }
     episode_title.to_a.each { |title| xml.pbcoreTitle(source: 'Episode') { xml.text(title) } }
@@ -49,7 +49,7 @@ module AMS::PbcoreXmlExportExtension
     raw_footage_title.to_a.each { |title| xml.pbcoreTitle(source: 'Raw Footage') { xml.text(title) } }
 
     # Descriptions
-    self['description'].to_a.each { |description| xml.pbcoreDescription { xml.text(description) } }
+    self['description_tesim'].to_a.each { |description| xml.pbcoreDescription { xml.text(description) } }
     series_description.to_a.each { |description| xml.pbcoreDescription(source: 'Series') { xml.text(description) } }
     program_description.to_a.each { |description| xml.pbcoreDescription(source: 'Program') { xml.text(description) } }
     episode_description.to_a.each { |description| xml.pbcoreDescription(source: 'Episode') { xml.text(description) } }

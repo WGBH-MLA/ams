@@ -83,6 +83,7 @@ module PBCoreXPathHelper
         tracks:                         '//instantiationTracks',
         channel_configuration:          '//instantiationChannelConfiguration',
         digitization_date:              '//instantiationDate[@dateType="Digitized"]',
+        holding_organization:           '//instantiationAnnotation[@annotationType="Organization"]',
 
         ess_track_type:                 '//essenceTrackType',
         ess_track_id:                   '//essenceTrackIdentifier',
@@ -97,11 +98,7 @@ module PBCoreXPathHelper
         ess_annotations:                '//essenceTrackAnnotation',
         ess_time_start:                 '//essenceTrackTimeStart'
 
-        # pending unitsOfMeasure renaming
-        # playback_inch_per_sec
-        # playback_frame_per_sec
-
-        # essenceTrackLanguage
+ 
       }
     end
 
