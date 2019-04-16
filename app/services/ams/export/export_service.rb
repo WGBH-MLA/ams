@@ -58,14 +58,10 @@ module AMS
         if aapb_key_path && aapb_host.present? && filepath.present?
           Sidekiq::Logging.logger.warn "Trying to run this -- ssh -t #{aapb_key_path} ec2-user@#{aapb_host} 'cd /home/ec2-user/ingest_zips && unzip #{filename} && cd /var/www/aapb/current && RAILS_ENV=production bundle exec ruby scripts/download_clean_ingest.rb --files /home/ec2-user/ingest_zips/*.xml'"
 
-          # `scp #{aapb_key_path} #{filepath} scp-guy@#{aapb_host}:/home/scp-guy/#{filename}`
-          # `ssh #{aapb_key_path} scp-guy@#{aapb_host} 'cd /home/scp-guy/ && unzip #{filename} && cd /var/www/aapb/current && RAILS_ENV=production bundle exec ruby scripts/download_clean_ingest.rb --dirs #{filename}'`
-          
-
           `scp #{aapb_key_path} #{filepath} ec2-user@#{aapb_host}:/home/ec2-user/ingest_zips/#{filename}`
-          # `ssh -t #{aapb_key_path} ec2-user@#{aapb_host}  "ruby -e'print :hello'"`
-          puts `ssh -t #{aapb_key_path} ec2-user@#{aapb_host} 'cd /home/ec2-user/ingest_zips && unzip #{filename} && cd /var/www/aapb/current && RAILS_ENV=production /usr/bin/ruby scripts/download_clean_ingest.rb --files /home/ec2-user/ingest_zips/*.xml'`
-
+          output =  `ssh -t #{aapb_key_path} ec2-user@#{aapb_host} 'cd /home/ec2-user/ingest_zips && unzip #{filename} && cd /var/www/aapb/current && RAILS_ENV=production /usr/bin/ruby scripts/download_clean_ingest.rb --files /home/ec2-user/ingest_zips/*.xml'`
+          puts output
+          Ams2Mailer.scp_to_aapb_notification(user, output).deliver_later
         end
         # raise "YAY"
       end

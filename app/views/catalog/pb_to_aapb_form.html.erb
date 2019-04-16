@@ -1,7 +1,3 @@
-<div>
-  <%= flash[:error] %>
-</div>
-
 <form action="/pb_to_aapb" method="post">
   <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
   <textarea type="text" name="id_field" placeholder="GUIDs (one per line)"></textarea>

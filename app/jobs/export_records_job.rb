@@ -15,7 +15,6 @@ class ExportRecordsJob < ApplicationJob
 
     format = search_params[:format]
     search_params.delete(:format)
-    Sidekiq::Logging.logger.warn "Searching wiht searchdparam #{search_params}"
     response, response_documents = search_results(search_params)
     
     if format == "csv"
@@ -23,7 +22,6 @@ class ExportRecordsJob < ApplicationJob
     elsif format == "pbcore"
       export_data = AMS::Export::DocumentsToPbcoreXml.new(response_documents)
     elsif format == 'zip-pbcore'
-      Sidekiq::Logging.logger.warn "Generating ZIPP PBCORE THING"
       export_data = AMS::Export::DocumentsToZippedPbcore.new(response_documents)
     else
       raise "Unknown export format"
@@ -33,8 +31,6 @@ class ExportRecordsJob < ApplicationJob
     if format == 'zip-pbcore'
       # TODO: add notification for aapb copy
       # use @file_path var to send zip from tmp location to aapb
-      Sidekiq::Logging.logger.warn "Ready to run scp_to_aapb"
-
       export_data.process do
         export_data.scp_to_aapb
       end

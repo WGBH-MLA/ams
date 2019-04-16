@@ -495,7 +495,7 @@ class CatalogController < ApplicationController
     ids = split_and_validate_ids(params[:id_field])
     unless ids
       flash[:error] = "There was a problem with your IDs, please try again."
-      render 'pb_to_aapb_form'
+      return render 'pb_to_aapb_form'
     end
 
     inner_query = ""
@@ -516,7 +516,8 @@ class CatalogController < ApplicationController
     query_params.delete :controller
     query_params.delete :locale
     ExportRecordsJob.perform_later(query_params, current_user)
-    redirect_to '/pb_to_aapb'
+    flash[:notice] = "Your IDs have been accepted."
+    render 'pb_to_aapb_form'
   end
 
   def export

@@ -72,15 +72,15 @@ module AMS::PbcoreXmlExportExtension
     # Spatial Coverage
     spatial_coverage.to_a.each do |coverage|
       xml.pbcoreCoverage do |coverage_node|
-        coverage_node.coverage(source: 'Wikipedia', ref: 'http://en.wikipedia.org/wiki/Werowocomoco') { coverage_node.text(coverage) }
-        coverage_node.coverageType(source: 'PBCore coverageType', ref: 'http://pbcore.org/vocabularies/coverageType#spatial') { coverage_node.text('Spatial') }
+        coverage_node.coverage { coverage_node.text(coverage) }
+        coverage_node.coverageType { coverage_node.text('Spatial') }
       end
     end
     # Temporal Coverage
     temporal_coverage.to_a.each do |coverage|
       xml.pbcoreCoverage do |coverage_node|
-        coverage_node.coverage(source: 'Wikipedia', ref: 'http://en.wikipedia.org/wiki/Werowocomoco') { coverage_node.text(coverage) }
-        coverage_node.coverageType(source: 'PBCore coverageType', ref: 'http://pbcore.org/vocabularies/coverageType#spatial') { coverage_node.text('Temporal') }
+        coverage_node.coverage { coverage_node.text(coverage) }
+        coverage_node.coverageType { coverage_node.text('Temporal') }
       end
     end
 
