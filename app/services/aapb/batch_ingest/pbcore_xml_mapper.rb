@@ -53,6 +53,7 @@ module AAPB
           attrs[:segment_title]               = grouped_titles["segment"] if grouped_titles["segment"]
           attrs[:clip_title]                  = grouped_titles["clip"] if grouped_titles["clip"]
           attrs[:promo_title]                 = grouped_titles["promo"] if grouped_titles["promo"]
+          attrs[:series_title]                = grouped_titles["series"] if grouped_titles["series"]
           attrs[:raw_footage_title]           = grouped_titles["raw footage"] if grouped_titles["raw footage"]
           attrs[:episode_number]              = grouped_titles["episode number"] if grouped_titles["episode number"]
 
@@ -61,11 +62,12 @@ module AAPB
           descriptions_no_type = grouped_descriptions.slice!(*desc_types)
           attrs[:description]                 = descriptions_no_type.values.flatten
           attrs[:episode_description]         = (grouped_descriptions.fetch("episode", []) + grouped_descriptions.fetch("episode description", []))
-          attrs[:program_description]         = grouped_descriptions["program"] if grouped_descriptions["program"]
-          attrs[:segment_description]         = grouped_descriptions["segment"] if grouped_descriptions["segment"]
-          attrs[:clip_description]            = grouped_descriptions["clip"] if grouped_descriptions["clip"]
-          attrs[:promo_description]           = grouped_descriptions["promo"] if grouped_descriptions["promo"]
-          attrs[:raw_footage_description]     = grouped_descriptions["raw footage"] if grouped_descriptions["raw footage"]
+          attrs[:series_description]          = (grouped_descriptions.fetch("series", []) + grouped_descriptions.fetch("series description", []))
+          attrs[:program_description]         = (grouped_descriptions.fetch("program", []) + grouped_descriptions.fetch("program description", []))
+          attrs[:segment_description]         = (grouped_descriptions.fetch("segment", []) + grouped_descriptions.fetch("segment description", []))
+          attrs[:clip_description]            = (grouped_descriptions.fetch("clip", []) + grouped_descriptions.fetch("clip description", []))
+          attrs[:promo_description]           = (grouped_descriptions.fetch("promo", []) + grouped_descriptions.fetch("promo description", []))
+          attrs[:raw_footage_description]     = (grouped_descriptions.fetch("raw footage", []) + grouped_descriptions.fetch("raw footage description", []))
 
           attrs[:audience_level]              = pbcore.audience_levels.map(&:value)
           attrs[:audience_rating]             = pbcore.audience_ratings.map(&:value)
@@ -87,7 +89,11 @@ module AAPB
           attrs[:sonyci_id]                   = grouped_identifiers["sony ci"] if grouped_identifiers["sony ci"]
 
           attrs[:subject]                     = pbcore.subjects.map(&:value)
-          attrs[:contributors]                = contributor_attributes(pbcore.contributors)
+
+          creator_orgs, creator_people        = pbcore.creators.partition { |pbcreator| pbcreator.role.value == 'Producing Organization' }
+          all_people = pbcore.contributors + pbcore.publishers + creator_people
+          attrs[:contributors]                = people_attributes(all_people)
+          attrs[:producing_organization]      = creator_orgs.map {|co| co.creator.value}
         end
       end
 
@@ -107,15 +113,30 @@ module AAPB
         id.gsub('cpb-aacip/', 'cpb-aacip_') if id
       end
 
-      def contributor_attributes(contributors)
-        contributors.map do |contributor_node|
-          {
-            contributor: (contributor_node.contributor.value if contributor_node.contributor),
-            contributor_role: (contributor_node.role.value if contributor_node.role),
-            affiliation: (contributor_node.contributor.affiliation if contributor_node.contributor),
-            portrayal: (contributor_node.role.portrayal if contributor_node.role),
-          }
+      def people_attributes(people)
+        people.map do |person_node|
+          person = if person_node.is_a? PBCore::Contributor
+            person_node.contributor 
+          elsif person_node.is_a? PBCore::Publisher
+            person_node.publisher
+          elsif person_node.is_a? PBCore::Creator
+            person_node.creator
+          end
+
+          role = person_node.role
+          person_attributes(person, role)
         end
+      end
+
+      def person_attributes(person, role)
+        {
+          contributor: (person.value if person),
+          contributor_role: (role.value if role),
+          # pbcorecontributor ONLY v 
+          affiliation: (person.affiliation if defined? person.affiliation),
+          portrayal: (role.portrayal if role && defined? role.portrayal),
+        }
+
       end
 
       def physical_instantiation_attributes
@@ -129,7 +150,6 @@ module AAPB
           attrs[:format] = pbcore.digital.value || nil
         end
       end
-
 
       def instantiation_attributes
         @instantiation_attributes ||= {}.tap do |attrs|
@@ -150,6 +170,10 @@ module AAPB
           attrs[:tracks]                          = pbcore.tracks&.value
           attrs[:channel_configuration]           = pbcore.channel_configuration&.value
           attrs[:alternative_modes]               = pbcore.alternative_modes&.value
+
+          orgs, annotations = pbcore.annotations.partition { |anno| anno.type && anno.type.downcase == 'organization' }
+          attrs[:holding_organization] = orgs.first.value if orgs.present?
+          attrs[:annotation] = annotations.map(&:value)
         end
       end
 
@@ -162,8 +186,6 @@ module AAPB
           attrs[:encoding] = pbcore.encoding.value if pbcore.encoding
           attrs[:data_rate] = pbcore.data_rate.value if pbcore.data_rate
           attrs[:frame_rate] = pbcore.frame_rate.value if pbcore.frame_rate
-          # attrs[:playback_inch_per_sec] = pbcore.playback_speed.value if pbcore.playback_speed
-          # attrs[:playback_frame_per_sec] = pbcore.playback_speed.value if pbcore.playback_speed
           attrs[:sample_rate] = pbcore.sampling_rate.value if pbcore.sampling_rate
           attrs[:bit_depth] = pbcore.bit_depth.value if pbcore.bit_depth
 
@@ -213,11 +235,11 @@ module AAPB
         end
 
         def title_types
-          @title_types ||= ['program', 'episode', 'episode title', 'episode number', 'segment', 'clip', 'promo', 'raw footage']
+          @title_types ||= ['program', 'episode', 'episode title', 'episode number', 'segment', 'clip', 'promo', 'raw footage', 'series']
         end
 
         def desc_types
-          @desc_types ||= ["program","segment","clip","promo","raw footage","episode","episode description",]
+          @desc_types ||= ['program','segment','clip','promo','footage','episode','series','raw footage','program description','segment description','clip description','promo description','raw footage description','episode description','series description']
         end
     end
   end

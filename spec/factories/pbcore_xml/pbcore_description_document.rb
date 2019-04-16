@@ -68,7 +68,7 @@ FactoryBot.define do
 
       instantiations do
         [
-          build(:pbcore_instantiation, :digital)
+          build(:pbcore_instantiation, :digital, :aapb_holding)
         ]
       end
 
