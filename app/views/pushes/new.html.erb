@@ -1,6 +1,7 @@
-<form action="/pb_to_aapb" method="post">
+
+<form action="/pushes" method="post">
   <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
-  <textarea id="id_field" type="text" name="id_field" placeholder="GUIDs (one per line)">
+  <textarea style="width:100%;" id="id_field" type="text" name="id_field" placeholder="GUIDs (one per line)">
     <%= params[:id_field] %>
   </textarea>
   <input type="submit" value="Send To AAPB" name="">
@@ -10,22 +11,22 @@
 </div>
 
 <script type="text/javascript">
-  
-  $(document).ready(function() {
+  $(document).on('turbolinks:load', function() {
+
+    // console.log('load')
     $('#id_field').on('change textInput input', function() {
+    // $('#id_field').on('change', function() {
+      // console.log('fired')
       
-      $.post('/validate_ids', { id_field: $(this).val() }, function(resp) {
+      $.post('/pushes/validate_ids', { id_field: $(this).val() }, function(resp) {
+        // console.log('posted')
 
         var message;
         if(resp.all_valid) {
-          message = "All Clear, Chief!";
+          message = "All GUIDs are valid!";
           $('#valid-box').addClass("green").removeClass("red");
-
-          // var url = window.location.href;
-          // window.location.href = url + '?' + resp.id_query;
-
         } else if(resp.error) {
-          message = error;
+          message = resp.error;
           $('#valid-box').addClass("green").removeClass("red");     
         } else {
           message = "The following IDs were not found (" + resp.missing_ids.length + "): " + resp.missing_ids;
@@ -33,8 +34,8 @@
         }
 
         $('#valid-box').text(message);
-      })
+        // console.log('texted')
+      });
     });
   });
-
 </script>

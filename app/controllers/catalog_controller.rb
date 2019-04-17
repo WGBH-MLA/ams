@@ -2,7 +2,6 @@ class CatalogController < ApplicationController
   include Hydra::Catalog
   include Hydra::Controller::ControllerBehavior
   include BlacklightAdvancedSearch::Controller
-  include ApplicationHelper
 
   # This filter applies the hydra access controls
   before_action :enforce_show_permissions, only: :show
@@ -35,7 +34,7 @@ class CatalogController < ApplicationController
     config.default_solr_params = {
       qt: "search",
       rows: 10,
-      qf: "title_tesim description_tesim creator_tesim keyword_tesim"
+      qf: "title_tesim description_tesim creator_tesim keyword_tesim",
     }
 
     # solr field configuration for document/show views
@@ -486,67 +485,67 @@ class CatalogController < ApplicationController
   # def pb_to_aapb_form
   # end
 
-  def validate_ids
+  # def validate_ids
+  #   requested_ids = split_and_validate_ids(params[:id_field])
+  #   # bad input
+  #   return render json: {error: "There was a problem parsing your IDs. Please check your input and try again."} unless requested_ids && requested_ids.count > 1
 
-    requested_ids = split_and_validate_ids(params[:id_field])
-    # bad input
-    return render json: {error: "There was a problem parsing your IDs. Please check your input and try again."} unless requested_ids
+  #   query = ""
+  #   if requested_ids.count > 1
+  #     requested_ids.each_with_index do |id, index|
+  #       next if index == (requested_ids.count-1)
+  #       query += %(#{id} OR )
+  #     end
+  #   end
 
-    query = ""
-    if requested_ids.count > 1
-      requested_ids.each_with_index do |id, index|
-        next if index == (requested_ids.count-1)
-        query += %(#{id} OR )
-      end
-    end
+  #   query += %(#{requested_ids.last})
+  #   response, response_documents = search_results({q: query})
 
-    query += %(#{requested_ids.last})
+  #   found_ids_set = Set.new( response_documents.map(&:id) )
+  #   requested_ids_set = Set.new(requested_ids)
 
-    response, response_documents = search_results({q: query})
+  #   # get exclusive items, remove those exclusive to found_ids
+  #   missing_ids = (requested_ids_set ^ found_ids_set).subtract(found_ids_set)
 
-    found_ids = Set.new(response_documents.map(&:id))
-    requested_ids = Set.new(requested_ids)
-    missing_ids = requested_ids ^ found_ids
+  #   all_valid = missing_ids.count == 0 ? true : false
+  #   id_response = {all_valid: all_valid}
+  #   id_response[:missing_ids] = missing_ids unless missing_ids.empty?
+  #   id_response[:id_query] = query
+  #   render json: id_response
+  # end
 
-    all_valid = missing_ids.count == 0 ? true : false
-    id_response = {all_valid: all_valid}
-    id_response[:missing_ids] = missing_ids unless missing_ids.empty?
-    id_response[:id_query] = query
-    render json: id_response
-  end
+  # def pb_to_aapb
+  #   # -get set of ids from form + click 'push to aapb'
+  #   # -pull solr_documents from list of ids
+  #   # -render xml for each, and zip dat
+  #   # -return zip
+  #   # ids = params[:id_field].split(/\s/).reject(&:empty?)
+  #   ids = split_and_validate_ids(params[:id_field])
+  #   unless ids
+  #     flash[:error] = "There was a problem with your IDs, please try again."
+  #     return render 'pb_to_aapb_form'
+  #   end
 
-  def pb_to_aapb
-    # -get set of ids from form + click 'push to aapb'
-    # -pull solr_documents from list of ids
-    # -render xml for each, and zip dat
-    # -return zip
-    # ids = params[:id_field].split(/\s/).reject(&:empty?)
-    ids = split_and_validate_ids(params[:id_field])
-    unless ids
-      flash[:error] = "There was a problem with your IDs, please try again."
-      return render 'pb_to_aapb_form'
-    end
+  #   query = ""
+  #   if ids.count > 1
+  #     ids.each_with_index do |id, index|
+  #       next if index == (ids.count-1)
+  #       query += %(#{id} OR )
+  #     end
+  #   end
+  #   query += %(#{ids.last})
+  #   query_params = {q: query}
 
-    query = ""
-    if ids.count > 1
-      ids.each_with_index do |id, index|
-        next if index == (ids.count-1)
-        query += %(#{id} OR )
-      end
-    end
-    query += %(#{ids.last})
-    query_params = {q: query}
-
-    query_params[:format] = 'zip-pbcore'
-    query_params.delete :page
-    query_params.delete :per_page
-    query_params.delete :action
-    query_params.delete :controller
-    query_params.delete :locale
-    ExportRecordsJob.perform_later(query_params, current_user)
-    flash[:notice] = "Your IDs have been accepted."
-    render 'pb_to_aapb_form'
-  end
+  #   query_params[:format] = 'zip-pbcore'
+  #   query_params.delete :page
+  #   query_params.delete :per_page
+  #   query_params.delete :action
+  #   query_params.delete :controller
+  #   query_params.delete :locale
+  #   ExportRecordsJob.perform_later(query_params, current_user)
+  #   flash[:notice] = "Your IDs have been accepted."
+  #   render 'pb_to_aapb_form'
+  # end
 
   def export
     search_params = params.dup

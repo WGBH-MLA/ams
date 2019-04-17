@@ -48,8 +48,16 @@ Rails.application.routes.draw do
 
   resources 'media', only: [:show]
 
-  get 'pb_to_aapb', to: 'catalog#pb_to_aapb_form'
-  post 'pb_to_aapb', to: 'catalog#pb_to_aapb'
-  post 'validate_ids', to: 'catalog#validate_ids'
+  # get 'pb_to_aapb', to: 'catalog#pb_to_aapb_form'
+  # post 'pb_to_aapb', to: 'catalog#pb_to_aapb'
+  # post 'validate_ids', to: 'catalog#validate_ids'
+  resources :pushes, only: [:index,:show,:new,:create] do
+    collection do
+      post 'validate_ids', to: 'pushes#validate_ids'
+      get 'transfer_query', to: 'pushes#transfer_query'
+    end
+  end
+
+
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
 end
