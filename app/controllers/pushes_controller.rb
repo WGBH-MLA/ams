@@ -4,14 +4,12 @@ class PushesController < ApplicationController
 
   def index
     # show all previous pushes
+    @pushes = Push.all
   end
 
   def show
     # view results of push
-  end
-
-  def new
-    # render 'pb_to_aapb_form'
+    @push = Push.find(params[:id])
   end
 
   def create

@@ -1,10 +1,10 @@
 
 <form action="/pushes" method="post">
   <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
-  <textarea style="width:100%;" id="id_field" type="text" name="id_field" placeholder="GUIDs (one per line)">
+  <textarea style="width:100%; height: 12vw;" id="id_field" type="text" name="id_field" placeholder="GUIDs (one per line)">
     <%= params[:id_field] %>
   </textarea>
-  <input type="submit" value="Send To AAPB" name="">
+  <input class="aapb-push-button" type="submit" value="Send To AAPB" name="">
 </form>
 
 <div id="valid-box">
@@ -37,5 +37,11 @@
         // console.log('texted')
       });
     });
+
+    if( $('#id_field').val().length > 0 ){
+      // validate if page loaded with ids
+      console.log('nice')
+      $('#id_field').trigger('change');
+    }
   });
 </script>

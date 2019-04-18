@@ -53,3 +53,26 @@ div.facets h3 {
 .red {
   color: red;
 }
+
+.aapb-push-button {
+  vertical-align: middle;
+  line-height: 20px;
+  font-size: 14px;
+  font-weight: 400;
+  display: inline-block;
+  color: #333;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  padding-top: 6px;
+  padding-left: 12px;
+  padding-right: 12px;
+  padding-bottom: 6px;
+  border-radius: 4px;
+}
+
+.aapb-push-button:hover {
+  background-color: #ddd;
+  border: 1px solid #bbb;
+  text-decoration: none;
+  color: #000;
+}

@@ -225,7 +225,7 @@ module AAPB
         end
 
         def desc_types
-          @desc_types ||= ["program","segment","clip","promo","footage","episode","series","program description","segment description","clip description","promo description","raw footage description","episode description","series description",]
+          @desc_types ||= ["program","segment","clip","promo","raw footage","episode","series","program description","segment description","clip description","promo description","raw footage description","episode description","series description",]
         end
     end
   end

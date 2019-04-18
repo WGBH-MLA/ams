@@ -1,1 +1,5 @@
-HERES DA PUSHES
+<h3>All Pushes</h3>
+
+<% @pushes.each do |push| %>
+  <%= link_to %(Push ##{push.id}), push %>
+<% end %>
