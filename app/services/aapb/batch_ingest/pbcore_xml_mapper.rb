@@ -48,7 +48,6 @@ module AAPB
           # pull out no-type titles, removing from grouped_titles
           titles_no_type = grouped_titles.slice!(*title_types)
           attrs[:title]                       = titles_no_type.values.flatten
-          # attrs[:episode_title]               = (grouped_titles.fetch("episode title", []) + grouped_titles.fetch("episode", []))
           attrs[:episode_title]               = grouped_titles["episode"] if grouped_titles["episode"]
           attrs[:program_title]               = grouped_titles["program"] if grouped_titles["program"]
           attrs[:segment_title]               = grouped_titles["segment"] if grouped_titles["segment"]
