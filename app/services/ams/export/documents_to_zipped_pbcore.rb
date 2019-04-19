@@ -1,5 +1,4 @@
 require 'zip'
-#NEW NEW NEW 
 # module AMS::Export
 # The module used to export the zip file containing PBCore XMLs
 module AMS::Export
@@ -11,8 +10,6 @@ module AMS::Export
     end
 
     def process_export
-      Sidekiq::Logging.logger.warn "Making Zip File right NOW"
-
       tmp_hash = []
       ::Zip::File.open(@file_path.path, Zip::File::CREATE) do |zip_file|
         @solr_documents.each do |doc|

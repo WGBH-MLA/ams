@@ -11,6 +11,6 @@
   </ul>
 </div>
 
-<% if request.env['QUERY_STRING'] && request.env['QUERY_STRING'].present? %>
+<% if can? :push_to_aapb, nil && request.env['QUERY_STRING'] && request.env['QUERY_STRING'].present? %>
   <a class="aapb-push-button" href="/pushes/transfer_query?<%= request.env['QUERY_STRING'] %>">Push To AAPB</a>
 <% end %>
