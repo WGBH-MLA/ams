@@ -1,3 +1,0 @@
-<% if request.env['QUERY_STRING'] && request.env['QUERY_STRING'].present? %>
-  <a class="aapb-push-button" href="/pushes/transfer_query?<%= request.env['QUERY_STRING'] %>">Push These Records To AAPB</a>
-<% end %>
