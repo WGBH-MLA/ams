@@ -74,7 +74,7 @@ RSpec.describe AAPB::BatchIngest::PBCoreXMLItemIngester, reset_data: false do
       # Instantiations, and a Physical Instantiation and ingest it. Use the
       # PBCore XML as the source data for a BatchItem instance, and then use the
       # PBCoreXMLItemIngester to ingest the BatchItem. The return value is an
-      # Asset model instance on which we can write our expectations.
+      # DigitalInstantiation model instance on which we can write our expectations.
       before :all do
         # Build the PBCore XML
         pbcore_xml = FactoryBot.build(:pbcore_instantiation_document, :media_info).to_xml
@@ -90,7 +90,7 @@ RSpec.describe AAPB::BatchIngest::PBCoreXMLItemIngester, reset_data: false do
           source_data: pbcore_xml
         )
 
-        # Ingest the BatchItem and use the returned Asset instance for testing.
+        # Ingest the BatchItem and use the returned DigitalInstantiation instance for testing.
         @instantiation = described_class.new(batch_item).ingest
         @essence_tracks = @instantiation.essence_tracks
       end
