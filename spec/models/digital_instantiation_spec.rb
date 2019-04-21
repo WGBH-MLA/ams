@@ -33,7 +33,7 @@ RSpec.describe DigitalInstantiation do
   context "standard" do
     let(:digital_instantiation) { FactoryBot.build(:digital_instantiation) }
     it "has standard" do
-      digital_instantiation.standard = ["Test standard"]
+      digital_instantiation.standard = "Test standard"
       expect(digital_instantiation.resource.dump(:ttl)).to match(/ebucore#hasStandard/)
       expect(digital_instantiation.standard.include?("Test standard")).to be true
     end

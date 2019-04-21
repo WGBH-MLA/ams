@@ -68,5 +68,41 @@ RSpec.describe AAPB::BatchIngest::PBCoreXMLItemIngester, reset_data: false do
         expect(@essence_tracks.count).to eq 12
       end
     end
+
+    context 'given a PBCore Instantiation Document with Essence Tracks' do
+      # Before all, build a PBCore Instantiation Document with Essence Tracks
+      # Instantiations, and a Physical Instantiation and ingest it. Use the
+      # PBCore XML as the source data for a BatchItem instance, and then use the
+      # PBCoreXMLItemIngester to ingest the BatchItem. The return value is an
+      # DigitalInstantiation model instance on which we can write our expectations.
+      before :all do
+        # Build the PBCore XML
+        pbcore_xml = FactoryBot.build(:pbcore_instantiation_document, :media_info).to_xml
+
+        asset = create(:asset, id: "123456")
+
+        # Use the PBCore XML as the source data for a BatchItem.
+        batch_item = build(
+          :batch_item,
+          batch: build(:batch, submitter_email: create(:user).email),
+          id_within_batch: "sample_digital_instantiation.xml",
+          source_location: File.join(fixture_path, "batch_ingest", "sample_pbcore_digital_instantiation", "digital_instantiation_manifest.xlsx"),
+          source_data: pbcore_xml
+        )
+
+        # Ingest the BatchItem and use the returned DigitalInstantiation instance for testing.
+        @instantiation = described_class.new(batch_item).ingest
+        @essence_tracks = @instantiation.essence_tracks
+      end
+
+      it 'creates a DigitalInstantiation' do
+        expect(@instantiation).to be_instance_of(DigitalInstantiation)
+      end
+
+      it 'creates an associated EssenceTrack' do
+        expect(@essence_tracks.count).to eq(1)
+      end
+
+    end
   end
 end
