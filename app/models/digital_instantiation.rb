@@ -6,6 +6,7 @@ class DigitalInstantiation < ActiveFedora::Base
 
   include ::Hyrax::WorkBehavior
   include ::AMS::CreateMemberMethods
+  include ::AMS::IdentifierService
 
   extend CarrierWave::Mount
   before_save :save_instantiation_admin_data
