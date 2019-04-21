@@ -53,7 +53,7 @@ class DigitalInstantiation < ActiveFedora::Base
     index.as :stored_searchable
   end
 
-  property :standard, predicate: ::RDF::URI.new("http://www.ebu.ch/metadata/ontologies/ebucore/ebucore#hasStandard"), multiple: true do |index|
+  property :standard, predicate: ::RDF::URI.new("http://www.ebu.ch/metadata/ontologies/ebucore/ebucore#hasStandard"), multiple: false do |index|
     index.as :stored_searchable
   end
 

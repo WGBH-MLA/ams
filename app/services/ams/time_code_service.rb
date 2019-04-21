@@ -6,7 +6,7 @@ module AMS
       end
 
       def regex_for_html
-        '\A(\d+:\d\d:\d\d|\d\d?:\d\d)(\.\d+)?\z'
+        '\A(\d+:\d\d:\d\d|\d\d?:\d\d)(\.\d+)?(\:\d{2})?(\;\d{2})?\z'
       end
     end
   end

@@ -8,6 +8,7 @@ FactoryBot.define do
                                 build(:pbcore_instantiation_identifier) ] }
     dates                   { [ build(:pbcore_instantiation_date), build(:pbcore_instantiation_date, :digitized) ] }
     dimensions              { [ build(:pbcore_instantiation_dimensions) ] }
+    digital                 { build(:pbcore_instantiation_digital) }
     physical                { build(:pbcore_instantiation_physical) }
     standard                { build(:pbcore_instantiation_standard) }
     location                { build(:pbcore_instantiation_location) }
@@ -23,5 +24,11 @@ FactoryBot.define do
     annotations             { [ build(:pbcore_instantiation_annotation, type: "Organization", value: "American Archive of Public Broadcasting") ] }
 
     initialize_with { new(attributes) }
+
+    trait :media_info do
+      physical          { }
+      generations       { }
+      essence_tracks    { [ build(:pbcore_instantiation_essence_track) ] }
+    end
   end
 end
