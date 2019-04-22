@@ -48,7 +48,7 @@ module AAPB
           # pull out no-type titles, removing from grouped_titles
           titles_no_type = grouped_titles.slice!(*title_types)
           attrs[:title]                       = titles_no_type.values.flatten
-          attrs[:episode_title]               = (grouped_titles.fetch("episode title", []) + grouped_titles.fetch("episode", []))
+          attrs[:episode_title]               = grouped_titles["episode"] if grouped_titles["episode"]
           attrs[:program_title]               = grouped_titles["program"] if grouped_titles["program"]
           attrs[:segment_title]               = grouped_titles["segment"] if grouped_titles["segment"]
           attrs[:clip_title]                  = grouped_titles["clip"] if grouped_titles["clip"]
@@ -116,7 +116,7 @@ module AAPB
       def people_attributes(people)
         people.map do |person_node|
           person = if person_node.is_a? PBCore::Contributor
-            person_node.contributor 
+            person_node.contributor
           elsif person_node.is_a? PBCore::Publisher
             person_node.publisher
           elsif person_node.is_a? PBCore::Creator
@@ -132,7 +132,7 @@ module AAPB
         {
           contributor: (person.value if person),
           contributor_role: (role.value if role),
-          # pbcorecontributor ONLY v 
+          # pbcorecontributor ONLY v
           affiliation: (person.affiliation if defined? person.affiliation),
           portrayal: (role.portrayal if role && defined? role.portrayal),
         }
