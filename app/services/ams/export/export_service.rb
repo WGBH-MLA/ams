@@ -47,6 +47,23 @@ module AMS
         end
         @s3_path = obj.public_url
       end
+
+      def scp_to_aapb(user)
+        # aapb_key_path = '-i /home/ec2-user/.ssh/aapb-zip-key.pem'
+        aapb_key_path = ""
+        filepath = @file_path.path
+        filename = File.basename(@file_path.path)
+
+        aapb_host = ENV['AAPB_HOST']
+        if aapb_key_path && aapb_host.present? && filepath.present?
+
+          `scp #{aapb_key_path} #{filepath} ec2-user@#{aapb_host}:/home/ec2-user/ingest_zips/#{filename}`
+          output =  `ssh -t #{aapb_key_path} ec2-user@#{aapb_host} 'cd /home/ec2-user/ingest_zips && unzip #{filename} && cd /var/www/aapb/current && RAILS_ENV=production /usr/bin/ruby scripts/download_clean_ingest.rb --stdout-log --files /home/ec2-user/ingest_zips/*.xml'`
+          Rails.logger.info output
+          Ams2Mailer.scp_to_aapb_notification(user, output).deliver_later
+        end
+        # raise "YAY"
+      end
     end
   end
 end

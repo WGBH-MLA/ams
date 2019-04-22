@@ -26,6 +26,10 @@ class Ability
     if current_user.admin?
       can [:create, :show, :add_user, :remove_user, :index, :edit, :update, :destroy], Role
       can [:create, :savenew, :new, :index, :edit, :update, :destroy], User
+
+      # push ids to AAPB
+      can [:index,:show,:new,:create,:validate_ids,:transfer_query], Push
+      can :push_to_aapb
     end
     if user_groups.include? 'aapb-admin'
       can [:create], AdminData
