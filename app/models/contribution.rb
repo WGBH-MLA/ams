@@ -2,6 +2,7 @@
 #  `rails generate hyrax:work Contribution`
 class Contribution < ActiveFedora::Base
   include ::Hyrax::WorkBehavior
+  include ::AMS::IdentifierService
 
   self.indexer = ContributionIndexer
   # Change this to restrict which works can be added as a child.

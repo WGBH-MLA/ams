@@ -1,6 +1,10 @@
 module GuidHelpers
   def guid_regex
-    /cpb-aacip_600-[0-9b-z][0-9b-z][0-9][0-9b-z][0-9b-z][0-9][0-9b-z][0-9b-z][0-9][0-9b-z]/i
+    # Regex for verifying valid ID format of...
+    # 1. "cpb-aacip-" prefix (required)
+    # 2. 1-3 digit number, followed by dash (optional)
+    # 3. 6+ digit number (required)
+    /cpb-aacip-(\d{1,3}\-)?[0-9a-z]{6,}/i
   end
 end
 
