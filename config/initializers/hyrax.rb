@@ -74,10 +74,10 @@ Hyrax.config do |config|
 
   # Hyrax uses NOIDs for files and collections instead of Fedora UUIDs
   # where NOID = 10-character string and UUID = 32-character string w/ hyphens
-  config.enable_noids = true
+  config.enable_noids = false
 
   # Template for your repository's NOID IDs
-  config.noid_template = "cpb-aacip_600-.reedeedeedk"
+  # config.noid_template = "cpb-aacip_600-.reedeedeedk"
 
   # Use the database-backed minter class
   # config.noid_minter_class = ActiveFedora::Noid::Minter::Db

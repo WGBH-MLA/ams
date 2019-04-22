@@ -2,6 +2,7 @@
 #  `rails generate hyrax:work EssenceTrack`
 class EssenceTrack < ActiveFedora::Base
   include ::Hyrax::WorkBehavior
+  include ::AMS::IdentifierService
 
   self.indexer = EssenceTrackIndexer
   # Change this to restrict which works can be added as a child.

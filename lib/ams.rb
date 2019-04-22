@@ -29,7 +29,9 @@ module AMS
       logger.info "Data reset complete in #{time.round(3)} seconds"
     end
 
-    private
+    def seeds; Seed; end
+
+    # private
 
       def fedora_status
         response = ActiveFedora.fedora.connection.head(ActiveFedora.fedora.base_uri)

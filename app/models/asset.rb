@@ -1,9 +1,7 @@
-# Generated via
-#  `rails generate hyrax:work Asset`
 class Asset < ActiveFedora::Base
   include ::Hyrax::WorkBehavior
   include ::AMS::CreateMemberMethods
-
+  include ::AMS::IdentifierService
 
   self.indexer = AssetIndexer
   before_save :save_admin_data
