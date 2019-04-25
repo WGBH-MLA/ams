@@ -69,6 +69,14 @@ module AAPB
           attrs[:promo_description]           = (grouped_descriptions.fetch("promo", []) + grouped_descriptions.fetch("promo description", []))
           attrs[:raw_footage_description]     = (grouped_descriptions.fetch("raw footage", []) + grouped_descriptions.fetch("raw footage description", []))
 
+          grouped_dates = categorize(pbcore.asset_dates)
+          # pull out no-type dates, removing from grouped_dates
+          dates_no_type = grouped_dates.slice!(*date_types)
+          attrs[:date]                        = dates_no_type.values.flatten
+          attrs[:broadcast_date]              = grouped_dates.fetch("broadcast", [])
+          attrs[:copyright_date]              = grouped_dates.fetch("copyright", [])
+          attrs[:created_date]                = grouped_dates.fetch("created", [])
+
           attrs[:audience_level]              = pbcore.audience_levels.map(&:value)
           attrs[:audience_rating]             = pbcore.audience_ratings.map(&:value)
           attrs[:asset_types]                 = pbcore.asset_types.map(&:value)
@@ -240,6 +248,10 @@ module AAPB
 
         def desc_types
           @desc_types ||= ['program','segment','clip','promo','footage','episode','series','raw footage','program description','segment description','clip description','promo description','raw footage description','episode description','series description']
+        end
+
+        def date_types
+          @date_types ||= ['broadcast', 'copyright', 'created']
         end
     end
   end

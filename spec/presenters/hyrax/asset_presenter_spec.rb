@@ -11,7 +11,7 @@ RSpec.describe Hyrax::AssetPresenter do
   context "asset_members" do
     describe "list_of_contribution_ids_to_display" do
       subject { presenter }
-      let(:asset) { build(:asset) }
+      let(:asset) { create(:asset) }
       let(:presenter) do
         described_class.new(SolrDocument.new(asset.to_solr), ability, request)
       end
@@ -37,7 +37,7 @@ RSpec.describe Hyrax::AssetPresenter do
 
     describe "list_of_instantiation_ids_to_display" do
       subject { presenter }
-      let(:asset) { build(:asset) }
+      let(:asset) { create(:asset) }
       let(:presenter) do
         described_class.new(SolrDocument.new(asset.to_solr), ability, request)
       end
@@ -96,7 +96,7 @@ RSpec.describe Hyrax::AssetPresenter do
 
     describe "display_aapb_admin_data?" do
       subject { presenter }
-      let(:asset) { build(:asset) }
+      let(:asset) { create(:asset) }
       let(:presenter) do
         described_class.new(SolrDocument.new(asset.to_solr), ability, request)
       end
@@ -138,7 +138,7 @@ RSpec.describe Hyrax::AssetPresenter do
 
   context "delegate_methods" do
     subject { presenter }
-    let(:asset) { build(:asset) }
+    let(:asset) { create(:asset) }
 
     let(:presenter) do
       described_class.new(SolrDocument.new(asset.to_solr), nil)

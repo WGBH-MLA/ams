@@ -1,6 +1,5 @@
 FactoryBot.define do
   factory :asset do
-    id { Noid::Rails::Service.new.mint }
     sequence(:title)         { |n| ["Test Asset #{n}"] }
     sequence(:description)   { |n| ["This is a description of Test Asset #{n}"] }
     asset_types  { ['Clip','Promo'] }

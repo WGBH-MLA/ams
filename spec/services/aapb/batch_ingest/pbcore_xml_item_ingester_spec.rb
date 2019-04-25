@@ -74,7 +74,7 @@ RSpec.describe AAPB::BatchIngest::PBCoreXMLItemIngester, reset_data: false do
         # This number reflects the Asset, the Digital Instantiations, the
         # Physical Instantiations, and the Essence Tracks coming from Physical
         # Instnatiations.
-        expect(@batch.batch_items.count).to eq 7
+        expect(@batch.batch_items.count).to eq 9
       end
     end
 

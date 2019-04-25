@@ -9,7 +9,7 @@ FactoryBot.define do
     role { PBCore::Contributor::Role.new(value: Faker::Job.title)  }
 
     trait :with_portrayal do
-      role { PBCore::Contributor::Role.new(value: Faker::Job.title, portrayal: Faker::GameOfThrones.character)  }      
+      role { PBCore::Contributor::Role.new(value: Faker::Job.title, portrayal: Faker::TvShows::GameOfThrones.character)  }      
     end
 
     trait :with_affiliation do

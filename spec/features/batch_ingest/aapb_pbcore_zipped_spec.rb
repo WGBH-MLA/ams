@@ -16,11 +16,28 @@ RSpec.feature "Ingest: AAPB PBCore - Zipped" do
                                                                         agent_type: 'group',
                                                                         access: 'deposit')
 
+      # Build a list of PBCore Description Documents, keeping it pretty small to
+      # avoid long ingest times.
+      @pbcore_description_documents = build_list(:pbcore_description_document, rand(2..4), :full_aapb)
+      @pbcore_description_documents.each do |pbcore_description_document|
+        pbcore_description_document.instantiations = [
+          # Add 1-3 Digital Instantiations
+          build_list(:pbcore_instantiation, rand(1..3), :digital),
+          # Add 1 Physical Instantiation
+          build(:pbcore_instantiation, :physical)
+        ].flatten
+
+        # Add 1-3 Essence Tracks for each instantiation
+        pbcore_description_document.instantiations.each do |instantiation|
+          instantiation.essence_tracks = build_list(:pbcore_instantiation_essence_track, rand(1..3))
+        end
+      end
+
+      zipped_batch = make_aapb_pbcore_zipped_batch(@pbcore_description_documents)
+
       # login_as @user
       # TODO: move this to more generic location.
-      # ActiveJob::Base.queue_adapter = :test
       ActiveJob::Base.queue_adapter = :inline
-      zipped_batch = zip_to_tmp(File.join(fixture_path, "batch_ingest", "aapb_pbcore_zipped", "assets_only"))
       @batch = run_batch_ingest(ingest_file_path: zipped_batch,
                                 ingest_type: 'aapb_pbcore_zipped',
                                 admin_set: @admin_set,
@@ -31,10 +48,17 @@ RSpec.feature "Ingest: AAPB PBCore - Zipped" do
     before { @batch.reload }
 
     it 'creates the correct number of batch item records' do
-      # Why 24? Because the fixture used in these tests has a total of 24
-      # pbcoreDescriptionDocument and pbcoreInstantiation elements, each of
-      # which are represented by a BatchItem within the Batch.
-      expect(@batch.batch_items.to_a.count).to eq 24
+      instantiations = @pbcore_description_documents.map(&:instantiations).flatten
+      physical_instantiations = instantiations.select { |i| i.physical }
+      physical_instantiation_essence_tracks = physical_instantiations.map(&:essence_tracks).flatten
+      # The expected number of batch items is the  number of Assets, the number
+      # of Instantiations, and the number of  Essence Tracks from Physical
+      # Instantiations only. A little odd, but this is just how the ingest works
+      # right now.
+      expected_count = @pbcore_description_documents.count \
+                       + instantiations.count \
+                       + physical_instantiation_essence_tracks.count
+      expect(@batch.batch_items.to_a.count).to eq expected_count
     end
 
     it 'has a status of completed' do
@@ -45,7 +69,7 @@ RSpec.feature "Ingest: AAPB PBCore - Zipped" do
       expect(@batch.batch_items.map(&:error)).to all(be_nil)
     end
 
-    it 'has status of "completed" for each batch item'do
+    it 'has status of "completed" for each batch item' do
       expect(@batch.batch_items.map(&:status)).to all( eq 'completed' )
     end
 

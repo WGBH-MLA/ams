@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190308015530) do
+ActiveRecord::Schema.define(version: 20190417205747) do
 
   create_table "admin_data", force: :cascade do |t|
     t.string "level_of_user_access"
@@ -311,6 +311,13 @@ ActiveRecord::Schema.define(version: 20190308015530) do
     t.datetime "updated_at", null: false
     t.index ["grantee_id"], name: "index_proxy_deposit_rights_on_grantee_id"
     t.index ["grantor_id"], name: "index_proxy_deposit_rights_on_grantor_id"
+  end
+
+  create_table "pushes", force: :cascade do |t|
+    t.string "pushed_id_csv"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "user_id"
   end
 
   create_table "qa_local_authorities", force: :cascade do |t|
