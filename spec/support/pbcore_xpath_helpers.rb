@@ -35,7 +35,7 @@ module PBCoreXPathHelper
       # Map the xpath strings to the Nokogiri nodes found.
       # Filter out empty results.
       # Flatten again, to get a flat array of Nokogiri nodes.
-      # Fially, map to #text (i.e. the value within the xml node).
+      # Finally, map to #text (i.e. the value within the xml node).
       xpaths.flatten.map { |xp| noko.xpath(xp) }.select { |found| found.count > 0 }.flatten.map(&:text).map(&:strip)
     end
 
@@ -48,7 +48,6 @@ module PBCoreXPathHelper
         promo_title:                    '//pbcoreTitle[@titleType="Promo"]',
         raw_footage_title:              '//pbcoreTitle[@titleType="Raw Footage"]',
         episode_number:                 '//pbcoreTitle[@titleType="Episode Number"]',
-        description:                    '//pbcoreDescription[@descriptionType="Program"]',
         program_description:            '//pbcoreDescription[@descriptionType="Program"]',
         episode_description:            '//pbcoreDescription[@descriptionType="Episode" or @descriptionType="Episode Description"]',
         segment_description:            '//pbcoreDescription[@descriptionType="Segment"]',
@@ -58,6 +57,9 @@ module PBCoreXPathHelper
         audience_level:                 '//pbcoreAudienceLevel',
         audience_rating:                '//pbcoreAudienceRating',
         asset_types:                    '//pbcoreAssetType',
+        broadcast_date:                 '//pbcoreAssetDate[@dateType="Broadcast"]',
+        copyright_date:                 '//pbcoreAssetDate[@dateType="Copyright"]',
+        created_date:                   '//pbcoreAssetDate[@dateType="Created"]',
         genre:                          '//pbcoreGenre',
         annotation:                     '//pbcoreAnnotation',
         rights_summary:                 '//pbcoreRightsSummary/rightsSummary',
@@ -84,7 +86,7 @@ module PBCoreXPathHelper
         channel_configuration:          '//instantiationChannelConfiguration',
         digitization_date:              '//instantiationDate[@dateType="Digitized"]',
         holding_organization:           '//instantiationAnnotation[@annotationType="Organization"]',
-
+        # Essence track xpath helper shortcuts
         ess_track_type:                 '//essenceTrackType',
         ess_track_id:                   '//essenceTrackIdentifier',
         ess_standard:                   '//essenceTrackStandard',
@@ -97,8 +99,6 @@ module PBCoreXPathHelper
         ess_duration:                   '//essenceTrackDuration',
         ess_annotations:                '//essenceTrackAnnotation',
         ess_time_start:                 '//essenceTrackTimeStart'
-
- 
       }
     end
 
@@ -123,6 +123,17 @@ module PBCoreXPathHelper
       with_types = values_from_xpath(:program_description) + values_from_xpath(:episode_description) + values_from_xpath(:segment_description) + values_from_xpath(:clip_description) + values_from_xpath(:promo_description) + values_from_xpath(:raw_footage_description) + values_from_xpath(:episode_number)
       with_types.each {|desc| dex = all_descs.index(desc); all_descs.slice!( dex ) if dex  }
       all_descs
+    end
+
+    # Shortcut method to pull out all asset dates that don't match the other
+    # asset date types.
+    # Usage: In your spec, do this..
+    #   pbcore_xpath_helper(pbcore_xml).asset_dates_without_type
+    def dates_without_type
+      all_dates = values_from_xpath('//pbcoreAssetDate')
+      with_types = values_from_xpath(:broadcast_date) + values_from_xpath(:copyright_date) + values_from_xpath(:created_date)
+      with_types.each {|desc| dex = all_dates.index(desc); all_dates.slice!( dex ) if dex  }
+      all_dates
     end
 
     def ams_id
