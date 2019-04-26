@@ -15,10 +15,10 @@ RSpec.describe AAPB::BatchIngest::PBCoreXMLMapper, :pbcore_xpath_helper do
       :audience_level, :audience_rating, :asset_types, :genre,
       :spatial_coverage, :temporal_coverage, :annotation, :rights_summary,
       :rights_link, :local_identifier, :pbs_nola_code, :eidr_id, :topics,
-      :subject]
+      :date, :broadcast_date, :copyright_date, :created_date, :subject]
     end
 
-    let(:attrs_with_xpath_shortcuts) { attr_names - [:title, :description, :spatial_coverage, :temporal_coverage, :id, :holding_organization] }
+    let(:attrs_with_xpath_shortcuts) { attr_names - [:title, :description, :date, :spatial_coverage, :temporal_coverage, :id, :holding_organization] }
     let(:attrs) { subject.asset_attributes }
 
     it 'maps all attributes from PBCore XML' do
@@ -38,6 +38,7 @@ RSpec.describe AAPB::BatchIngest::PBCoreXMLMapper, :pbcore_xpath_helper do
       # Check :title, :description, :id separately with specific helpers.
       expect(attrs[:title]).to        eq pbcore_xpath_helper(pbcore_xml).titles_without_type
       expect(attrs[:description]).to  eq pbcore_xpath_helper(pbcore_xml).descriptions_without_type
+      expect(attrs[:date]).to         eq pbcore_xpath_helper(pbcore_xml).dates_without_type
       expect(attrs[:id]).to           eq pbcore_xpath_helper(pbcore_xml).ams_id
     end
 

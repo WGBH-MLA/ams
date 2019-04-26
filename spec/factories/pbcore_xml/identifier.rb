@@ -7,7 +7,7 @@ FactoryBot.define do
     trait :aapb do
       source { "http://americanarchiveinventory.org" }
       # Generates a random AAPB ID
-      value { "cpb-aacip/#{rand(10..999)}-#{Array.new(10) { rand(15).to_s(16) }.join }" }
+      value { AMS::IdentifierService.mint }
     end
 
     trait :nola_code do

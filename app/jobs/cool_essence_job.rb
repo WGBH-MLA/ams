@@ -1,6 +1,6 @@
 require 'aapb/batch_ingest/pbcore_xml_item_ingester'
 
-class CoolEssenceJob < ApplicationJob
+class CoolEssenceJob < Hyrax::BatchIngest::BatchItemProcessingJob
   def perform(parent_id:, xml:, batch_item:)
     # we only do essoes round here
     parent = ActiveFedora::Base.find(parent_id)

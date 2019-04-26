@@ -2,7 +2,6 @@
 #  `rails generate hyrax:work Asset`
 module Hyrax
   class AssetPresenter < Hyrax::WorkShowPresenter
-
     delegate :id, :genre, :asset_types, :broadcast_date, :created_date, :copyright_date,
              :episode_number, :spatial_coverage, :temporal_coverage,
              :audience_level, :audience_rating, :annotation, :rights_summary, :rights_link,

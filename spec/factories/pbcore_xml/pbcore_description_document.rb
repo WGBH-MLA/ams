@@ -66,6 +66,15 @@ FactoryBot.define do
         ]
       end
 
+      asset_dates do
+        [
+          build(:pbcore_asset_date),
+          build(:pbcore_asset_date, type: "Broadcast"),
+          build(:pbcore_asset_date, type: "Copyright"),
+          build(:pbcore_asset_date, type: "Created")
+        ]
+      end
+
       instantiations do
         [
           build(:pbcore_instantiation, :digital, :aapb_holding)

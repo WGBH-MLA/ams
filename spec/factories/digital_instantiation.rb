@@ -1,6 +1,5 @@
 FactoryBot.define do
   factory :digital_instantiation, class: DigitalInstantiation do
-    id { Noid::Rails::Service.new.mint }
     sequence(:title) { |n| ["Test Digital Instantiation #{n}"] }
     location { "Test location" }
     digital_format { "Test digital_format" }
@@ -41,6 +40,9 @@ FactoryBot.define do
       else
         instantiation_admin_data = create(:instantiation_admin_data)
         work.instantiation_admin_data_gid = instantiation_admin_data.gid
+        # TODO: we shouldn't be saving the DigitalInstantiation after :build.
+        # the purpose of :build (instead of :create) is to deliberately NOT
+        # save the object.
         work.save
       end
     end
