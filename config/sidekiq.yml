@@ -1,6 +1,6 @@
 :verbose: true
 :concurrency: 10
 :queues:
-  - default
-  - ingest
-  - mailers
+  - [default, 3]
+  - [ingest, 1]
+  - [mailers, 999]

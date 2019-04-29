@@ -45,6 +45,24 @@ RSpec.describe AAPB::BatchIngest::PBCoreXMLMapper, :pbcore_xpath_helper do
     it 'maps Contribution data from PBCore XML' do
       expect(attrs[:contributors]).to eq pbcore_xpath_helper(pbcore_xml).contributors_attrs
     end
+
+    context 'when dates are of a known invalid type' do
+      let(:pbcore_xml) do
+        build(
+          :pbcore_description_document,
+          asset_dates: [
+            build(:pbcore_asset_date, value: '0000-00-00'),
+            build(:pbcore_asset_date, value: '2001-00-00'),
+            build(:pbcore_asset_date, value: '2002-02-00'),
+            build(:pbcore_asset_date, value: '2003-03-03')
+          ]
+        ).to_xml
+      end
+
+      it 'converts known invalid types to valid types' do
+        expect(attrs[:date]).to eq ['2001', '2002-02', '2003-03-03']
+      end
+    end
   end
 
   describe '#physical_instantiation_attributes' do

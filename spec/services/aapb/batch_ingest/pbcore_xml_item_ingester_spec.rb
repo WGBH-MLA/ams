@@ -20,7 +20,7 @@ RSpec.describe AAPB::BatchIngest::PBCoreXMLItemIngester, reset_data: false do
       # Asset model instance on which we can write our expectations.
       before :all do
         # Build the PBCore XML
-        pbcore_xml = FactoryBot.build(
+        @pbcore_xml = FactoryBot.build(
           :pbcore_description_document,
           identifiers: [
             build(:pbcore_identifier, :aapb)
@@ -41,7 +41,7 @@ RSpec.describe AAPB::BatchIngest::PBCoreXMLItemIngester, reset_data: false do
           :batch_item,
           batch: @batch,
           source_location: nil,
-          source_data: pbcore_xml
+          source_data: @pbcore_xml
         )
 
         # Ingest the BatchItem and use the returned Asset instance for testing.
