@@ -5,7 +5,6 @@ require 'aapb/batch_ingest/zipped_pbcore_digital_instantiation_mapper'
 module AAPB
   module BatchIngest
     class PBCoreXMLItemIngester < AAPB::BatchIngest::BatchItemIngester
-
       def ingest
         if batch_item_is_asset?
           # This is a bit of a workaround. Errors will be raised from deep within
@@ -13,6 +12,10 @@ module AAPB
           raise "Could not find or create Sipity Agent for user #{submitter}" unless sipity_agent
 
           batch_item_object = ingest_asset!
+
+          # Raise validation errors as exceptions to be handled by the batch
+          # item processing job in the hyrax-batch_ingest gem
+          raise "Batch item contained invalid data.\n\n#{batch_item_object.errors.to_a.join("\n")}" if batch_item_object.errors.count > 0
 
           pbcore_digital_instantiations.each do |pbcore_digital_instantiation|
             di_batch_item = Hyrax::BatchIngest::BatchItem.create!(batch: batch_item.batch, status: 'initialized')
