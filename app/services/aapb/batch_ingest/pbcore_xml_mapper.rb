@@ -34,7 +34,12 @@ module AAPB
           admindata_field_names.each do |field_name|
             field_name = 'minimally_cataloged' if field_name == 'cataloging status'
             field_name = 'special_collection' if field_name == 'special_collections'
-            attrs[:"#{field_name.gsub(" ", '_')}"] = admindata[field_name] if admindata[field_name]
+
+            value = admindata[field_name]
+            # handle arrays for single-value fields
+            value = value.first if value && ['special_collections','sonyci_id'].exclude?(field_name)
+
+            attrs[:"#{field_name.gsub(" ", '_')}"] = value if value
           end
 
           # Saves Asset with AAPB ID if present
