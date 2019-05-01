@@ -77,10 +77,10 @@ module AAPB
           grouped_dates = categorize(pbcore.asset_dates)
           # pull out no-type dates, removing from grouped_dates
           dates_no_type = grouped_dates.slice!(*date_types)
-          attrs[:date]                        = dates_no_type.values.flatten
-          attrs[:broadcast_date]              = grouped_dates.fetch("broadcast", [])
-          attrs[:copyright_date]              = grouped_dates.fetch("copyright", [])
-          attrs[:created_date]                = grouped_dates.fetch("created", [])
+          attrs[:date]                        = transform_dates dates_no_type.values.flatten
+          attrs[:broadcast_date]              = transform_dates grouped_dates.fetch("broadcast", [])
+          attrs[:copyright_date]              = transform_dates grouped_dates.fetch("copyright", [])
+          attrs[:created_date]                = transform_dates grouped_dates.fetch("created", [])
 
           attrs[:audience_level]              = pbcore.audience_levels.map(&:value)
           attrs[:audience_rating]             = pbcore.audience_ratings.map(&:value)
@@ -166,8 +166,9 @@ module AAPB
 
       def instantiation_attributes
         @instantiation_attributes ||= {}.tap do |attrs|
-          attrs[:date]                            = pbcore.dates.select { |date| date.type.to_s.downcase.strip != "digitized" }.map(&:value)
-          attrs[:digitization_date]               = pbcore.dates.select { |date| date.type.to_s.downcase.strip == "digitized" }.map(&:value).first
+          attrs[:date]                            = transform_dates(pbcore.dates.select { |date| date.type.to_s.downcase.strip != "digitized" }.map(&:value))
+          attrs[:digitization_date]               = transform_dates(pbcore.dates.select { |date| date.type.to_s.downcase.strip == "digitized" }.map(&:value).first)
+
           attrs[:dimensions]                      = pbcore.dimensions.map(&:value)
           attrs[:standard]                        = pbcore.standard&.value
           attrs[:location]                        = pbcore.location&.value
@@ -257,6 +258,38 @@ module AAPB
 
         def date_types
           @date_types ||= ['broadcast', 'copyright', 'created']
+        end
+
+        # Transforms one or more dates.
+        # @param [Array<String>, String] dates a date string, or an array of
+        #  date strings to sanitize.
+        # @return [Array<String>, String, nil]
+        #  If a single date was passed in, returns sanitized date, or nil.
+        #  If multiple dates were passed in, returns array of sanitized dates
+        #  with nils removed.
+        def transform_dates(dates)
+          if dates.respond_to?(:map)
+            dates.map { |date| transform_date(date) }.compact
+          else
+            transform_date dates
+          end
+        end
+
+        # Transforms some known invalid dates into acceptable date formats.
+        # @param [String] date a date string.
+        # @return [String, Nil] if the date param matches a known invalid format
+        #  it will return the transoformed date; otherwise returns date param
+        #  as-is so that other invalid dates of unknown format show up in the
+        #  error message.
+        def transform_date(date)
+          case date
+          when /0000\-00\-00/
+            nil
+          when /\-00/
+            date.gsub(/-00/, '')
+          else
+            date
+          end
         end
     end
   end
