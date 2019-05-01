@@ -73,7 +73,7 @@ module Hyrax
 
             # Do not set holding organization if it's already there (i.e. came in from the UI).
             unless env.attributes[:holding_organization]
-              env.attributes[:holding_organization] = pbcore_doc.annotations.select { |annotation| annotation.type.downcase == 'organization' }.first&.value
+              env.attributes[:holding_organization] = pbcore_doc.annotations.select { |annotation| annotation&.type&.downcase == 'organization' }.first&.value
             end
 
             env.attributes[:digital_format] = pbcore_doc.digital.value  if pbcore_doc.digital && env.attributes[:digital].blank?
