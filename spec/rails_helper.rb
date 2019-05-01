@@ -18,6 +18,7 @@ require 'capybara-screenshot/rspec'
 require 'selenium/webdriver'
 require 'capybara/rails'
 require 'ams'
+require 'webdrivers'
 
 # Require support files
 Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each { |f| require f }
@@ -90,3 +91,5 @@ RSpec.configure do |config|
   # For Devise >= 4.1.0
   config.extend ControllerMacros, :type => :controller
 end
+
+Webdrivers::Chromedriver.version = '72.0.3626.69'
