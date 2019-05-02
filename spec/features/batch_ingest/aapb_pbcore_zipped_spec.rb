@@ -7,15 +7,6 @@ RSpec.feature "Ingest: AAPB PBCore - Zipped" do
   context 'where batch contains valid Assets (no children)', reset_data: false do
 
     before :all do
-      @admin_set = create(:admin_set)
-      @user_role = 'TestRole'
-      @user = create(:user, role_names: [@user_role])
-      @permission_template = create(:permission_template, source_id: @admin_set.id)
-      @permission_template_access = create(:permission_template_access, permission_template: @permission_template,
-                                                                        agent_id: @user_role,
-                                                                        agent_type: 'group',
-                                                                        access: 'deposit')
-
       # Build a list of PBCore Description Documents, keeping it pretty small to
       # avoid long ingest times.
       @pbcore_description_documents = build_list(:pbcore_description_document, rand(2..4), :full_aapb)
@@ -35,19 +26,23 @@ RSpec.feature "Ingest: AAPB PBCore - Zipped" do
 
       zipped_batch = make_aapb_pbcore_zipped_batch(@pbcore_description_documents)
 
-      # login_as @user
-      # TODO: move this to more generic location.
-      ActiveJob::Base.queue_adapter = :inline
+      user, admin_set = create_user_and_admin_set_for_deposit
       @batch = run_batch_ingest(ingest_file_path: zipped_batch,
                                 ingest_type: 'aapb_pbcore_zipped',
-                                admin_set: @admin_set,
-                                submitter: @user)
+                                admin_set: admin_set,
+                                submitter: user)
+
+      # Reload the batch so all the child BatchItems are populated.
+      @batch.reload
+
+      # Grab the ingested objects from the BatchItem's #repo_object_id values.
+      # We store in an instance var to use it more than once between tests.
+      @ingested_objects = @batch.batch_items.map do |batch_item|
+        ActiveFedora::Base.find(batch_item.repo_object_id.to_s)
+      end
     end
 
-    # Reload the batch before each example.
-    before { @batch.reload }
-
-    it 'creates the correct number of batch item records' do
+    let(:expected_batch_item_count) do
       instantiations = @pbcore_description_documents.map(&:instantiations).flatten
       physical_instantiations = instantiations.select { |i| i.physical }
       physical_instantiation_essence_tracks = physical_instantiations.map(&:essence_tracks).flatten
@@ -55,10 +50,26 @@ RSpec.feature "Ingest: AAPB PBCore - Zipped" do
       # of Instantiations, and the number of  Essence Tracks from Physical
       # Instantiations only. A little odd, but this is just how the ingest works
       # right now.
-      expected_count = @pbcore_description_documents.count \
-                       + instantiations.count \
-                       + physical_instantiation_essence_tracks.count
-      expect(@batch.batch_items.to_a.count).to eq expected_count
+      @pbcore_description_documents.count \
+        + instantiations.count \
+        + physical_instantiation_essence_tracks.count
+    end
+
+    it 'creates the correct number of batch item records' do
+      expect(@batch.batch_items.to_a.count).to eq expected_batch_item_count
+    end
+
+    it 'creates additional BatchItem reocrds with inherited values for child objects' do
+      batch_items_by_repo_object_id = @batch.batch_items.index_by(&:repo_object_id)
+      ingested_objects_by_id = @ingested_objects.index_by(&:id)
+      batch_items_by_repo_object_id.each do |repo_object_id, batch_item|
+        # There should be at most 1 parent work ID; assets won't have one.
+        parent_work_id = ingested_objects_by_id[repo_object_id].parent_work_ids.first
+        if parent_work_id
+          parent_batch_item = batch_items_by_repo_object_id[parent_work_id]
+          expect(batch_item.id_within_batch).to eq parent_batch_item.id_within_batch
+        end
+      end
     end
 
     it 'has a status of completed' do
@@ -74,9 +85,7 @@ RSpec.feature "Ingest: AAPB PBCore - Zipped" do
     end
 
     it "saves all records" do
-      @batch.batch_items.each do |batch_item|
-        expect(ActiveFedora::Base.find(batch_item.repo_object_id)).to_not be_nil
-      end
+      expect(@ingested_objects.all?).to eq true
     end
   end
 
