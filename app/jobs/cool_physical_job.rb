@@ -9,7 +9,7 @@ class CoolPhysicalJob < Hyrax::BatchIngest::BatchItemProcessingJob
     pbcore_physical = PBCore::Instantiation.parse(xml)
     # fire these off while we have em
     pbcore_physical.essence_tracks.each do |ess_track|
-      et_batch_item = Hyrax::BatchIngest::BatchItem.create!(batch: batch_item.batch, status: 'initialized')
+      et_batch_item = Hyrax::BatchIngest::BatchItem.create!(batch: batch_item.batch, status: 'initialized', id_within_batch: batch_item.id_within_batch)
       CoolEssenceJob.perform_later(parent_id: physical_inst.id, xml: ess_track.to_xml, batch_item: et_batch_item)
     end
     # Need to set @work to the ingested PhysicalInstantiation in order for
