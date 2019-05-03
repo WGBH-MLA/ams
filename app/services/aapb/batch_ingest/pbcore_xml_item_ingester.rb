@@ -18,12 +18,12 @@ module AAPB
           raise "Batch item contained invalid data.\n\n#{batch_item_object.errors.to_a.join("\n")}" if batch_item_object.errors.count > 0
 
           pbcore_digital_instantiations.each do |pbcore_digital_instantiation|
-            di_batch_item = Hyrax::BatchIngest::BatchItem.create!(batch: batch_item.batch, status: 'initialized')
+            di_batch_item = Hyrax::BatchIngest::BatchItem.create!(batch: batch_item.batch, status: 'initialized', id_within_batch: batch_item.id_within_batch)
             CoolDigitalJob.perform_later(parent_id: batch_item_object.id, xml: pbcore_digital_instantiation.to_xml, batch_item: di_batch_item)
           end
 
           pbcore_physical_instantiations.each do |pbcore_physical_instantiation|
-            pi_batch_item = Hyrax::BatchIngest::BatchItem.create!(batch: batch_item.batch, status: 'initialized')
+            pi_batch_item = Hyrax::BatchIngest::BatchItem.create!(batch: batch_item.batch, status: 'initialized', id_within_batch: batch_item.id_within_batch)
             CoolPhysicalJob.perform_later(parent_id: batch_item_object.id, xml: pbcore_physical_instantiation.to_xml, batch_item: pi_batch_item)
           end
         elsif batch_item_is_digital_instantiation?
