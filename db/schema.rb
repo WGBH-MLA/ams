@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190417205747) do
+ActiveRecord::Schema.define(version: 20190506173217) do
 
   create_table "admin_data", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci" do |t|
     t.string "level_of_user_access"
@@ -145,6 +145,7 @@ ActiveRecord::Schema.define(version: 20190417205747) do
     t.string "repo_object_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "repo_object_class_name"
     t.index ["batch_id"], name: "index_hyrax_batch_ingest_batch_items_on_batch_id"
   end
 
