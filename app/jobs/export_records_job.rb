@@ -22,6 +22,15 @@ class ExportRecordsJob < ApplicationJob
     elsif format == "pbcore"
       export_data = AMS::Export::DocumentsToPbcoreXml.new(response_documents)
     elsif format == 'zip-pbcore'
+
+      @solr = RSolr.instance.connect
+
+      response_documents.each do |doc|
+        doc[:last_pushed] = Time.now.strftime('%Y-%m-%dT%H:%M:%SZ')
+      end
+
+      @solr.add(response_documents)
+
       export_data = AMS::Export::DocumentsToZippedPbcore.new(response_documents)
     else
       raise "Unknown export format"

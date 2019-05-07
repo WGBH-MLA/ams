@@ -1,3 +1,5 @@
+require 'lib/ams/aapb'
+
 module AMS
   module Export
     class ExportService
@@ -55,6 +57,7 @@ module AMS
         filename = File.basename(@file_path.path)
 
         if aapb_key_path && AMS::AAPB.reachable? && filepath.present?
+          aapb_host = AMS::AAPB.host
 
           `scp #{aapb_key_path} #{filepath} ec2-user@#{aapb_host}:/home/ec2-user/ingest_zips/#{filename}`
           output =  `ssh -t #{aapb_key_path} ec2-user@#{aapb_host} 'cd /home/ec2-user/ingest_zips && unzip #{filename} && cd /var/www/aapb/current && RAILS_ENV=production /usr/bin/ruby scripts/download_clean_ingest.rb --stdout-log --files /home/ec2-user/ingest_zips/*.xml'`

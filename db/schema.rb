@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190417205747) do
+ActiveRecord::Schema.define(version: 20190502160946) do
 
   create_table "admin_data", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci" do |t|
     t.string "level_of_user_access"
@@ -314,7 +314,7 @@ ActiveRecord::Schema.define(version: 20190417205747) do
   end
 
   create_table "pushes", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci" do |t|
-    t.string "pushed_id_csv"
+    t.text "pushed_id_csv"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "user_id"
