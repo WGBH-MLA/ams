@@ -37,9 +37,14 @@ RSpec.feature "Ingest: AAPB PBCore - Zipped" do
 
       # Grab the ingested objects from the BatchItem's #repo_object_id values.
       # We store in an instance var to use it more than once between tests.
+      # We rescue from any ObjectNotFound error to mystery errors in the before
+      # hook; we would rather have failed tests.
       @ingested_objects = @batch.batch_items.map do |batch_item|
         ActiveFedora::Base.find(batch_item.repo_object_id.to_s)
-      end
+      rescue ActiveFedora::ObjectNotFoundError
+        nil
+      end.compact
+
     end
 
     let(:expected_batch_item_count) do
@@ -57,6 +62,10 @@ RSpec.feature "Ingest: AAPB PBCore - Zipped" do
 
     it 'creates the correct number of batch item records' do
       expect(@batch.batch_items.to_a.count).to eq expected_batch_item_count
+    end
+
+    it 'ingests the correct number of objects' do
+      expect(@ingested_objects.count).to eq expected_batch_item_count
     end
 
     it 'creates additional BatchItem reocrds with inherited values for child objects' do
@@ -82,10 +91,6 @@ RSpec.feature "Ingest: AAPB PBCore - Zipped" do
 
     it 'has status of "completed" for each batch item' do
       expect(@batch.batch_items.map(&:status)).to all( eq 'completed' )
-    end
-
-    it "saves all records" do
-      expect(@ingested_objects.all?).to eq true
     end
   end
 
