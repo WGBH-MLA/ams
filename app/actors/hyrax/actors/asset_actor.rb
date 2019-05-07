@@ -86,6 +86,7 @@ module Hyrax
                 if param_contributor[:id].blank?
                   param_contributor.delete(:id)
                   contributor = ::Contribution.new
+
                   if actor.create(Actors::Environment.new(contributor, env.current_ability, param_contributor))
                     env.curation_concern.ordered_members << contributor
                     env.curation_concern.save

@@ -87,13 +87,15 @@ RSpec.describe AAPB::BatchIngest::PBCoreXMLItemIngester, reset_data: false do
       before :all do
         # Build the PBCore XML
         pbcore_xml = FactoryBot.build(:pbcore_instantiation_document, :media_info).to_xml
-
-        asset = create(:asset, id: "123456")
+        submitter = create(:user)
+        asset = build(:asset, id: "123456")
+        asset.apply_depositor_metadata(submitter)
+        asset.save!
 
         # Use the PBCore XML as the source data for a BatchItem.
         batch_item = build(
           :batch_item,
-          batch: build(:batch, submitter_email: create(:user).email),
+          batch: build(:batch, submitter_email: submitter.email),
           id_within_batch: "sample_digital_instantiation.xml",
           source_location: File.join(fixture_path, "batch_ingest", "sample_pbcore_digital_instantiation", "digital_instantiation_manifest.xlsx"),
           source_data: pbcore_xml
