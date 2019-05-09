@@ -49,7 +49,6 @@ class PushesController < ApplicationController
   def validate_ids
     requested_ids = split_and_validate_ids(params[:id_field])
     # bad input
-    require('pry');binding.pry
     return render json: {error: "There was a problem parsing your IDs. Please check your input and try again."} unless requested_ids && requested_ids.count > 0
 
     query = ""
