@@ -53,14 +53,22 @@ module AAPB
           pbcore.instantiations.select { |inst| inst.physical }
         end
 
+        def raise_ingest_errors(object)
+          msg = object.errors.values.join('; ')
+          msg = "An unknown error occurred during ingest of #{object.class}" if msg.empty?
+          raise msg
+        end
+
         def ingest_asset!
           asset = Asset.new
           actor = Hyrax::CurationConcern.actor
           attrs = AAPB::BatchIngest::PBCoreXMLMapper.new(pbcore_xml).asset_attributes
           attrs[:hyrax_batch_ingest_batch_id] = batch_id
           env = Hyrax::Actors::Environment.new(asset, current_ability, attrs)
-          actor.create(env)
+          raise_ingest_errors(asset) unless actor.create(env)
           asset
+        rescue => e
+          raise_ingest_failure()
         end
 
         def ingest_digital_instiation_and_manifest!
@@ -69,7 +77,8 @@ module AAPB
           actor = Hyrax::CurationConcern.actor
           attrs = AAPB::BatchIngest::ZippedPBCoreDigitalInstantiationMapper.new(@batch_item).digital_instantiation_attributes
           env = Hyrax::Actors::Environment.new(digital_instantiation, current_ability, attrs)
-          actor.create(env)
+          raise_ingest_errors(digital_instantiation) unless actor.create(env)
+          # TODO: try without the following line.
           attrs[:in_works_ids].map{ |id| Asset.find(id).reload }
           digital_instantiation
         end
@@ -85,7 +94,7 @@ module AAPB
 
           env = Hyrax::Actors::Environment.new(digital_instantiation, current_ability, attrs)
           env.attributes[:title] = ::SolrDocument.new(parent.to_solr).title
-          actor.create(env)
+          raise_ingest_errors(digital_instantiation) unless actor.create(env)
           digital_instantiation
         end
 
@@ -96,7 +105,7 @@ module AAPB
           attrs[:in_works_ids] = [parent.id]
           env = Hyrax::Actors::Environment.new(physical_instantiation, current_ability, attrs)
           env.attributes[:title] = ::SolrDocument.new(parent.to_solr).title
-          actor.create(env)
+          raise_ingest_errors(physical_instantiation) unless actor.create(env)
           physical_instantiation
         end
 
@@ -107,7 +116,7 @@ module AAPB
           attrs[:in_works_ids] = [parent.id]
           env = Hyrax::Actors::Environment.new(essence_track, current_ability, attrs)
           env.attributes[:title] = ::SolrDocument.new(parent.to_solr).title
-          actor.create(env)
+          raise_ingest_errors(essence_track) unless actor.create(env)
           essence_track
         end
 
