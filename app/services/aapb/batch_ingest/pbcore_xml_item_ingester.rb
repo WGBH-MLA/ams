@@ -68,8 +68,6 @@ module AAPB
           env = Hyrax::Actors::Environment.new(asset, current_ability, attrs)
           raise_ingest_errors(asset) unless actor.create(env)
           asset
-        rescue => e
-          raise_ingest_failure()
         end
 
         def ingest_digital_instiation_and_manifest!
