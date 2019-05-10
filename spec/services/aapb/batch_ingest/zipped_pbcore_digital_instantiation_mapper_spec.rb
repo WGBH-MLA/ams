@@ -24,7 +24,6 @@ RSpec.describe AAPB::BatchIngest::ZippedPBCoreDigitalInstantiationMapper, :pbcor
       it 'maps attributes from Manifest' do
         expect(attrs[:pbcore_xml]).to eq(pbcore_xml)
         expect(attrs[:title]).to eq(Asset.find(asset_id).title)
-        expect(attrs[:in_works_ids]).to include(asset_id)
         expect(attrs[:generations]).to eq(["Proxy", "Master"])
         expect(attrs[:holding_organization]).to eq("American Archive of Public Broadcasting")
         expect(attrs[:aapb_preservation_lto]).to eq("fhqwhgads")

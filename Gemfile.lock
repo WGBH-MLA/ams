@@ -909,6 +909,7 @@ DEPENDENCIES
   rails (~> 5.1.5)
   react-rails
   redis (~> 4.0)
+  redlock (~> 1.0)
   rsolr (>= 1.0)
   rspec (~> 3.7)
   rspec-activemodel-mocks
