@@ -51,6 +51,10 @@ class Asset < ActiveFedora::Base
   # TODO: Use RDF::Vocab for applicable terms.
   # See https://github.com/ruby-rdf/rdf-vocab/tree/develop/lib/rdf/vocab
 
+  property :last_pushed, predicate: ::RDF::URI.new('http://pbcore.org#hasBroadcastDate'), multiple: false do |index|
+    index.as :stored_searchable
+  end
+
   property :asset_types, predicate: ::RDF::URI.new("http://www.ebu.ch/metadata/ontologies/ebucore/ebucore#hasType"), multiple: true do |index|
     index.as :stored_searchable, :facetable
   end

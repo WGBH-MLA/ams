@@ -23,13 +23,14 @@ class ExportRecordsJob < ApplicationJob
       export_data = AMS::Export::DocumentsToPbcoreXml.new(response_documents)
     elsif format == 'zip-pbcore'
 
-      @solr = RSolr.instance.connect
-
-      response_documents.each do |doc|
+      update_docs = response_documents.map do |doc|
+        doc.delete(:score)
+        doc.delete(:_version)
         doc[:last_pushed] = Time.now.strftime('%Y-%m-%dT%H:%M:%SZ')
+        doc._source
       end
 
-      @solr.add(response_documents)
+      ActiveFedora::SolrService.add(update_docs, commit: true)
 
       export_data = AMS::Export::DocumentsToZippedPbcore.new(response_documents)
     else

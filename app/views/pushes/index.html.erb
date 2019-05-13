@@ -1,5 +1,7 @@
 <h3>All Pushes</h3>
 
+<%= link_to "Start New Push", new_push_path %>
+
 <% @pushes.each do |push| %>
   <%= link_to %(Push ##{push.id}), push %>
 <% end %>

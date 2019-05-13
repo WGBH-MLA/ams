@@ -391,4 +391,8 @@ class SolrDocument
   def hyrax_batch_ingest_batch_id
     self[Solrizer.solr_name('hyrax_batch_ingest_batch_id')]
   end
+
+  def last_pushed
+    self[Solrizer.solr_name('last_pushed')]
+  end
 end
