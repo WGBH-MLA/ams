@@ -166,7 +166,7 @@ module AAPB
         # @param <ActiveFedora::Base> child the child object
         def atomically_adopt(parent, child)
           # Get the lock for 10 seconds
-          lock_manager.lock!("add_ordered_member_to:#{parent.id}", 10000) do |locked|
+          lock_manager.lock!("add_ordered_member_to:#{parent.id}", 120000) do |locked|
             parent.ordered_members << child
             parent.save!
           end
@@ -181,9 +181,9 @@ module AAPB
         def lock_manager
           @lock_manager ||= Redlock::Client.new(
             [ Redis.current ], {
-            retry_count:   3,
-            retry_delay:   200, # milliseconds
-            retry_jitter:  50,  # milliseconds
+            retry_count:   120,
+            retry_delay:   5000, # every 5 seconds
+            retry_jitter:  500,  # half a second
             redis_timeout: 0.1  # seconds
           })
         end
