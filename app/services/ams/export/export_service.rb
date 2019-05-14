@@ -58,11 +58,12 @@ module AMS
 
         if aapb_key_path && AMS::AAPB.reachable? && filepath.present?
           aapb_host = AMS::AAPB.host
-
-          `scp #{aapb_key_path} #{filepath} ec2-user@#{aapb_host}:/home/ec2-user/ingest_zips/#{filename}`
-          output =  `ssh -t #{aapb_key_path} ec2-user@#{aapb_host} 'cd /home/ec2-user/ingest_zips && unzip -o #{filename} && cd /var/www/aapb/current && RAILS_ENV=production /usr/bin/ruby scripts/download_clean_ingest.rb --stdout-log --files /home/ec2-user/ingest_zips/*.xml'`
+          output = []
+          output << `scp #{aapb_key_path} #{filepath} ec2-user@#{aapb_host}:/home/ec2-user/ingest_zips/#{filename}`
+          output << `ssh -t #{aapb_key_path} ec2-user@#{aapb_host} 'cd /home/ec2-user/ingest_zips && unzip -o #{filename}'`
+          output << `ssh -t #{aapb_key_path} ec2-user@#{aapb_host} 'cd /var/www/aapb/current && RAILS_ENV=production ~/bin/bundle exec /usr/bin/ruby scripts/download_clean_ingest.rb --stdout-log --files /home/ec2-user/ingest_zips/*.xml'`
           Rails.logger.info output
-          Ams2Mailer.scp_to_aapb_notification(user, output).deliver_later
+          Ams2Mailer.scp_to_aapb_notification(user, output.join("\n\n")).deliver_later
         else
           raise "AAPB was unreachable! #{ENV['AAPB_HOST']}"
         end
