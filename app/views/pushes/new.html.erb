@@ -7,58 +7,45 @@
   <input class="aapb-push-button" type="submit" value="Send To AAPB" name="">
 </form>
 
+<div id="valid-box">
+</div>
+
 <div id="loader">
   <img src="/pbcore-logo.gif">
 </div>
 
-<div id="valid-box">
-</div>
-
 <script type="text/javascript">
-  var send_after_timeout = false;
 
   $(document).on('turbolinks:load', function() {
     $('#loader').hide();
 
     var timeout = Date.now();
+    var inputActive = false;
     var init = true;
-    var startedInput = false;
 
-    // console.log('load')
     $('#id_field').on('change textInput input', function() {
-    // $('#id_field').on('change', function() {
-      // console.log('fired')
       $('#loader').show();
-
-      startedInput = true;
-      // console.log(timeout - Date.now)
-      if(init || (Date.now() - timeout > 1000)){
-        init = false;
-        startedInput = false;
-        timeout = Date.now();
-        validate( $(this).val() );
-      }
+      timeout = Date.now();
+      inputActive = true;
     });
 
     setInterval(function(){
-      if(startedInput && (Date.now() - timeout > 400)){
+      if(init || (inputActive && Date.now() - timeout > 400)){
         validate( $('#id_field').val() );
-        startedInput = false;
+        inputActive = false;
+        init = false;
       }
     }, 400);
 
     var boxval = $('#id_field').val();
     if( boxval && boxval.length > 0 ){
       // validate if page loaded with ids
-      console.log('nice')
       $('#id_field').trigger('change textInput input');
     }
-
   });
 
   function validate(id_field_val){
     $.post('/pushes/validate_ids', { id_field: id_field_val }, function(resp) {
-      console.log('posted')
       $('#loader').hide();
 
       var message;
@@ -76,12 +63,4 @@
       $('#valid-box').text(message);
     });        
   }
-
 </script>
-
-
-<style type="text/css">
-  .hidden {
-    opacity: 0;
-  }
-</style>
