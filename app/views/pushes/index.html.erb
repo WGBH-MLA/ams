@@ -2,6 +2,12 @@
 
 <%= link_to "Start New Push", new_push_path %>
 
-<% @pushes.each do |push| %>
-  <%= link_to %(Push ##{push.id}), push %>
-<% end %>
+<ul>
+    
+  <% @pushes.each do |push| %>
+    <li>
+      <%= link_to %(Push ##{push.id}), push %>
+    </li>  
+  <% end %>
+
+</ul>

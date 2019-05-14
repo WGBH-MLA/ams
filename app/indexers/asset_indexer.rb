@@ -17,6 +17,7 @@ class AssetIndexer < AMS::WorkIndexer
       solr_doc['broadcast_date_drsim'] = object.broadcast_date if object.broadcast_date
       solr_doc['created_date_drsim'] = object.created_date if object.created_date
       solr_doc['copyright_date_drsim'] = object.copyright_date if object.copyright_date
+
       if object.admin_data
         #Indexing as english text so we can use it on asset show page
         solr_doc['admin_data_tesim'] = object.admin_data.gid if !object.admin_data.gid.blank?
@@ -31,6 +32,7 @@ class AssetIndexer < AMS::WorkIndexer
         solr_doc['playlist_order_tesim']  = object.admin_data.playlist_order if !object.admin_data.playlist_order.blank?
 
 
+
         #Indexing for Facets
         solr_doc['level_of_user_access_ssim'] =  object.admin_data.level_of_user_access if !object.admin_data.level_of_user_access.blank?
         solr_doc['minimally_cataloged_ssim'] =  object.admin_data.minimally_cataloged if !object.admin_data.minimally_cataloged.to_s.blank?
@@ -42,6 +44,7 @@ class AssetIndexer < AMS::WorkIndexer
 
         #Indexing for search by batch_id
         solr_doc['hyrax_batch_ingest_batch_id_tesim'] = object.admin_data.hyrax_batch_ingest_batch_id if !object.admin_data.hyrax_batch_ingest_batch_id.blank?
+        solr_doc['last_pushed_tesim'] = object.admin_data.last_pushed if !object.admin_data.last_pushed.blank?
       end
     end
   end

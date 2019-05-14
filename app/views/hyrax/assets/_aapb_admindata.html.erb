@@ -18,6 +18,8 @@
           <%= presenter.attribute_to_html(:playlist_group, html_dl: true) %>
           <%= presenter.attribute_to_html(:playlist_order, html_dl: true) %>
 
+          <%= presenter.attribute_to_html(:last_pushed, html_dl: true) %>
+
           <%= render 'batch', presenter: presenter %>
         </dl>
       </div>
