@@ -7,41 +7,81 @@
   <input class="aapb-push-button" type="submit" value="Send To AAPB" name="">
 </form>
 
+<div id="loader">
+  <img src="/pbcore-logo.gif">
+</div>
+
 <div id="valid-box">
 </div>
 
 <script type="text/javascript">
+  var send_after_timeout = false;
+
   $(document).on('turbolinks:load', function() {
+    $('#loader').hide();
+
+    var timeout = Date.now();
+    var init = true;
+    var startedInput = false;
 
     // console.log('load')
     $('#id_field').on('change textInput input', function() {
     // $('#id_field').on('change', function() {
       // console.log('fired')
-      
-      $.post('/pushes/validate_ids', { id_field: $(this).val() }, function(resp) {
-        // console.log('posted')
+      $('#loader').show();
 
-        var message;
-        if(resp.all_valid) {
-          message = "All GUIDs are valid!";
-          $('#valid-box').addClass("green").removeClass("red");
-        } else if(resp.error) {
-          message = resp.error;
-          $('#valid-box').addClass("green").removeClass("red");     
-        } else {
-          message = "The following IDs were not found (" + resp.missing_ids.length + "): " + resp.missing_ids;
-          $('#valid-box').addClass("red").removeClass("green");
-        }
-
-        $('#valid-box').text(message);
-        // console.log('texted')
-      });
+      startedInput = true;
+      // console.log(timeout - Date.now)
+      if(init || (Date.now() - timeout > 1000)){
+        init = false;
+        startedInput = false;
+        timeout = Date.now();
+        validate( $(this).val() );
+      }
     });
 
-    if( $('#id_field').val().length > 0 ){
+    setInterval(function(){
+      if(startedInput && (Date.now() - timeout > 400)){
+        validate( $('#id_field').val() );
+        startedInput = false;
+      }
+    }, 400);
+
+    var boxval = $('#id_field').val();
+    if( boxval && boxval.length > 0 ){
       // validate if page loaded with ids
       console.log('nice')
-      $('#id_field').trigger('change');
+      $('#id_field').trigger('change textInput input');
     }
+
   });
+
+  function validate(id_field_val){
+    $.post('/pushes/validate_ids', { id_field: id_field_val }, function(resp) {
+      console.log('posted')
+      $('#loader').hide();
+
+      var message;
+      if(resp.all_valid) {
+        message = "All GUIDs are valid!";
+        $('#valid-box').addClass("green").removeClass("red");
+      } else if(resp.error) {
+        message = resp.error;
+        $('#valid-box').addClass("green").removeClass("red");     
+      } else {
+        message = "The following IDs were not found (" + resp.missing_ids.length + "): " + resp.missing_ids;
+        $('#valid-box').addClass("red").removeClass("green");
+      }
+
+      $('#valid-box').text(message);
+    });        
+  }
+
 </script>
+
+
+<style type="text/css">
+  .hidden {
+    opacity: 0;
+  }
+</style>
