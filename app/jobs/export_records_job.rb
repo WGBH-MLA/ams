@@ -22,8 +22,17 @@ class ExportRecordsJob < ApplicationJob
     elsif format == "pbcore"
       export_data = AMS::Export::DocumentsToPbcoreXml.new(response_documents)
     elsif format == 'zip-pbcore'
-
+      
       update_docs = response_documents.map do |doc|
+
+        admindata = Asset.find(doc[:id]).admin_data
+        if admindata
+          admindata.last_pushed = Time.now.strftime('%Y-%m-%dT%H:%M:%SZ')
+          admindata.save!
+          admindata = nil
+        end
+        # env = Hyrax::Actors::Environment.new(asset, current_ability, attrs)
+        # actor.update(env)
         doc.delete(:score)
         doc.delete(:_version)
         doc[:last_pushed] = Time.now.strftime('%Y-%m-%dT%H:%M:%SZ')
