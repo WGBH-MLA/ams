@@ -11,7 +11,7 @@ module Hyrax
              :promo_description, :clip_description, :copyright_date,
              :level_of_user_access, :minimally_cataloged, :outside_url, :special_collection, :transcript_status,
              :sonyci_id, :licensing_info, :producing_organization, :series_title, :series_description,
-             :playlist_group, :playlist_order, :hyrax_batch_ingest_batch_id, :last_pushed,
+             :playlist_group, :playlist_order, :hyrax_batch_ingest_batch_id,
              to: :solr_document
 
     def batch
@@ -29,6 +29,10 @@ module Hyrax
 
     def batch_ingest_date
       @batch_ingest_date ||= Date.parse(batch.created_at.to_s)
+    end
+
+    def last_pushed
+      DateTime.strptime(solr_document['last_pushed'], '%Y-%m-%dT%H:%M:%SZ',).strftime('%m-%e-%y %H:%M') if solr_document['last_pushed']
     end
 
     def filter_item_ids_to_display(solr_query)
