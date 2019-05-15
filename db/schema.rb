@@ -25,10 +25,8 @@ ActiveRecord::Schema.define(version: 20190514205641) do
     t.string "playlist_group"
     t.integer "playlist_order"
     t.bigint "hyrax_batch_ingest_batch_id"
-    t.bigint "last_pushed_id"
     t.string "last_pushed"
     t.index ["hyrax_batch_ingest_batch_id"], name: "index_admin_data_on_hyrax_batch_ingest_batch_id"
-    t.index ["last_pushed_id"], name: "index_admin_data_on_last_pushed_id"
   end
 
   create_table "bookmarks", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci" do |t|
