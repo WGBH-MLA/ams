@@ -11,7 +11,7 @@ module Hyrax
              :promo_description, :clip_description, :copyright_date,
              :level_of_user_access, :minimally_cataloged, :outside_url, :special_collection, :transcript_status,
              :sonyci_id, :licensing_info, :producing_organization, :series_title, :series_description,
-             :playlist_group, :playlist_order, :hyrax_batch_ingest_batch_id, :last_pushed
+             :playlist_group, :playlist_order, :hyrax_batch_ingest_batch_id, :last_pushed,
              to: :solr_document
 
     def batch
