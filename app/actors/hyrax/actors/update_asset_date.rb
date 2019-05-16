@@ -13,19 +13,20 @@ module Hyrax
 
       private
       def update_asset_date(env)
-        # todo check if things are saved twice up in here
 
         # getcha mom
         parent = env.curation_concern.parent_works.first
 
         # go up to an asset if necce
-        if [DigitalInstantiation,PhysicalInstantiation].any? { |cls| parent.is_a?(cls) }
+        if parent && [DigitalInstantiation,PhysicalInstantiation].any? { |cls| parent.is_a?(cls) }
           parent = parent.parent_works.first
         end
 
-        admindata = parent.admin_data
-        admindata.last_updated = Time.now.strftime('%Y-%m-%dT%H:%M:%SZ')
-        admindata.save
+        if parent
+          admindata = parent.admin_data
+          admindata.last_updated = Time.now.strftime('%Y-%m-%dT%H:%M:%SZ')
+          admindata.save
+        end
       end
 
     end
