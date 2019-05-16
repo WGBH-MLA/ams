@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190514205641) do
+ActiveRecord::Schema.define(version: 20190516160526) do
 
   create_table "admin_data", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci" do |t|
     t.string "level_of_user_access"
@@ -26,6 +26,7 @@ ActiveRecord::Schema.define(version: 20190514205641) do
     t.integer "playlist_order"
     t.bigint "hyrax_batch_ingest_batch_id"
     t.string "last_pushed"
+    t.string "last_updated"
     t.index ["hyrax_batch_ingest_batch_id"], name: "index_admin_data_on_hyrax_batch_ingest_batch_id"
   end
 

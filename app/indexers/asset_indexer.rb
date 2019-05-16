@@ -45,6 +45,7 @@ class AssetIndexer < AMS::WorkIndexer
         #Indexing for search by batch_id
         solr_doc['hyrax_batch_ingest_batch_id_tesim'] = object.admin_data.hyrax_batch_ingest_batch_id if !object.admin_data.hyrax_batch_ingest_batch_id.blank?
         solr_doc['last_pushed_tesim'] = object.admin_data.last_pushed if !object.admin_data.last_pushed.blank?
+        solr_doc['last_updated_tesim'] = object.admin_data.last_updated if !object.admin_data.last_updated.blank?
       end
     end
   end

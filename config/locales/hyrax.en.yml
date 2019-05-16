@@ -58,6 +58,7 @@ en:
           subject_tesim: Subject
           hyrax_batch_ingest_batch_id_tesim: Batch ID
           last_pushed: Last Pushed To AAPB
+          last_pushed: Asset Last Updated
         show:
           id: 'GUID'
           admin_set: 'In Administrative Set:'

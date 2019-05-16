@@ -395,4 +395,8 @@ class SolrDocument
   def last_pushed
     self[Solrizer.solr_name('last_pushed')]
   end
+
+  def last_updated
+    self[Solrizer.solr_name('last_updated')]
+  end
 end

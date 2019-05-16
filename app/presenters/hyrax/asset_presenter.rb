@@ -35,6 +35,10 @@ module Hyrax
       DateTime.strptime(solr_document['last_pushed'], '%Y-%m-%dT%H:%M:%SZ',).strftime('%m-%e-%y %H:%M') if solr_document['last_pushed']
     end
 
+    def last_updated
+      DateTime.strptime(solr_document['last_updated'], '%Y-%m-%dT%H:%M:%SZ',).strftime('%m-%e-%y %H:%M') if solr_document['last_updated']
+    end
+
     def filter_item_ids_to_display(solr_query)
       return [] if authorized_item_ids.empty?
       query_ids = authorized_item_ids.map {|id| "id:#{id}"} .join(" OR ")
@@ -65,6 +69,7 @@ module Hyrax
           playlist_group.blank? &&
           playlist_order.blank? &&
           hyrax_batch_ingest_batch_id.blank? &&
+          last_updated.blank? &&
           last_pushed.blank?
         )
     end
