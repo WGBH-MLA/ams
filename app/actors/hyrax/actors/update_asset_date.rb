@@ -13,7 +13,6 @@ module Hyrax
 
       private
       def update_asset_date(env)
-
         # getcha mom
         parent = env.curation_concern.parent_works.first
 
@@ -22,10 +21,17 @@ module Hyrax
           parent = parent.parent_works.first
         end
 
+        # if its a asset
+        unless parent
+          parent = env.curation_concern
+        end
+
         if parent
           admindata = parent.admin_data
           admindata.last_updated = Time.now.strftime('%Y-%m-%dT%H:%M:%SZ')
           admindata.save
+          # force update of solr, my friend
+          parent.update_index
         end
       end
 
