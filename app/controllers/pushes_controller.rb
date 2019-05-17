@@ -88,6 +88,27 @@ class PushesController < ApplicationController
 
   def needs_updating
 
-    
+    # loopin way
+    # query_params = {rows: 1, sort: "last_updated: asc"}
+    # oldest_updated = search_results(query_params).first
+
+    # query = %(last_updated: [#{ oldest_updated['last_updated'] } to *])
+    # hella_rekkids = search_results({q: query, rows: 2147483647})
+
+    # ids = hella_rekkids.select {|doc| doc[:last_updated] > doc[:last_pushed]}.map(&:id).join("\n")
+    # redirect_to action: 'new', id_field: ids
+
+
+    # (last_updated - last_pushed) > 0
+    query = {q: %(gte(sub(last_updated, last_pushed),0)), rows: 2147483647}
+
+    response, need_update = search_results(query)
+    if need_update.count > 0
+      ids = need_update.map {|doc| doc[:id]}.join("\n")
+      redirect_to action: 'new', id_field: ids
+    else
+      # sorry!
+      redirect_to pushes_path
+    end
   end
 end

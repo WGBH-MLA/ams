@@ -32,11 +32,13 @@ module Hyrax
     end
 
     def last_pushed
-      DateTime.strptime(solr_document['last_pushed'], '%Y-%m-%dT%H:%M:%SZ',).strftime('%m-%e-%y %H:%M') if solr_document['last_pushed']
+      # DateTime.strptime(solr_document['last_pushed'], '%Y-%m-%dT%H:%M:%SZ',).strftime('%m-%e-%y %H:%M') if solr_document['last_pushed']
+      DateTime.new(solr_document['last_pushed']).strftime('%m-%e-%y %H:%M') if solr_document['last_pushed']
     end
 
     def last_updated
-      DateTime.strptime(solr_document['last_updated'], '%Y-%m-%dT%H:%M:%SZ',).strftime('%m-%e-%y %H:%M') if solr_document['last_updated']
+      # DateTime.strptime(solr_document['last_updated'], '%Y-%m-%dT%H:%M:%SZ',).strftime('%m-%e-%y %H:%M') if solr_document['last_updated']
+      DateTime.new(solr_document['last_updated']).strftime('%m-%e-%y %H:%M') if solr_document['last_updated']
     end
 
     def filter_item_ids_to_display(solr_query)

@@ -28,10 +28,18 @@ module Hyrax
 
         if parent
           admindata = parent.admin_data
-          admindata.last_updated = Time.now.strftime('%Y-%m-%dT%H:%M:%SZ')
-          admindata.save
-          # force update of solr, my friend
-          parent.update_index
+
+          if admindata
+            # admindata.last_updated = Time.now.strftime('%Y-%m-%dT%H:%M:%SZ')
+            admindata.last_updated = Time.now.to_i
+            admindata.save
+            # force update of solr, my friend
+            parent.update_index
+          else
+            raise "No fookin admindata"
+          end
+        else
+          raise "No fookin parent :("
         end
       end
 

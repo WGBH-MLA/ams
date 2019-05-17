@@ -31,8 +31,6 @@ class AssetIndexer < AMS::WorkIndexer
         solr_doc['playlist_group_tesim']  = object.admin_data.playlist_group if !object.admin_data.playlist_group.blank?
         solr_doc['playlist_order_tesim']  = object.admin_data.playlist_order if !object.admin_data.playlist_order.blank?
 
-
-
         #Indexing for Facets
         solr_doc['level_of_user_access_ssim'] =  object.admin_data.level_of_user_access if !object.admin_data.level_of_user_access.blank?
         solr_doc['minimally_cataloged_ssim'] =  object.admin_data.minimally_cataloged if !object.admin_data.minimally_cataloged.to_s.blank?

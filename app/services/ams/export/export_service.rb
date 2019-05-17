@@ -59,6 +59,7 @@ module AMS
         if aapb_key_path && AMS::AAPB.reachable? && filepath.present?
           aapb_host = AMS::AAPB.host
           output = []
+
           output << `scp #{aapb_key_path} #{filepath} ec2-user@#{aapb_host}:/home/ec2-user/ingest_zips/#{filename}`
           output << `ssh -t #{aapb_key_path} ec2-user@#{aapb_host} 'cd /home/ec2-user/ingest_zips && unzip -o #{filename}'`
           output << `ssh -t #{aapb_key_path} ec2-user@#{aapb_host} 'cd /var/www/aapb/current && RAILS_ENV=production ~/bin/bundle exec /usr/bin/ruby scripts/download_clean_ingest.rb --stdout-log --files /home/ec2-user/ingest_zips/*.xml'`

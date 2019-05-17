@@ -24,22 +24,27 @@ class ExportRecordsJob < ApplicationJob
     elsif format == 'zip-pbcore'
       
       update_docs = response_documents.map do |doc|
+        now = Time.now.to_i
 
-        admindata = Asset.find(doc[:id]).admin_data
+        asset = Asset.find(doc[:id])
+        admindata = asset.admin_data
         if admindata
-          admindata.last_pushed = Time.now.strftime('%Y-%m-%dT%H:%M:%SZ')
+          # admindata.last_pushed = Time.now.strftime('%Y-%m-%dT%H:%M:%SZ')
+          admindata.last_pushed = now
           admindata.save!
           admindata = nil
         end
-        # env = Hyrax::Actors::Environment.new(asset, current_ability, attrs)
-        # actor.update(env)
-        doc.delete(:score)
-        doc.delete(:_version)
-        doc[:last_pushed] = Time.now.strftime('%Y-%m-%dT%H:%M:%SZ')
-        doc._source
+
+        # doc.delete(:score)
+        # doc.delete(:_version)
+        # # doc[:last_pushed] = Time.now.strftime('%Y-%m-%dT%H:%M:%SZ')
+        # doc[:last_pushed] = now
+        # doc._source
+        asset.update_index
       end
 
-      ActiveFedora::SolrService.add(update_docs, commit: true)
+      # explicitly add this info to solr
+      # ActiveFedora::SolrService.add(update_docs, commit: true)
 
       export_data = AMS::Export::DocumentsToZippedPbcore.new(response_documents)
     else
@@ -48,7 +53,7 @@ class ExportRecordsJob < ApplicationJob
 
     # new zip method
     if format == 'zip-pbcore'
-      # TODO: add notification for aapb copy
+
       # use @file_path var to send zip from tmp location to aapb
       export_data.process do
         export_data.scp_to_aapb(user)
