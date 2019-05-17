@@ -55,8 +55,12 @@ module AAPB
         end
 
         def raise_ingest_errors(object)
-          msg = object.errors.values.join('; ')
-          msg = "An unknown error occurred during ingest of #{object.class}" if msg.empty?
+          msg = "Error on #{object.class.model_name.human}: "
+          unless object.errors.empty?
+            msg += object.errors.messages.map { |field, msg| "#{field} #{msg.join(', ')}"}.join('; ')
+          else
+            msg += 'unknown error'
+          end
           raise msg
         end
 
