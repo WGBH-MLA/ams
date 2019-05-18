@@ -177,8 +177,7 @@ module AAPB
           attrs[:format]                          = pbcore.physical&.value
           attrs[:generations]                     = pbcore.generations.map(&:value)
           attrs[:time_start]                      = pbcore.time_starts.map(&:value)
-          attrs[:duration]                        = pbcore.duration&.value
-          attrs[:duration].gsub!('?', '')
+          attrs[:duration]                        = pbcore.duration&.value&.gsub('?', '')
           attrs[:colors]                          = pbcore.colors&.value
           attrs[:rights_summary]                  = pbcore.rights.map(&:rights_summary).map(&:value)
           attrs[:rights_link]                     = pbcore.rights.map(&:rights_link).map(&:value)
