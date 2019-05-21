@@ -3,7 +3,7 @@ module AMS
     include BlacklightAdvancedSearch::AdvancedSearchBuilder
 
     # Add date filters to the processor chain.
-    self.default_processor_chain += [:apply_date_filter,:add_advanced_parse_q_to_solr,:add_advanced_search_to_solr]
+    self.default_processor_chain += [:apply_date_filter,:add_advanced_parse_q_to_solr,:add_advanced_search_to_solr, :add_range_parser]
 
     # Overrides Hyrax::FilterModels.
     def models
@@ -17,6 +17,16 @@ module AMS
         solr_params[:fq] << "(#{date_filters.join(" OR ")})"
       end
       solr_params
+    end
+
+    def add_range_parser(solr_parameters)
+      # require('pry');binding.pry
+      # solr_parameters[:q] = %(_val_:"sub(last_updated_tesim, last_pushed_tesim)")
+      # solr_parameters[:fq] << %(_val_: {0 TO *])
+      # solr_parameters[:q] = %(_query_:"{!frange l=0 u=*}sub(last_updated_tesim, last_pushed_tesim)")
+
+
+      solr_parameters[:sort] = %(sub(last_updated_tesim, last_pushed_tesim) desc)
     end
 
     ##

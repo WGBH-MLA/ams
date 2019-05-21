@@ -215,6 +215,8 @@ Hyrax.config do |config|
 
   #Register custom Actor
   #
+  # Hyrax::CurationConcern.actor_factory.use Hyrax::Actors::EnforceParentTitle
+  # Hyrax::CurationConcern.actor_factory.use Hyrax::Actors::UpdateAssetDate
   Hyrax::CurationConcern.actor_factory.insert_after Hyrax::Actors::ApplyPermissionTemplateActor, Hyrax::Actors::EnforceParentTitle
   Hyrax::CurationConcern.actor_factory.insert_after Hyrax::Actors::InitializeWorkflowActor, Hyrax::Actors::UpdateAssetDate
 

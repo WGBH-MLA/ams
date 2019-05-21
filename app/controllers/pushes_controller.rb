@@ -88,21 +88,26 @@ class PushesController < ApplicationController
 
   def needs_updating
 
-    # loopin way
-    # query_params = {rows: 1, sort: "last_updated: asc"}
-    # oldest_updated = search_results(query_params).first
-
-    # query = %(last_updated: [#{ oldest_updated['last_updated'] } to *])
-    # hella_rekkids = search_results({q: query, rows: 2147483647})
-
-    # ids = hella_rekkids.select {|doc| doc[:last_updated] > doc[:last_pushed]}.map(&:id).join("\n")
-    # redirect_to action: 'new', id_field: ids
 
 
     # (last_updated - last_pushed) > 0
-    query = {q: %(gte(sub(last_updated, last_pushed),0)), rows: 2147483647}
+    # query = { q: %( if(gt(sub(last_updated, last_pushed),0)), true, false), rows: 2147483647}
+    # query = { q: %({!func}if(gt(sub(last_updated, last_pushed),0)), true, false), rows: 2147483647}
+    # query = { qf: 'last_updated, last_pushed', q: %({!func}gt(sub(last_updated, last_pushed),0), true, false), rows: 2147483647}
 
-    response, need_update = search_results(query)
+
+    # query = %({!func}sub(last_updated_ssim, last_pushed_ssim))
+    # fq=%({!frange l=0 u=*}sub(last_updated_ssim, last_pushed_ssim))
+    # fq = %(_val_: {0 TO *])
+
+
+    # query=%({!frange l=0 u=*}"sub(last_updated_ssim, last_pushed_ssim)")
+    # query=%(_val_:"gt(sub(last_updated, last_pushed),0)")
+    # full = {q: query}
+
+
+    response, need_update = search_results({q: 'Condition'})
+    require('pry');binding.pry  
     if need_update.count > 0
       ids = need_update.map {|doc| doc[:id]}.join("\n")
       redirect_to action: 'new', id_field: ids
