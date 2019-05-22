@@ -58,7 +58,8 @@ en:
           subject_tesim: Subject
           hyrax_batch_ingest_batch_id_tesim: Batch ID
           last_pushed: Last Pushed To AAPB
-          last_pushed: Asset Last Updated
+          last_updated: Asset Last Updated
+          needs_update: Needs Update
         show:
           id: 'GUID'
           admin_set: 'In Administrative Set:'
@@ -83,6 +84,8 @@ en:
           title_tesim: Title
           hyrax_batch_ingest_batch_id_tesim: Batch ID
           last_pushed: Last Pushed To AAPB
+          last_updated: Asset Last Updated
+          needs_update: Needs Update
       filters:
         title: 'Filtering by:'
       start_over: Start Over

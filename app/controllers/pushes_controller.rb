@@ -87,27 +87,21 @@ class PushesController < ApplicationController
   end
 
   def needs_updating
-
-
-
     # (last_updated - last_pushed) > 0
     # query = { q: %( if(gt(sub(last_updated, last_pushed),0)), true, false), rows: 2147483647}
     # query = { q: %({!func}if(gt(sub(last_updated, last_pushed),0)), true, false), rows: 2147483647}
     # query = { qf: 'last_updated, last_pushed', q: %({!func}gt(sub(last_updated, last_pushed),0), true, false), rows: 2147483647}
-
-
     # query = %({!func}sub(last_updated_ssim, last_pushed_ssim))
     # fq=%({!frange l=0 u=*}sub(last_updated_ssim, last_pushed_ssim))
     # fq = %(_val_: {0 TO *])
-
-
-    # query=%({!frange l=0 u=*}"sub(last_updated_ssim, last_pushed_ssim)")
-    # query=%(_val_:"gt(sub(last_updated, last_pushed),0)")
+    # query=%({!frange l=0 u=*}"sub(last_updated, last_pushed_ssim)")
     # full = {q: query}
+    # query=%(_val_:'gt(sub(last_updated, last_pushed),0)')
 
-
-    response, need_update = search_results({q: 'Condition'})
-    require('pry');binding.pry  
+    fq = %(needs_update: true)
+    # must be fq
+    # why not q? no idea, it doesn't make sense!
+    response, need_update = search_results({fq: fq})
     if need_update.count > 0
       ids = need_update.map {|doc| doc[:id]}.join("\n")
       redirect_to action: 'new', id_field: ids

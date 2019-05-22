@@ -26,20 +26,16 @@ class ExportRecordsJob < ApplicationJob
       update_docs = response_documents.map do |doc|
         now = Time.now.to_i
 
-        asset = Asset.find(doc[:id])
         admindata = asset.admin_data
         if admindata
-          # admindata.last_pushed = Time.now.strftime('%Y-%m-%dT%H:%M:%SZ')
           admindata.last_pushed = now
+          admindata.needs_update = false
           admindata.save!
           admindata = nil
         end
+      end
 
-        # doc.delete(:score)
-        # doc.delete(:_version)
-        # # doc[:last_pushed] = Time.now.strftime('%Y-%m-%dT%H:%M:%SZ')
-        # doc[:last_pushed] = now
-        # doc._source
+      update_docs.each do |doc|
         asset.update_index
       end
 

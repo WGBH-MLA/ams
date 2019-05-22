@@ -32,9 +32,14 @@ module Hyrax
           admindata = parent.admin_data
 
           if admindata
+            is_new_record = true if admindata.last_updated
             admindata.last_updated = Time.now.to_i
-            # default so that query works!
+            # admindata.last_updated = DateTime.now.strftime('%Y-%m-%dT%H:%M:%SZ')
+
             admindata.last_pushed = 0 unless admindata.last_pushed
+            # admindata.last_pushed = DateTime.new(1900,1,1).strftime('%Y-%m-%dT%H:%M:%SZ') unless admindata.last_pushed
+            admindata.needs_update = true unless is_new_record
+
             admindata.save!
             # force update of solr, my friend
             parent.update_index

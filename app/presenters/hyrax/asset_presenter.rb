@@ -11,7 +11,7 @@ module Hyrax
              :promo_description, :clip_description, :copyright_date,
              :level_of_user_access, :minimally_cataloged, :outside_url, :special_collection, :transcript_status,
              :sonyci_id, :licensing_info, :producing_organization, :series_title, :series_description,
-             :playlist_group, :playlist_order, :hyrax_batch_ingest_batch_id,
+             :playlist_group, :playlist_order, :hyrax_batch_ingest_batch_id, :last_pushed, :last_update, :needs_update,
              to: :solr_document
 
     def batch
@@ -39,6 +39,10 @@ module Hyrax
     def last_updated
       # DateTime.strptime(solr_document['last_updated'], '%Y-%m-%dT%H:%M:%SZ',).strftime('%m-%e-%y %H:%M') if solr_document['last_updated']
       DateTime.new(solr_document['last_updated']).strftime('%m-%e-%y %H:%M') if solr_document['last_updated']
+    end
+
+    def needs_update
+      solr_document['needs_update']
     end
 
     def filter_item_ids_to_display(solr_query)
@@ -72,7 +76,8 @@ module Hyrax
           playlist_order.blank? &&
           hyrax_batch_ingest_batch_id.blank? &&
           last_updated.blank? &&
-          last_pushed.blank?
+          last_pushed.blank? &&
+          needs_update.blank?
         )
     end
 

@@ -399,4 +399,8 @@ class SolrDocument
   def last_updated
     self[Solrizer.solr_name('last_updated')]
   end
+
+  def needs_update
+    self[Solrizer.solr_name('needs_update')]
+  end
 end
