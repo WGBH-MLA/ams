@@ -2,17 +2,16 @@ module Hyrax
   module Actors
     class UpdateAssetDate < Hyrax::Actors::BaseActor
       def create(env)
-        update_asset_date(env)
-        next_actor.create(env)
+        update_asset_date(env) && next_actor.create(env)
       end
 
       def update(env)
-        update_asset_date(env)
-        next_actor.update(env)
+        update_asset_date(env) && next_actor.update(env)
       end
 
       private
       def update_asset_date(env)
+
         # handled by its parent job
         return true if env.curation_concern.is_a? Contribution
         # getcha mom
@@ -32,13 +31,12 @@ module Hyrax
           admindata = parent.admin_data
 
           if admindata
-            is_new_record = true if admindata.last_updated
+
             admindata.last_updated = Time.now.to_i
-            # admindata.last_updated = DateTime.now.strftime('%Y-%m-%dT%H:%M:%SZ')
+            admindata.needs_update = true
 
             admindata.last_pushed = 0 unless admindata.last_pushed
             # admindata.last_pushed = DateTime.new(1900,1,1).strftime('%Y-%m-%dT%H:%M:%SZ') unless admindata.last_pushed
-            admindata.needs_update = true unless is_new_record
 
             admindata.save!
             # force update of solr, my friend

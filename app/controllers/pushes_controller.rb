@@ -60,7 +60,7 @@ class PushesController < ApplicationController
     end
 
     query += %(#{requested_ids.last})
-    query_params = {q: query, rows: 2147483647}
+    query_params = {q: query, rows: 2147483647, fq: ["{!terms f=has_model_ssim}Asset"]}
     response, response_documents = search_results(query_params)
 
     found_ids_set = Set.new( response_documents.map(&:id) )
@@ -80,6 +80,11 @@ class PushesController < ApplicationController
     query_params = delete_extra_params(params)
     query_params[:fl] = 'id'
     query_params[:rows] = 2147483647
+
+    # restrict to asset results
+    query_params[:fq] ||= []
+    query_params[:fq] << "{!terms f=has_model_ssim}Asset"
+
     response, response_documents = search_results(query_params)
     # TODO: make :fl query work? catcon default works, gets thrown away here :/
     ids = response_documents.map(&:id).join("\n")
@@ -98,10 +103,23 @@ class PushesController < ApplicationController
     # full = {q: query}
     # query=%(_val_:'gt(sub(last_updated, last_pushed),0)')
 
-    fq = %(needs_update: true)
-    # must be fq
-    # why not q? no idea, it doesn't make sense!
-    response, need_update = search_results({fq: fq})
+    # fq = []
+    # # fq << %(needs_update: true)
+    # # must be fq
+    # # why not q? no idea, it doesn't make sense!
+
+    # # restrict to Asset results
+    # fq << 
+
+    # rows: 2147483647, q: "has_model_ssim:Asset"
+
+
+    # Pass a stupid block in to override default search builder's monkeying around
+    response, need_update = search_results({q: "needs_update:true"}) do 
+      AMS::PushSearchBuilder.new(self)
+    end
+
+    # response, need_update = search_results({})
     if need_update.count > 0
       ids = need_update.map {|doc| doc[:id]}.join("\n")
       redirect_to action: 'new', id_field: ids

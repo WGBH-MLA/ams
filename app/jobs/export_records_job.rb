@@ -15,6 +15,9 @@ class ExportRecordsJob < ApplicationJob
 
     format = search_params[:format]
     search_params.delete(:format)
+
+    # restrict to Asset results
+    search_params[:fq] = ["{!terms f=has_model_ssim}Asset"]
     response, response_documents = search_results(search_params)
     
     if format == "csv"
@@ -23,24 +26,24 @@ class ExportRecordsJob < ApplicationJob
       export_data = AMS::Export::DocumentsToPbcoreXml.new(response_documents)
     elsif format == 'zip-pbcore'
       
-      update_docs = response_documents.map do |doc|
+      assets = response_documents.map {|doc| Asset.find(doc[:id])}
+      assets.each do |asset|
         now = Time.now.to_i
 
         admindata = asset.admin_data
         if admindata
           admindata.last_pushed = now
           admindata.needs_update = false
+          require('pry');binding.pry
           admindata.save!
           admindata = nil
         end
       end
 
-      update_docs.each do |doc|
+      # separating this from above because index update happens faster than admindata save
+      assets.each do |asset|
         asset.update_index
       end
-
-      # explicitly add this info to solr
-      # ActiveFedora::SolrService.add(update_docs, commit: true)
 
       export_data = AMS::Export::DocumentsToZippedPbcore.new(response_documents)
     else
