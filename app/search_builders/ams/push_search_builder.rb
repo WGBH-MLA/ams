@@ -6,8 +6,7 @@ module AMS
     end
 
     def check(solr_params)
-      require('pry');binding.pry
-      solr_params[:q] = 'needs_update: true'
+      # solr_params[:q] = 'needs_update: true'
       solr_params
     end
   end

@@ -34,7 +34,6 @@ class ExportRecordsJob < ApplicationJob
         if admindata
           admindata.last_pushed = now
           admindata.needs_update = false
-          require('pry');binding.pry
           admindata.save!
           admindata = nil
         end
