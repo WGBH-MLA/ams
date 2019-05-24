@@ -2,6 +2,11 @@ class PushesController < ApplicationController
   include ApplicationHelper
   include Blacklight::SearchHelper
 
+  # regular OR searches messed up using push searchbuilder...
+  # def search_builder_class
+  #   AMS::PushSearchBuilder
+  # end
+
   def index
     # show all previous pushes
     @pushes = Push.all
@@ -33,10 +38,10 @@ class PushesController < ApplicationController
       end
     end
     query += %(#{ids.last})
+    
     query_params = {q: query}
-
     query_params[:format] = 'zip-pbcore'
-    query_params[:rows] = 2147483647
+    # query_params[:rows] = 2147483647
     query_params = delete_extra_params(query_params)
     ExportRecordsJob.perform_later(query_params, current_user)
     push = Push.create(user_id: current_user.id, pushed_id_csv: ids.join(',') )
@@ -60,7 +65,7 @@ class PushesController < ApplicationController
     end
 
     query += %(#{requested_ids.last})
-    query_params = {q: query, rows: 2147483647}
+    query_params = {q: query}
     response, response_documents = search_results(query_params)
 
     found_ids_set = Set.new( response_documents.map(&:id) )
@@ -79,11 +84,11 @@ class PushesController < ApplicationController
   def transfer_query
     query_params = delete_extra_params(params)
     query_params[:fl] = 'id'
-    query_params[:rows] = 2147483647
+    # query_params[:rows] = 2147483647
 
     # restrict to asset results
-    query_params[:fq] ||= []
-    query_params[:fq] << "{!terms f=has_model_ssim}Asset"
+    # query_params[:fq] ||= []
+    # query_params[:fq] << "{!terms f=has_model_ssim}Asset"
 
     response, response_documents = search_results(query_params)
     # TODO: make :fl query work? catcon default works, gets thrown away here :/
@@ -116,12 +121,7 @@ class PushesController < ApplicationController
 
     # Pass a block in to override default search builder's monkeying around
     # Pushbuilder forces correct query params, which are otherwise wiped out
-    # response, docs = search_results({}) do |builder|
-    #   builder[:qf] = 'needs_update'
-    #   require('pry');binding.pry
-    # end
-
-    response, docs = search_results({}) do 
+    response, docs = search_results({}) do |builder|
       AMS::PushSearchBuilder.new(self)
     end
 
