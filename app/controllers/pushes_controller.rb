@@ -60,7 +60,7 @@ class PushesController < ApplicationController
     end
 
     query += %(#{requested_ids.last})
-    query_params = {q: query, rows: 2147483647, fq: ["{!terms f=has_model_ssim}Asset"]}
+    query_params = {q: query, rows: 2147483647}
     response, response_documents = search_results(query_params)
 
     found_ids_set = Set.new( response_documents.map(&:id) )
@@ -114,14 +114,19 @@ class PushesController < ApplicationController
     # rows: 2147483647, q: "has_model_ssim:Asset"
 
 
-    # Pass a stupid block in to override default search builder's monkeying around
-    response, need_update = search_results({q: "needs_update:true"}) do 
+    # Pass a block in to override default search builder's monkeying around
+    # Pushbuilder forces correct query params, which are otherwise wiped out
+    # response, docs = search_results({}) do |builder|
+    #   builder[:qf] = 'needs_update'
+    #   require('pry');binding.pry
+    # end
+
+    response, docs = search_results({}) do 
       AMS::PushSearchBuilder.new(self)
     end
 
-    # response, need_update = search_results({})
-    if need_update.count > 0
-      ids = need_update.map {|doc| doc[:id]}.join("\n")
+    if docs.count > 0
+      ids = docs.map {|doc| doc[:id]}.join("\n")
       redirect_to action: 'new', id_field: ids
     else
       # sorry!
