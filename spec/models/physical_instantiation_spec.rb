@@ -173,4 +173,28 @@ RSpec.describe PhysicalInstantiation do
       expect(physical_instantiation.holding_organization.include?("Test holding_organization")).to be true
     end
   end
+
+  describe '#destroy' do
+    before do
+      @ordered_members = [
+        create_list(:essence_track, rand(1..3)),
+        create_list(:contribution, rand(1..3))
+      ].flatten
+
+      # Create, with children
+      physical_instantiation = create(
+        :physical_instantiation,
+        ordered_members: @ordered_members
+      )
+
+      # Now destroy what we've just created
+      physical_instantiation.destroy!
+    end
+
+    it 'destroys child EssenceTracks and Contributions' do
+      @ordered_members.each do |child|
+        expect { child.reload }.to raise_error ActiveFedora::ObjectNotFoundError
+      end
+    end
+  end
 end
