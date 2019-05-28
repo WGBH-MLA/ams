@@ -24,6 +24,12 @@ class PhysicalInstantiation < ActiveFedora::Base
     end
   end
 
+  after_destroy do
+    ordered_members.to_a.each do |ordered_member|
+      ordered_member.destroy if ordered_member.class.in? [ EssenceTrack, Contribution ]
+    end
+  end
+
 
 
   property :date, predicate: ::RDF::URI.new("http://purl.org/dc/terms/date"), multiple: true, index_to_parent: true do |index|

@@ -107,4 +107,33 @@ RSpec.describe Asset do
       expect(asset.valid?).to be false
     end
   end
+
+  describe '#destroy' do
+    before do
+      @ordered_members = [
+        create_list(:digital_instantiation, rand(1..3)),
+        create_list(:physical_instantiation, rand(1..3)),
+        create(:contribution)
+      ].flatten
+
+      @asset = create(
+        :asset,
+        ordered_members: @ordered_members
+      )
+
+      # get the AdminData record to verify its destruction
+      @admin_data = @asset.admin_data
+
+      # Now destroy the Asset
+      @asset.destroy!
+    end
+
+    it 'destroys child PhysicalInstantiations, DigitalInstantiations, and associated AdminData' do
+      @ordered_members.each do |child|
+        expect { child.reload }.to raise_error ActiveFedora::ObjectNotFoundError
+      end
+
+      expect { @admin_data.reload }.to raise_error ActiveRecord::RecordNotFound
+    end
+  end
 end

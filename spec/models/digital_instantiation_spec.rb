@@ -195,4 +195,28 @@ RSpec.describe DigitalInstantiation do
       expect { digital_instantiation.instantiation_admin_data_gid = gid }.to raise_error(ActiveRecord::RecordNotFound, "Couldn't find InstantiationAdminData matching GID #{gid}")
     end
   end
+
+  describe '#destroy' do
+    before do
+      @ordered_members = [
+        create_list(:essence_track, rand(1..3)),
+        create_list(:contribution, rand(1..3))
+      ].flatten
+
+      # Create, with children
+      digtial_instantiation = create(
+        :digital_instantiation,
+        ordered_members: @ordered_members
+      )
+
+      # Now destroy what we've just created
+      digtial_instantiation.destroy!
+    end
+
+    it 'destroys child EssenceTracks and Contributions' do
+      @ordered_members.each do |child|
+        expect { child.reload }.to raise_error ActiveFedora::ObjectNotFoundError
+      end
+    end
+  end
 end
