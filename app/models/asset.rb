@@ -14,6 +14,13 @@ class Asset < ActiveFedora::Base
     value.each { |val|  record.errors.add(attr, "invalid date format: #{val}") if AMS::NonExactDateService.invalid?(val) }
   end
 
+  after_destroy do
+    ordered_members.to_a.each do |ordered_member|
+      ordered_member.destroy if ordered_member.class.in? [ PhysicalInstantiation, DigitalInstantiation, Contribution ]
+    end
+    admin_data.destroy if admin_data_gid
+  end
+
   def at_least_one_title
     all_titles = title.to_a
     all_titles += program_title.to_a

@@ -13,7 +13,7 @@ FactoryBot.define do
     trait :aapb_moving_image_with_essence_track do
       holding_organization { "American Archive of Public Broadcasting" }
       media_type { "Moving Image" }
-      members { [ create(:essence_track)] }
+      ordered_members { [ create(:essence_track)] }
     end
     trait :aapb_sound do
       holding_organization { "American Archive of Public Broadcasting" }
