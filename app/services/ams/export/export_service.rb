@@ -62,7 +62,17 @@ module AMS
 
           output << `scp #{aapb_key_path} #{filepath} ec2-user@#{aapb_host}:/home/ec2-user/ingest_zips/#{filename}`
           output << `ssh -t #{aapb_key_path} ec2-user@#{aapb_host} 'cd /home/ec2-user/ingest_zips && unzip -o #{filename}'`
-          output << `ssh -t #{aapb_key_path} ec2-user@#{aapb_host} 'cd /var/www/aapb/current && RAILS_ENV=production ~/bin/bundle exec /usr/bin/ruby scripts/download_clean_ingest.rb --stdout-log --files /home/ec2-user/ingest_zips/*.xml'`
+          
+          if Rails.env.test?
+            output << "TESTING IF THERE ARE FILES HERE"
+            output << `ssh -t #{aapb_key_path} ec2-user@#{aapb_host} 'cd /home/ec2-user/ingest_zips && ls'`
+          else
+            output << `ssh -t #{aapb_key_path} ec2-user@#{aapb_host} 'cd /var/www/aapb/current && RAILS_ENV=production ~/bin/bundle exec /usr/bin/ruby scripts/download_clean_ingest.rb --stdout-log --files /home/ec2-user/ingest_zips/*.xml'`
+          end
+
+          output << `ssh -t #{aapb_key_path} ec2-user@#{aapb_host} 'cd /home/ec2-user/ingest_zips && rm -v ./*'`
+
+          # print and email
           Rails.logger.info output
           Ams2Mailer.scp_to_aapb_notification(user, output.join("\n\n")).deliver_later
         else

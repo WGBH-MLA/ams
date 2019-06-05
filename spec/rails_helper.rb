@@ -71,6 +71,11 @@ RSpec.configure do |config|
     # Set the capybara JS driver to whatever was passed in to JS_DRIVER,
     # defaulting to :selenium_chrome_headless
     Capybara.javascript_driver = ENV.fetch('JS_DRIVER', 'selenium_chrome_headless').to_sym
+
+    Capybara.register_driver :chrome do |app|
+      Capybara::Selenium::Driver.new(app, browser: :chrome)
+    end
+
   end
 
   # Reset data conditionally for each exampld; defaults to true.

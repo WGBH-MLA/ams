@@ -19,7 +19,7 @@ class ExportRecordsJob < ApplicationJob
     # restrict to Asset results
     # search_params[:fq] = ["{!terms f=has_model_ssim}Asset"]
     response, response_documents = search_results(search_params)
-    require('pry');binding.pry
+
     if format == "csv"
       export_data = AMS::Export::DocumentsToCsv.new(response_documents)
     elsif format == "pbcore"
@@ -61,6 +61,7 @@ class ExportRecordsJob < ApplicationJob
       export_data.process do
         export_data.upload_to_s3
       end
+      
       Ams2Mailer.export_notification(user, export_data.s3_path).deliver_later
     end
 

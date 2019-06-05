@@ -43,8 +43,10 @@ class PushesController < ApplicationController
     query_params[:format] = 'zip-pbcore'
     # query_params[:rows] = 2147483647
     query_params = delete_extra_params(query_params)
+    require('pry');binding.pry
     ExportRecordsJob.perform_later(query_params, current_user)
     push = Push.create(user_id: current_user.id, pushed_id_csv: ids.join(',') )
+
     
     # flash[:notice] = "Your IDs have been accepted."
     # render 'pb_to_aapb_form'

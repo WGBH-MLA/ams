@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190517144831) do
+ActiveRecord::Schema.define(version: 20190522203953) do
 
   create_table "admin_data", force: :cascade do |t|
     t.string "level_of_user_access"
@@ -27,6 +27,7 @@ ActiveRecord::Schema.define(version: 20190517144831) do
     t.integer "hyrax_batch_ingest_batch_id"
     t.integer "last_pushed"
     t.integer "last_updated"
+    t.boolean "needs_update"
     t.index ["hyrax_batch_ingest_batch_id"], name: "index_admin_data_on_hyrax_batch_ingest_batch_id"
   end
 
