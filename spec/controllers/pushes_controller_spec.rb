@@ -1,11 +1,12 @@
 require 'rails_helper'
 
-RSpec.describe "Pushes", type: :controller, reset_data: true do
+RSpec.describe "Pushes", type: :controller, reset_data: true, js: true do
   include Warden::Test::Helpers
   include Devise::Test::ControllerHelpers
 
   let(:asset) { create(:asset) }
   let(:asset2) { create(:asset) }
+  let(:asset3) { create(:asset, needs_update: true) }
   let(:user) { create :admin_user }
 
   context '#pushes' do
@@ -17,19 +18,30 @@ RSpec.describe "Pushes", type: :controller, reset_data: true do
       Warden.test_reset!
     end
 
+    after :all do
+      ActiveFedora::Cleaner.clean!
+    end
+
     it 'gives validation error when invalid GUID input data' do
       visit '/pushes/new'
-      fill_in('id_field', with: 'xxx123' )
+      fill_in(id: 'id_field', with: 'xxx133' )
       expect(page).to have_text('There was a problem parsing your IDs. Please check your input and try again.')
     end
 
     it 'gives all clear for valid GUID input data' do
       visit '/pushes/new'
-      fill_in('id_field', with: asset.id )
+      fill_in(id: 'id_field', with: asset.id )
       expect(page).to have_text('All GUIDs are valid!')
     end
 
     it 'gets the correct record set for needs_updating' do
+      # this i do
+      # just for u
+      asset.update_index
+      asset2.update_index
+      asset3.update_index
+      visit '/pushes/needs_updating'
+      expect(page.find('textarea')).to have_text(asset3.id)
     end
 
     it 'gets the correct record set when navigating from a catalog serach' do
