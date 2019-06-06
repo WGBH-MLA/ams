@@ -2,6 +2,7 @@ class Asset < ActiveFedora::Base
   include ::Hyrax::WorkBehavior
   include ::AMS::CreateMemberMethods
   include ::AMS::IdentifierService
+  include ::AMS::CascadeDestroyMembers
 
   self.indexer = AssetIndexer
   before_save :save_admin_data
@@ -15,9 +16,6 @@ class Asset < ActiveFedora::Base
   end
 
   after_destroy do
-    ordered_members.to_a.each do |ordered_member|
-      ordered_member.destroy if ordered_member.class.in? [ PhysicalInstantiation, DigitalInstantiation, Contribution ]
-    end
     admin_data.destroy if admin_data_gid
   end
 

@@ -124,7 +124,7 @@ RSpec.describe Asset do
       # get the AdminData record to verify its destruction
       @admin_data = @asset.admin_data
 
-      # Now destroy the Asset
+      # Run the method under test, and assert expectations in the examples.
       @asset.destroy!
     end
 

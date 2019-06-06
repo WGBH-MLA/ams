@@ -7,6 +7,7 @@ class DigitalInstantiation < ActiveFedora::Base
   include ::Hyrax::WorkBehavior
   include ::AMS::CreateMemberMethods
   include ::AMS::IdentifierService
+  include ::AMS::CascadeDestroyMembers
 
   extend CarrierWave::Mount
   before_save :save_instantiation_admin_data
@@ -29,12 +30,6 @@ class DigitalInstantiation < ActiveFedora::Base
   validates :media_type, presence: { message: 'Your work must have a Media Type.' }
   validates :duration, format: { with: AMS::TimeCodeService.regex, allow_blank: true, message: "Invalid format for duration. Use HH:MM:SS, H:MM:SS, MM:SS, or M:SS" }
   validates :time_start, format: { with: AMS::TimeCodeService.regex, allow_blank: true, message: "Invalid format for time start. Use HH:MM:SS, H:MM:SS, MM:SS, or M:SS" }
-
-  after_destroy do
-    ordered_members.to_a.each do |ordered_member|
-      ordered_member.destroy if ordered_member.class.in? [ EssenceTrack, Contribution ]
-    end
-  end
 
   def pbcore_validate_instantiation_xsd
     if digital_instantiation_pbcore_xml.file
