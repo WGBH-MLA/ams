@@ -1,17 +1,21 @@
 require 'rails_helper'
-require 'current_user_stub'
 
-RSpec.describe "Pushes", reset_data: true do
-  #   let(:ingester_class) { described_class }
-  # let(:submitter) { create(:user) }
-  # let(:batch) { build(:batch, submitter_email: submitter.email) }
-  # let(:sample_source_location) { File.join(fixture_path, 'batch_ingest', 'sample_pbcore2_xml', 'cpb-aacip_600-g73707wt6r.xml' ) }
-  # let(:batch_item) { build(:batch_item, batch: batch, source_location: sample_source_location)}
-
+RSpec.describe "Pushes", type: :controller, reset_data: true do
+  include Warden::Test::Helpers
+  include Devise::Test::ControllerHelpers
 
   let(:asset) { create(:asset) }
+  let(:asset2) { create(:asset) }
+  let(:user) { create :admin_user }
 
   context '#pushes' do
+    before :each do
+      login_as(user)
+    end
+
+    after :each do
+      Warden.test_reset!
+    end
 
     it 'gives validation error when invalid GUID input data' do
       visit '/pushes/new'
@@ -25,15 +29,30 @@ RSpec.describe "Pushes", reset_data: true do
       expect(page).to have_text('All GUIDs are valid!')
     end
 
+    it 'gets the correct record set for needs_updating' do
+    end
+
+    it 'gets the correct record set when navigating from a catalog serach' do
+      uri = %(/catalog?q=title: #{asset.title.first} OR title: #{asset2.title.first})
+      visit uri
+      click_link('Push To AAPB', class: 'aapb-push-button')
+
+      expect(page.find('textarea')).to have_text(asset.id)
+      expect(page.find('textarea')).to have_text(asset2.id)
+    end
+
     it 'can submit a push successfully' do
+      allow(ExportRecordsJob).to receive(:perform_later)
       visit '/pushes/new'
       fill_in('id_field', with: asset.id )
-
       click_button(id: 'push-submit')
 
       # this will have the output mail
-      output_mail = ActionMailer::Base.deliveries.last
-      require('pry');binding.pry
+      # output_mail = ActionMailer::Base.deliveries.last
+      expect(ExportRecordsJob).to have_received(:perform_later)
+      push = Push.last
+      expect(push.user_id).to eq(user.id)
+      expect(push.pushed_id_csv).to eq(asset.id)
     end
   end
 end

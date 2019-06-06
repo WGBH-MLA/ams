@@ -4,12 +4,8 @@ module ApplicationHelper
     return false unless input =~ /[a-z0-9\-_\/\n]/
     ids = input.split(/\s/).reject(&:empty?)
 
-    if Rails.env.test?
-      # factory produces wack ids
-      return false unless ids.all? {|id| /\Acpb-aacip[\-_\/][a-zA-Z0-9]+\z/ =~ id }
-    else
-      return false unless ids.all? {|id| /\Acpb-aacip[\-_\/][0-9]{1,3}[\-_\/][a-zA-Z0-9]+\z/ =~ id }
-    end
+    return false unless ids.all? {|id| /\Acpb-aacip[\-_\/][0-9]{1,3}[\-_\/][a-zA-Z0-9]+\z/ =~ id || /\Acpb-aacip[\-_\/][a-zA-Z0-9]+\z/ =~ id }
+
     ids
   end
 

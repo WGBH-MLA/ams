@@ -1,7 +1,8 @@
 class PushesController < ApplicationController
   include ApplicationHelper
   include Blacklight::SearchHelper
-
+  before_action :authenticate_user!
+  
   # regular OR searches messed up using push searchbuilder...
   # def search_builder_class
   #   AMS::PushSearchBuilder
@@ -43,7 +44,7 @@ class PushesController < ApplicationController
     query_params[:format] = 'zip-pbcore'
     # query_params[:rows] = 2147483647
     query_params = delete_extra_params(query_params)
-    require('pry');binding.pry
+    
     ExportRecordsJob.perform_later(query_params, current_user)
     push = Push.create(user_id: current_user.id, pushed_id_csv: ids.join(',') )
 
@@ -99,28 +100,6 @@ class PushesController < ApplicationController
   end
 
   def needs_updating
-    # (last_updated - last_pushed) > 0
-    # query = { q: %( if(gt(sub(last_updated, last_pushed),0)), true, false), rows: 2147483647}
-    # query = { q: %({!func}if(gt(sub(last_updated, last_pushed),0)), true, false), rows: 2147483647}
-    # query = { qf: 'last_updated, last_pushed', q: %({!func}gt(sub(last_updated, last_pushed),0), true, false), rows: 2147483647}
-    # query = %({!func}sub(last_updated_ssim, last_pushed_ssim))
-    # fq=%({!frange l=0 u=*}sub(last_updated_ssim, last_pushed_ssim))
-    # fq = %(_val_: {0 TO *])
-    # query=%({!frange l=0 u=*}"sub(last_updated, last_pushed_ssim)")
-    # full = {q: query}
-    # query=%(_val_:'gt(sub(last_updated, last_pushed),0)')
-
-    # fq = []
-    # # fq << %(needs_update: true)
-    # # must be fq
-    # # why not q? no idea, it doesn't make sense!
-
-    # # restrict to Asset results
-    # fq << 
-
-    # rows: 2147483647, q: "has_model_ssim:Asset"
-
-
     # Pass a block in to override default search builder's monkeying around
     # Pushbuilder forces correct query params, which are otherwise wiped out
     response, docs = search_results({}) do |builder|
