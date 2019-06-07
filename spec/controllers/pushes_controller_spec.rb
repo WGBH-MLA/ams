@@ -44,7 +44,7 @@ RSpec.describe "Pushes", type: :controller, reset_data: true, js: true do
       expect(page.find('textarea')).to have_text(asset3.id)
     end
 
-    it 'gets the correct record set when navigating from a catalog serach' do
+    it 'gets the correct record set when navigating from a catalog search' do
       uri = %(/catalog?q=title: #{asset.title.first} OR title: #{asset2.title.first})
       visit uri
       click_link('Push To AAPB', class: 'aapb-push-button')
