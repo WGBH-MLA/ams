@@ -94,6 +94,7 @@ class PushesController < ApplicationController
     # query_params[:fq] << "{!terms f=has_model_ssim}Asset"
 
     response, response_documents = search_results(query_params)
+
     # TODO: make :fl query work? catcon default works, gets thrown away here :/
     ids = response_documents.map(&:id).join("\n")
     redirect_to action: 'new', id_field: ids

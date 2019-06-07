@@ -90,10 +90,5 @@ FactoryBot.define do
         work.admin_data_gid = admin_data.gid
       end
     end
-
-    after(:create) do |work, evaluator|
-      work.apply_depositor_metadata(evaluator.user.user_key)
-      work.save!
-    end
   end
 end

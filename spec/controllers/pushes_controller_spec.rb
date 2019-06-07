@@ -4,10 +4,11 @@ RSpec.describe "Pushes", type: :controller, js: true do
   include Warden::Test::Helpers
   include Devise::Test::ControllerHelpers
 
-  let(:asset) { create(:asset) }
-  let(:asset2) { create(:asset) }
-  let(:asset3) { create(:asset, needs_update: true) }
-  let(:user) { create :admin_user }
+  # let it bang
+  let!(:user) { create :admin_user }
+  let!(:asset) { create(:asset, user: user, program_title: ['foo']) }
+  let!(:asset2) { create(:asset, user: user, program_title: ['foo bar']) }
+  let!(:asset3) { create(:asset, user: user, needs_update: true) }
 
   context '#pushes' do
     before :each do
@@ -33,16 +34,16 @@ RSpec.describe "Pushes", type: :controller, js: true do
     it 'gets the correct record set for needs_updating' do
       # this i do
       # just for u
-      asset.update_index
-      asset2.update_index
-      asset3.update_index
       visit '/pushes/needs_updating'
       expect(page.find('textarea')).to have_text(asset3.id)
     end
 
     it 'gets the correct record set when navigating from a catalog search' do
-      uri = %(/catalog?q=title: #{asset.title.first} OR title: #{asset2.title.first})
-      visit uri
+      # uri = %(/catalog?q=foo)
+      # visit uri
+      visit '/catalog'
+      fill_in(id: 'q', with: 'foo')
+      click_button(id: 'search-submit-header')
       click_link('Push To AAPB', class: 'aapb-push-button')
 
       expect(page.find('textarea')).to have_text(asset.id)
