@@ -16,4 +16,15 @@ module ApplicationHelper
     # woo!
     params
   end
+
+  def display_date(date_time, format: '%Y-%m-%d', from_format: nil)
+    parsed_time = if from_format
+      Date.strptime(date_time, from_format)
+    else
+      Date.strptime(date_time)
+    end
+    parsed_time.strftime(format)
+  rescue => e
+    nil
+  end
 end

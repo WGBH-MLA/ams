@@ -4,6 +4,7 @@ class PhysicalInstantiation < ActiveFedora::Base
   include ::Hyrax::WorkBehavior
   include ::AMS::CreateMemberMethods
   include ::AMS::IdentifierService
+  include ::AMS::CascadeDestroyMembers
 
   self.indexer = PhysicalInstantiationIndexer
   # Change this to restrict which works can be added as a child.
@@ -23,14 +24,6 @@ class PhysicalInstantiation < ActiveFedora::Base
       end
     end
   end
-
-  after_destroy do
-    ordered_members.to_a.each do |ordered_member|
-      ordered_member.destroy if ordered_member.class.in? [ EssenceTrack, Contribution ]
-    end
-  end
-
-
 
   property :date, predicate: ::RDF::URI.new("http://purl.org/dc/terms/date"), multiple: true, index_to_parent: true do |index|
     index.as :stored_searchable, :facetable
