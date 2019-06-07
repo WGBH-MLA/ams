@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe "Pushes", type: :controller, reset_data: true, js: true do
+RSpec.describe "Pushes", type: :controller, js: true do
   include Warden::Test::Helpers
   include Devise::Test::ControllerHelpers
 
@@ -16,10 +16,6 @@ RSpec.describe "Pushes", type: :controller, reset_data: true, js: true do
 
     after :each do
       Warden.test_reset!
-    end
-
-    after :all do
-      ActiveFedora::Cleaner.clean!
     end
 
     it 'gives validation error when invalid GUID input data' do
