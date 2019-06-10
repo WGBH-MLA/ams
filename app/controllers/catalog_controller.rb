@@ -42,6 +42,10 @@ class CatalogController < ApplicationController
     config.index.display_type_field = solr_name("has_model", :symbol)
     config.index.thumbnail_field = 'thumbnail_path_ss'
 
+    # override default thumbnail method to handle 'cpb-aacip-' id vs 'cpb-aacip_' in S3 filename
+    config.index.thumbnail_method = :render_thumbnail
+
+
     # solr fields that will be treated as facets by the blacklight application
     #   The ordering of the field names is the order of the display
     config.add_facet_field solr_name("asset_types", :facetable), label: "Asset Type", limit: 5, collapse: true
