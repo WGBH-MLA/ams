@@ -3,7 +3,10 @@
   "private": true,
   "dependencies": {
     "@rails/webpacker": "3.5",
+    "ajv": "^6.9.1",
     "babel-preset-react": "^6.24.1",
+    "fsevents": "^2.0.7",
+    "node-sass": "^4.12.0",
     "prop-types": "^15.6.2",
     "react": "^16.5.2",
     "react-dom": "^16.5.2",
