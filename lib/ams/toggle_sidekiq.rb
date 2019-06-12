@@ -22,5 +22,15 @@ module AMS
       @logger.info "Killed sidekiq, got resp #{resp}"
     end
 
+    private
+
+      def logger=(logger)
+        raise ArgumentError, "Logger object expected but #{logger.class} was given" unless logger.is_a? Logger
+        @logger = logger
+      end
+
+      def logger
+        @logger ||= Logger.new(STDOUT)
+      end
   end
 end
