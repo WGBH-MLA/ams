@@ -103,7 +103,7 @@ module AAPB
 
           attrs[:subject]                     = pbcore.subjects.map(&:value)
 
-          creator_orgs, creator_people        = pbcore.creators.partition { |pbcreator| pbcreator.role.value == 'Producing Organization' }
+          creator_orgs, creator_people        = pbcore.creators.partition { |pbcreator| pbcreator.role&.value == 'Producing Organization' }
           all_people = pbcore.contributors + pbcore.publishers + creator_people
           attrs[:contributors]                = people_attributes(all_people)
           attrs[:producing_organization]      = creator_orgs.map {|co| co.creator.value}
@@ -118,12 +118,13 @@ module AAPB
       end
 
       def aapb_id
-        @aapb_id ||= pbcore.identifiers.select { |id|
-            id.source == "http://americanarchiveinventory.org"}.map(&:value).first
+        @aapb_id ||= pbcore.identifiers.select do |id|
+          id.source == "http://americanarchiveinventory.org"
+        end.map(&:value).first
       end
 
       def normalized_aapb_id(id)
-        id.gsub('cpb-aacip/', 'cpb-aacip_') if id
+        id.gsub('cpb-aacip/', 'cpb-aacip-') if id
       end
 
       def people_attributes(people)
@@ -176,7 +177,7 @@ module AAPB
           attrs[:format]                          = pbcore.physical&.value
           attrs[:generations]                     = pbcore.generations.map(&:value)
           attrs[:time_start]                      = pbcore.time_starts.map(&:value)
-          attrs[:duration]                        = pbcore.duration&.value
+          attrs[:duration]                        = pbcore.duration&.value&.gsub('?', '')
           attrs[:colors]                          = pbcore.colors&.value
           attrs[:rights_summary]                  = pbcore.rights.map(&:rights_summary).map(&:value)
           attrs[:rights_link]                     = pbcore.rights.map(&:rights_link).map(&:value)
@@ -209,7 +210,7 @@ module AAPB
           attrs[:frame_height] = frame_height
           attrs[:aspect_ratio] = pbcore.aspect_ratio.value if pbcore.aspect_ratio
           attrs[:time_start] = pbcore.time_start.value if pbcore.time_start
-          attrs[:duration] = pbcore.duration.value if pbcore.duration
+          attrs[:duration] = pbcore.duration.value.gsub('?', '') if pbcore.duration
           attrs[:annotation] = pbcore.annotations.map(&:value) if pbcore.annotations
         end
       end

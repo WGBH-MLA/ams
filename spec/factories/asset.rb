@@ -44,6 +44,10 @@ FactoryBot.define do
       # create(:asset, admin_set: create(:admin_set))
       admin_set { false }
       needs_update { false }
+
+      # This is where you would set the Asset's PhysicalInstantiations,
+      # DigitalINstantiations, and/or Contributions
+      ordered_members { [] }
     end
 
     trait :public do
@@ -51,19 +55,19 @@ FactoryBot.define do
     end
 
     trait :with_physical_instantiation do
-      members { [create(:physical_instantiation)] }
+      ordered_members { [ create(:physical_instantiation) ] }
     end
 
     trait :with_digital_instantiation do
-      members { [create(:digital_instantiation)] }
+      ordered_members { [ create(:digital_instantiation) ] }
     end
 
     trait :with_digital_instantiation_and_essence_track do
-      members { [create(:digital_instantiation, :aapb_moving_image_with_essence_track)] }
+      ordered_members { [ create(:digital_instantiation, :aapb_moving_image_with_essence_track) ] }
     end
 
     trait :with_two_digital_instantiations_and_essence_tracks do
-      members { [
+      ordered_members { [
         create(:digital_instantiation, :aapb_moving_image_with_essence_track),
         create(:digital_instantiation, :aapb_moving_image_with_essence_track)
       ] }
@@ -89,6 +93,18 @@ FactoryBot.define do
 
         work.admin_data_gid = admin_data.gid
       end
+
+      if evaluator.ordered_members
+        evaluator.ordered_members.each do |ordered_member|
+          work.ordered_members << ordered_member
+        end
+      end
+    end
+
+    after(:create) do |work, evaluator|
+      # TODO: don't think this is needed, since it's happening in after(:build)
+      work.apply_depositor_metadata(evaluator.user.user_key)
+      work.save!
     end
   end
 end

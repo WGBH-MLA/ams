@@ -18,4 +18,21 @@ module ApplicationHelper
     # woo!
     params
   end
+
+  def display_date(date_time, format: '%Y-%m-%d', from_format: nil)
+    parsed_time = if from_format
+      Date.strptime(date_time, from_format)
+    else
+      Date.strptime(date_time)
+    end
+    parsed_time.strftime(format)
+  rescue => e
+    nil
+  end
+
+  def render_thumbnail(document, options)
+    # send(blacklight_config.view_config(document_index_view_type).thumbnail_method, document, image_options)
+    url = thumbnail_url(document).gsub('cpb-aacip-', 'cpb-aacip_')
+    image_tag url, options if url.present?
+  end
 end

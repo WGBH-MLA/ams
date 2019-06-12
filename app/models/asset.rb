@@ -2,6 +2,7 @@ class Asset < ActiveFedora::Base
   include ::Hyrax::WorkBehavior
   include ::AMS::CreateMemberMethods
   include ::AMS::IdentifierService
+  include ::AMS::CascadeDestroyMembers
 
   self.indexer = AssetIndexer
   before_save :save_admin_data
@@ -12,6 +13,10 @@ class Asset < ActiveFedora::Base
   # validate :at_least_one_description
   validates_each :date, :broadcast_date, :created_date, :copyright_date,  allow_blank: true do |record, attr, value|
     value.each { |val|  record.errors.add(attr, "invalid date format: #{val}") if AMS::NonExactDateService.invalid?(val) }
+  end
+
+  after_destroy do
+    admin_data.destroy if admin_data_gid
   end
 
   def at_least_one_title

@@ -18,12 +18,12 @@ module AAPB
           raise "Batch item contained invalid data.\n\n#{batch_item_object.errors.to_a.join("\n")}" if batch_item_object.errors.count > 0
 
           pbcore_digital_instantiations.each do |pbcore_digital_instantiation|
-            di_batch_item = Hyrax::BatchIngest::BatchItem.create!(batch: batch_item.batch, status: 'initialized')
+            di_batch_item = Hyrax::BatchIngest::BatchItem.create!(batch: batch_item.batch, status: 'initialized', id_within_batch: batch_item.id_within_batch)
             CoolDigitalJob.perform_later(parent_id: batch_item_object.id, xml: pbcore_digital_instantiation.to_xml, batch_item: di_batch_item)
           end
 
           pbcore_physical_instantiations.each do |pbcore_physical_instantiation|
-            pi_batch_item = Hyrax::BatchIngest::BatchItem.create!(batch: batch_item.batch, status: 'initialized')
+            pi_batch_item = Hyrax::BatchIngest::BatchItem.create!(batch: batch_item.batch, status: 'initialized', id_within_batch: batch_item.id_within_batch)
             CoolPhysicalJob.perform_later(parent_id: batch_item_object.id, xml: pbcore_physical_instantiation.to_xml, batch_item: pi_batch_item)
           end
         elsif batch_item_is_digital_instantiation?
@@ -35,6 +35,7 @@ module AAPB
         batch_item_object
       end
 
+      # TODO: make private methods private again
       # private
 
         def batch_item_is_asset?
@@ -53,13 +54,23 @@ module AAPB
           pbcore.instantiations.select { |inst| inst.physical }
         end
 
+        def raise_ingest_errors(object)
+          msg = "Error on #{object.class.model_name.human}: "
+          unless object.errors.empty?
+            msg += object.errors.messages.map { |field, msg| "#{field} #{msg.join(', ')}"}.join('; ')
+          else
+            msg += 'unknown error'
+          end
+          raise msg
+        end
+
         def ingest_asset!
           asset = Asset.new
           actor = Hyrax::CurationConcern.actor
           attrs = AAPB::BatchIngest::PBCoreXMLMapper.new(pbcore_xml).asset_attributes
           attrs[:hyrax_batch_ingest_batch_id] = batch_id
           env = Hyrax::Actors::Environment.new(asset, current_ability, attrs)
-          actor.create(env)
+          raise_ingest_errors(asset) unless actor.create(env)
           asset
         end
 
@@ -67,10 +78,12 @@ module AAPB
           digital_instantiation = DigitalInstantiation.new
           digital_instantiation.skip_file_upload_validation = true
           actor = Hyrax::CurationConcern.actor
-          attrs = AAPB::BatchIngest::ZippedPBCoreDigitalInstantiationMapper.new(@batch_item).digital_instantiation_attributes
+          mapper = AAPB::BatchIngest::ZippedPBCoreDigitalInstantiationMapper.new(@batch_item)
+          attrs = mapper.digital_instantiation_attributes
+          parent = mapper.parent_asset
           env = Hyrax::Actors::Environment.new(digital_instantiation, current_ability, attrs)
-          actor.create(env)
-          attrs[:in_works_ids].map{ |id| Asset.find(id).reload }
+          raise_ingest_errors(digital_instantiation) unless actor.create(env)
+          atomically_adopt parent, digital_instantiation
           digital_instantiation
         end
 
@@ -78,14 +91,11 @@ module AAPB
           digital_instantiation = DigitalInstantiation.new
           digital_instantiation.skip_file_upload_validation = true
           actor = Hyrax::CurationConcern.actor
-          attrs = {
-            pbcore_xml: xml,
-            in_works_ids: [parent.id],
-          }
-
+          attrs = { pbcore_xml: xml }
           env = Hyrax::Actors::Environment.new(digital_instantiation, current_ability, attrs)
           env.attributes[:title] = ::SolrDocument.new(parent.to_solr).title
-          actor.create(env)
+          raise_ingest_errors(digital_instantiation) unless actor.create(env)
+          atomically_adopt parent, digital_instantiation
           digital_instantiation
         end
 
@@ -93,10 +103,10 @@ module AAPB
           physical_instantiation = PhysicalInstantiation.new
           actor = Hyrax::CurationConcern.actor
           attrs = AAPB::BatchIngest::PBCoreXMLMapper.new(xml).physical_instantiation_attributes
-          attrs[:in_works_ids] = [parent.id]
           env = Hyrax::Actors::Environment.new(physical_instantiation, current_ability, attrs)
           env.attributes[:title] = ::SolrDocument.new(parent.to_solr).title
-          actor.create(env)
+          raise_ingest_errors(physical_instantiation) unless actor.create(env)
+          atomically_adopt parent, physical_instantiation
           physical_instantiation
         end
 
@@ -104,10 +114,10 @@ module AAPB
           essence_track = EssenceTrack.new
           actor = Hyrax::CurationConcern.actor
           attrs = AAPB::BatchIngest::PBCoreXMLMapper.new(xml).essence_track_attributes
-          attrs[:in_works_ids] = [parent.id]
           env = Hyrax::Actors::Environment.new(essence_track, current_ability, attrs)
           env.attributes[:title] = ::SolrDocument.new(parent.to_solr).title
-          actor.create(env)
+          raise_ingest_errors(essence_track) unless actor.create(env)
+          atomically_adopt parent, essence_track
           essence_track
         end
 
@@ -151,6 +161,35 @@ module AAPB
         # to avoid that issue.
         def sipity_agent
           PowerConverter.convert_to_sipity_agent(submitter)
+        end
+
+        # When running ingest methods concurrently in background jobs, we need
+        # to add children to their parent objects atomically, so that jobs to
+        # overwrite the children added from other concurrent jobs.
+        # @param <ActiveFedora::Base> parent the parent object
+        # @param <ActiveFedora::Base> child the child object
+        def atomically_adopt(parent, child)
+          # Get the lock for 10 seconds
+          lock_manager.lock!("add_ordered_member_to:#{parent.id}", 120000) do |locked|
+            parent.ordered_members << child
+            parent.save!
+          end
+        rescue Redlock::LockError
+          # redlock will automatically retry to acquire the lock according to
+          # params passed to Redlock::Client.new (see #lock_manager). If all of
+          # those retries fail, then we land here. Raise an exception that
+          # indicates the failure as it is relevant to ingest.
+          raise "Could not add #{child.class} (#{child.id}) to #{parent.class} (#{parent.id})."
+        end
+
+        def lock_manager
+          @lock_manager ||= Redlock::Client.new(
+            [ Redis.current ], {
+            retry_count:   120,
+            retry_delay:   5000, # every 5 seconds
+            retry_jitter:  500,  # half a second
+            redis_timeout: 0.1  # seconds
+          })
         end
     end
   end

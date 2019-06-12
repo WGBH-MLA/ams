@@ -4,6 +4,7 @@ class PhysicalInstantiation < ActiveFedora::Base
   include ::Hyrax::WorkBehavior
   include ::AMS::CreateMemberMethods
   include ::AMS::IdentifierService
+  include ::AMS::CascadeDestroyMembers
 
   self.indexer = PhysicalInstantiationIndexer
   # Change this to restrict which works can be added as a child.

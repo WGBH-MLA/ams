@@ -2,6 +2,17 @@
   Overwrites view from hyrax-batch_ingest to add link to view all
   Assets associated with the batch.
 -->
+
+<!-- TODO: find a way to move this css into correct place -->
+<style type="text/css">
+  .batch_sort_asc::after {
+    content: ' ▲';
+  }
+  .batch_sort_desc::after {
+    content: ' ▼';
+  }
+</style>
+
 <h1><span class="fa fa-copy"></span>Batch Details</h1>
 
 <dl>
@@ -9,12 +20,12 @@
   <dd><%= @presenter.ingest_type %></dd>
   <dt>Submitter:</dt>
   <dd><%= @presenter.submitter_email %></dd>
-  <dt>Source Location:</dt>
-  <dd><%= @presenter.source_location %></dd>
-  <dt>Error:</dt>
-  <dd><%= @presenter.error %></dd>
   <dt>Admin Set:</dt>
   <dd><%= @presenter.admin_set_title %></dd>
+  <% if @presenter.error.present? %>
+    <dt>Error:</dt>
+    <dd><%= @presenter.error %></dd>
+  <% end %>
 </dl>
 
 <dl>
@@ -25,17 +36,17 @@
   <table class='table table-condensed'>
     <thead>
       <tr>
-        <th scope='col'>Status</th>
-        <th scope='col'>ID Within Batch</th>
-        <th scope='col'>Source Location</th>
-        <th scope='col'>Repository ID</th>
-        <th scope='col'>Error</th>
+        <th scope='col'><%= sort_link_to('Status', 'status') %></th>
+        <th scope='col'><%= sort_link_to('ID Within Batch', 'id_within_batch') %></th>
+        <th scope='col'><%= sort_link_to('Object Type', 'repo_object_class_name') %></th>
+        <th scope='col'><%= sort_link_to('Repository ID', 'repo_object_id') %></th>
       </tr>
     </thead>
     <tbody>
-      <% @presenter.batch_item_presenters.each_with_index do |batch_item_presenter, index| %>
-        <%= render 'batch_item', presenter: batch_item_presenter, index: index %>
+      <% @batch_items.each_with_index do |batch_item, index| %>
+        <%= render 'batch_item', presenter: Hyrax::BatchIngest::BatchItemPresenter.new(batch_item), index: index %>
       <% end %>
     </tbody>
   </table>
+  <%= paginate @batch_items %>
 </div>

@@ -1,5 +1,6 @@
-username: <%= ENV['CI_USERNAME'] %>
-password: <%= ENV['CI_PASSWORD'] %>
-client_id: <%= ENV['CI_CLIENT_ID'] %>
-client_secret: <%= ENV['CI_CLIENT_SECRET'] %>
-workspace_id: <%= ENV['CI_WORKSPACE_ID'] %>
+# Uses quotes so that yaml parses special characters properly
+username: "<%= ENV['CI_USERNAME'] %>"
+password: "<%= ENV['CI_PASSWORD'] %>"
+client_id: "<%= ENV['CI_CLIENT_ID'] %>"
+client_secret: "<%= ENV['CI_CLIENT_SECRET'] %>"
+workspace_id: "<%= ENV['CI_WORKSPACE_ID'] %>"

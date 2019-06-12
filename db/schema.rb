@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190522203953) do
+ActiveRecord::Schema.define(version: 20190506173217) do
 
   create_table "admin_data", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci" do |t|
     t.string "level_of_user_access"
