@@ -11,12 +11,14 @@ module AMS
       resp.length > 0
     end
 
-    def def turn_on
+    def turn_on
       resp = `cd /var/www/ams/ && bundle exec sidekiq -e production > log/sidekiq.log 2>&1 &`
-      @logger.info "Brought sidekiq to life, got resp #{resp}"
+      resp2 = `cd /var/www/ams/ && bundle exec sidekiq -e production > log/sidekiq.log 2>&1 &`
+      resp3 = `cd /var/www/ams/ && bundle exec sidekiq -e production > log/sidekiq.log 2>&1 &`
+      @logger.info "Brought sidekiq to life, got resp #{resp} #{resp2} #{resp3}"
     end
 
-    def def turn_off
+    def turn_off
       # get ps, grep for sidekiq (without returning grep), then awk dat
       resp = `kill -9 $(ps aux | grep '[s]idekiq' | awk '{print $2}')`
       @logger.info "Killed sidekiq, got resp #{resp}"
