@@ -2,11 +2,6 @@ class PushesController < ApplicationController
   include ApplicationHelper
   include Blacklight::SearchHelper
   before_action :authenticate_user!
-  
-  # regular OR searches messed up using push searchbuilder...
-  # def search_builder_class
-  #   AMS::PushSearchBuilder
-  # end
 
   def index
     # show all previous pushes
@@ -24,7 +19,6 @@ class PushesController < ApplicationController
     # -pull solr_documents from list of ids
     # -render xml for each, and zip dat
     # -return zip
-    # ids = params[:id_field].split(/\s/).reject(&:empty?)
     ids = split_and_validate_ids(params[:id_field])
     unless ids
       flash[:error] = "There was a problem with your IDs, please try again."
@@ -42,15 +36,11 @@ class PushesController < ApplicationController
     
     query_params = {q: query}
     query_params[:format] = 'zip-pbcore'
-    # query_params[:rows] = 2147483647
+    query_params[:rows] = 2147483647
     query_params = delete_extra_params(query_params)
     
     ExportRecordsJob.perform_later(query_params, current_user)
     push = Push.create(user_id: current_user.id, pushed_id_csv: ids.join(',') )
-
-    
-    # flash[:notice] = "Your IDs have been accepted."
-    # render 'pb_to_aapb_form'
     redirect_to "/pushes/#{push.id}"
   end  
 
@@ -87,15 +77,8 @@ class PushesController < ApplicationController
   def transfer_query
     query_params = delete_extra_params(params)
     query_params[:fl] = 'id'
-    # query_params[:rows] = 2147483647
-
-    # restrict to asset results
-    # query_params[:fq] ||= []
-    # query_params[:fq] << "{!terms f=has_model_ssim}Asset"
 
     response, response_documents = search_results(query_params)
-
-    # TODO: make :fl query work? catcon default works, gets thrown away here :/
     ids = response_documents.map(&:id).join("\n")
     redirect_to action: 'new', id_field: ids
   end

@@ -36,16 +36,10 @@ module Hyrax
             admindata.needs_update = true
 
             admindata.last_pushed = 0 unless admindata.last_pushed
-            # admindata.last_pushed = DateTime.new(1900,1,1).strftime('%Y-%m-%dT%H:%M:%SZ') unless admindata.last_pushed
-
             admindata.save!
             # force update of solr, my friend
             parent.update_index
-          else
-            # raise "No admindata"
           end
-        else
-          # raise "No parent :("
         end
 
         true

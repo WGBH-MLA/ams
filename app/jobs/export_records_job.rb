@@ -16,10 +16,7 @@ class ExportRecordsJob < ApplicationJob
     format = search_params[:format]
     search_params.delete(:format)
 
-    # restrict to Asset results
-    # search_params[:fq] = ["{!terms f=has_model_ssim}Asset"]
     response, response_documents = search_results(search_params)
-
     if format == "csv"
       export_data = AMS::Export::DocumentsToCsv.new(response_documents)
     elsif format == "pbcore"
