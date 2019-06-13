@@ -92,4 +92,4 @@ RSpec.configure do |config|
   config.extend ControllerMacros, :type => :controller
 end
 
-Webdrivers::Chromedriver.version = '72.0.3626.69'
+Webdrivers::Chromedriver.required_version = '72.0.3626.69'
