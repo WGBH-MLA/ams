@@ -1,8 +1,19 @@
+require 'sidekiq/api'
+redis_conn = { url: "redis://#{ENV['REDIS_SERVER']}:6379/", network_timeout: 5 }
+Sidekiq.configure_server do |s|
+  s.redis = redis_conn
+end
+Sidekiq.configure_client do |s|
+  s.redis = redis_conn
+end
+
+Sidekiq::Logging.logger.level = Logger::DEBUG
+
 module AMS
   class ToggleSidekiq
 
     def initialize(logger)
-      @logger = logger if logger
+      self.logger = logger if logger
     end
 
     def is_running?
@@ -12,18 +23,35 @@ module AMS
     end
 
     def turn_on
-      `cd /var/www/ams/ && (bundle exec sidekiq -e production > log/sidekiq.log 2>&1 & bundle exec sidekiq -e production > log/sidekiq.log 2>&1 & bundle exec sidekiq -e production > log/sidekiq.log 2>&1 &)`
-      logger.info "Brought sidekiq to life!"
+      pid = fork do
+        `cd /var/www/ams/ && bundle exec sidekiq -e production > log/sidekiq.log 2>&1 & bundle exec sidekiq -e production > log/sidekiq.log 2>&1 & bundle exec sidekiq -e production > log/sidekiq.log 2>&1 &`
+        logger.info "Brought sidekiq to life!"
+        exit
+      end
+
+      logger.info "Received pid #{pid} for sidekiq launch"
+      Process.detach(pid)
+      logger.info "Detached pid #{pid} for sidekiq launch"
     end
 
     def turn_off
+      # send signal to quiet processors
+      resp = `kill -TSTP $(ps aux | grep '[s]idekiq' | awk '{print $2}')`
+      logger.info "Set kill sequences to sidekiqs, resp #{resp}"
+
+      workers = Sidekiq::Workers.new
+      logger.info %(#{workers.count} Workers Working... Lets go to work)
+      while workers.count > 0
+        logger.info "Ingest Queue had #{workers.count} workers working... sleeping..."
+        sleep 10 
+      end
+
       # get ps, grep for sidekiq (without returning grep), then awk dat
       resp = `kill -9 $(ps aux | grep '[s]idekiq' | awk '{print $2}')`
-      logger.info "Killed sidekiq, got resp #{resp}"
+      logger.info "Killed sidekiq, hoo-ray!"
     end
 
-    private
-
+    # private
       def logger=(logger)
         raise ArgumentError, "Logger object expected but #{logger.class} was given" unless logger.is_a? Logger
         @logger = logger
