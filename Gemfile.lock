@@ -163,13 +163,14 @@ GEM
     builder (3.2.3)
     byebug (11.0.1)
     cancancan (1.17.0)
-    capybara (2.18.0)
+    capybara (3.23.0)
       addressable
       mini_mime (>= 0.1.3)
-      nokogiri (>= 1.3.3)
-      rack (>= 1.0.0)
-      rack-test (>= 0.5.4)
-      xpath (>= 2.0, < 4.0)
+      nokogiri (~> 1.8)
+      rack (>= 1.6.0)
+      rack-test (>= 0.6.3)
+      regexp_parser (~> 1.5)
+      xpath (~> 3.2)
     capybara-screenshot (1.0.23)
       capybara (>= 1.0, < 4)
       launchy
@@ -688,6 +689,7 @@ GEM
       redis (>= 3.0.4)
     redlock (1.0.1)
       redis (>= 3.0.0, < 5.0)
+    regexp_parser (1.5.1)
     representable (3.0.4)
       declarative (< 0.1.0)
       declarative-option (< 0.2.0)
@@ -881,7 +883,7 @@ DEPENDENCIES
   blacklight_advanced_search (~> 6.4.0)
   bootstrap-multiselect-rails
   byebug
-  capybara (~> 2.18)
+  capybara (~> 3.0)
   capybara-screenshot
   carrierwave (~> 1.0)
   coffee-rails (~> 4.2)
@@ -928,7 +930,7 @@ DEPENDENCIES
   turbolinks (~> 5)
   uglifier (>= 1.3.0)
   web-console (>= 3.3.0)
-  webdrivers
+  webdrivers (~> 4.0)
   webpacker
   xray-rails
 
