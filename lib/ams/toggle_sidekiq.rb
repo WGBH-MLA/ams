@@ -26,12 +26,10 @@ module AMS
       pid = fork do
         `cd /var/www/ams/ && bundle exec sidekiq -e production > log/sidekiq.log 2>&1 & bundle exec sidekiq -e production > log/sidekiq.log 2>&1 & bundle exec sidekiq -e production > log/sidekiq.log 2>&1 &`
         logger.info "Brought sidekiq to life!"
-        exit
+        Process.daemon
       end
 
-      logger.info "Received pid #{pid} for sidekiq launch"
-      Process.detach(pid)
-      logger.info "Detached pid #{pid} for sidekiq launch"
+      logger.info "Received daemon pid #{pid} for sidekiq launch"
     end
 
     def turn_off
