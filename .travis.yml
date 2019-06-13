@@ -20,6 +20,8 @@ before_install:
 - ls -l dep_cache
 - cp config/travis/solr_wrapper_test.yml config/solr_wrapper_test.yml
 - cp config/travis/fcrepo_wrapper_test.yml config/fcrepo_wrapper_test.yml
+- gem update --system
+- gem install bundler
 before_script:
 - export DISPLAY=:99.0
 - sh -e /etc/init.d/xvfb start

@@ -27,4 +27,10 @@ module ApplicationHelper
   rescue => e
     nil
   end
+
+  def render_thumbnail(document, options)
+    # send(blacklight_config.view_config(document_index_view_type).thumbnail_method, document, image_options)
+    url = thumbnail_url(document).gsub('cpb-aacip-', 'cpb-aacip_')
+    image_tag url, options if url.present?
+  end
 end
