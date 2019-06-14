@@ -1,7 +1,6 @@
 require 'rubygems'
 require 'bundler/setup'
 require 'logger'
-
 require_relative './postgres_vacuum_service'
 require_relative './toggle_sidekiq'
 
@@ -9,18 +8,6 @@ require_relative './toggle_sidekiq'
 # must do
 # sudo yum install postgresql-devel
 # gem install pg -v '0.18.4' --source 'https://rubygems.org/'
-
-
-
-
-# TODO: COMPLETELY UNTESTED!!!! TEST, MODIFY, AND REMOVE THIS COMMENT!!
-
-# The idea here is to use this object in a cron job.
-# It could be as simply as...
-#
-#   AMS::VacuumFullFedoraDB.run
-#
-# ... and run that every hour or so. The sweet spot would be to
 
 module AMS
   class VacuumFullFedoraDB
@@ -64,4 +51,5 @@ module AMS
   end
 end
 
+logger = Logger.new('../../log/vacuum.log')
 AMS::VacuumFullFedoraDB.new.run
