@@ -52,5 +52,5 @@ module AMS
 end
 
 # TODO: replace with relative path, not working now for some reason
-logger = Logger.new('/var/www/ams/log/vacuum.log')
+logger = Logger.new('/var/www/ams/log/vacuum.log', File::APPEND)
 AMS::VacuumFullFedoraDB.new(logger: logger).run
