@@ -822,6 +822,7 @@ en:
           date_modified: Last Modified
           date_uploaded: Date Added
           highlighted: Highlighted
+          id: ID
           items: Items
           last_modified: Last modified
           title: Title

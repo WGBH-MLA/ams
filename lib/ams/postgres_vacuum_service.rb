@@ -24,7 +24,12 @@ module AMS
     end
 
     def current_vacuum_full
-      conn.exec(current_vacuum_full_query).first
+      begin
+        conn.exec(current_vacuum_full_query).first
+      rescue PG::UnableToSend => e
+        logger.info "Couldnt contact PG #{e.inspect}"
+        return nil
+      end
     end
 
     # TODO: make private before commit
