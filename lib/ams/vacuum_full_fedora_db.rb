@@ -52,4 +52,4 @@ module AMS
 end
 
 logger = Logger.new('../../log/vacuum.log')
-AMS::VacuumFullFedoraDB.new.run
+AMS::VacuumFullFedoraDB.new.run(logger)
