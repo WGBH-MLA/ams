@@ -9,6 +9,9 @@ require_relative './toggle_sidekiq'
 # sudo yum install postgresql-devel
 # gem install pg -v '0.18.4' --source 'https://rubygems.org/'
 
+# crontab -e
+# 0 * * * *  /bin/bash -l -c 'cd /var/www/ams && bundle exec ruby /var/www/ams/lib/ams/vacuum_full_fedora_db.rb'
+
 module AMS
   class VacuumFullFedoraDB
     attr_reader :vacuum_service, :sidekiq_toggler
