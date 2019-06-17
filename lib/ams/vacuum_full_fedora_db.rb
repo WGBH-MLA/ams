@@ -12,6 +12,8 @@ require_relative './toggle_sidekiq'
 # crontab -e
 # 0 * * * *  /bin/bash -l -c 'cd /var/www/ams && bundle exec ruby /var/www/ams/lib/ams/vacuum_full_fedora_db.rb'
 
+#put PG database env variables in /etc/profile
+
 module AMS
   class VacuumFullFedoraDB
     attr_reader :vacuum_service, :sidekiq_toggler

@@ -27,7 +27,9 @@ module AMS
       begin
         conn.exec(current_vacuum_full_query).first
       rescue PG::UnableToSend => e
-        logger.info "Couldnt contact PG #{e.inspect}"
+
+        # PG gem throws an exception once job is complete, so catch it here! nothing to worry about
+        logger.info "Couldnt contact PG, and thats ok! #{e.inspect}"
         return nil
       end
     end
