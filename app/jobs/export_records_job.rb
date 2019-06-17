@@ -15,13 +15,32 @@ class ExportRecordsJob < ApplicationJob
 
     format = search_params[:format]
     search_params.delete(:format)
+
     response, response_documents = search_results(search_params)
-    
     if format == "csv"
       export_data = AMS::Export::DocumentsToCsv.new(response_documents)
     elsif format == "pbcore"
       export_data = AMS::Export::DocumentsToPbcoreXml.new(response_documents)
     elsif format == 'zip-pbcore'
+      
+      assets = response_documents.map {|doc| Asset.find(doc[:id])}
+      assets.each do |asset|
+        now = Time.now.to_i
+
+        admindata = asset.admin_data
+        if admindata
+          admindata.last_pushed = now
+          admindata.needs_update = false
+          admindata.save!
+          admindata = nil
+        end
+      end
+
+      # separating this from above because index update happens faster than admindata save
+      assets.each do |asset|
+        asset.update_index
+      end
+
       export_data = AMS::Export::DocumentsToZippedPbcore.new(response_documents)
     else
       raise "Unknown export format"
@@ -29,7 +48,7 @@ class ExportRecordsJob < ApplicationJob
 
     # new zip method
     if format == 'zip-pbcore'
-      # TODO: add notification for aapb copy
+
       # use @file_path var to send zip from tmp location to aapb
       export_data.process do
         export_data.scp_to_aapb(user)
@@ -39,6 +58,7 @@ class ExportRecordsJob < ApplicationJob
       export_data.process do
         export_data.upload_to_s3
       end
+      
       Ams2Mailer.export_notification(user, export_data.s3_path).deliver_later
     end
 

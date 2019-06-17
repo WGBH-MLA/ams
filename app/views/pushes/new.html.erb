@@ -4,44 +4,63 @@
   <textarea style="width:100%; height: 12vw;" id="id_field" type="text" name="id_field" placeholder="GUIDs (one per line)">
     <%= params[:id_field] %>
   </textarea>
-  <input class="aapb-push-button" type="submit" value="Send To AAPB" name="">
+  <input id="push-submit" class="aapb-push-button" type="submit" value="Send To AAPB" name="">
 </form>
 
 <div id="valid-box">
 </div>
 
+<div id="loader">
+  <img src="/pbcore-logo.gif">
+</div>
+
 <script type="text/javascript">
+
   $(document).on('turbolinks:load', function() {
+    $('#loader').hide();
 
-    // console.log('load')
+    var timeout = Date.now();
+    var inputActive = false;
+    var init = true;
+
     $('#id_field').on('change textInput input', function() {
-    // $('#id_field').on('change', function() {
-      // console.log('fired')
-      
-      $.post('/pushes/validate_ids', { id_field: $(this).val() }, function(resp) {
-        // console.log('posted')
-
-        var message;
-        if(resp.all_valid) {
-          message = "All GUIDs are valid!";
-          $('#valid-box').addClass("green").removeClass("red");
-        } else if(resp.error) {
-          message = resp.error;
-          $('#valid-box').addClass("green").removeClass("red");     
-        } else {
-          message = "The following IDs were not found (" + resp.missing_ids.length + "): " + resp.missing_ids;
-          $('#valid-box').addClass("red").removeClass("green");
-        }
-
-        $('#valid-box').text(message);
-        // console.log('texted')
-      });
+      $('#loader').show();
+      timeout = Date.now();
+      inputActive = true;
     });
 
-    if( $('#id_field').val().length > 0 ){
+    setInterval(function(){
+      if(init || (inputActive && Date.now() - timeout > 400)){
+        validate( $('#id_field').val() );
+        inputActive = false;
+        init = false;
+      }
+    }, 400);
+
+    var boxval = $('#id_field').val();
+    if( boxval && boxval.length > 0 ){
       // validate if page loaded with ids
-      console.log('nice')
-      $('#id_field').trigger('change');
+      $('#id_field').trigger('change textInput input');
     }
   });
+
+  function validate(id_field_val){
+    $.post('/pushes/validate_ids', { id_field: id_field_val }, function(resp) {
+      $('#loader').hide();
+
+      var message;
+      if(resp.all_valid) {
+        message = "All GUIDs are valid!";
+        $('#valid-box').addClass("green").removeClass("red");
+      } else if(resp.error) {
+        message = resp.error;
+        $('#valid-box').addClass("green").removeClass("red");     
+      } else {
+        message = "The following IDs were not found (" + resp.missing_ids.length + "): " + resp.missing_ids;
+        $('#valid-box').addClass("red").removeClass("green");
+      }
+
+      $('#valid-box').text(message);
+    });        
+  }
 </script>
