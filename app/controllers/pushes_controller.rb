@@ -1,6 +1,7 @@
 class PushesController < ApplicationController
   include ApplicationHelper
   include Blacklight::SearchHelper
+  before_action :authenticate_user!
 
   def index
     # show all previous pushes
@@ -18,7 +19,6 @@ class PushesController < ApplicationController
     # -pull solr_documents from list of ids
     # -render xml for each, and zip dat
     # -return zip
-    # ids = params[:id_field].split(/\s/).reject(&:empty?)
     ids = split_and_validate_ids(params[:id_field])
     unless ids
       flash[:error] = "There was a problem with your IDs, please try again."
@@ -33,23 +33,21 @@ class PushesController < ApplicationController
       end
     end
     query += %(#{ids.last})
+    
     query_params = {q: query}
-
     query_params[:format] = 'zip-pbcore'
     query_params[:rows] = 2147483647
     query_params = delete_extra_params(query_params)
+    
     ExportRecordsJob.perform_later(query_params, current_user)
     push = Push.create(user_id: current_user.id, pushed_id_csv: ids.join(',') )
-    
-    # flash[:notice] = "Your IDs have been accepted."
-    # render 'pb_to_aapb_form'
     redirect_to "/pushes/#{push.id}"
   end  
 
   def validate_ids
     requested_ids = split_and_validate_ids(params[:id_field])
     # bad input
-    return render json: {error: "There was a problem parsing your IDs. Please check your input and try again."} unless requested_ids && requested_ids.count > 1
+    return render json: {error: "There was a problem parsing your IDs. Please check your input and try again."} unless requested_ids && requested_ids.count > 0
 
     query = ""
     if requested_ids.count > 1
@@ -60,7 +58,7 @@ class PushesController < ApplicationController
     end
 
     query += %(#{requested_ids.last})
-    query_params = {q: query, rows: 2147483647}
+    query_params = {q: query}
     response, response_documents = search_results(query_params)
 
     found_ids_set = Set.new( response_documents.map(&:id) )
@@ -79,10 +77,25 @@ class PushesController < ApplicationController
   def transfer_query
     query_params = delete_extra_params(params)
     query_params[:fl] = 'id'
-    query_params[:rows] = 2147483647
+
     response, response_documents = search_results(query_params)
-    # TODO: make :fl query work? catcon default works, gets thrown away here :/
     ids = response_documents.map(&:id).join("\n")
     redirect_to action: 'new', id_field: ids
+  end
+
+  def needs_updating
+    # Pass a block in to override default search builder's monkeying around
+    # Pushbuilder forces correct query params, which are otherwise wiped out
+    response, docs = search_results({}) do |builder|
+      AMS::PushSearchBuilder.new(self)
+    end
+
+    if docs.count > 0
+      ids = docs.map {|doc| doc[:id]}.join("\n")
+      redirect_to action: 'new', id_field: ids
+    else
+      # sorry!
+      redirect_to pushes_path
+    end
   end
 end

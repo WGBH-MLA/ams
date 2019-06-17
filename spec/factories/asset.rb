@@ -43,6 +43,7 @@ FactoryBot.define do
       # Pass in an AdminSet instance, or an admin set id, for example
       # create(:asset, admin_set: create(:admin_set))
       admin_set { false }
+      needs_update { false }
 
       # This is where you would set the Asset's PhysicalInstantiations,
       # DigitalINstantiations, and/or Contributions
@@ -84,7 +85,12 @@ FactoryBot.define do
         attributes = {}
         work.admin_data_gid = evaluator.with_admin_data if !work.admin_data_gid.present?
       else
-        admin_data = create(:admin_data)
+        if evaluator.needs_update
+          admin_data = create(:admin_data, :needs_update)
+        else
+          admin_data = create(:admin_data)
+        end
+
         work.admin_data_gid = admin_data.gid
       end
 
