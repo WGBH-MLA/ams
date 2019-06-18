@@ -5,7 +5,7 @@ module AMS
   module AAPB
     class << self
       def host
-        ENV.fetch('AAPB_HOST', 'americanarchive.org')
+        ENV.fetch('AAPB_HOST', 'http://americanarchive.org')
       end
 
       def get(*url_args)
@@ -18,14 +18,14 @@ module AMS
 
       def reachable?
         !!head
-      rescue SocketError, Errno::ECONNREFUSED
+      rescue SocketError
         false
       end
 
       private
+
         def make_url(*url_args)
-          # HEAD check requires http://, while ssh requires it naught! joining them like this because URI#join messes up //
-          url_args.unshift('http://' + host)
+          url_args.unshift host
           URI.join(*url_args)
         end
     end

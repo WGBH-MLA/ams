@@ -216,7 +216,6 @@ Hyrax.config do |config|
   #Register custom Actor
   #
   Hyrax::CurationConcern.actor_factory.insert_after Hyrax::Actors::ApplyPermissionTemplateActor, Hyrax::Actors::EnforceParentTitle
-  Hyrax::CurationConcern.actor_factory.insert_after Hyrax::Actors::InitializeWorkflowActor, Hyrax::Actors::UpdateAssetDate
 
 
   ## Whitelist all directories which can be used to ingest from the local file

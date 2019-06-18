@@ -13,9 +13,5 @@ FactoryBot.define do
     trait :one_sony_ci_id do
       sonyci_id {["Sony-1"] }
     end
-
-    trait :needs_update do
-      needs_update {true}
-    end
   end
 end

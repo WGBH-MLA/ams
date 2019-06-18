@@ -337,9 +337,6 @@
     <!-- you must define copyField source and dest fields explicity or schemaBrowser doesn't work -->
     <field name="all_text_timv" type="text" stored="false" indexed="true" multiValued="true" termVectors="true" termPositions="true" termOffsets="true"/>
 
-    <field name="last_pushed" type="int" stored="true" indexed="true" multiValued="false" />
-    <field name="last_updated" type="int" stored="true" indexed="true" multiValued="false" />
-    <field name="needs_update" type="boolean" stored="true" indexed="true" multiValued="false" />
 
   </fields>
 

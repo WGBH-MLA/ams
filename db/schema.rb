@@ -25,9 +25,6 @@ ActiveRecord::Schema.define(version: 20190522203953) do
     t.string "playlist_group"
     t.integer "playlist_order"
     t.bigint "hyrax_batch_ingest_batch_id"
-    t.integer "last_pushed"
-    t.integer "last_updated"
-    t.boolean "needs_update"
     t.index ["hyrax_batch_ingest_batch_id"], name: "index_admin_data_on_hyrax_batch_ingest_batch_id"
   end
 
@@ -317,8 +314,8 @@ ActiveRecord::Schema.define(version: 20190522203953) do
     t.index ["grantor_id"], name: "index_proxy_deposit_rights_on_grantor_id"
   end
 
-  create_table "pushes", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci" do |t|
-    t.text "pushed_id_csv"
+  create_table "pushes", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.string "pushed_id_csv"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "user_id"

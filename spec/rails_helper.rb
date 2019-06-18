@@ -49,8 +49,6 @@ RSpec.configure do |config|
   config.include Warden::Test::Helpers, type: :feature
   config.after(:each, type: :feature) { Warden.test_reset! }
 
-  config.include Capybara::DSL
-
   # Gets around a bug in RSpec where helper methods that are defined in views aren't
   # getting scoped correctly and RSpec returns "does not implement" errors. So we
   # can disable verify_partial_doubles if a particular test is giving us problems.
@@ -71,17 +69,19 @@ RSpec.configure do |config|
     # Set the capybara JS driver to whatever was passed in to JS_DRIVER,
     # defaulting to :selenium_chrome_headless
     Capybara.javascript_driver = ENV.fetch('JS_DRIVER', 'selenium_chrome_headless').to_sym
-
-    Capybara.register_driver :chrome do |app|
-      Capybara::Selenium::Driver.new(app, browser: :chrome)
-    end
-
   end
 
   # Reset data conditionally for each exampld; defaults to true.
   config.before :each do |example|
     AMS.reset_data! if example.metadata.fetch(:reset_data, true)
   end
+
+  # Reset data before the suite is run.
+  config.before :suite do
+    # TODO: ONly need to do this once?
+    AMS.reset_data!
+  end
+
 
   # Filter lines from Rails gems in backtraces.
   config.filter_rails_from_backtrace!

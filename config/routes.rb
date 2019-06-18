@@ -55,7 +55,6 @@ Rails.application.routes.draw do
     collection do
       post 'validate_ids', to: 'pushes#validate_ids'
       get 'transfer_query', to: 'pushes#transfer_query'
-      get 'needs_updating', to: 'pushes#needs_updating'
     end
   end
 
