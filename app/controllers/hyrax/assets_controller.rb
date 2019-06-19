@@ -27,6 +27,12 @@ module Hyrax
       end
     end
 
+
+    def destroy
+      raise "hey whats up dumbass"
+      super
+    end
+
     private
 
     def solr_document

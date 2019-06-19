@@ -22,10 +22,18 @@ class Ability
     # if current_user.admin?
     #   can [:destroy], ActiveFedora::Base
     # end
+    # cannot [:destroy], ActiveFedora::Base
 
     if current_user.admin?
       can [:create, :show, :add_user, :remove_user, :index, :edit, :update, :destroy], Role
       can [:create, :savenew, :new, :index, :edit, :update, :destroy], User
+
+      # cannot [:destroy], Asset
+      # cannot [:destroy], DigitalInstantiation
+      # cannot [:destroy], PhysicalInstantiation
+      # cannot [:destroy], EssenceTrack
+      # cannot [:destroy], Contribution
+      # cannot [:destroy], Collection
 
       # push ids to AAPB
       can [:index,:show,:new,:create,:validate_ids,:transfer_query,:needs_updating], Push
@@ -34,6 +42,14 @@ class Ability
     if user_groups.include? 'aapb-admin'
       can [:create], AdminData
       can [:create], InstantiationAdminData
+
+      # can [:destroy], ActiveFedora::Base
+      can [:destroy], Asset
+      can [:destroy], DigitalInstantiation
+      can [:destroy], PhysicalInstantiation
+      can [:destroy], EssenceTrack
+      can [:destroy], Contribution
+      can [:destroy], Collection
     end
 
     # Limits creating new objects to a specific group
