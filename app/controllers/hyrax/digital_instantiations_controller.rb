@@ -16,4 +16,14 @@ module Hyrax
     # Use this line if you want to use a custom presenter
     self.show_presenter = Hyrax::DigitalInstantiationPresenter
   end
+
+
+  def destroy
+    if current_user.can? :destroy, DigitalInstantiation
+      super
+    else
+      flash[:error] = 'You are not permitted to do that!'
+      redirect_to request.path
+    end
+  end
 end
