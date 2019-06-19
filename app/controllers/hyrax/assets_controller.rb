@@ -27,6 +27,15 @@ module Hyrax
       end
     end
 
+    def destroy
+      if current_user.can? :destroy, Asset
+        super
+      else
+        flash[:error] = 'You are not permitted to do that!'
+        redirect_to request.path
+      end
+    end
+
     private
 
     def solr_document
