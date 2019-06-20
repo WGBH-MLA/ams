@@ -23,13 +23,15 @@ module AMS
     end
 
     def turn_on
-      pid = fork do
-        `cd /var/www/ams/ && bundle exec sidekiq -e production > log/sidekiq.log 2>&1 & bundle exec sidekiq -e production > log/sidekiq.log 2>&1 & bundle exec sidekiq -e production > log/sidekiq.log 2>&1 &`
-        logger.info "Brought sidekiq to life!"
-        Process.daemon
-      end
 
-      logger.info "Received daemon pid #{pid} for sidekiq launch"
+      3.times do |n|
+        pid = fork do
+          logger.info "Bringing sidekiq #{n} to life!"
+          `cd /var/www/ams/ && bundle exec sidekiq -e production 1>&2 > log/sidekiq.log`
+          Process.daemon
+        end
+        logger.info "Received daemon pid #{pid} for sidekiq #{n} launch"
+      end
     end
 
     def turn_off
@@ -45,7 +47,7 @@ module AMS
       end
 
       # get ps, grep for sidekiq (without returning grep), then awk dat
-      resp = `kill -9 $(ps aux | grep '[s]idekiq' | awk '{print $2}')`
+      resp = `kill $(ps aux | grep '[s]idekiq' | awk '{print $2}')`
       logger.info "Killed sidekiq, hoo-ray!"
     end
 
