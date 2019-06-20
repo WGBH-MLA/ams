@@ -17,23 +17,25 @@ class Ability
     can [:create], Collection
     can [:create], Contribution
 
+    cannot [:destroy], Asset
+    cannot [:destroy], EssenceTrack
+    cannot [:destroy], PhysicalInstantiation
+    cannot [:destroy], DigitalInstantiation
+    cannot [:destroy], Collection
+    cannot [:destroy], Contribution
+
     # Limits deleting objects to a the admin user
     #
-    # if current_user.admin?
+    # if user_groups.include? 'aapb-admin'
     #   can [:destroy], ActiveFedora::Base
     # end
     # cannot [:destroy], ActiveFedora::Base
+    
+    # HEED MY WORDSSS above is untrue. this will not block direct requests to the destroy action ^^^
 
     if current_user.admin?
       can [:create, :show, :add_user, :remove_user, :index, :edit, :update, :destroy], Role
       can [:create, :savenew, :new, :index, :edit, :update, :destroy], User
-
-      # cannot [:destroy], Asset
-      # cannot [:destroy], DigitalInstantiation
-      # cannot [:destroy], PhysicalInstantiation
-      # cannot [:destroy], EssenceTrack
-      # cannot [:destroy], Contribution
-      # cannot [:destroy], Collection
 
       # push ids to AAPB
       can [:index,:show,:new,:create,:validate_ids,:transfer_query,:needs_updating], Push
@@ -43,13 +45,14 @@ class Ability
       can [:create], AdminData
       can [:create], InstantiationAdminData
 
-      # can [:destroy], ActiveFedora::Base
+
+      # This only allows us to check can? :destroy in the view. does not permit deleting!!!!!
       can [:destroy], Asset
-      can [:destroy], DigitalInstantiation
-      can [:destroy], PhysicalInstantiation
       can [:destroy], EssenceTrack
-      can [:destroy], Contribution
+      can [:destroy], PhysicalInstantiation
+      can [:destroy], DigitalInstantiation
       can [:destroy], Collection
+      can [:destroy], Contribution
     end
 
     # Limits creating new objects to a specific group

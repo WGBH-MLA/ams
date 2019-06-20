@@ -27,10 +27,13 @@ module Hyrax
       end
     end
 
-
     def destroy
-      raise "hey whats up dumbass"
-      super
+      if current_user.can? :destroy, Asset
+        super
+      else
+        flash[:error] = 'You are not permitted to do that!'
+        redirect_to request.path
+      end
     end
 
     private
