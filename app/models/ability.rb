@@ -31,7 +31,7 @@ class Ability
     # end
     # cannot [:destroy], ActiveFedora::Base
     
-    # HEED MY WORDSSS above is untrue. this will not block direct requests to the destroy action ^^^
+    # this will not block direct delete requests to the destroy action ^^^ you have to explicitly check in controller
 
     if current_user.admin?
       can [:create, :show, :add_user, :remove_user, :index, :edit, :update, :destroy], Role
