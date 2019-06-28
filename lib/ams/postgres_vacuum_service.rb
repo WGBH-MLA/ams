@@ -24,18 +24,26 @@ module AMS
     end
 
     def current_vacuum_full
-      begin
-        conn.exec(current_vacuum_full_query).first
-      rescue PG::UnableToSend => e
+      conn.exec(current_vacuum_full_query).first
+    rescue PG::UnableToSend => e
 
-        # PG gem throws an exception once job is complete, so catch it here! nothing to worry about
-        logger.info "Couldnt contact PG, and thats ok! #{e.inspect}"
-        return nil
-      end
+      # PG gem throws an exception once job is complete, so catch it here! nothing to worry about
+      logger.info "Couldnt contact PG, and thats ok! #{e.inspect}"
+      return nil
     end
 
-    # TODO: make private before commit
-    # private
+    protected
+
+      def logger=(logger)
+        raise ArgumentError, "Logger object expected but #{logger.class} was given" unless logger.is_a? Logger
+        @logger = logger
+      end
+
+      def logger
+        @logger ||= Logger.new(STDOUT)
+      end
+
+    private
 
       def conn
         @conn ||= new_connection
@@ -63,15 +71,6 @@ module AMS
           AND query LIKE '%VACUUM FULL%'
           AND query NOT LIKE '%dont return this query%';
         EOS
-      end
-
-      def logger=(logger)
-        raise ArgumentError, "Logger object expected but #{logger.class} was given" unless logger.is_a? Logger
-        @logger = logger
-      end
-
-      def logger
-        @logger ||= Logger.new(STDOUT)
       end
   end
 end
