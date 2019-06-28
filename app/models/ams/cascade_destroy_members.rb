@@ -6,6 +6,8 @@ module AMS
       after_destroy do
         members.each do |member|
           member.destroy!
+        rescue Ldp::Gone
+          nil
         end
       end
     end
