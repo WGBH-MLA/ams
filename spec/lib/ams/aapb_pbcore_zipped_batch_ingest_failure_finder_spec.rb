@@ -32,7 +32,7 @@ RSpec.describe AMS::AAPBPBCoreZippedBatchIngestFailureFinder do
     create(:batch_item, batch: batch, repo_object_class_name: 'Asset', repo_object_id: asset.id, status: status, id_within_batch: "#{asset.id}.xml")
   end
 
-  describe '.find_batches_with_failures' do
+  describe '.find_batches_to_expunge' do
     # Setup mock ingests.
     before do
       assets_with_failure.each do |asset|
@@ -51,13 +51,13 @@ RSpec.describe AMS::AAPBPBCoreZippedBatchIngestFailureFinder do
     end
 
     it 'returns the batch_id of the batch with a failed Asset' do
-      expect(described_class.find_batches_with_failures.length).to eq(1)
-      expect(described_class.find_batches_with_failures).to include(batch_with_failure.id)
-      expect(described_class.find_batches_with_failures).not_to include(batch_without_failure.id)
+      expect(described_class.find_batches_to_expunge.length).to eq(1)
+      expect(described_class.find_batches_to_expunge).to include(batch_with_failure.id)
+      expect(described_class.find_batches_to_expunge).not_to include(batch_without_failure.id)
     end
   end
 
-  describe '.find_xml_files_for_reingest' do
+  describe '.find_xml_files_to_reingest' do
     # Setup mock ingests.
     before do
       assets_with_expunged.each do |asset|
@@ -74,9 +74,9 @@ RSpec.describe AMS::AAPBPBCoreZippedBatchIngestFailureFinder do
     end
 
     it 'returns the id_within_batch of batch items that have been expunged' do
-      expect(described_class.find_xml_files_for_reingest.length).to eq(1)
-      expect(described_class.find_xml_files_for_reingest).to include("#{expunged_asset.id}.xml")
-      expect(described_class.find_xml_files_for_reingest).not_to include("#{assets_without_failure.sample.id}.xml")
+      expect(described_class.find_xml_files_to_reingest.length).to eq(1)
+      expect(described_class.find_xml_files_to_reingest).to include("#{expunged_asset.id}.xml")
+      expect(described_class.find_xml_files_to_reingest).not_to include("#{assets_without_failure.sample.id}.xml")
     end
   end
 end
