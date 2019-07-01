@@ -74,7 +74,6 @@ RSpec.describe AMS::AAPBPBCoreZippedBatchIngestFailureFinder do
     end
 
     it 'returns the id_within_batch of batch items that have been expunged' do
-      require 'pry'; binding.pry
       expect(described_class.find_xml_files_for_reingest.length).to eq(1)
       expect(described_class.find_xml_files_for_reingest).to include("#{expunged_asset.id}.xml")
       expect(described_class.find_xml_files_for_reingest).not_to include("#{assets_without_failure.sample.id}.xml")
