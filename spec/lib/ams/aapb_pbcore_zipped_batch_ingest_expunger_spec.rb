@@ -1,7 +1,7 @@
 require 'rails_helper'
-require 'ams/aapb_pbcore_zipped_batch_ingest_fixer'
+require 'ams/aapb_pbcore_zipped_batch_ingest_expunger'
 
-RSpec.describe AMS::AAPBPBCoreZippedBatchIngestFixer do
+RSpec.describe AMS::AAPBPBCoreZippedBatchIngestExpunger do
   describe '.new' do
     context 'with the wrong kind of batch' do
       let(:wrong_kind_of_batch) { create(:batch, ingest_type: 'wrong') }

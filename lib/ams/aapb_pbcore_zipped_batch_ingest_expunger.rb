@@ -1,5 +1,5 @@
 module AMS
-  class AAPBPBCoreZippedBatchIngestFixer
+  class AAPBPBCoreZippedBatchIngestExpunger
     attr_reader :batch
 
     def initialize(batch_id)
@@ -26,7 +26,6 @@ module AMS
       end
 
       def parent_asset_ids_for_failed_children
-
         @parent_asset_ids_for_failed_children ||= failed_batch_items_for_assets.map { |batch_item| batch_item.repo_object_id }
       end
 
