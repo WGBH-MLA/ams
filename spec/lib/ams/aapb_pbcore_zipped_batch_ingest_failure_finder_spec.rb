@@ -3,56 +3,81 @@ require 'ams/aapb_pbcore_zipped_batch_ingest_failure_finder'
 
 RSpec.describe AMS::AAPBPBCoreZippedBatchIngestFailureFinder do
 
-  describe '.find_failures' do
-    # Create a batch for testing.
-    let(:batch) { create(:batch, ingest_type: 'aapb_pbcore_zipped') }
-    # Create a random list of assets.
-    let(:assets) do
-      rand(3..5).times.map { create(:asset, id: rand(999999)) }
-    end
-    # Pick one unlucky asset to have a child that failed to ingest.
-    let(:failed_asset) { assets.first }
-    let(:successful_assets) { assets - [failed_asset] }
+  # Create a batches for testing.
+  let(:batch_with_failure) { create(:batch, ingest_type: 'aapb_pbcore_zipped') }
+  let(:batch_without_failure) { create(:batch, ingest_type: 'aapb_pbcore_zipped') }
+  let(:batch_with_expunged) { create(:batch, ingest_type: 'aapb_pbcore_zipped') }
 
+  # Create a list assets that will have a failure.
+  let(:assets_with_failure) do
+    rand(3..5).times.map { create(:asset, id: rand(999999)) }
+  end
+  # Pick one unlucky asset to fail.
+  let(:failed_asset) { assets_with_failure.first }
+
+  # Create a list assets that won't have a failure.
+  let(:assets_without_failure) do
+    rand(3..5).times.map { create(:asset, id: rand(999999)) }
+  end
+
+  # Create a list of assets that will have an expunged asset.
+  let(:assets_with_expunged) do
+    rand(3..5).times.map { create(:asset, id: rand(999999)) }
+  end
+
+  # Pick one unlucky asset to have been expunged.
+  let(:expunged_asset) { assets_with_expunged.first }
+
+  def create_batch_item(batch, asset, status)
+    create(:batch_item, batch: batch, repo_object_class_name: 'Asset', repo_object_id: asset.id, status: status, id_within_batch: "#{asset.id}.xml")
+  end
+
+  describe '.find_batches_with_failures' do
+    # Setup mock ingests.
     before do
-      # Setup a mock ingest. For each of the assets...
-      assets.each do |asset|
-        id_within_batch = "#{asset.id}.xml"
-
+      assets_with_failure.each do |asset|
         if asset == failed_asset
          # Create failed batch item for the failed_asset.
-            create(:batch_item, batch: batch, repo_object_class_name: 'Asset', repo_object_id: asset.id, status: 'failed', id_within_batch: id_within_batch)
+          create_batch_item(batch_with_failure, asset, 'failed')
         else
           # Create successful batch items for the assets.
-          create(:batch_item, batch: batch, repo_object_class_name: 'Asset', repo_object_id: asset.id, status: 'completed', id_within_batch: id_within_batch)
+          create_batch_item(batch_with_failure, asset, 'completed')
         end
       end
-    end
 
-    it 'returns the id_within_batch of failed Asset' do
-      expect(described_class.find_failures.length).to eq(1)
-      expect(described_class.find_failures).to include("#{failed_asset.id}.xml")
-    end
-
-    it 'does not return the id_within_batch of the successful Assets' do
-      successful_assets.each do |asset|
-        expect(described_class.find_failures).not_to include("#{asset.id}.xml")
+      assets_without_failure.each do |asset|
+        create_batch_item(batch_without_failure, asset, 'completed')
       end
     end
 
-    context 'on an expunged Asset' do
-      let(:expunged_asset) { successful_assets.sample }
+    it 'returns the batch_id of the batch with a failed Asset' do
+      expect(described_class.find_batches_with_failures.length).to eq(1)
+      expect(described_class.find_batches_with_failures).to include(batch_with_failure.id)
+      expect(described_class.find_batches_with_failures).not_to include(batch_without_failure.id)
+    end
+  end
 
-      before do
-        expunged_asset_batch_item = Hyrax::BatchIngest::BatchItem.where(:repo_object_id => expunged_asset.id).first
-        expunged_asset_batch_item.status = 'expunged'
-        expunged_asset_batch_item.save!
+  describe '.find_xml_files_for_reingest' do
+    # Setup mock ingests.
+    before do
+      assets_with_expunged.each do |asset|
+        if asset == expunged_asset
+          create_batch_item(batch_with_expunged, asset, 'expunged')
+        else
+          create_batch_item(batch_with_expunged, asset, 'completed')
+        end
       end
 
-      it 'returns the id_within_batch of the expunged Asset' do
-        expect(described_class.find_failures.length).to eq(2)
-        expect(described_class.find_failures).to include("#{expunged_asset.id}.xml")
+      assets_without_failure.each do |asset|
+        create_batch_item(batch_without_failure, asset, 'completed')
       end
+    end
+
+    it 'returns the id_within_batch of batch items that have been expunged' do
+      require 'pry'; binding.pry
+      expect(described_class.find_xml_files_for_reingest.length).to eq(1)
+      expect(described_class.find_xml_files_for_reingest).to include("#{expunged_asset.id}.xml")
+      expect(described_class.find_xml_files_for_reingest).not_to include("#{assets_without_failure.sample.id}.xml")
     end
   end
 end
