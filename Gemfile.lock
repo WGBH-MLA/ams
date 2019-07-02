@@ -8,8 +8,7 @@ GIT
 
 GIT
   remote: https://github.com/samvera-labs/hyrax-batch_ingest
-  revision: e9a3996045bc4367f477f3d5eecb38ffda33ef6f
-  branch: batch_ingest_summary
+  revision: 965d4c3899406a32c4958e692ec634d9c145f251
   specs:
     hyrax-batch_ingest (0.2.0)
       hyrax (~> 2.2)
@@ -87,7 +86,7 @@ GEM
     awesome_nested_set (3.1.4)
       activerecord (>= 4.0.0, < 5.3)
     aws-eventstream (1.0.3)
-    aws-partitions (1.176.0)
+    aws-partitions (1.181.0)
     aws-sdk-codedeploy (1.22.0)
       aws-sdk-core (~> 3, >= 3.53.0)
       aws-sigv4 (~> 1.1)
@@ -220,7 +219,7 @@ GEM
     dry-container (0.7.1)
       concurrent-ruby (~> 1.0)
       dry-configurable (~> 0.1, >= 0.1.3)
-    dry-core (0.4.7)
+    dry-core (0.4.8)
       concurrent-ruby (~> 1.0)
     dry-equalizer (0.2.2)
     dry-events (0.1.1)
@@ -290,7 +289,7 @@ GEM
       railties (>= 3.2, < 6.1)
     globalid (0.4.2)
       activesupport (>= 4.2.0)
-    google-api-client (0.30.2)
+    google-api-client (0.30.3)
       addressable (~> 2.5, >= 2.5.1)
       googleauth (>= 0.5, < 0.10.0)
       httpclient (>= 2.8.1, < 3.0)
@@ -574,7 +573,7 @@ GEM
       pry (~> 0.10)
     pry-rails (0.3.9)
       pry (>= 0.10.4)
-    public_suffix (3.1.0)
+    public_suffix (3.1.1)
     pul_uv_rails (2.0.1)
     puma (3.12.1)
     qa (2.2.0)
@@ -656,13 +655,13 @@ GEM
       rdf (~> 3.0)
       rdf-vocab (~> 3.0)
       rdf-xsd (~> 3.0)
-    rdf-tabular (2.2.1)
+    rdf-tabular (2.2.2)
       addressable (~> 2.3)
       bcp47 (~> 0.3, >= 0.3.3)
       json-ld (>= 2.1, < 4.0)
-      rdf (>= 2.2, < 4.0)
-      rdf-vocab (>= 2.2, < 4.0)
-      rdf-xsd (>= 2.2, < 4.0)
+      rdf (~> 3.0)
+      rdf-vocab (~> 3.0)
+      rdf-xsd (~> 3.0)
     rdf-trig (3.0.1)
       ebnf (~> 1.1)
       rdf (~> 3.0)
