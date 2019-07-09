@@ -30,7 +30,6 @@ class Ability
     #   can [:destroy], ActiveFedora::Base
     # end
     # cannot [:destroy], ActiveFedora::Base
-    
     # this will not block direct delete requests to the destroy action ^^^ you have to explicitly check in controller
 
     if current_user.admin?
