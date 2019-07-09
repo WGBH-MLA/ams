@@ -8,7 +8,13 @@ module AMS
     end
 
     def delete_parent_assets_of_failed_children
-      parent_assets_of_failed_children.each { |asset| asset.destroy! }
+      failed_batch_items_for_assets.each do |batch_item|
+        asset = Asset.find(batch_item.repo_object_id)
+        asset.destroy!
+        batch_item.status = 'expunged'
+        batch_item.repo_object_id = nil
+        batch_item.save!
+      end
     end
 
     delegate :batch_items, to: :batch
@@ -21,14 +27,6 @@ module AMS
       # This method checks for failures among the child batch items, and if any
       # are found, it then fetches the parent Asset, which we want to delete,
       # because it has been only 'partially' ingested.
-      def parent_assets_of_failed_children
-        @parent_assets_of_failed_children ||= parent_asset_ids_for_failed_children.map { |asset_id| Asset.find asset_id }
-      end
-
-      def parent_asset_ids_for_failed_children
-        @parent_asset_ids_for_failed_children ||= failed_batch_items_for_assets.map { |batch_item| batch_item.repo_object_id }
-      end
-
       def failed_batch_items_for_assets
         @failed_batch_items_for_assets ||= failed_batch_item_groups.map do |failed_batch_item_group|
           failed_batch_item_group.select { |batch_item| batch_item.repo_object_class_name == 'Asset' }
@@ -46,3 +44,6 @@ module AMS
       end
   end
 end
+
+
+# TODO: path batch ingest gem to include BatchItem#'expunged' status

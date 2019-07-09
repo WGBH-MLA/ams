@@ -35,4 +35,8 @@ module ApplicationHelper
     url = thumbnail_url(document).gsub('cpb-aacip-', 'cpb-aacip_')
     image_tag url, options if url.present?
   end
+
+  def user_can_delete?(user)
+    user.roles.any? {|r| r.name == 'aapb-admin'}
+  end
 end
