@@ -34,3 +34,9 @@ end
 
 # Include these custom matchers in RSpec.
 RSpec.configure { |c| c.include HyraxCapybaraMatchers }
+
+RSpec::Matchers.define :exist_in_repository do
+  match do |obj_id|
+    ActiveFedora::Base.exists? obj_id
+  end
+end
