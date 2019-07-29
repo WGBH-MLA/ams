@@ -44,3 +44,6 @@ fits.log
 
 # Drew's demo stuff. Remove this ignore if necessary.
 demo*
+
+# This file is generated on deployment
+public/deployment.html
