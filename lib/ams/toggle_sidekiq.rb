@@ -36,6 +36,11 @@ module AMS
       logger.info "Sidekiq turned off, hoo-ray!"
     end
 
+    def sidekiq_pids
+      # NOTE: This command has been tested on OSX and Amazon linux.
+      `ps aux | egrep 'sidekiq.*\[[0-9]+ of [0-9]+ busy\]' | awk '{print $2}'`.split(/\s/)
+    end
+
     protected
 
       def logger=(logger)
@@ -115,11 +120,6 @@ module AMS
 
       def quiet_sidekiq_cmd(pid)
         "kill -TSTP #{pid}"
-      end
-
-      def sidekiq_pids
-        # NOTE: This command has been tested on OSX and Amazon linux.
-        `ps aux | egrep 'sidekiq.*\[[0-9]+ of [0-9]+ busy\]' | awk '{print $2}'`.split(/\s/)
       end
 
       def configure_redis

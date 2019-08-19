@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Current Deployment</title>
+  </head>
+  <body>
+    <dl>
+      <dt>Current Revision</dt>
+      <dd>
+        <a href="<%= github_commit_url %>" target="_blank"><%= git_commit %></a>
+      </dd>
+      <dt>Deployed</dt>
+      <dd><%= formatted_date_time %></dd>
+    </dl>
+  </body>
+</html>
