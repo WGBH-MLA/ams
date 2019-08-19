@@ -76,6 +76,18 @@ RSpec.describe AAPB::BatchIngest::PBCoreXMLItemIngester, reset_data: false do
         # Instnatiations.
         expect(@batch.batch_items.count).to eq 9
       end
+
+      context 'given a PBCore Description Document that alread exists' do
+        it 'raises an exception' do
+          duplicate_batch_item = create(
+            :batch_item,
+            batch: @batch,
+            source_location: nil,
+            source_data: @pbcore_xml
+          )
+          expect { described_class.new(duplicate_batch_item).ingest }.to raise_error AAPB::BatchIngest::RecordExists
+        end
+      end
     end
 
     context 'given a PBCore Instantiation Document with Essence Tracks' do
@@ -115,5 +127,7 @@ RSpec.describe AAPB::BatchIngest::PBCoreXMLItemIngester, reset_data: false do
       end
 
     end
+
+
   end
 end

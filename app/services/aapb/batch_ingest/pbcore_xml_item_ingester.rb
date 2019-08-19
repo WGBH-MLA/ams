@@ -1,6 +1,7 @@
 require 'aapb/batch_ingest/batch_item_ingester'
 require 'aapb/batch_ingest/pbcore_xml_mapper'
 require 'aapb/batch_ingest/zipped_pbcore_digital_instantiation_mapper'
+require 'aapb/batch_ingest/errors'
 
 module AAPB
   module BatchIngest
@@ -8,7 +9,7 @@ module AAPB
       def ingest
         if batch_item_is_asset?
           # This is a bit of a workaround. Errors will be raised from deep within
-          # the stack if the user cannot be conveted to a Sipity::Entity.
+          # the stack if the user cannot be converted to a Sipity::Entity.
           raise "Could not find or create Sipity Agent for user #{submitter}" unless sipity_agent
 
           batch_item_object = ingest_asset!
@@ -37,6 +38,9 @@ module AAPB
 
       # TODO: make private methods private again
       # private
+        def validate_record_does_not_exist!(id)
+          raise RecordExists.new(id) if ActiveFedora::Base.exists?(id: id)
+        end
 
         def batch_item_is_asset?
           pbcore_xml =~ /pbcoreDescriptionDocument/
@@ -65,12 +69,23 @@ module AAPB
         end
 
         def ingest_asset!
-          asset = Asset.new
-          actor = Hyrax::CurationConcern.actor
           attrs = AAPB::BatchIngest::PBCoreXMLMapper.new(pbcore_xml).asset_attributes
+          validate_record_does_not_exist! attrs[:id]
           attrs[:hyrax_batch_ingest_batch_id] = batch_id
+
+          # Create an actor environment with a new Asset object and the
+          # attributes mapped from PBCore.
+          asset = Asset.new
           env = Hyrax::Actors::Environment.new(asset, current_ability, attrs)
+
+          # Get the actor and call #create with teh actor environment.
+          # If #create fails, raise any exception that was set on the Asset
+          # object.
+          actor = Hyrax::CurationConcern.actor
           raise_ingest_errors(asset) unless actor.create(env)
+
+          # Return the completed asset that has been populaged with attributes
+          # and saved (all within the actor stack).
           asset
         end
 
