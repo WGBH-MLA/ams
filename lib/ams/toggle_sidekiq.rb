@@ -1,5 +1,6 @@
 require 'sidekiq/api'
 require 'open3'
+require 'logger'
 
 module AMS
   class ToggleSidekiq
@@ -7,7 +8,6 @@ module AMS
 
     def initialize(logger: nil, env: nil, project_dir: nil)
       self.logger = logger if logger
-      configure_redis
       @env = env || ENV['RAILS_ENV'] || 'development'
       @project_dir = project_dir || File.expand_path('../../../', __FILE__)
     end
@@ -41,27 +41,21 @@ module AMS
       `ps aux | egrep 'sidekiq.*\[[0-9]+ of [0-9]+ busy\]' | awk '{print $2}'`.split(/\s/)
     end
 
-    protected
+    def logger=(logger)
+      raise ArgumentError, "Logger object expected but #{logger.class} was given" unless logger.is_a? Logger
+      @logger = logger
+    end
 
-      def logger=(logger)
-        raise ArgumentError, "Logger object expected but #{logger.class} was given" unless logger.is_a? Logger
-        @logger = logger
-      end
-
-      def logger
-        @logger ||= Logger.new(STDOUT)
-      end
+    def logger
+      @logger ||= Logger.new(STDOUT)
+    end
 
     private
 
       def start_sidekiq_process
-        fork do
-          Dir.chdir project_dir do
-            run_command start_sidekiq_cmd
-            Process.daemon
-          end
+        Dir.chdir project_dir do
+          run_command start_sidekiq_cmd, spawn_new_process: true
         end
-        logger.info "Started Sidekiq processor in forked process."
       end
 
 
@@ -104,10 +98,11 @@ module AMS
         logger.info "#{count} Sidekiq processes stopped."
       end
 
-      # Runs a system command with some nice logging around it.
-      def run_command(command)
+      # Log the command, then run it. If spawn_new_process is TRUE, then call
+      # it with `spawn`, otherwise with backticks.
+      def run_command(command, spawn_new_process: false)
         logger.info "Running: #{command}"
-        `#{command}`
+        spawn_new_process ? spawn(command) : `#{command}`
       end
 
       def start_sidekiq_cmd
@@ -120,19 +115,6 @@ module AMS
 
       def quiet_sidekiq_cmd(pid)
         "kill -TSTP #{pid}"
-      end
-
-      def configure_redis
-        Sidekiq.configure_server do |s|
-          s.redis = redis_conn
-        end
-        Sidekiq.configure_client do |s|
-          s.redis = redis_conn
-        end
-      end
-
-      def redis_conn
-        @redis_conn ||= { url: "redis://#{ENV.fetch('REDIS_SERVER', 'localhost')}:6379/", network_timeout: 5 }
       end
   end
 end

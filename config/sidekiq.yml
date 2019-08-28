@@ -1,6 +1,9 @@
+# NOTE: These options can be overwritten by options passed in through the
+# command line. Run `ps aux | grep sidekiq` to see all running sidekiq
+# processes and which options were passed in.
 :verbose: true
 :concurrency: 10
 :queues:
   - [default, 3]
   - [ingest, 1]
-  - [mailers, 999]
+  - [mailers, 10]
