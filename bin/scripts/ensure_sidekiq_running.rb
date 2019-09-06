@@ -1,4 +1,4 @@
-require_relative '../../lib/ams/sidekiq_process_manager.rb'
+require_relative '../../lib/ams/sidekiq_process_manager'
 
 sidekiq = AMS::SidekiqProcessManager.new
 puts "#{sidekiq.active_pids.count} Sidekiq processes running."
