@@ -21,7 +21,7 @@ fi
 bin/rails g deployment_info_page --deployment_id $DEPLOYMENT_ID
 sudo service httpd restart
 sleep 2
-RESTART=true ruby bin/scripts/ensure_sidekiq_running.rb
+RESTART=true bundle exec ruby bin/scripts/ensure_sidekiq_running.rb
 sleep 2
 echo "End of install.sh"
 exit 0;

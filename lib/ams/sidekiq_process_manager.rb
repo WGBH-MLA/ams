@@ -142,7 +142,7 @@ module AMS
       end
 
       def start_sidekiq_cmd
-        "bundle exec sidekiq -e #{env} > #{sidekiq_log_file} 2>&1"
+        "bundle exec sidekiq -e #{env} >> #{sidekiq_log_file} 2>&1"
       end
 
       def sidekiq_log_file
