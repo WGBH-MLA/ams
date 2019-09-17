@@ -21,10 +21,12 @@
   <div class='table-responsive'>
     <table class='table table-condensed'>
       <thead>
+        <th scope='col'><%= sort_link_to('ID', 'id') %></th>
         <th scope='col'><%= sort_link_to('Status', 'status') %></th>
         <th scope='col'><%= sort_link_to('Date', 'created_at') %></th>
         <th scope='col'><%= sort_link_to('Items', 'batch_item_count') %></th>
-        <th scope='col'><%= sort_link_to('Submitter email address', 'submitter_email') %></th>
+        <th scope='col'><%= sort_link_to('Submitter Email Address', 'submitter_email') %></th>
+        <th scope='col'><%= sort_link_to('Original Filename', 'uploaded_filename') %></th>
         <th scope='col'><%= sort_link_to('Admin Set', 'admin_set_title') %></th>
         <th scope='col'></th>
       </thead>
