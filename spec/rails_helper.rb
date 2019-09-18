@@ -92,4 +92,15 @@ RSpec.configure do |config|
   config.extend ControllerMacros, :type => :controller
 end
 
-Webdrivers::Chromedriver.required_version = '72.0.3626.69'
+# Uncomment this to specify a version of ChromeDriver, a list of which can be
+# found at https://chromedriver.storage.googleapis.com/index.html.
+# NOTE: The ChromeDriver version must be compatible with the version of Chrome,
+# being used to run tests, whether it's in development or on Travis CI.
+# NOTE: The 'webdrivers' gem is supposed to automatically select the correct
+# version of ChromeDriver, so you should only need to use this if WebDrivers is
+# failing to do so.
+# Webdrivers::Chromedriver.required_version = ''
+
+# Uncomment this to help debug ChromeDriver (or other web driver) issues on
+# Travis or development.
+# Webdrivers.logger.level = :DEBUG
