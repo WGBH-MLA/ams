@@ -10,10 +10,12 @@
 </style>
 
 <tr class="batch-row">
+  <td><%= presenter.id %></td>
   <td><a href="<%= batch_path id: presenter.id %>"><%= presenter.status_span_tag %></a></td>
   <td><%= presenter.created_at %></td>
   <td><%= presenter.batch_item_count %></td>
   <td><%= presenter.submitter_email %></td>
+  <td><%= presenter.uploaded_filename %></td>
   <td><%= presenter.admin_set_title %></td>
   <td><%= link_to "View All Assets", "/catalog?f[hyrax_batch_ingest_batch_id_tesim][]=#{presenter.id}&locale=en&q=&search_field=all_fields" %></td>
 </tr>
