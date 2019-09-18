@@ -75,7 +75,6 @@ module AMS
             admin_user: admin_user,
             admin_role: admin_role,
             aapb_admin_role: aapb_admin_role,
-            series_collection_type: series_collection_type,
             admin_set: admin_set
           }
         end
@@ -96,28 +95,6 @@ module AMS
           role = Role.find_by name: 'aapb-admin'
           return role if role
           Role.create!(name: 'aapb-admin', users: [admin_user])
-        end
-
-        def series_collection_type
-          machine_id = 'series'
-          series_collection_type = Hyrax::CollectionType.find_by(machine_id: machine_id)
-          return series_collection_type if series_collection_type.present?
-          options = {
-            description: 'Series',
-            nestable: true,
-            brandable: false,
-            discoverable: true,
-            sharable: false,
-            share_applies_to_new_works: false,
-            allow_multiple_membership: true,
-            require_membership: false,
-            assigns_workflow: false,
-            assigns_visibility: false,
-            badge_color: '#FF7F4F',
-            participants: [{ agent_type: Hyrax::CollectionTypeParticipant::GROUP_TYPE, agent_id: 'admin', access: Hyrax::CollectionTypeParticipant::MANAGE_ACCESS },
-                           { agent_type: Hyrax::CollectionTypeParticipant::GROUP_TYPE, agent_id: ::Ability.registered_group_name, access: Hyrax::CollectionTypeParticipant::CREATE_ACCESS }]
-          }
-          Hyrax::CollectionTypes::CreateService.create_collection_type(machine_id: machine_id, title: 'Series', options: options)
         end
 
         def admin_set
