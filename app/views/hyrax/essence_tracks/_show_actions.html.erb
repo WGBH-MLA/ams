@@ -21,9 +21,6 @@
         <%= link_to "Delete", [main_app, presenter], class: 'btn btn-danger', data: { confirm: "Delete this #{presenter.human_readable_type}?" }, method: :delete %>
       <% end %>
       
-      <% if presenter.media_available? %>
-        <%= link_to "Download Media", "/concern/assets/#{presenter.id}/download_media.zip", class: 'btn btn-default' %>
-      <% end %>
       <% if presenter.valid_child_concerns.length > 0 %>
         <div class="btn-group">
           <button type="button" class="btn btn-default dropdown-toggle" type="button" id="dropdown-menu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
