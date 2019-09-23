@@ -32,6 +32,8 @@ development:
   <<: *default
   compile: true
 
+  extract_css: true
+
   # Reference: https://webpack.js.org/configuration/dev-server/
   dev_server:
     https: false
@@ -67,3 +69,5 @@ production:
 
   # Cache manifest.json for performance
   cache_manifest: true
+
+  extract_css: true
