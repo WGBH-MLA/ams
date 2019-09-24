@@ -18,6 +18,7 @@ class DigitalInstantiationIndexer < AMS::WorkIndexer
         solr_doc['instantiation_admin_data_tesim'] = object.instantiation_admin_data.gid if !object.instantiation_admin_data.gid.blank?
         solr_doc['aapb_preservation_lto_ssim'] = solr_doc['aapb_preservation_lto_tesim'] = object.instantiation_admin_data.aapb_preservation_lto if !object.instantiation_admin_data.aapb_preservation_lto.blank?
         solr_doc['aapb_preservation_disk_ssim'] = solr_doc['aapb_preservation_disk_tesim'] = object.instantiation_admin_data.aapb_preservation_disk if !object.instantiation_admin_data.aapb_preservation_disk.blank?
+        solr_doc['md5_tesim'] = object.instantiation_admin_data.md5 if !object.instantiation_admin_data.md5.blank?
       end
     end
   end

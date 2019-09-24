@@ -68,6 +68,14 @@ module Hyrax
       end
     end
 
+    def md5
+      if model.instantiation_admin_data
+        model.instantiation_admin_data.md5
+      else
+        ""
+      end
+    end
+
     def field_group_terms(group)
       field_groups[group]
     end

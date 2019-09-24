@@ -403,4 +403,8 @@ class SolrDocument
   def needs_update
     self[Solrizer.solr_name('needs_update')]
   end
+
+  def md5
+    self[Solrizer.solr_name('md5')]
+  end
 end
