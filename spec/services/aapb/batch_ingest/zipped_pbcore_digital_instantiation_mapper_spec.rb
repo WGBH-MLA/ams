@@ -28,6 +28,7 @@ RSpec.describe AAPB::BatchIngest::ZippedPBCoreDigitalInstantiationMapper, :pbcor
         expect(attrs[:holding_organization]).to eq("American Archive of Public Broadcasting")
         expect(attrs[:aapb_preservation_lto]).to eq("fhqwhgads")
         expect(attrs[:aapb_preservation_disk]).to eq("disky mc diskface")
+        expect(attrs[:md5]).to eq("qwertyqwerty")
       end
     end
   end
