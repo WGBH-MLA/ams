@@ -11,7 +11,7 @@ RSpec.feature 'Create Asset with Asset Type', js: true, asset_form_helpers: true
     let(:workflow) { Sipity::Workflow.create!(active: true, name: 'test-workflow', permission_template: permission_template) }
 
     let(:asset_attributes) do
-      { title: "My Asset Test Title"+ get_random_string, description:"My Asset Test Description", genre:"Call-in" }
+      { title: "My Asset Test Title "+ get_random_string, description:"My Asset Test Description", genre:"Call-in" }
     end
 
     before do
@@ -79,8 +79,6 @@ RSpec.feature 'Create Asset with Asset Type', js: true, asset_form_helpers: true
 
       # open asset with detail show
       click_on(asset_attributes[:title])
-      wait_for(2)
-      click_on('Asset Details')
       expect(page).to have_content asset_attributes[:genre]
     end
   end

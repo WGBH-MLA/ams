@@ -86,12 +86,12 @@ config.webpacker.check_yarn_integrity = false
   config.action_mailer.default :charset => "utf-8"
 
   config.action_mailer.smtp_settings = {
-    address: ENV["SMTP_ADDRESS"],
-    port: ENV["SMTP_PORT"].to_i,
-    user_name: ENV["SMTP_USERNAME"],
-    password: ENV["SMTP_PASSWORD"],
-    authentication: ENV["SMTP_AUTHENTICATION"].to_sym,
-    enable_starttls_auto: truthy_env_var?(ENV["SMTP_ENABLE_STARTTLS"])
+    address: ENV.fetch("SMTP_ADDRESS", ''),
+    port: ENV.fetch("SMTP_PORT", '').to_i,
+    user_name: ENV.fetch("SMTP_USERNAME", ''),
+    password: ENV.fetch("SMTP_PASSWORD", ''),
+    authentication: ENV.fetch("SMTP_AUTHENTICATION", '').to_sym,
+    enable_starttls_auto: truthy_env_var?(ENV.fetch("SMTP_ENABLE_STARTTLS", ''))
   }
 
   # Enable locale fallbacks for I18n (makes lookups for any locale fall back to
