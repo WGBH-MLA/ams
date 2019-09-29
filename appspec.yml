@@ -9,6 +9,6 @@ hooks:
       timeout: 300
       runas: ec2-user
   ValidateService:
-  - location: bin/deploy/verify_service.sh
-    timeout: 300
-    runas: ec2-user
+    - location: bin/deploy/verify_service.sh
+      timeout: 300
+      runas: ec2-user
