@@ -561,7 +561,6 @@ GEM
     parser (2.6.3.0)
       ast (~> 2.4.0)
     parslet (1.8.2)
-    pg (0.18.4)
     posix-spawn (0.3.13)
     power_converter (0.1.2)
     powerpack (0.1.2)
@@ -905,7 +904,6 @@ DEPENDENCIES
   mysql2 (~> 0.4.10)
   nokogiri
   pbcore!
-  pg (~> 0.18.4)
   pry-byebug
   pry-rails
   puma (~> 3.7)
