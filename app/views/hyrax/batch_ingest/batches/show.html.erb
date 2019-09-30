@@ -1,0 +1,10 @@
+<%= stylesheet_link_tag 'hyrax/batch_ingest/batch_ingest' %>
+<h1><span class="fa fa-copy"></span>Batch Ingest <%= @presenter.id %></h1>
+<%= render partial: 'hyrax/batch_ingest/batches/batch_attrs' %>
+<%= render partial: 'hyrax/batch_ingest/batches/batch_actions' %>
+<%= render partial: 'hyrax/batch_ingest/batches/batch_item_list' %>
+
+
+
+
+<td><%= link_to "View All Assets", "/catalog?f[hyrax_batch_ingest_batch_id_tesim][]=#{@presenter.id}&locale=en&q=&search_field=all_fields" %></td>
