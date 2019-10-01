@@ -27,7 +27,7 @@ module AAPB
 
           ingest_type = hash.fetch("ingest_type")
 
-          rase("Invalid ingest type, Allow types are #{valid_ingest_type.join(',')}") if valid_ingest_type.exclude?(ingest_type)
+          raise("Invalid ingest type, Allow types are #{valid_ingest_type.join(',')}") if valid_ingest_type.exclude?(ingest_type)
 
           CSVConfigTree.new(model, ingest_type, attr, children)
         end
