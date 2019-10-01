@@ -13,9 +13,8 @@ namespace :verify_service do
   end
 
   task :homepage do
-    host = ENV.fetch('PRODUCTION_HOST')
-    result = `curl -s -o /dev/null -I -w "%{http_code}" #{host}`
-    msg = "Request to #{host} returned: #{result}"
+    result = `curl -s -o /dev/null -I -w "%{http_code}" 127.0.0.1`
+    msg = "Request to 127.0.0.1 returned: #{result}"
     raise msg unless result == '200'
     puts msg
   end
