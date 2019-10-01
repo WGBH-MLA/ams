@@ -92,7 +92,7 @@ module AMS
       # Starts `count` sidekiq processes in the background.
       def start_sidekiq_processes(count: 1)
         Dir.chdir project_dir do
-          count.times { run_command start_sidekiq_cmd, spawn_new_process: true }
+          count.times { run_command start_sidekiq_cmd }
         end
       end
 
@@ -134,15 +134,14 @@ module AMS
         Sidekiq::Workers.new.map { |pid, thread_id, work| pid.split(':')[1] }
       end
 
-      # Log the command, then run it. If spawn_new_process is TRUE, then call
-      # it with `spawn`, otherwise with backticks.
-      def run_command(command, spawn_new_process: false)
+      # Log the command, then run it with backticks.
+      def run_command(command)
         logger.info "Running: #{command}"
-        spawn_new_process ? spawn(command) : `#{command}`
+        `#{command}`
       end
 
       def start_sidekiq_cmd
-        "bundle exec sidekiq -e #{env} >> #{sidekiq_log_file} 2>&1"
+        "bundle exec sidekiq -e #{env} >> #{sidekiq_log_file} 2>&1 &"
       end
 
       def sidekiq_log_file
