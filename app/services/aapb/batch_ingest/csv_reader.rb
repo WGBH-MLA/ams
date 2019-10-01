@@ -58,28 +58,43 @@ module AAPB
           (model, attribute) = col.split(".", 2)
 
           value = element.strip
-          if multi_value_attr?(attribute,@options_structure.object_class)
+          if multi_value_attr?(attribute, model)
             value = Array(value) unless element.strip.empty?
           end
 
-          if model.include?(@options_structure.object_class)
+          if model.include?('Asset')
+
+            # an asset
             if attribute.nil?
+        
               model_hash[model] ||= {}
-            elsif multi_value_attr?(attribute,@options_structure.object_class)
+            elsif multi_value_attr?(attribute, model)
+
               model_hash[model][attribute] ||= []
               model_hash[model][attribute] << value.first
             else
+
               model_hash[model][attribute] = value unless value.empty?
             end
+
           else
+
+            # not an asset
             if attribute.nil?
 
               model_hash[model] ||= [{}]
-
             else
 
               last_hash = model_hash[model].last
-              last_hash[attribute] = value unless value.empty?
+
+              if multi_value_attr?(attribute, model)
+
+                last_hash[attribute] ||= []
+                last_hash[attribute] << value.first
+              else
+
+                last_hash[attribute] = value unless value.empty?
+              end
             end
           end
 
