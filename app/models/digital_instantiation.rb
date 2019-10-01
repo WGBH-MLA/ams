@@ -127,6 +127,9 @@ class DigitalInstantiation < ActiveFedora::Base
     index.as :symbol
   end
 
+  property :md5, predicate: ::RDF::URI.new('http://pbcore.org#hasmd5'), multiple: false do |index|
+    index.as :stored_searchable
+  end
 
 
   def instantiation_admin_data_gid=(new_instantiation_admin_data_gid)

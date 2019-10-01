@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190719181534) do
+ActiveRecord::Schema.define(version: 20190923224725) do
 
   create_table "admin_data", force: :cascade do |t|
     t.string "level_of_user_access"
@@ -195,6 +195,7 @@ ActiveRecord::Schema.define(version: 20190719181534) do
     t.string "aapb_preservation_disk"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "md5"
   end
 
   create_table "job_io_wrappers", force: :cascade do |t|
