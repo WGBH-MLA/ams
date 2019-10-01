@@ -6,7 +6,7 @@ files:
 hooks:
   AfterInstall:
     - location: bin/deploy/install.sh
-      timeout: 300
+      timeout: 900
       runas: ec2-user
   ValidateService:
     - location: bin/deploy/verify_service.sh
