@@ -173,19 +173,19 @@ module AMS::PbcoreXmlExportExtension
 
       instantiation.date.to_a.each { |date|  instantiation_node.instantiationDate { instantiation_node.text(date) } }
       instantiation.digitization_date.to_a.each { |date| instantiation_node.instantiationDate(dateType: 'digitized') { instantiation_node.text(date) } }
-      
+
       instantiation.dimensions.to_a.each { |dimension| instantiation_node.instantiationDimensions { instantiation_node.text(dimension) } }
-      
+
       instantiation.format.to_a.each { |format| instantiation_node.instantiationPhysical { instantiation_node.text(format) } }
-      
+
       instantiation.standard.to_a.each { |standard|  instantiation_node.instantiationStandard { instantiation_node.text(standard) }  }
-      
+
       instantiation.location.to_a.each { |location|  instantiation_node.instantiationLocation { instantiation_node.text(location) }  }
-      
+
       instantiation.media_type.to_a.each { |media_type| instantiation_node.instantiationMediaType { instantiation_node.text(media_type) }  }
-      
+
       instantiation.generations.to_a.each { |generation| instantiation_node.instantiationGenerations { instantiation_node.text(generation) } }
-      
+
       instantiation.time_start.to_a.each { |time_start| instantiation_node.instantiationTimeStart { instantiation_node.text(time_start) }  }
 
       instantiation.duration.to_a.each { |duration| instantiation_node.instantiationDuration { instantiation_node.text(duration) } }
@@ -225,10 +225,12 @@ module AMS::PbcoreXmlExportExtension
 
   def prepare_digital_instantiation(xml, instantiation)
     xml.pbcoreInstantiation do |instantiation_node|
-      
+
       instantiation_node.instantiationIdentifier { instantiation_node.text(instantiation.id) }
       instantiation.local_instantiation_identifier.to_a.each { |local_instantiation_identifier| instantiation_node.instantiationIdentifier { instantiation_node.text(local_instantiation_identifier) } }
-      
+
+      instantiation.md5.to_a.each { |md5| instantiation_node.instantiationIdentifier(source: 'md5') { instantiation_node.text(md5) } }
+
       instantiation.date.to_a.each { |date|  instantiation_node.instantiationDate { instantiation_node.text(date) } }
       instantiation.digitization_date.to_a.each { |date| instantiation_node.instantiationDate(dateType: 'digitized') { instantiation_node.text(date) } }
 
@@ -288,7 +290,7 @@ module AMS::PbcoreXmlExportExtension
 
   def prepare_essence_track(instantiation_node, essence_track)
     instantiation_node.instantiationEssenceTrack do |essence_track_node|
-      
+
       essence_track_node.essenceTrackType { essence_track_node.text(essence_track.track_type.first) }
 
       essence_track.track_id.to_a.each { |track_id| essence_track_node.essenceTrackIdentifier { essence_track_node.text(track_id) } }
