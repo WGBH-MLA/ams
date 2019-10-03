@@ -43,6 +43,12 @@ class DeploymentInfoPageGenerator < Rails::Generators::Base
 
     def deployment_info_html
       ERB.new(template).result(binding)
+    rescue => e
+      STDERR.puts "#{e.class}: #{e.message}"
+      STDERR.puts "\n\t#{e.backtrace.join("\n\t")}"
+      "An error occurred when attempting to generate this page: #{e.class}\n" \
+      "See /opt/codedeploy-agent/deployment-root/deployment-logs/codedeploy-agent-deployments.log " \
+      "on deployment destination host for full backtrace."
     end
 
     def template; File.read(template_path); end
