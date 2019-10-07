@@ -1,0 +1,19 @@
+#!/usr/bin/env ruby
+require File.expand_path('../config/environment', __FILE__) unless defined?(Rails) && Rails.env
+require 'hyrax/benchmark'
+
+class TestWork < ActiveFedora::Base
+  include ::Hyrax::WorkBehavior
+end
+
+b = Hyrax::Benchmark.new(output_file: './benchmarks.csv')
+# b = Hyrax::Benchmark.new
+b.procedure do
+  TestWork.create!
+end
+
+b.measure(:repository_size) do
+  ActiveFedora::Base.count
+end
+
+b.run trials: 100
