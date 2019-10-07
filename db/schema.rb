@@ -10,9 +10,20 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
+<<<<<<< HEAD
 ActiveRecord::Schema.define(version: 20200803200219) do
 
   create_table "admin_data", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci" do |t|
+=======
+ActiveRecord::Schema.define(version: 20190923224725) do
+
+  create_table "admin_data", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci" do |t|
+    t.string "level_of_user_access"
+    t.string "minimally_cataloged"
+    t.string "outside_url"
+    t.text "special_collection"
+    t.string "transcript_status"
+>>>>>>> Adds initials for Benchmarking AMS
     t.text "sonyci_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -23,6 +34,7 @@ ActiveRecord::Schema.define(version: 20200803200219) do
     t.index ["hyrax_batch_ingest_batch_id"], name: "index_admin_data_on_hyrax_batch_ingest_batch_id"
   end
 
+<<<<<<< HEAD
   create_table "annotations", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci" do |t|
     t.string "annotation_type"
     t.string "ref"
@@ -36,6 +48,8 @@ ActiveRecord::Schema.define(version: 20200803200219) do
     t.index ["admin_data_id"], name: "index_annotations_on_admin_data_id"
   end
 
+=======
+>>>>>>> Adds initials for Benchmarking AMS
   create_table "bookmarks", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci" do |t|
     t.integer "user_id", null: false
     t.string "user_type"
