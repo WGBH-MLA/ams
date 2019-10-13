@@ -1,0 +1,65 @@
+#!/usr/bin/env ruby
+
+###
+# A script for benchmarking ingest of a typical Work type, using a typical
+# actor stack for the Work type.
+#
+# Environment Variables Used:
+#   TRIALS        The number of times to run the benchmark, defaults to 10.
+#   OUPTUT_FILE   Where the CSV data will be saved. Defaults to
+#                 ./benchmark_results/{timestamp}.{trials}_generic_works.csv
+#
+# Usage (from command line):
+#
+#   TRIALS=100 ./generic_work_actor_stack_benchmark
+require File.expand_path('../../../../config/environment', __FILE__) unless defined?(Rails) && Rails.env
+require 'hyrax/benchmark'
+
+# Fetch params from ENV; set defaults if empty.
+trials = ENV.fetch('TRIALS', 10).to_i
+timestamp = Time.now.strftime('%Y%m%d-%H%M%S')
+output_file = ENV.fetch('OUTPUT_FILE', "./benchmark_results/#{timestamp}.#{trials}_generic_works.csv")
+
+# Create a place for the output file if needed.
+FileUtils.mkdir_p File.dirname output_file
+
+# Create a test user for all deposits.
+depositor = User.create! email: "benchmark#{rand.to_s.sub('.', '')}@example.com", password: "password"
+
+# Create the bnechmark.
+b = Hyrax::Benchmark.new(output_file: output_file)
+b.procedure do
+  generic_work = GenericWork.new title: ["some title"]
+  ability = Ability.new depositor
+  env = Hyrax::Actors::Environment.new(generic_work, ability, {})
+  actor = Hyrax::CurationConcern.actor
+  raise "Failed to save record:\n#{generic_work.errors.messages.join("\n")}" unless actor.create(env)
+end
+
+# Specify a measurement for Fedora repository size.
+b.measure(:fcr_objects) { ActiveFedora::Base.count }
+
+# Specify a measurement for Solr index size
+b.measure(:solr_docs) do
+  ActiveFedora.solr.conn.get(:select)['response']['numFound']
+end
+
+
+# Establish a connection to the DB Fedora uses for it's persistence, so we can
+# measure it's growth.
+class FedoraRepo < ActiveRecord::Base
+  establish_connection  adapter: "mysql2",
+                        host: ENV.fetch('FEDORA_DB_HOST'),
+                        username: ENV.fetch('FEDORA_DB_USER'),
+                        password: ENV.fetch('FEDORA_DB_PWD'),
+                        database: "fcrepo"
+  self.table_name = 'MODESHAPE_REPOSITORY'
+end
+
+# Measure the total number of records in Fedora's database.
+b.measure(:fcr_db_record_count) do
+  FedoraRepo.count
+end
+
+# Run the benchmarkb
+b.run trials: trials
