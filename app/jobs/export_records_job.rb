@@ -17,12 +17,13 @@ class ExportRecordsJob < ApplicationJob
     search_params.delete(:format)
 
     response, response_documents = search_results(search_params)
+
     if format == "csv"
-      export_data = AMS::Export::DocumentsToCsv.new(response_documents)
+      export_data = AMS::Export::DocumentsToCsv.new(response_documents, search_params)
     elsif format == "pbcore"
       export_data = AMS::Export::DocumentsToPbcoreXml.new(response_documents)
     elsif format == 'zip-pbcore'
-      
+
       assets = response_documents.map {|doc| Asset.find(doc[:id])}
       assets.each do |asset|
         now = Time.now.to_i
@@ -58,7 +59,6 @@ class ExportRecordsJob < ApplicationJob
       export_data.process do
         export_data.upload_to_s3
       end
-      
       Ams2Mailer.export_notification(user, export_data.s3_path).deliver_later
     end
 
