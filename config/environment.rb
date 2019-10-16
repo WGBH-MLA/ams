@@ -5,5 +5,5 @@ require_relative 'application'
 Rails.application.initialize!
 
 Rails.application.configure do
-  config.export_to_browser_limit = 10
+  config.export_to_browser_limit = 100
 end

@@ -45,7 +45,11 @@ module AMS
         # send file to s3
         obj = s3.bucket(ENV['S3_EXPORT_BUCKET']).object("#{ENV['S3_EXPORT_DIR']}/#{SecureRandom.uuid}/#{@filename}")
         File.open(@file_path, 'r') do |f|
-          obj.upload_file(f, acl: 'public-read', content_disposition: 'attachment')
+          if format == 'csv'
+            obj.upload_file(f, acl: 'public-read', content_disposition: 'attachment', content_type: 'text/csv')
+          else
+            obj.upload_file(f, acl: 'public-read', content_disposition: 'attachment')
+          end
         end
         @s3_path = obj.public_url
       end
@@ -68,7 +72,6 @@ module AMS
         else
           raise "AAPB was unreachable! #{ENV['AAPB_HOST']}"
         end
-        
       end
     end
   end
