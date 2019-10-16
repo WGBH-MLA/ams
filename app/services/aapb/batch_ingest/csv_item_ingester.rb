@@ -13,6 +13,23 @@ module AAPB
 
       private
 
+        def clean_failed_batch_item(works_ids, model_obj)
+          obj = Asset.find(works_ids.first) if works_ids && works_ids.present?
+
+          unless obj
+            obj = model_obj.is_a?(Asset) ? model_obj : (model_obj.in_works_ids.present? ? Asset.find(model_obj.in_works_ids.first) : nil)
+          end
+
+          if obj
+            # lol
+            begin
+              obj.destroy!
+            rescue Ldp::Gone => e
+              # rescue because the asset itself being destroyed is throwing Ldp::Gone
+            end
+          end
+        end
+
         def ingest_object_at(node, with_data, with_parent = false)
           actor = ::Hyrax::CurationConcern.actor
           ability = ::Ability.new(User.find_by_email(@batch_item.submitter_email))
@@ -45,6 +62,7 @@ module AAPB
                 asset_actor.update(asset_env)
               end
             end
+
             actor_stack_status = actor.create(::Hyrax::Actors::Environment.new(model_object, ability, attributes))
           elsif node.ingest_type == "update"
             object_id = attributes.delete("id")
@@ -70,6 +88,7 @@ module AAPB
             actor_stack_status = actor.update(::Hyrax::Actors::Environment.new(model_object, ability, attributes))
           end
 
+          # catch sub-Asset ingest failures here, where we have attributes, cleanup, then re-raise to enable rescue_from to properly update failed batch item etc
           begin
             if actor_stack_status
               @batch_item.repo_object_id = model_object.id unless !with_parent
@@ -81,6 +100,7 @@ module AAPB
                               with_parent
                             end
 
+              # ingest asset's childrens
               node.children.each do |c_node|
                 with_data[c_node.object_class].each do |c_data|
                   ingest_object_at(c_node,c_data,parent_node)
@@ -90,6 +110,10 @@ module AAPB
             if model_object.errors.any?
               @batch_item.error = model_object.errors.messages.to_s
             end
+
+          rescue Exception => e
+            clean_failed_batch_item(attributes[:in_works_ids], model_object)
+            raise e
           end
         end
 
