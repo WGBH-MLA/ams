@@ -68,7 +68,7 @@ RSpec.feature "Ingest: AAPB PBCore - Zipped" do
       expect(@ingested_objects.count).to eq expected_batch_item_count
     end
 
-    it 'creates additional BatchItem reocrds with inherited values for child objects' do
+    it 'creates additional BatchItem records that all share the same `id_within_batch` value' do
       batch_items_by_repo_object_id = @batch.batch_items.index_by(&:repo_object_id)
       ingested_objects_by_id = @ingested_objects.index_by(&:id)
       batch_items_by_repo_object_id.each do |repo_object_id, batch_item|

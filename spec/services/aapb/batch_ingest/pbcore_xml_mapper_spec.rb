@@ -18,7 +18,7 @@ RSpec.describe AAPB::BatchIngest::PBCoreXMLMapper, :pbcore_xpath_helper do
       :date, :broadcast_date, :copyright_date, :created_date, :subject]
     end
 
-    let(:attrs_with_xpath_shortcuts) { attr_names - [:title, :description, :date, :spatial_coverage, :temporal_coverage, :id, :holding_organization] }
+    let(:attrs_with_xpath_shortcuts) { attr_names - [:title, :description, :date, :spatial_coverage, :temporal_coverage, :id, :holding_organization, :annotation] }
     let(:attrs) { subject.asset_attributes }
 
     it 'maps all attributes from PBCore XML' do
@@ -40,10 +40,29 @@ RSpec.describe AAPB::BatchIngest::PBCoreXMLMapper, :pbcore_xpath_helper do
       expect(attrs[:description]).to  eq pbcore_xpath_helper(pbcore_xml).descriptions_without_type
       expect(attrs[:date]).to         eq pbcore_xpath_helper(pbcore_xml).dates_without_type
       expect(attrs[:id]).to           eq pbcore_xpath_helper(pbcore_xml).ams_id
+      expect(attrs[:annotation]).to   eq pbcore_xpath_helper(pbcore_xml).annotations_without_type
     end
 
     it 'maps Contribution data from PBCore XML' do
       expect(attrs[:contributors]).to eq pbcore_xpath_helper(pbcore_xml).contributors_attrs
+    end
+
+    it 'correctly maps admin data coming from annotations' do
+      admin_data_fields = [
+        :level_of_user_access,
+        :minimally_cataloged,
+        :outside_url,
+        :special_collection,
+        :transcript_status,
+        :licensing_info,
+        :playlist_group,
+        :playlist_order
+      ]
+
+      admin_data_fields.each do |admin_data_field|
+        expect(attrs).to have_key admin_data_field
+        expect(attrs[admin_data_field]).not_to be_nil
+      end
     end
 
     context 'when dates are of a known invalid type' do
