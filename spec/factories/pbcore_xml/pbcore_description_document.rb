@@ -11,8 +11,29 @@ FactoryBot.define do
       audience_levels   { build_list(:pbcore_audience_level, rand(1..3)) }
       audience_ratings  { build_list(:pbcore_audience_rating, rand(1..3)) }
       asset_types       { build_list(:pbcore_asset_type, rand(1..3)) }
-      annotations       { build_list(:pbcore_annotation, rand(1..3)) }
       subjects          { build_list(:pbcore_subject, rand(1..3)) }
+
+      annotations do
+        # AAPB-specific admin data annotations
+        admin_data_annotations = [
+
+          # The incoming PBCore XML values for "Level of User Access" and
+          # "Transcript Status" match our controlled vocabulary, so we can take
+          # a random sampling from there.
+          build(:pbcore_annotation, type: "Level of User Access", value: LevelOfUserAccessService.new.select_all_options.to_h.values.sample),
+          build(:pbcore_annotation, type: "Transcript Status", value: TranscriptStatusService.new.select_all_options.to_h.values.sample),
+          build(:pbcore_annotation, type: "cataloging status", value: "Minimally Cataloged"),
+          build(:pbcore_annotation, type: "Outside URL", value: Faker::Internet.url),
+          build(:pbcore_annotation, type: "special_collections" , value: Faker::TvShows::Simpsons.character),
+          build(:pbcore_annotation, type: "Licensing Info" , value: Faker::Lorem.paragraph),
+          build(:pbcore_annotation, type: "Playlist Group" , value: Faker::Lorem.word),
+          build(:pbcore_annotation, type: "Playlist Order" , value: rand(1..5))
+        ]
+
+        # In addition to the admin data annotations, throw in some arbitrary
+        # annotations that are not admin data to show they can also be handled.
+        admin_data_annotations + build_list(:pbcore_annotation, rand(1..3))
+      end
 
       titles do
         [
@@ -77,7 +98,7 @@ FactoryBot.define do
 
       instantiations do
         [
-          build(:pbcore_instantiation, :digital, :aapb_holding)
+          build(:pbcore_instantiation, :digital, aapb_holding: true, on_lto: true, on_disk: true)
         ]
       end
 
