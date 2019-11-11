@@ -104,8 +104,19 @@ module AAPB
             # If there was an exception during ingest, ensure the related work
             # is destroyed.
             work_id = attributes.fetch(:in_works_ids, []).first
-            work_id ||= model_obj&.in_works_ids&.first if model_obj
-            clean_failed_batch_item_work(work_id) if work_id
+            work_id ||= model_object&.in_works_ids&.first if model_object
+
+            if work_id
+              work = Asset.find(work_id)
+              asset_batch_id = work.admin_data.hyrax_batch_ingest_batch_id if work.admin_data
+              child_batch_id = model_object.admin_data.hyrax_batch_ingest_batch_id if model_object.admin_data
+
+              # make sure failed child object is from the same batch as parent
+              if work && asset_batch_id == child_batch_id
+                clean_failed_batch_item_work(work)
+              end
+            end
+
             # Re-raise the exception so it can be handled by downstream
             # exception handling e.g. the `rescue_from` block of
             # BatchItemIngestJob from hyrax-batch_ingest gem
