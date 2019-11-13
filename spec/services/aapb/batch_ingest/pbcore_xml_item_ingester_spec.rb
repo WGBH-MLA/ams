@@ -19,22 +19,8 @@ RSpec.describe AAPB::BatchIngest::PBCoreXMLItemIngester, reset_data: false do
       # PBCoreXMLItemIngester to ingest the BatchItem. The return value is an
       # Asset model instance on which we can write our expectations.
       before :all do
-        # Build the PBCore XML
-        @pbcore_xml = FactoryBot.build(
-          :pbcore_description_document,
-          identifiers: [
-            build(:pbcore_identifier, :aapb)
-          ],
-          contributors: build_list(:pbcore_contributor, 5),
-          instantiations: [
-            build_list(:pbcore_instantiation, 5, :digital,
-                       essence_tracks: build_list(:pbcore_instantiation_essence_track, 2)),
-            build(:pbcore_instantiation, :physical,
-                  essence_tracks: build_list(:pbcore_instantiation_essence_track, 2))
-          ].flatten
-        ).to_xml
-
-        @batch = create(:batch, submitter_email: create(:user).email)
+        @pbcore_xml = build(:pbcore_description_document, :full_aapb).to_xml
+        @batch = create(:batch, submitter_email: create(:user, role_names: ['aapb-admin']).email)
 
         # Use the PBCore XML as the source data for a BatchItem.
         batch_item = create(
@@ -47,11 +33,15 @@ RSpec.describe AAPB::BatchIngest::PBCoreXMLItemIngester, reset_data: false do
         # Ingest the BatchItem and use the returned Asset instance for testing.
         @asset = described_class.new(batch_item).ingest
         @asset.reload
+
+        # Here we grab a few things off the @asset that we want to test in order
+        # to make tests a bit cleaner.
         @contributions = @asset.members.select { |member| member.is_a? Contribution }
         @digital_instantiations = @asset.members.select { |member| member.is_a? DigitalInstantiation }
         @physical_instantiations = @asset.members.select { |member| member.is_a? PhysicalInstantiation }
         @essence_tracks = @digital_instantiations.map(&:members).flatten.select { |member| member.is_a? EssenceTrack }
         @essence_tracks += @physical_instantiations.map(&:members).flatten.select { |member| member.is_a? EssenceTrack }
+        @admin_data = AdminData.find_by_gid @asset.admin_data_gid
       end
 
       it 'ingests the Asset and the Contributions' do
@@ -68,6 +58,22 @@ RSpec.describe AAPB::BatchIngest::PBCoreXMLItemIngester, reset_data: false do
 
       it 'ingests the Essence Tracks of Digital and Physical Instantiations' do
         expect(@essence_tracks.count).to eq 12
+      end
+
+      fit 'ingests Admin Data' do
+        expect(@admin_data).not_to be_nil
+        expect(@admin_data.level_of_user_access).not_to be_nil
+        expect(@admin_data.minimally_cataloged).not_to be_nil
+        expect(@admin_data.outside_url).not_to be_nil
+        expect(@admin_data.special_collection).not_to be_nil
+        expect(@admin_data.transcript_status).not_to be_nil
+        expect(@admin_data.sonyci_id).not_to be_nil
+        expect(@admin_data.licensing_info).not_to be_nil
+        expect(@admin_data.created_at).not_to be_nil
+        expect(@admin_data.updated_at).not_to be_nil
+        expect(@admin_data.playlist_group).not_to be_nil
+        expect(@admin_data.playlist_order).not_to be_nil
+        expect(@admin_data.hyrax_batch_ingest_batch_id).not_to be_nil
       end
 
       it 'propagates additional batch items as part of the batch' do

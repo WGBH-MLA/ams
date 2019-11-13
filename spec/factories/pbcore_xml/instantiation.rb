@@ -30,8 +30,28 @@ FactoryBot.define do
       physical { build(:pbcore_instantiation_physical) }
     end
 
-    trait :aapb_holding do
-      annotations { [ build(:pbcore_instantiation_annotation, type: "Organization", value: "American Archive of Public Broadcasting") ] }
+    transient do
+      aapb_holding { true }
+      on_lto { true }
+      on_disk { true }
+    end
+
+    after(:build) do |pbcore_identifier, evaluator|
+      if evaluator.aapb_holding
+        pbcore_identifier.annotations << build(:pbcore_instantiation_annotation, type: "Organization", value: "American Archive of Public Broadcasting")
+      end
+
+      if evaluator.on_lto
+        # If the value is simply TRUE (the default), then convert it to a random string.
+        val = evaluator.on_lto == true ? SecureRandom.hex[0..10] : evaluator.on_lto.to_s
+        pbcore_identifier.annotations << build(:pbcore_instantiation_annotation, type: "AAPB Preservation LTO", value: val)
+      end
+
+      if evaluator.on_disk
+        # If the value is simply TRUE (the default), then convert it to a random string.
+        val = evaluator.on_disk == true ? SecureRandom.hex[0..10] : evaluator.on_disk.to_s
+        pbcore_identifier.annotations << build(:pbcore_instantiation_annotation, type: "AAPB Preservation Disk", value: val)
+      end
     end
   end
 end
