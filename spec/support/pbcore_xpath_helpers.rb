@@ -61,7 +61,14 @@ module PBCoreXPathHelper
         copyright_date:                 '//pbcoreAssetDate[@dateType="Copyright"]',
         created_date:                   '//pbcoreAssetDate[@dateType="Created"]',
         genre:                          '//pbcoreGenre',
-        annotation:                     '//pbcoreAnnotation',
+        level_of_user_access:           '//pbcoreAnnotation[@annotationType="Level of User Access"]',
+        minimally_cataloged:            '//pbcoreAnnotation[@annotationType="cataloging status"]',
+        outside_url:                    '//pbcoreAnnotation[@annotationType="Outside URL"]',
+        special_collection:             '//pbcoreAnnotation[@annotationType="special_collections"]',
+        transcript_status:              '//pbcoreAnnotation[@annotationType="Transcript Status"]',
+        licensing_info:                 '//pbcoreAnnotation[@annotationType="Licensing Info"]',
+        playlist_group:                 '//pbcoreAnnotation[@annotationType="Playlist Group"]',
+        playlist_order:                 '//pbcoreAnnotation[@annotationType="Playlist Order"]',
         rights_summary:                 '//pbcoreRightsSummary/rightsSummary',
         rights_link:                    '//pbcoreRightsSummary/rightsLink',
         local_identifier:               '//pbcoreIdentifier[@source="Local Identifier"]',
@@ -110,8 +117,7 @@ module PBCoreXPathHelper
     def titles_without_type
       all_titles = values_from_xpath('//pbcoreTitle')
       with_types = values_from_xpath(:program_title) + values_from_xpath(:episode_title) + values_from_xpath(:segment_title) + values_from_xpath(:clip_title) + values_from_xpath(:promo_title) + values_from_xpath(:raw_footage_title) + values_from_xpath(:episode_number)
-      with_types.each {|title| dex = all_titles.index(title); all_titles.slice!( dex ) if dex }
-      all_titles
+      remove_exactly_once_from_array all_titles, with_types
     end
 
     # Shortcut method to pull out all descriptions that don't match the other description
@@ -121,8 +127,7 @@ module PBCoreXPathHelper
     def descriptions_without_type
       all_descs = values_from_xpath('//pbcoreDescription')
       with_types = values_from_xpath(:program_description) + values_from_xpath(:episode_description) + values_from_xpath(:segment_description) + values_from_xpath(:clip_description) + values_from_xpath(:promo_description) + values_from_xpath(:raw_footage_description) + values_from_xpath(:episode_number)
-      with_types.each {|desc| dex = all_descs.index(desc); all_descs.slice!( dex ) if dex  }
-      all_descs
+      remove_exactly_once_from_array all_descs, with_types
     end
 
     # Shortcut method to pull out all asset dates that don't match the other
@@ -132,8 +137,24 @@ module PBCoreXPathHelper
     def dates_without_type
       all_dates = values_from_xpath('//pbcoreAssetDate')
       with_types = values_from_xpath(:broadcast_date) + values_from_xpath(:copyright_date) + values_from_xpath(:created_date)
-      with_types.each {|desc| dex = all_dates.index(desc); all_dates.slice!( dex ) if dex  }
-      all_dates
+      remove_exactly_once_from_array all_dates, with_types
+    end
+
+    # Shortcut method to pull out all annotations that don't match special
+    # annotation types.
+    # Usage: In your spec, do this..
+    #   pbcore_xpath_helper(pbcore_xml).annotations_without_type
+    def annotations_without_type
+      all_vals = values_from_xpath('//pbcoreAnnotation')
+      with_types = values_from_xpath(:level_of_user_access) +
+                   values_from_xpath(:minimally_cataloged) +
+                   values_from_xpath(:outside_url) +
+                   values_from_xpath(:special_collection) +
+                   values_from_xpath(:transcript_status) +
+                   values_from_xpath(:licensing_info) +
+                   values_from_xpath(:playlist_group) +
+                   values_from_xpath(:playlist_order)
+      remove_exactly_once_from_array all_vals, with_types
     end
 
     def ams_id
@@ -167,6 +188,25 @@ module PBCoreXPathHelper
       noko.xpath('//essenceTrackFrameSize').first.text.split('x').last
     end
 
+    private
+
+      # Does a proper array subtraction that the minus operator does not do.
+      # The minus operator `-` on arrays will remove ALL occurences of the right
+      # operand from the left operand and return the result. We need to be able
+      # to remove values just once, leaving any others that may be present.
+      # @param [Array] orig_array an array of values you want to remove from.
+      # @param [Array] remove_these an array of values you want to remove from
+      #   orig_array
+      # @return [Array] the result of removing each occurrence of remove_these
+      #   from orig_array exactly once.
+      def remove_exactly_once_from_array(orig_array, remove_these)
+        return_array = orig_array.dup
+        remove_these.each do |val|
+          remove_this_index = return_array.index val
+          return_array.slice! remove_this_index if remove_this_index
+        end
+        return_array
+      end
   end
 end
 

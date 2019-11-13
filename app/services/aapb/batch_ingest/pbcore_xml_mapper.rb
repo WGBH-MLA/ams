@@ -22,24 +22,39 @@ module AAPB
         grouped
       end
 
-      def admindata_field_names
-        @admindata_field_names ||= ["level of user access", "cataloging status", "outside url", "special_collections", "transcript status", "licensing info", "playlist group", "playlist order"]
+      # Provides a mapping of annotation types to field names, used in
+      # #asset_attributes. NOTE: The case of the annotation types are normalized
+      # to be lowercase in this mapping, but the incoming PBCore may contain
+      # capitalization.
+      # @return [Hash] a mapping of possible values for the `type` attribute of
+      # <pbcoreAnnotation> elements to their corresponding field names.
+      def self.annotation_type_to_field_name
+        {
+          "level of user access" => :level_of_user_access,
+          "cataloging status" => :minimally_cataloged,
+          "outside url" => :outside_url,
+          "special_collections" => :special_collection,
+          "transcript status" => :transcript_status,
+          "licensing info" => :licensing_info,
+          "playlist group" => :playlist_group,
+          "playlist order" => :playlist_order
+        }
       end
 
       def asset_attributes
         @asset_attributes ||= {}.tap do |attrs|
           annotations, admindata = separate_admindata(pbcore.annotations)
 
-          # bring along the ol' admin data, to be removed in the actor
-          admindata_field_names.each do |field_name|
-            field_name = 'minimally_cataloged' if field_name == 'cataloging status'
-            field_name = 'special_collection' if field_name == 'special_collections'
+          # normalize the case of the annotation type keys in admindata
+          admindata =  admindata.map { |k, v| [ k.downcase, v ] }.to_h
 
-            value = admindata[field_name]
-            # handle arrays for single-value fields
-            value = value.first if value && ['special_collections','sonyci_id'].exclude?(field_name)
-
-            attrs[:"#{field_name.gsub(" ", '_')}"] = value if value
+          self.class.annotation_type_to_field_name.each do |annotation_type, field_name|
+            value = admindata[annotation_type]
+            if value
+              # 'sepcial_collection' field is single-valued
+              value = value.first if field_name == 'special_collection'
+              attrs[field_name] = value
+            end
           end
 
           # Saves Asset with AAPB ID if present
