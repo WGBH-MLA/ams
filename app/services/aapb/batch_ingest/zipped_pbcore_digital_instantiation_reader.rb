@@ -18,7 +18,10 @@ module AAPB
       private
 
         def unzipped_manifest_path
-          @unzipped_manifest_path ||= unzipped_file_paths.select { |path| ['.xlsx'].include? File.extname(path) }.first
+          @unzipped_manifest_path ||= unzipped_file_paths.select { |path| ['.xlsx', '.csv'].include? File.extname(path) }.reject { |path| path.split("/")[-1].start_with?(".") }.first
+        ensure
+          # TODO: Be more specific, i.e. "can't find a manifest"?
+          raise Hyrax::BatchIngest::ReaderError, I18n.t('hyrax.batch_ingest.readers.errors.invalid_manifest', source_location: @source_location) unless @unzipped_manifest_path.present?
         end
 
         def unzipped_file_paths
