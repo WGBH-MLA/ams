@@ -17,9 +17,9 @@ module AAPB
       private
 
         def unzipped_xml_file_paths
+          # Had instances where we were getting hidden files, so added reject method
           @unzipped_xml_file_paths ||= unzipped_file_paths.select { |path| ['.pbcore', '.xml'].include? File.extname(path) }.reject { |path| path.split("/")[-1].start_with?(".") }
         ensure
-          # TODO: Be more specific, i.e. "batch is missing XML files"?
           raise Hyrax::BatchIngest::ReaderError, I18n.t('hyrax.batch_ingest.readers.errors.invalid_batch_item_file_type', source_location: @source_location) unless @unzipped_xml_file_paths&.present?
         end
 
