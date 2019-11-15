@@ -893,7 +893,7 @@ DEPENDENCIES
   factory_bot_rails (~> 4.0)
   faker
   fcrepo_wrapper
-  hydra-role-management
+  hydra-role-management (~> 1.0)
   hyrax (= 2.5.1)
   hyrax-batch_ingest!
   hyrax-iiif_av (>= 0.2.0)
