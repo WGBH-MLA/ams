@@ -4,7 +4,7 @@ RSpec.feature 'AssignMultipleRolesAsManager.', js: true do
     context 'Add Manager permissions to user (Role)' do
       let(:admin_user) { create :admin_user }
       let!(:user) { create :user }
-      let!(:user_with_role) { create :user, role_names: ['user'] }
+      let!(:user_with_role) { create :user, role_names: ['test-group'] }
       let!(:admin_set_1) { create :admin_set }
       let!(:admin_set_2) { create :admin_set }
 
