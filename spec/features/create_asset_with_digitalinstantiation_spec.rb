@@ -4,7 +4,7 @@ RSpec.feature 'Create and Validate Asset,Digital Instantiation, EssenseTrack', j
               disable_animation:true, expand_fieldgroup: true  do
   context 'Create adminset, create asset, import pbcore xml for digital instantiation and essensetrack' do
     let(:admin_user) { create :admin_user }
-    let!(:user_with_role) { create :user, role_names: ['user'] }
+    let!(:user_with_role) { create :user, role_names: ['ingester'] }
     # let(:admin_set_id) { AdminSet.find_or_create_default_admin_set_id }
     let(:admin_set_id) { create(:admin_set).id }
     let(:permission_template) { Hyrax::PermissionTemplate.find_or_create_by!(source_id: admin_set_id) }
@@ -64,9 +64,9 @@ RSpec.feature 'Create and Validate Asset,Digital Instantiation, EssenseTrack', j
       Sipity::WorkflowAction.create!(name: 'submit', workflow: workflow)
       Hyrax::PermissionTemplateAccess.create!(
         permission_template_id: permission_template.id,
-        agent_type: 'group',
-        agent_id: 'user',
-        access: 'manage'
+        agent_type: 'user',
+        agent_id: user_with_role.email,
+        access: 'deposit'
       )
       # Login role user to create asset
       login_as(user_with_role)
@@ -102,6 +102,7 @@ RSpec.feature 'Create and Validate Asset,Digital Instantiation, EssenseTrack', j
       fill_in('Rights summary', with: asset_attributes[:rights_summary])
 
       click_link "Relationships" # define adminset relation
+
       find("#asset_admin_set_id option[value='#{admin_set_id}']").select_option
 
       # set it public

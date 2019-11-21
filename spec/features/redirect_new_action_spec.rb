@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.feature 'Redirect controller#new actions', js: true do
   context 'a logged in User' do
     let(:admin_user) { create :admin_user }
-    let!(:user_with_role) { create :user, role_names: ['user'] }
+    let!(:user_with_role) { create :user, role_names: ['ingester'] }
     let(:admin_set_id) { AdminSet.find_or_create_default_admin_set_id }
 
     let!(:permission_template) { Hyrax::PermissionTemplate.find_or_create_by!(source_id: admin_set_id) }
@@ -13,8 +13,8 @@ RSpec.feature 'Redirect controller#new actions', js: true do
       Sipity::WorkflowAction.create!(name: 'submit', workflow: workflow)
       Hyrax::PermissionTemplateAccess.create!(
           permission_template_id: permission_template.id,
-          agent_type: 'group',
-          agent_id: 'user',
+          agent_type: 'user',
+          agent_id: user_with_role.email,
           access: 'deposit'
       )
       # Login role user to create DigitalInstantiation

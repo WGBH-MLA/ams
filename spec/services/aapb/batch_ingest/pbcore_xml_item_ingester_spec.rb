@@ -19,7 +19,16 @@ RSpec.describe AAPB::BatchIngest::PBCoreXMLItemIngester, reset_data: false do
       # PBCoreXMLItemIngester to ingest the BatchItem. The return value is an
       # Asset model instance on which we can write our expectations.
       before :all do
-        @pbcore_xml = build(:pbcore_description_document, :full_aapb).to_xml
+        @pbcore = build(:pbcore_description_document,
+                        :full_aapb,
+                        contributors: build_list(:pbcore_contributor, 5),
+                        instantiations: [
+                         build_list(:pbcore_instantiation, 5, :digital,
+                           essence_tracks: build_list(:pbcore_instantiation_essence_track, 2)),
+                         build(:pbcore_instantiation, :physical,
+                           essence_tracks: build_list(:pbcore_instantiation_essence_track, 2))
+                         ].flatten )
+
         @batch = create(:batch, submitter_email: create(:user, role_names: ['aapb-admin']).email)
 
         # Use the PBCore XML as the source data for a BatchItem.
@@ -27,7 +36,7 @@ RSpec.describe AAPB::BatchIngest::PBCoreXMLItemIngester, reset_data: false do
           :batch_item,
           batch: @batch,
           source_location: nil,
-          source_data: @pbcore_xml
+          source_data: @pbcore.to_xml
         )
 
         # Ingest the BatchItem and use the returned Asset instance for testing.
@@ -60,7 +69,7 @@ RSpec.describe AAPB::BatchIngest::PBCoreXMLItemIngester, reset_data: false do
         expect(@essence_tracks.count).to eq 12
       end
 
-      fit 'ingests Admin Data' do
+      it 'ingests Admin Data' do
         expect(@admin_data).not_to be_nil
         expect(@admin_data.level_of_user_access).not_to be_nil
         expect(@admin_data.minimally_cataloged).not_to be_nil
@@ -89,7 +98,7 @@ RSpec.describe AAPB::BatchIngest::PBCoreXMLItemIngester, reset_data: false do
             :batch_item,
             batch: @batch,
             source_location: nil,
-            source_data: @pbcore_xml
+            source_data: @pbcore.to_xml
           )
           expect { described_class.new(duplicate_batch_item).ingest }.to raise_error AAPB::BatchIngest::RecordExists
         end
@@ -131,9 +140,6 @@ RSpec.describe AAPB::BatchIngest::PBCoreXMLItemIngester, reset_data: false do
       it 'creates an associated EssenceTrack' do
         expect(@essence_tracks.count).to eq(1)
       end
-
     end
-
-
   end
 end
