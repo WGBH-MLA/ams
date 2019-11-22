@@ -13,21 +13,11 @@ module AAPB
 
       private
 
-        def clean_failed_batch_item(works_ids, model_obj)
-          obj = Asset.find(works_ids.first) if works_ids && works_ids.present?
-
-          unless obj
-            obj = model_obj.is_a?(Asset) ? model_obj : (model_obj.in_works_ids.present? ? Asset.find(model_obj.in_works_ids.first) : nil)
-          end
-
-          if obj
-            # lol
-            begin
-              obj.destroy!
-            rescue Ldp::Gone => e
-              # rescue because the asset itself being destroyed is throwing Ldp::Gone
-            end
-          end
+        # Removes a work without raising an exception
+        def clean_failed_batch_item_work(work_id)
+          Asset.find(work_id).destroy!
+        rescue Ldp::Gone, ActiveFedora::ObjectNotFoundError => e
+          # if it's already gone, continue without error.
         end
 
         def ingest_object_at(node, with_data, with_parent = false)
@@ -110,9 +100,15 @@ module AAPB
             if model_object.errors.any?
               @batch_item.error = model_object.errors.messages.to_s
             end
-
-          rescue Exception => e
-            clean_failed_batch_item(attributes[:in_works_ids], model_object)
+          rescue => e
+            # If there was an exception during ingest, ensure the related work
+            # is destroyed.
+            work_id = attributes.fetch(:in_works_ids, []).first
+            work_id ||= model_obj&.in_works_ids&.first if model_obj
+            clean_failed_batch_item_work(work_id) if work_id
+            # Re-raise the exception so it can be handled by downstream
+            # exception handling e.g. the `rescue_from` block of
+            # BatchItemIngestJob from hyrax-batch_ingest gem
             raise e
           end
         end
