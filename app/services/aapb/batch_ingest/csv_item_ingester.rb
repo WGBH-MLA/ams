@@ -14,8 +14,8 @@ module AAPB
       private
 
         # Removes a work without raising an exception
-        def clean_failed_batch_item_work(work_id)
-          Asset.find(work_id).destroy!
+        def clean_failed_batch_item_work(work)
+          work.destroy!
         rescue Ldp::Gone, ActiveFedora::ObjectNotFoundError => e
           # if it's already gone, continue without error.
         end
