@@ -3,7 +3,7 @@
   <%if can? :create, Role %>
     <div class="pull-right">
       <% if can? :create, Role %>
-        <%= button_to t('hyrax.dashboard.manage_role.create_role'), role_management.new_role_path, method: :get, class: 'btn btn-primary' %>
+        <%= link_to t('hyrax.dashboard.manage_role.create_role'), role_management.new_role_path, method: :get, class: 'btn btn-primary' %>
       <% end %>
   <% end %>
   </div>
@@ -37,7 +37,7 @@
         </table>
       </div>
     <% else %>
-      <p><%= t('hyrax.dashboard.manage_role.role_not_avilable')%></p>
+      <p><%= t('hyrax.dashboard.manage_role.role_not_available')%></p>
     <% end %>
   </div>
 </div>
