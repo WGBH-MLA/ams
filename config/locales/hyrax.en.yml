@@ -353,12 +353,12 @@ en:
           select_user: 'Select a user...'
           cancel: 'Cancel'
           confirm: 'Are you sure you want to delete?'
-          role_not_avilable: 'No roles have been created.'
+          role_not_available: 'No roles have been created.'
         admin_sets:
           title_unique_validation: 'already exist try another one'
           title_cant_blank_validation: 'You must provide a title'
       sidebar:
-        manage_roles:        'Manage Roles'
+        manage_roles: 'Manage Roles'
         activity: Activity
         appearance: Appearance
         collection_types: Collection Types
