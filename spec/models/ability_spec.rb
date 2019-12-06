@@ -89,37 +89,6 @@ RSpec.describe Ability do
 
   context ', given a user who is part of the "admin" group, ' do
     let(:user) { create(:admin_user) }
-
     it { is_expected.to be_able_to(:manage, :all) }
-
-    # it { is_expected.to be_able_to([:create, :update, :destroy], Asset) }
-    # it { is_expected.to be_able_to([:create, :update, :destroy], DigitalInstantiation) }
-    # it { is_expected.to be_able_to([:create, :update, :destroy], PhysicalInstantiation) }
-    # it { is_expected.to be_able_to([:create, :update, :destroy], Collection) }
-    # it { is_expected.to be_able_to([:create, :update, :destroy], EssenceTrack) }
-    # it { is_expected.to be_able_to([:create, :update, :destroy], Contribution) }
-    #
-    #
-    # it 'an create, update, and destroy a Role' do
-    #   [:create, :update, :destroy].each do |action|
-    #
-    #   end
-    #   expect(subject.can?(action, Role)).to eq true
-    # end
-    #
-    # it 'an create, update, and destroy a Contribution' do
-    #   expect(subject.can?([:create, :update, :destroy], Contribution)).to eq true
-    # end
-    #
-    # it 'an create, update, and destroy a AdminData' do
-    #   expect(subject.can?([:create, :update, :destroy], AdminData)).to eq true
-    # end
-    #
-    # it { is_expected.to be_able_to([:create, :update, :destroy], Role) }
-    # it { is_expected.to be_able_to(:create, Role) }
-    # it { is_expected.to be_able_to(:update, Role) }
-    # it { is_expected.to be_able_to(:destroy, Role) }
-    # it { is_expected.to be_able_to([:create, :update, :destroy], User) }
-    # it { is_expected.to be_able_to([:create, :update, :destroy], Push) }
   end
 end
