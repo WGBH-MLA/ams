@@ -6,7 +6,7 @@ require_relative '../../app/services/date_types_service'
 RSpec.feature 'Create and Validate Asset', js: true, asset_form_helpers: true, clean:true do
   context 'Create adminset, create asset' do
     let(:admin_user) { create :admin_user }
-    let!(:user_with_role) { create :user, role_names: ['user'] }
+    let!(:user_with_role) { create :user, role_names: ['ingester'] }
     let(:admin_set_id) { AdminSet.find_or_create_default_admin_set_id }
     let(:permission_template) { Hyrax::PermissionTemplate.find_or_create_by!(source_id: admin_set_id) }
     let!(:workflow) { Sipity::Workflow.create!(active: true, name: 'test-workflow', permission_template: permission_template) }
@@ -69,7 +69,7 @@ RSpec.feature 'Create and Validate Asset', js: true, asset_form_helpers: true, c
       Hyrax::PermissionTemplateAccess.create!(
         permission_template_id: permission_template.id,
         agent_type: 'group',
-        agent_id: 'user',
+        agent_id: 'ingester',
         access: 'deposit'
       )
       # Login role user to create asset
@@ -77,6 +77,7 @@ RSpec.feature 'Create and Validate Asset', js: true, asset_form_helpers: true, c
 
       # create asset
       visit new_hyrax_asset_path
+
       expect(page).to have_content "Add New Asset"
 
       click_link "Files" # switch tab

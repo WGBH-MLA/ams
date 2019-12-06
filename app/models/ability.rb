@@ -1,63 +1,84 @@
 class Ability
   include Hydra::Ability
-
   include Hyrax::Ability
   include Hyrax::BatchIngest::Ability
 
-  self.ability_logic += [:everyone_can_create_curation_concerns]
+  # IMPORTANT! This is a list of methods that modify the Ability's permissions
+  # and the order matters! Subsequent definitions overwrite previous ones,
+  # including those that are set in the included modules above.
+  # Best practice:
+  #   * Use methods for defining permissions that are logically related
+  #     (e.g. permission for a given user group).
+  #   * Start with blanket restrictions, and then seletively enable permissions
+  #     in subsequent methods.
+  #   * It's OK to have redundant permission declarations if it means abilities
+  #     are easier to read and modify without unexpected side effects.
+  self.ability_logic += [
+    :ams_base_permissions,
+    :ams_admin_permissions,
+    :ams_ingester_permissions,
+    :ams_aapb_admin_permissions
+  ]
 
-  # Define any customized permissions here.
-  def custom_permissions
-    # Probbly too permissive in the long run. Replace and augment with
-    # hydra-role-management gem in long run.
-    can [:create], Asset
-    can [:create], EssenceTrack
-    can [:create], PhysicalInstantiation
-    can [:create], DigitalInstantiation
-    can [:create], Collection
-    can [:create], Contribution
+  # Sets permissions for all users.
+  def ams_base_permissions
+    # Minimal permissions for everybody
+    can [:show], [ AdminData,
+                   InstantiationAdminData,
+                   Asset,
+                   EssenceTrack,
+                   PhysicalInstantiation,
+                   DigitalInstantiation,
+                   Collection,
+                   Contribution ]
 
-    cannot [:destroy], Asset
-    cannot [:destroy], EssenceTrack
-    cannot [:destroy], PhysicalInstantiation
-    cannot [:destroy], DigitalInstantiation
-    cannot [:destroy], Collection
-    cannot [:destroy], Contribution
+    # Explicitly forbid these actions.
+    cannot [:destroy, :update], [ AdminData,
+                                  InstantiationAdminData,
+                                  Asset,
+                                  EssenceTrack,
+                                  PhysicalInstantiation,
+                                  DigitalInstantiation,
+                                  Collection,
+                                  Contribution ]
+  end
 
-    # Limits deleting objects to a the admin user
-    #
-    # if user_groups.include? 'aapb-admin'
-    #   can [:destroy], ActiveFedora::Base
-    # end
-    # cannot [:destroy], ActiveFedora::Base
-    # this will not block direct delete requests to the destroy action ^^^ you have to explicitly check in controller
+  # Sets permisisons for 'admin' users.
+  def ams_admin_permissions
+    return unless current_user.admin?
+    can :manage, :all
+  end
 
-    if current_user.admin?
-      can [:create, :show, :add_user, :remove_user, :index, :edit, :update, :destroy], Role
-      can [:create, :savenew, :new, :index, :edit, :update, :destroy], User
+  # Sets permission for 'ingester' users
+  def ams_ingester_permissions
+    return unless user_groups.include? 'ingester'
+    can [:create, :update], [ Asset,
+                              EssenceTrack,
+                              PhysicalInstantiation,
+                              DigitalInstantiation,
+                              Collection,
+                              Contribution,
+                              AdminData,
+                              InstantiationAdminData ]
 
-      # push ids to AAPB
-      can [:index,:show,:new,:create,:validate_ids,:transfer_query,:needs_updating], Push
-      can :push_to_aapb
-    end
-    if user_groups.include? 'aapb-admin'
-      can [:create], AdminData
-      can [:create], InstantiationAdminData
+    # Field-level permissions for Admin Data
+    can [:update_level_of_user_access, :update_minimally_cataloged,
+         :update_outside_url, :update_sonyci_id, :update_licensing_info,
+         :update_playlist_group, :update_playlist_order,
+         :update_hyrax_batch_ingest_batch_id, :update_last_pushed,
+         :update_last_updated, :update_needs_update], AdminData
+  end
 
-
-      # This only allows us to check can? :destroy in the view. does not permit deleting!!!!!
-      can [:destroy], Asset
-      can [:destroy], EssenceTrack
-      can [:destroy], PhysicalInstantiation
-      can [:destroy], DigitalInstantiation
-      can [:destroy], Collection
-      can [:destroy], Contribution
-    end
-
-    # Limits creating new objects to a specific group
-    #
-    # if user_groups.include? 'special_group'
-    #   can [:create], ActiveFedora::Base
-    # end
+  # Sets permissions for 'aapb-admin' users.
+  def ams_aapb_admin_permissions
+    return unless user_groups.include?('aapb-admin')
+    can [:create, :update, :destroy], [ AdminData,
+                                        InstantiationAdminData,
+                                        Asset,
+                                        EssenceTrack,
+                                        PhysicalInstantiation,
+                                        DigitalInstantiation,
+                                        Collection,
+                                        Contribution ]
   end
 end

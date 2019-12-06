@@ -4,7 +4,7 @@ RSpec.feature 'AssignMultipleRolesAsViewer.', js: true do
   context 'Add Viewer permissions to user (Role)' do
     let(:admin_user) { create :admin_user }
     let!(:user) { create :user }
-    let!(:user_with_role) { create :user, role_names: ['user'] }
+    let!(:user_with_role) { create :user, role_names: ['test-role'] }
     let!(:admin_set_1) { create :admin_set }
     let!(:asset_1) { create :asset, :public, user: user, admin_set_id: admin_set_1.id}
     let!(:admin_set_2) { create :admin_set }

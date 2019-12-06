@@ -8,6 +8,9 @@ module AAPB
     class PBCoreXMLItemIngester < AAPB::BatchIngest::BatchItemIngester
       def ingest
         if batch_item_is_asset?
+          # Do not proceed unless submitter has proper permissions
+          confirm_submitter_permissions!
+
           # This is a bit of a workaround. Errors will be raised from deep within
           # the stack if the user cannot be converted to a Sipity::Entity.
           raise "Could not find or create Sipity Agent for user #{submitter}" unless sipity_agent
@@ -205,6 +208,55 @@ module AAPB
             retry_jitter:  500,  # half a second
             redis_timeout: 0.1  # seconds
           })
+        end
+
+        def confirm_submitter_permissions!
+          raise "User #{submitter} does not have permission to ingest this record" unless submitter_can_ingest?
+        end
+
+        def ability
+          @ability ||= Ability.new(submitter)
+        end
+
+        def submitter_can_ingest?
+          submitter_can_create_records? && submitter_can_update_admin_data?
+        end
+
+        def submitter_can_create_records?
+          [
+            Asset,
+            DigitalInstantiation,
+            PhysicalInstantiation,
+            EssenceTrack,
+            Contribution,
+            AdminData,
+            Collection
+          ].all? do |klass|
+            ability.can? :create, klass
+          end
+        end
+
+        def submitter_can_update_admin_data?
+          # If user can simply :update AdminData, return true.
+          return true if ability.can? :update, AdminData
+
+          # Otherwise, if use can update all these specific fiels, then return
+          # true.
+          [
+            :update_level_of_user_access,
+            :update_minimally_cataloged,
+            :update_outside_url,
+            :update_sonyci_id,
+            :update_licensing_info,
+            :update_playlist_group,
+            :update_playlist_order,
+            :update_hyrax_batch_ingest_batch_id,
+            :update_last_pushed,
+            :update_last_updated,
+            :update_needs_update
+          ].all? do |action|
+            ability.can? action, AdminData
+          end
         end
     end
   end
