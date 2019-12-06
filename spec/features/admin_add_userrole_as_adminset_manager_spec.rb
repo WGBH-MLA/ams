@@ -1,11 +1,11 @@
 require 'rails_helper'
 
-RSpec.feature 'AdminAddUserroleAsAdminserManager.', js: true do
+RSpec.feature 'AdminAddUserroleAsAdminsetManager.', js: true do
 
   context 'As Admin add a UserRole as Adminset Manager' do
     let(:admin_user) { create :admin_user }
     let!(:user) { create :user }
-    let!(:user_with_role) { create :user, role_names: ['user'] }
+    let!(:user_with_role) { create :user, role_names: ['test_role'] }
     let!(:admin_set) { create :admin_set }
 
     before do
