@@ -5,6 +5,10 @@ terms:
     term: Appalshop, Inc. (WMMT and Appalshop Films)
   - id: Arkansas Educational TV Network (AETN)
     term: Arkansas Educational TV Network (AETN)
+  - id: BirdNote
+    term: BirdNote
+  - id: Bloomberg L.P.
+    term: Bloomberg L.P.
   - id: Center for Asian American Media
     term: Center for Asian American Media
   - id: Chicago Public Radio (WBEZ-FM) and Vocalo.org
@@ -33,6 +37,8 @@ terms:
     term: Idaho Public Television
   - id: Illinois Public Media (WILL)
     term: Illinois Public Media (WILL)
+  - id: Indiana University Libraries Moving Image Archive
+    term: Indiana University Libraries Moving Image Archive
   - id : Internet Archive
     term: Internet Archive
   - id: Iowa Public Radio
@@ -127,6 +133,7 @@ terms:
     term: Maryland Public Television
   - id: Media Burn
     term: Media Burn
+  - id: Media for the Public Good, Inc. / Outcasting Media
   - id: Mississippi Public Broadcasting
     term: Mississippi Public Broadcasting
   - id: Mountain Lake PBS (WCFE)
@@ -141,6 +148,8 @@ terms:
     term: New Hampshire Public Television
   - id: New Jersey Network
     term: New Jersey Network
+  - id: New York State Archives
+    term: New York State Archives
   - id: NewsHour Productions
     term: NewsHour Productions
   - id: North Carolina Public Radio - WUNC
@@ -165,6 +174,8 @@ terms:
     term: Radio Bilingue
   - id: Rocky Mountain PBS (KRMA)
     term: Rocky Mountain PBS (KRMA)
+  - id: Sesame Workshop
+    term: Sesame Workshop
   - id: South Carolina Network (SCETV) (WRLK)
     term: South Carolina Network (SCETV) (WRLK)
   - id: Southern Oregon Public Television (KSYS/KFTS)
@@ -177,12 +188,16 @@ terms:
     term: The Riverside Church
   - id: The Walter J. Brown Media Archives & Peabody Awards Collection at the University of Georgia
     term: The Walter J. Brown Media Archives & Peabody Awards Collection at the University of Georgia
+  - id: ThinkTV
+    term: ThinkTV
   - id: Thirteen - New York Public Media (WNET)
     term: Thirteen - New York Public Media (WNET)
   - id: Twin Cities Public Television (KTCA-TV)
     term: Twin Cities Public Television (KTCA-TV)
   - id: UNC-TV
     term: UNC-TV
+  - id: University of Alabama Center for Public Broadcasting
+    term: University of Alabama Center for Public Broadcasting
   - id: University of Houston
     term: University of Houston
   - id: University of Maryland
@@ -203,6 +218,8 @@ terms:
     term: WCNY
   - id: WCTE
     term: WCTE
+  - id: WCVE
+    term: WCVE
   - id: WDIY-FM
     term: WDIY-FM
   - id: WDVX-FM
@@ -267,6 +284,8 @@ terms:
     term: WSIU Public Broadcasting
   - id: WSKG Public Broadcasting
     term: WSKG Public Broadcasting
+  - id: WSRE
+    term: WSRE
   - id: WTIP (North Shore Community Radio)
     term: WTIP (North Shore Community Radio)
   - id: WTIU (Public Television from Indiana University)
