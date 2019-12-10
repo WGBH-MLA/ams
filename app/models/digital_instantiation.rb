@@ -127,11 +127,6 @@ class DigitalInstantiation < ActiveFedora::Base
     index.as :symbol
   end
 
-  property :md5, predicate: ::RDF::URI.new('http://pbcore.org#hasmd5'), multiple: false do |index|
-    index.as :stored_searchable
-  end
-
-
   def instantiation_admin_data_gid=(new_instantiation_admin_data_gid)
     raise "Can't modify admin data of this asset" if persisted? && !instantiation_admin_data_gid_was.nil? && instantiation_admin_data_gid_was != new_instantiation_admin_data_gid
     new_instantiation_admin_data = InstantiationAdminData.find_by_gid!(new_instantiation_admin_data_gid)
