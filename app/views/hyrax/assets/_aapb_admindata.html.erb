@@ -1,8 +1,9 @@
 <% if presenter.display_aapb_admin_data? %>
+
   <div class="block">
-  <a class="btn btn-default btn-block header collapsed" role="button" data-toggle="collapse" href="#collapse-<%= t('.aapb_admin').parameterize.underscore %>" aria-expanded="false" aria-controls="collapse-<%= t('.aapb_admin').parameterize.underscore %>">
-      <%= t('.aapb_admin') %>
-  </a>
+    <a class="btn btn-default btn-block header collapsed" role="button" data-toggle="collapse" href="#collapse-<%= t('.aapb_admin').parameterize.underscore %>" aria-expanded="false" aria-controls="collapse-<%= t('.aapb_admin').parameterize.underscore %>">
+        <%= t('.aapb_admin') %>
+    </a>
     <div class="collapse" id="collapse-<%= t('.aapb_admin').parameterize.underscore %>">
       <div class="well">
         <dl>
