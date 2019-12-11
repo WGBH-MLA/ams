@@ -4,7 +4,8 @@ module AAPB
     included do
       def display_admin_data?
         !(aapb_preservation_lto.blank? &&
-            aapb_preservation_disk.blank?
+          aapb_preservation_disk.blank? &&
+          md5.blank?          
         )
       end
     end
