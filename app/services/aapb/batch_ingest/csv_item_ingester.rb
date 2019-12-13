@@ -53,6 +53,10 @@ module AAPB
               end
             end
 
+            if model_object.is_a?(Contribution)
+              File.open('contribs', 'a') { |f| f << attributes.to_s }
+            end
+
             actor_stack_status = actor.create(::Hyrax::Actors::Environment.new(model_object, ability, attributes))
           elsif node.ingest_type == "update"
             object_id = attributes.delete("id")
