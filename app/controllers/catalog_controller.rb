@@ -492,16 +492,37 @@ class CatalogController < ApplicationController
     search_params.delete :action
     search_params.delete :controller
     search_params.delete :locale
-    search_params[:rows] = Rails.configuration.max_downloadable_export_records
+
+    # Start by setting the row limit to the max_export_to_browser_limit.
+    # If the number of results exceeds this, the :rows option will be increased
+    # to the max_export_limit, and the search will be re-run in a background
+    # job that will save the reults in S3 and notify the user with a link to
+    # download.
+    search_params[:rows] = Rails.configuration.max_export_to_browser_limit
+
     response, response_documents = search_results(search_params)
-    if (response[:response][:numFound] > Rails.configuration.export_to_browser_limit)
-      params.delete :rows
+    num_found = response[:response][:numFound]
+
+    if (num_found > Rails.configuration.max_export_to_browser_limit)
       params.permit!
-      ExportRecordsJob.perform_later(params.to_h, current_user)
+      if (num_found > Rails.configuration.max_export_limit)
+        # Number of results exceeds max export limit.
+        flash[:notice] = "Results set of #{num_found} exceeds max export " \
+                         "of #{Rails.configuration.max_export_limit}. Try " \
+                         "limiting your search to a smaller set of records."
+      else
+        # Results are too much for browser, but do not exceed max export limit.
+        # Reset the :rows option to be max_export_limit, and kick off background
+        # job which will re-run the search with the new upper limit.
+        params[:rows] = Rails.configuration.max_export_limit
+        ExportRecordsJob.perform_later(params.to_h, current_user)
+        flash[:notice] = view_context.t('blacklight.search.messages.export_will_be_emailed', application_name: view_context.application_name)
+      end
+
+      # Go back to search results page with appropriate flash message.
       params.delete :action
       params.delete :controller
       params.delete :format
-      flash[:notice] = view_context.t('blacklight.search.messages.export_will_be_emailed', application_name: view_context.application_name)
       redirect_to(search_catalog_url(params)) and return true
     end
 

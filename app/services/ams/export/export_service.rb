@@ -8,10 +8,9 @@ module AMS
       attr_reader :filename
       attr_reader :file_path
       attr_reader :s3_path
-      attr_reader :object_type
 
-
-      def initialize(solr_documents, options={}, format, filename)
+      def initialize(solr_documents, format:, filename: nil)
+        raise ArgumentError, ":format option required" unless format
         @solr_documents = solr_documents
         @format = format
         @filename = if filename.nil?
@@ -19,7 +18,6 @@ module AMS
                     else
                       filename
                     end
-        @object_type = options[:object_type] || nil
         @file_path = Tempfile.new([@filename, ".#{@format}"])
         @s3_path = nil
       end
