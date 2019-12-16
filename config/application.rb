@@ -25,7 +25,12 @@ module AMS
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 5.1
 
-    config.max_downloadable_export_records = 10
+    # Sets the max allowed results in any export.
+    config.max_export_limit = 9999999
+
+    # Sets the max allowed results for a browser download.
+    # config.max_export_to_browser_limit = 100
+    config.max_export_to_browser_limit = 50 # for testing
 
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration should go into files in config/initializers
