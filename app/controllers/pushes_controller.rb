@@ -23,7 +23,7 @@ class PushesController < ApplicationController
     unless ids
       flash[:error] = "There was a problem with your IDs, please try again."
       return render 'new'
-    end    
+    end
 
     query = ""
     if ids.count > 1
@@ -33,16 +33,15 @@ class PushesController < ApplicationController
       end
     end
     query += %(#{ids.last})
-    
+
     query_params = {q: query}
     query_params[:format] = 'zip-pbcore'
-    query_params[:rows] = 2147483647
     query_params = delete_extra_params(query_params)
-    
+
     ExportRecordsJob.perform_later(query_params, current_user)
     push = Push.create(user_id: current_user.id, pushed_id_csv: ids.join(',') )
     redirect_to "/pushes/#{push.id}"
-  end  
+  end
 
   def validate_ids
     requested_ids = split_and_validate_ids(params[:id_field])
