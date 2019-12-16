@@ -53,9 +53,12 @@ module AAPB
               end
             end
 
-            if model_object.is_a?(Contribution)
-              File.open('contribs', 'a') { |f| f << attributes.to_s }
-            end
+            # if model_object.is_a?(Contribution)
+            #   File.open('contribs', 'a') { |f| f << %(#{attributes.to_s}\n) }
+            # end
+
+            puts %(ATTRS FOR YA ASS :: #{model_object.id})
+            puts attributes
 
             actor_stack_status = actor.create(::Hyrax::Actors::Environment.new(model_object, ability, attributes))
           elsif node.ingest_type == "update"
