@@ -101,7 +101,9 @@ module AMS::PbcoreXmlExportExtension
     find_child(Contribution).each do |contribution|
       xml.pbcoreContributor do |contributor_node|
         contributor_node.contributor { contributor_node.text(contribution.contributor.first) }
-        contributor_node.contributorRole { contributor_node.text(contribution.contributor_role.first) }
+
+        # contributorRole is not required!
+        contributor_node.contributorRole { contributor_node.text(contribution.contributor_role.first) } if contribution.contributor_role
       end
     end
     # people_with_types = find_child(Contribution).sort_by {|peep| peep.contributor_role }
