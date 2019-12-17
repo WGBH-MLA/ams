@@ -3,10 +3,14 @@ module AMS
     class DocumentsToCsv < ExportService
       attr_reader :object_type
 
-      def initialize(solr_documents, object_type:, format: 'csv', filename: nil)
+      def initialize(solr_documents, object_type:, filename: nil)
         raise ArgumentError.new("Not a valid object_type for CSV export") unless AMS::CsvExportExtension::CSV_FIELDS.has_key?(object_type)
         @object_type = object_type
         super(solr_documents, format: format, filename: filename)
+      end
+
+      def format
+        'csv'
       end
 
       def process_export

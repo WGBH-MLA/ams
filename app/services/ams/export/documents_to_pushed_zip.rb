@@ -3,7 +3,11 @@ require 'zip'
 # The module used to export the zip file containing PBCore XMLs
 module AMS::Export
   # Class is responsible for generating the zip file containing the PBCore xml files.
-  class DocumentsToZippedPbcore < ExportService
+  class DocumentsToPushedZip < ExportService
+    def format
+      'zip'
+    end
+
     def process_export
       tmp_hash = []
       ::Zip::File.open(@file_path.path, Zip::File::CREATE) do |zip_file|

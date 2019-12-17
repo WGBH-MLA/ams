@@ -9,8 +9,14 @@ module AMS
       attr_reader :file_path
       attr_reader :s3_path
 
-      def initialize(solr_documents, format:, filename: nil)
-        raise ArgumentError, ":format option required" unless format
+      attr_accessor :export_data
+
+      # user is needed to 
+      def initialize(solr_documents, filename: nil, user: nil)
+        
+        # this is used for emailing push-to-aapb summaries in a PushedZip export_records_job
+        @user = user
+
         @solr_documents = solr_documents
         @format = format
         @filename = if filename.nil?
@@ -20,12 +26,38 @@ module AMS
                     end
         @file_path = Tempfile.new([@filename, ".#{@format}"])
         @s3_path = nil
+
+
+        # call this my damn self
+        process
+      end
+
+      def format
+        raise 'Whoa there, tiger! Format is required! Did you define a #format method in your export adaptor class?'
       end
 
       def process
         begin
-          process_export
-          yield
+
+          # this actually creates the export data, using a #process_export method defined in each subclass of ExportService
+          @export_data = process_export
+          
+          # determine after-package action to take
+
+          if format == 'zip'
+            # DocumentsToPushedZip 
+
+            # uses @file_path var (defined in ExportService#initialize) to send zip from tmp location to aapb
+              scp_to_aapb(@user)
+            end
+          else
+            
+            # DocumentsToPbcoreXml or DocumentsToCsv
+
+            # upload zip to s3 for download
+            upload_to_s3
+            Ams2Mailer.export_notification(@user, export_data.s3_path).deliver_later
+          end
         ensure
           @file_path.close
           @file_path.unlink # deletes the temp file.
@@ -58,7 +90,7 @@ module AMS
         end
       end
 
-      def scp_to_aapb(user)
+      def scp_to_aapb
         filepath = @file_path.path
 
         if aapb_key_path && AMS::AAPB.reachable? && filepath.present?
@@ -71,7 +103,7 @@ module AMS
 
           # print and email
           Rails.logger.info output
-          Ams2Mailer.scp_to_aapb_notification(user, output.join("\n\n")).deliver_later
+          Ams2Mailer.scp_to_aapb_notification(@user, output.join("\n\n")).deliver_later
         else
           raise "AAPB was unreachable! #{ENV['AAPB_HOST']}"
         end
