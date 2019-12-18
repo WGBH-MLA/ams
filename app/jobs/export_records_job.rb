@@ -21,9 +21,9 @@ class ExportRecordsJob < ApplicationJob
 
     if format == "csv"
       object_type = search_params.delete :object_type
-      AMS::Export::DocumentsToCsv.new(response_documents, object_type: object_type)
+      AMS::Export::DocumentsToCsv.new(response_documents, object_type: object_type, export_type: 'csv_job')
     elsif format == "pbcore"
-      AMS::Export::DocumentsToPbcoreXml.new(response_documents)
+      AMS::Export::DocumentsToPbcoreXml.new(response_documents, export_type: 'pbcore_job')
     elsif format == 'zip-pbcore'
 
       assets = response_documents.map {|doc| Asset.find(doc[:id])}
@@ -44,7 +44,7 @@ class ExportRecordsJob < ApplicationJob
         asset.update_index
       end
 
-      AMS::Export::DocumentsToPushedZip.new(response_documents)
+      AMS::Export::DocumentsToPushedZip.new(response_documents, export_type: 'pushed_zip_job')
     else
       raise "Unknown export format"
     end

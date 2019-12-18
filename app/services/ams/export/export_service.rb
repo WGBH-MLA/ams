@@ -8,11 +8,12 @@ module AMS
       attr_reader :filename
       attr_reader :file_path
       attr_reader :s3_path
+      attr_reader :export_type
 
       attr_accessor :export_data
 
       # user is needed to 
-      def initialize(solr_documents, filename: nil, user: nil)
+      def initialize(solr_documents, filename: nil, user: nil, export_type: nil)
         
         # this is used for emailing push-to-aapb summaries in a PushedZip export_records_job
         @user = user
@@ -26,37 +27,45 @@ module AMS
                     end
         @file_path = Tempfile.new([@filename, ".#{@format}"])
         @s3_path = nil
-
+        @export_type = export_type
+        raise 'export_type was not defined!' unless @export_type
 
         # call this my damn self
         process
       end
 
       def format
-        raise 'Whoa there, tiger! Format is required! Did you define a #format method in your export adaptor class?'
+        raise 'Whoa there! Format is required! Did you define a #format method in your export adaptor class?'
       end
 
       def process
         begin
-
           # this actually creates the export data, using a #process_export method defined in each subclass of ExportService
           @export_data = process_export
-          
-          # determine after-package action to take
+          # determine which after-package action to take
 
-          if format == 'zip'
+          # if format == 'zip'
+          if @export_type == 'pushed_zip_job'
             # DocumentsToPushedZip 
 
             # uses @file_path var (defined in ExportService#initialize) to send zip from tmp location to aapb
               scp_to_aapb(@user)
-            end
-          else
-            
+          elsif @export_type == 'csv_download'
+
+            # DocumentsToCsv, UI download
+            export_file = File.read(@export_data.file_path)
+            send_data export_file, :type => 'text/csv; charset=utf-8; header=present', :disposition => "attachment; filename=#{@export_data.filename}", :filename => "#{@export_data.filename}"
+          elsif @export_type == 'pbcore_download'
+
+            # DocumentsToPbcoreXml, UI download
+            export_file = File.read(@export_data.file_path)
+            send_data export_file, :type => 'application/zip', :filename => "#{@export_data.filename}"
+          elsif ['csv_job', 'pbcore_job'].include?(@export_type)
             # DocumentsToPbcoreXml or DocumentsToCsv
 
             # upload zip to s3 for download
             upload_to_s3
-            Ams2Mailer.export_notification(@user, export_data.s3_path).deliver_later
+            Ams2Mailer.export_notification(@user, @export_data.s3_path).deliver_later
           end
         ensure
           @file_path.close
