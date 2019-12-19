@@ -177,6 +177,11 @@ module AAPB
       def digital_instantiation_attributes
         @digital_instantiation_attributes ||= instantiation_attributes.tap do |attrs|
           attrs[:format] = pbcore.digital.value || nil
+
+          # pipe in instantiation_admin_data attributes here, because they only apply to digital
+          attrs[:aapb_preservation_lto] = pbcore.annotations.find {|anno| anno.type == 'Preservation LTO' }&.value
+          attrs[:aapb_preservation_disk] = pbcore.annotations.find {|anno| anno.type == 'Preservation Disk' }&.value
+          attrs[:md5] = pbcore.identifiers.find {|identifier| identifier.source.to_s.strip == 'MD5 Checksum' }&.value
         end
       end
 
