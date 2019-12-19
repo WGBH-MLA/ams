@@ -49,7 +49,7 @@ module AMS
             # DocumentsToPushedZip 
 
             # uses @file_path var (defined in ExportService#initialize) to send zip from tmp location to aapb
-              scp_to_aapb(@user)
+              scp_to_aapb
           elsif @export_type == 'csv_download'
 
             # DocumentsToCsv, UI download
@@ -107,8 +107,11 @@ module AMS
           output = []
 
           output << `scp #{aapb_key_path} #{filepath} ec2-user@#{aapb_host}:/home/ec2-user/ingest_zips/#{@filename}`
-          output << `ssh #{aapb_key_path} ec2-user@#{aapb_host} '/bin/bash cd /home/ec2-user/ingest_zips && unzip -o #{@filename}'`
-          output << `ssh #{aapb_key_path} ec2-user@#{aapb_host} '/bin/bash cd /var/www/aapb/current && RAILS_ENV=production ~/bin/bundle exec /usr/bin/ruby scripts/download_clean_ingest.rb --stdout-log --files /home/ec2-user/ingest_zips/*.xml'`
+          output << `ssh #{aapb_key_path} ec2-user@#{aapb_host} '/bin/bash unzip -d /home/ec2-user/ingest_zips -ov /home/ec2-user/ingest_zips/#{@filename}'`
+          output << `ssh #{aapb_key_path} ec2-user@#{aapb_host} '/bin/bash cd /var/www/aapb/current && RAILS_ENV=production /home/ec2-user/.gem/ruby/gems/bundler-1.16.5/exe/bundle exec /usr/bin/ruby scripts/download_clean_ingest.rb --files /home/ec2-user/ingest_zips/*.xml'`
+
+          # output << `ssh #{aapb_key_path} ec2-user@#{aapb_host} '/bin/bash cd /var/www/aapb/current && /home/ec2-user/bundle show rest-client'`
+# /home/ec2-user/.gem/ruby/gems/bundler-1.16.5/exe/bundle
 
           # print and email
           Rails.logger.info output

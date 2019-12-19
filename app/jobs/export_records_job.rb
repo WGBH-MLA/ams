@@ -44,7 +44,7 @@ class ExportRecordsJob < ApplicationJob
         asset.update_index
       end
 
-      AMS::Export::DocumentsToPushedZip.new(response_documents, export_type: 'pushed_zip_job')
+      AMS::Export::DocumentsToPushedZip.new(response_documents, export_type: 'pushed_zip_job', user: user)
     else
       raise "Unknown export format"
     end
