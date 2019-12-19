@@ -8,7 +8,10 @@
       <dl>
         <%= presenter.attribute_to_html(:aapb_preservation_lto, html_dl: true) %>
         <%= presenter.attribute_to_html(:aapb_preservation_disk, html_dl: true) %>
-        <%= presenter.attribute_to_html(:md5, html_dl: true) %>
+
+        <% if presenter.is_a?(DigitalInstantiationPresenter) %>
+          <%= presenter.attribute_to_html(:md5, html_dl: true) %>
+        <% end %>
       </dl>
     </div>
   </div>
