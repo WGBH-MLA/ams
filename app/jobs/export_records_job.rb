@@ -11,6 +11,12 @@ class ExportRecordsJob < ApplicationJob
 
   copy_blacklight_config_from(CatalogController)
 
+  configure_blacklight do |config|
+    # This is necessary to prevent Blacklight's default value of 100 for
+    # config.max_per_page from capping the number of results.
+    config.max_per_page = Rails.application.config.max_export_limit
+  end
+
   # @param [Hash] search params
   # @param [User] user
   def perform(search_params, user)
