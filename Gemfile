@@ -59,6 +59,7 @@ group :development, :test do
   gem 'selenium-webdriver'
   gem 'fcrepo_wrapper'
   gem 'solr_wrapper', '~> 2.1'
+  gem 'webmock', '~> 3.7'
 end
 
 group :development do
