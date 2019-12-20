@@ -14,13 +14,12 @@ module AMS
       media_content = []
       if @solr_doc['media']
         @solr_doc['media'].each_with_index do |media,index|
-          if media[:type] == "video"
+          if media[:type].downcase == "video"
             media_content << video_content(@solr_doc.media_src(index.to_s),
                                            width=media[:width].nil??400:media[:width], height=media[:height].nil??400:media[:height], duration=media[:duration])
-          elsif media[:type] == "audio"
+          elsif media[:type].downcase == "audio"
             media_content << audio_content(@solr_doc.media_src(index.to_s),
                                            duration=media[:duration])
-
           end
         end
       end
