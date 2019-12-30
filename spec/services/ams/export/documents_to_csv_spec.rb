@@ -9,7 +9,7 @@ RSpec.describe AMS::Export::DocumentsToCsv do
   describe "#process_export" do
     describe "with 'asset' set as the object_type" do
       let(:service) do
-        described_class.new(search_results, object_type: 'asset', export_type: 'csv_job')
+        described_class.new(search_results, object_type: 'asset', export_type: 'csv_download')
       end
 
       it "runs" do
@@ -20,7 +20,7 @@ RSpec.describe AMS::Export::DocumentsToCsv do
     describe "with 'physical_instantiation' set as the object type" do
       let(:asset_with_physical_instantiation) { create(:asset, :with_physical_instantiation) }
       let(:service) do
-        described_class.new(search_results, object_type: 'physical_instantiation', export_type: 'csv_job')
+        described_class.new(search_results, object_type: 'physical_instantiation', export_type: 'csv_download')
       end
 
       it "runs" do
@@ -30,7 +30,7 @@ RSpec.describe AMS::Export::DocumentsToCsv do
 
     describe "with an invalid object_type" do
       let(:invalid_object_service) do
-        described_class.new(search_results, object_type: 'not_a_thing', export_type: 'csv_job')
+        described_class.new(search_results, object_type: 'not_a_thing', export_type: 'csv_download')
       end
 
       it "raises an error" do
@@ -40,7 +40,7 @@ RSpec.describe AMS::Export::DocumentsToCsv do
 
     describe "with no object_type" do
       let(:no_object_service) do
-        described_class.new(search_results, object_type: nil, export_type: 'csv_job')
+        described_class.new(search_results, object_type: nil, export_type: 'csv_download')
       end
 
       it "raises an error" do
