@@ -10,7 +10,7 @@ module AMS::Export
     
     def process_export
       tmp_hash = []
-      ::Zip::File.open(@file_path.path, Zip::File::CREATE) do |zip_file|
+      ::Zip::File.open(@temp_file.path, Zip::File::CREATE) do |zip_file|
         @solr_documents.each do |doc|
           file_name = "#{doc.id}.xml"
           tmp = Tempfile.new(file_name)
@@ -25,7 +25,7 @@ module AMS::Export
     end
 
     def clean
-      @file_path.unlink
+      @temp_file.unlink
     end
   end
 end

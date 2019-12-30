@@ -25,7 +25,7 @@ module AMS
                     else
                       filename
                     end
-        @file_path = Tempfile.new([@filename, ".#{@format}"])
+        @temp_file = Tempfile.new([@filename, ".#{@format}"])
         @s3_path = nil
         @export_type = export_type
         raise 'export_type was not defined!' unless @export_type
@@ -48,17 +48,17 @@ module AMS
           if @export_type == 'pushed_zip_job'
             # DocumentsToPushedZip 
 
-            # uses @file_path var (defined in ExportService#initialize) to send zip from tmp location to aapb
+            # uses @temp_file var (defined in ExportService#initialize) to send zip from tmp location to aapb
               scp_to_aapb
           elsif @export_type == 'csv_download'
 
             # DocumentsToCsv, UI download
-            export_file = File.read(@export_data.file_path)
+            export_file = File.read(@temp_file.path)
             send_data export_file, :type => 'text/csv; charset=utf-8; header=present', :disposition => "attachment; filename=#{@export_data.filename}", :filename => "#{@export_data.filename}"
           elsif @export_type == 'pbcore_download'
 
             # DocumentsToPbcoreXml, UI download
-            export_file = File.read(@export_data.file_path)
+            export_file = File.read(@temp_file.path)
             send_data export_file, :type => 'application/zip', :filename => "#{@export_data.filename}"
           elsif ['csv_job', 'pbcore_job'].include?(@export_type)
             # DocumentsToPbcoreXml or DocumentsToCsv
@@ -68,8 +68,8 @@ module AMS
             Ams2Mailer.export_notification(@user, @export_data.s3_path).deliver_later
           end
         ensure
-          @file_path.close
-          @file_path.unlink # deletes the temp file.
+          @temp_file.close
+          @temp_file.unlink # deletes the temp file.
         end
       end
 
@@ -80,10 +80,10 @@ module AMS
         )
         s3 = Aws::S3::Resource.new(region: 'us-east-1')
 
-        export_file = File.read(@file_path)
+        export_file = File.read(@temp_file)
         # send file to s3
         obj = s3.bucket(ENV['S3_EXPORT_BUCKET']).object("#{ENV['S3_EXPORT_DIR']}/#{SecureRandom.uuid}/#{@filename}")
-        File.open(@file_path, 'r') do |f|
+        File.open(@temp_file, 'r') do |f|
           if format == 'csv'
             obj.upload_file(f, acl: 'public-read', content_disposition: 'attachment', content_type: 'text/csv')
           else
@@ -100,7 +100,7 @@ module AMS
       end
 
       def scp_to_aapb
-        filepath = @file_path.path
+        filepath = @temp_file.path
 
         if aapb_key_path && AMS::AAPB.reachable? && filepath.present?
           aapb_host = AMS::AAPB.host

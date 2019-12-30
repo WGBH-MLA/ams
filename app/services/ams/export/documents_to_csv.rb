@@ -14,15 +14,15 @@ module AMS
       end
 
       def process_export
-        @file_path << AMS::CsvExportExtension.get_csv_header(object_type)
+        @temp_file << AMS::CsvExportExtension.get_csv_header(object_type)
         @solr_documents.each do |doc|
-          @file_path << doc.export_as_csv(object_type)
+          @temp_file << doc.export_as_csv(object_type)
         end
-        @file_path.close
+        @temp_file.close
       end
 
       def clean
-        @file_path.unlink
+        @temp_file.unlink
       end
     end
   end
