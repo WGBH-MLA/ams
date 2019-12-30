@@ -51,7 +51,7 @@ RSpec.describe AMS::Export::DocumentsToCsv do
 
     describe "with no export_type" do
       let(:no_type_service) do
-        described_class.new(search_results, object_type: nil)
+        described_class.new(search_results, object_type: 'asset')
       end
 
       it "raises an error" do
