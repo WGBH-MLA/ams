@@ -528,20 +528,20 @@ class CatalogController < ApplicationController
 
     respond_to do |format|
       format.csv {
-        export_file_path = AMS::Export::DocumentsToCsv.new(response_documents, object_type: params[:object_type], export_type: 'csv_download')
+        export_file_path = AMS::Export::DocumentsToCsv.new(response_documents, object_type: params[:object_type], export_type: 'csv_download').temp_file.path
 
         begin
-          export_file = File.open(export_file_path)
+          export_file = File.read(export_file_path)
           send_data export_file, :type => 'text/csv; charset=utf-8; header=present', :disposition => "attachment; filename=#{@filename}", :filename => "#{@filename}"
         ensure
           File.delete(export_file_path)
         end
       }
       format.pbcore {
-        export_file_path = AMS::Export::DocumentsToPbcoreXml.new(response_documents, export_type: 'pbcore_download')
+        export_file_path = AMS::Export::DocumentsToPbcoreXml.new(response_documents, export_type: 'pbcore_download').temp_file.path
 
         begin
-          export_file = File.open(export_file_path)
+          export_file = File.read(export_file_path)
           send_data export_file, :type => 'application/zip', :filename => "#{@export_data.filename}"
         ensure
           File.delete(export_file_path)

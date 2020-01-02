@@ -5,7 +5,7 @@ module AMS::Export
   # Class is responsible for generating the zip file containing the PBCore xml files.
   class DocumentsToPbcoreXml < ExportService
     def format
-      'pbcore'
+      'zip'
     end
     
     def process_export
@@ -19,9 +19,10 @@ module AMS::Export
           zip_file.add(file_name, tmp.path)
           tmp.close
           tmp_hash << tmp
+          tmp.unlink
         end
       end
-      tmp_hash.each(&:unlink)
+      @temp_file.close
     end
 
     def clean

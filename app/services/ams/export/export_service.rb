@@ -6,11 +6,13 @@ module AMS
       attr_reader :solr_documents
       attr_reader :format
       attr_reader :filename
-      attr_reader :file_path
       attr_reader :s3_path
       attr_reader :export_type
 
+      attr_reader :temp_file
+
       attr_accessor :export_data
+
 
       # user is needed to 
       def initialize(solr_documents, filename: nil, user: nil, export_type: nil)
@@ -24,7 +26,7 @@ module AMS
                     else
                       filename
                     end
-        @temp_file = Tempfile.new([@filename, ".#{@format}"])
+        @temp_file = Tempfile.new(@filename)
         @s3_path = nil
         @export_type = export_type
         raise 'export_type was not defined!' unless @export_type
@@ -35,9 +37,6 @@ module AMS
 
         if @export_type.end_with?('_job')
           process_job
-        else
-          # the only post-work do do for _download jobs is to pass the @temp_file path out to CatalogController
-          @temp_file.path
         end
       end
 
