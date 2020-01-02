@@ -14,6 +14,7 @@ module AMS
       end
 
       def process_export
+        # require('pry');binding.pry
         @temp_file << AMS::CsvExportExtension.get_csv_header(object_type)
         @solr_documents.each do |doc|
           @temp_file << doc.export_as_csv(object_type)

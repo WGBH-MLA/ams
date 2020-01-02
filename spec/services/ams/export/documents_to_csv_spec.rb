@@ -9,22 +9,15 @@ RSpec.describe AMS::Export::DocumentsToCsv do
   describe "#process_export" do
     describe "with 'asset' set as the object_type" do
       let(:service) do
-        described_class.new(search_results, object_type: 'asset', export_type: 'csv_download')
-      end
-
-      it "runs" do
-        expect{ service.process_export }.to_not raise_error
+        expect{ described_class.new(search_results, object_type: 'asset', export_type: 'csv_download') }.to_not raise_error
       end
     end
 
     describe "with 'physical_instantiation' set as the object type" do
       let(:asset_with_physical_instantiation) { create(:asset, :with_physical_instantiation) }
       let(:service) do
-        described_class.new(search_results, object_type: 'physical_instantiation', export_type: 'csv_download')
-      end
-
-      it "runs" do
-        expect{ service.process_export }.to_not raise_error
+        # removed 'call #process_export test' because that now happens during initialize of service
+        expect{ described_class.new(search_results, object_type: 'physical_instantiation', export_type: 'csv_download') }.to_not raise_error
       end
     end
 

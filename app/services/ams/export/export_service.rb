@@ -14,7 +14,6 @@ module AMS
 
       # user is needed to 
       def initialize(solr_documents, filename: nil, user: nil, export_type: nil)
-        
         # this is used for emailing push-to-aapb summaries in a PushedZip export_records_job
         @user = user
 
@@ -38,7 +37,7 @@ module AMS
           process_job
         else
           # the only post-work do do for _download jobs is to pass the @temp_file path out to CatalogController
-          @tempfile.path
+          @temp_file.path
         end
       end
 
@@ -153,7 +152,6 @@ module AMS
           output << `scp #{aapb_key_path} #{filepath} ec2-user@#{aapb_host}:/home/ec2-user/ingest_zips/#{@filename}`
           output << `ssh #{aapb_key_path} ec2-user@#{aapb_host} 'unzip -d /home/ec2-user/ingest_zips -o /home/ec2-user/ingest_zips/#{@filename}'`
           output << `ssh #{aapb_key_path} ec2-user@#{aapb_host} 'cd /var/www/aapb/current && RAILS_ENV=production /home/ec2-user/.gem/ruby/gems/bundler-1.16.5/exe/bundle exec /usr/bin/ruby scripts/download_clean_ingest.rb --files /home/ec2-user/ingest_zips/*.xml'`
-
 
           # print and email
           Rails.logger.info output
