@@ -31,17 +31,23 @@ module AMS
         raise 'export_type was not defined!' unless @export_type
 
         # call this my damn self
-        process
+        # this actually creates the export data, using a #process_export method defined in each subclass of ExportService
+        @export_data = process_export
+
+        if @export_type.end_with?('_job')
+          process_job
+        else
+          # the only post-work do do for _download jobs is to pass the @temp_file path out to CatalogController
+          @tempfile.path
+        end
       end
 
       def format
         raise 'Whoa there! Format is required! Did you define a #format method in your export adaptor class?'
       end
 
-      def process
+      def process_job
         begin
-          # this actually creates the export data, using a #process_export method defined in each subclass of ExportService
-          @export_data = process_export
           # determine which after-package action to take
 
           # if format == 'zip'
@@ -49,17 +55,7 @@ module AMS
             # DocumentsToPushedZip 
 
             # uses @temp_file var (defined in ExportService#initialize) to send zip from tmp location to aapb
-              scp_to_aapb
-          elsif @export_type == 'csv_download'
-
-            # DocumentsToCsv, UI download
-            export_file = File.read(@temp_file.path)
-            send_data export_file, :type => 'text/csv; charset=utf-8; header=present', :disposition => "attachment; filename=#{@export_data.filename}", :filename => "#{@export_data.filename}"
-          elsif @export_type == 'pbcore_download'
-
-            # DocumentsToPbcoreXml, UI download
-            export_file = File.read(@temp_file.path)
-            send_data export_file, :type => 'application/zip', :filename => "#{@export_data.filename}"
+            scp_to_aapb
           elsif ['csv_job', 'pbcore_job'].include?(@export_type)
             # DocumentsToPbcoreXml or DocumentsToCsv
 
@@ -72,6 +68,54 @@ module AMS
           @temp_file.unlink # deletes the temp file.
         end
       end
+
+      # def process_download
+      #   if @export_type == 'csv_download'
+
+      #     # DocumentsToCsv, UI download
+      #     # ActionController::DataStreaming.send_data export_file, :type => 'text/csv; charset=utf-8; header=present', :disposition => "attachment; filename=#{@filename}", :filename => "#{@filename}"
+      #   elsif @export_type == 'pbcore_download'
+
+      #     # DocumentsToPbcoreXml, UI download
+      #     # ActionController::DataStreaming.send_data export_file, :type => 'application/zip', :filename => "#{@export_data.filename}"
+
+      #   end
+      # end
+
+      # def process
+      #   begin
+      #     # determine which after-package action to take
+
+      #     # if format == 'zip'
+      #     if @export_type == 'pushed_zip_job'
+      #       # DocumentsToPushedZip 
+
+      #       # uses @temp_file var (defined in ExportService#initialize) to send zip from tmp location to aapb
+      #         scp_to_aapb
+      #     elsif @export_type == 'csv_download'
+
+      #       # DocumentsToCsv, UI download
+      #       File.read(@temp_file.path)
+      #       # ActionController::DataStreaming.send_data export_file, :type => 'text/csv; charset=utf-8; header=present', :disposition => "attachment; filename=#{@filename}", :filename => "#{@filename}"
+      #     elsif @export_type == 'pbcore_download'
+
+      #       # DocumentsToPbcoreXml, UI download
+      #       File.read(@temp_file.path)
+      #       # ActionController::DataStreaming.send_data export_file, :type => 'application/zip', :filename => "#{@export_data.filename}"
+      #     elsif ['csv_job', 'pbcore_job'].include?(@export_type)
+      #       # DocumentsToPbcoreXml or DocumentsToCsv
+
+      #       # upload zip to s3 for download
+      #       upload_to_s3
+      #       Ams2Mailer.export_notification(@user, @export_data.s3_path).deliver_later
+      #     end
+      #   ensure
+      #     @temp_file.close
+      #     @temp_file.unlink # deletes the temp file.
+      #   end
+
+      #   data_to_send
+      # end
 
       def upload_to_s3
         Aws.config.update(
