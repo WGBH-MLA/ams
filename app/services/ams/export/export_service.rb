@@ -67,54 +67,6 @@ module AMS
         end
       end
 
-      # def process_download
-      #   if @export_type == 'csv_download'
-
-      #     # DocumentsToCsv, UI download
-      #     # ActionController::DataStreaming.send_data export_file, :type => 'text/csv; charset=utf-8; header=present', :disposition => "attachment; filename=#{@filename}", :filename => "#{@filename}"
-      #   elsif @export_type == 'pbcore_download'
-
-      #     # DocumentsToPbcoreXml, UI download
-      #     # ActionController::DataStreaming.send_data export_file, :type => 'application/zip', :filename => "#{@export_data.filename}"
-
-      #   end
-      # end
-
-      # def process
-      #   begin
-      #     # determine which after-package action to take
-
-      #     # if format == 'zip'
-      #     if @export_type == 'pushed_zip_job'
-      #       # DocumentsToPushedZip 
-
-      #       # uses @temp_file var (defined in ExportService#initialize) to send zip from tmp location to aapb
-      #         scp_to_aapb
-      #     elsif @export_type == 'csv_download'
-
-      #       # DocumentsToCsv, UI download
-      #       File.read(@temp_file.path)
-      #       # ActionController::DataStreaming.send_data export_file, :type => 'text/csv; charset=utf-8; header=present', :disposition => "attachment; filename=#{@filename}", :filename => "#{@filename}"
-      #     elsif @export_type == 'pbcore_download'
-
-      #       # DocumentsToPbcoreXml, UI download
-      #       File.read(@temp_file.path)
-      #       # ActionController::DataStreaming.send_data export_file, :type => 'application/zip', :filename => "#{@export_data.filename}"
-      #     elsif ['csv_job', 'pbcore_job'].include?(@export_type)
-      #       # DocumentsToPbcoreXml or DocumentsToCsv
-
-      #       # upload zip to s3 for download
-      #       upload_to_s3
-      #       Ams2Mailer.export_notification(@user, @export_data.s3_path).deliver_later
-      #     end
-      #   ensure
-      #     @temp_file.close
-      #     @temp_file.unlink # deletes the temp file.
-      #   end
-
-      #   data_to_send
-      # end
-
       def upload_to_s3
         Aws.config.update(
           region: 'us-east-1',
