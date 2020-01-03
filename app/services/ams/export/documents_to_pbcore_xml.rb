@@ -19,10 +19,10 @@ module AMS::Export
           zip_file.add(file_name, tmp.path)
           tmp.close
           tmp_hash << tmp
-          tmp.unlink
         end
       end
-      @temp_file.close
+      tmp_hash.each(&:unlink)
+      # @temp_file.close
     end
 
     def clean
