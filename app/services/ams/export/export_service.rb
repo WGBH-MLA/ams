@@ -8,10 +8,9 @@ module AMS
       attr_reader :filename
       attr_reader :file_path
       attr_reader :s3_path
-      attr_reader :object_type
 
-
-      def initialize(solr_documents, options={}, format, filename)
+      def initialize(solr_documents, format:, filename: nil)
+        raise ArgumentError, ":format option required" unless format
         @solr_documents = solr_documents
         @format = format
         @filename = if filename.nil?
@@ -19,7 +18,6 @@ module AMS
                     else
                       filename
                     end
-        @object_type = options[:object_type] || nil
         @file_path = Tempfile.new([@filename, ".#{@format}"])
         @s3_path = nil
       end
@@ -54,17 +52,22 @@ module AMS
         @s3_path = obj.public_url
       end
 
+      def aapb_key_path
+        if Rails.env.production?
+          '-i /home/ec2-user/.ssh/id_rsa'
+        end
+      end
+
       def scp_to_aapb(user)
         filepath = @file_path.path
-        filename = File.basename(@file_path.path)
 
         if aapb_key_path && AMS::AAPB.reachable? && filepath.present?
           aapb_host = AMS::AAPB.host
           output = []
 
-          output << `scp #{aapb_key_path} #{filepath} ec2-user@#{aapb_host}:/home/ec2-user/ingest_zips/#{filename}`
-          output << `ssh -t #{aapb_key_path} ec2-user@#{aapb_host} 'cd /home/ec2-user/ingest_zips && unzip -o #{filename}'`
-          output << `ssh -t #{aapb_key_path} ec2-user@#{aapb_host} 'cd /var/www/aapb/current && RAILS_ENV=production ~/bin/bundle exec /usr/bin/ruby scripts/download_clean_ingest.rb --stdout-log --files /home/ec2-user/ingest_zips/*.xml'`
+          output << `scp #{aapb_key_path} #{filepath} ec2-user@#{aapb_host}:/home/ec2-user/ingest_zips/#{@filename}`
+          output << `ssh #{aapb_key_path} ec2-user@#{aapb_host} '/bin/bash cd /home/ec2-user/ingest_zips && unzip -o #{@filename}'`
+          output << `ssh #{aapb_key_path} ec2-user@#{aapb_host} '/bin/bash cd /var/www/aapb/current && RAILS_ENV=production ~/bin/bundle exec /usr/bin/ruby scripts/download_clean_ingest.rb --stdout-log --files /home/ec2-user/ingest_zips/*.xml'`
 
           # print and email
           Rails.logger.info output

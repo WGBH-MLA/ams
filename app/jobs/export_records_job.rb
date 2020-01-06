@@ -1,6 +1,9 @@
 class ExportRecordsJob < ApplicationJob
+  # Sepcify queue name
   queue_as :default
 
+  # Include Blacklight modules that provide methods for configurating and
+  # performing searches.
   include Blacklight::Configurable
   include Blacklight::SearchHelper
 
@@ -8,18 +11,23 @@ class ExportRecordsJob < ApplicationJob
 
   copy_blacklight_config_from(CatalogController)
 
+  configure_blacklight do |config|
+    # This is necessary to prevent Blacklight's default value of 100 for
+    # config.max_per_page from capping the number of results.
+    config.max_per_page = Rails.application.config.max_export_limit
+  end
+
   # @param [Hash] search params
   # @param [User] user
   def perform(search_params, user)
     self.current_ability = Ability.new(user)
 
-    format = search_params[:format]
-    search_params.delete(:format)
-
+    format = search_params.delete :format
     response, response_documents = search_results(search_params)
 
     if format == "csv"
-      export_data = AMS::Export::DocumentsToCsv.new(response_documents, search_params)
+      object_type = search_params.delete :object_type
+      export_data = AMS::Export::DocumentsToCsv.new(response_documents, object_type: object_type)
     elsif format == "pbcore"
       export_data = AMS::Export::DocumentsToPbcoreXml.new(response_documents)
     elsif format == 'zip-pbcore'

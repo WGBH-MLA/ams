@@ -4,11 +4,12 @@ RSpec.describe AMS::Export::DocumentsToCsv do
   subject { service }
 
   let(:asset) { create(:asset) }
+  let(:search_results) { [SolrDocument.new(asset.to_solr)] }
 
   describe "#process_export" do
     describe "with 'asset' set as the object_type" do
       let(:service) do
-        described_class.new([SolrDocument.new(asset.to_solr)], object_type: 'asset')
+        described_class.new(search_results, object_type: 'asset')
       end
 
       it "runs" do
@@ -19,7 +20,7 @@ RSpec.describe AMS::Export::DocumentsToCsv do
     describe "with 'physical_instantiation' set as the object type" do
       let(:asset_with_physical_instantiation) { create(:asset, :with_physical_instantiation) }
       let(:service) do
-        described_class.new([SolrDocument.new(asset.to_solr)], object_type: 'physical_instantiation')
+        described_class.new(search_results, object_type: 'physical_instantiation')
       end
 
       it "runs" do
@@ -29,7 +30,7 @@ RSpec.describe AMS::Export::DocumentsToCsv do
 
     describe "with an invalid object_type" do
       let(:invalid_object_service) do
-        described_class.new([SolrDocument.new(asset.to_solr)], object_type: 'not_a_thing')
+        described_class.new(search_results, object_type: 'not_a_thing')
       end
 
       it "raises an error" do
@@ -39,11 +40,11 @@ RSpec.describe AMS::Export::DocumentsToCsv do
 
     describe "with no object_type" do
       let(:no_object_service) do
-        described_class.new([SolrDocument.new(asset.to_solr)])
+        described_class.new(search_results, object_type: nil)
       end
 
       it "raises an error" do
-        expect{ no_object_service.process_export }.to raise_error("Need to supply an object_type option for CSV export")
+        expect{ no_object_service }.to raise_error "Not a valid object_type for CSV export"
       end
     end
   end

@@ -1,7 +1,7 @@
 module AMS
   module CsvExportExtension
     CSV_FIELDS = {'asset' =>
-                    { :GUID=>:id,:title=>:title,:dates=>:all_dates,:producing_organization=>:producing_organization, :description=>:description,:level_of_user_access=>:level_of_user_access,:minimally_cataloged=>:minimally_cataloged, :holding_organization =>:holding_organization_ssim}.freeze,
+                    { :GUID=>:id,:local_identifier=>:local_identifier,:title=>:title,:dates=>:all_dates,:producing_organization=>:producing_organization, :description=>:description,:level_of_user_access=>:level_of_user_access,:minimally_cataloged=>:minimally_cataloged, :holding_organization =>:holding_organization_ssim}.freeze,
                   'digital_instantiation' =>
                     { :asset_id=>:id,:digital_instantiation_id=>:id,:local_identifier=>:local_instantiation_identifier,:md5=>:md5, :media_type=>:media_type,:generations=>:generations,:duration=>:duration,:file_size=>:file_size }.freeze,
                   'physical_instantiation' =>
