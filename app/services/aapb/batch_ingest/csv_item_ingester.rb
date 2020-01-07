@@ -60,6 +60,8 @@ module AAPB
             puts %(ATTRS FOR YA ASS :: #{model_object.id})
             puts attributes
 
+            # require('pry');binding.pry
+
             actor_stack_status = actor.create(::Hyrax::Actors::Environment.new(model_object, ability, attributes))
           elsif node.ingest_type == "update"
             object_id = attributes.delete("id")
@@ -100,7 +102,11 @@ module AAPB
               # ingest asset's childrens
               node.children.each do |c_node|
                 with_data[c_node.object_class].each do |c_data|
-                  ingest_object_at(c_node,c_data,parent_node)
+
+
+                  (require('pry');binding.pry) if c_data.keys.include?('contributor')
+
+                  ingest_object_at(c_node, c_data, parent_node)
                 end
               end
             end

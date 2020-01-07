@@ -73,6 +73,7 @@ module AAPB
 
         def ingest_asset!
           attrs = AAPB::BatchIngest::PBCoreXMLMapper.new(pbcore_xml).asset_attributes
+
           validate_record_does_not_exist! attrs[:id]
           attrs[:hyrax_batch_ingest_batch_id] = batch_id
 
