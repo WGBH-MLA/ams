@@ -26,7 +26,7 @@ module AMS
                     else
                       filename
                     end
-        @temp_file_path = Tempfile.new(@filename).file_path
+        @temp_file_path = Tempfile.new(@filename).path
         @s3_path = nil
         @export_type = export_type
         raise 'export_type was not defined!' unless @export_type
