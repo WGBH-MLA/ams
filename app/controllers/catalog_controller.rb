@@ -529,7 +529,7 @@ class CatalogController < ApplicationController
     respond_to do |format|
       format.csv {
         exporter = AMS::Export::DocumentsToCsv.new(response_documents, object_type: params[:object_type], export_type: 'csv_download')
-        export_file_path = exporter.temp_file.path
+        export_file_path = exporter.temp_file_path
         export_file_name = exporter.filename
 
         begin
@@ -541,7 +541,7 @@ class CatalogController < ApplicationController
       }
       format.pbcore {
         exporter = AMS::Export::DocumentsToPbcoreXml.new(response_documents, export_type: 'pbcore_download')
-        export_file_path = exporter.temp_file.path
+        export_file_path = exporter.temp_file_path
         export_file_name = exporter.filename
 
         begin

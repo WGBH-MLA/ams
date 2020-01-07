@@ -9,7 +9,7 @@ module AMS
       attr_reader :s3_path
       attr_reader :export_type
 
-      attr_reader :temp_file
+      attr_reader :temp_file_path
 
       attr_accessor :export_data
 
@@ -26,7 +26,7 @@ module AMS
                     else
                       filename
                     end
-        @temp_file = Tempfile.new(@filename)
+        @temp_file_path = Tempfile.new(@filename).file_path
         @s3_path = nil
         @export_type = export_type
         raise 'export_type was not defined!' unless @export_type
@@ -48,22 +48,19 @@ module AMS
         begin
           # determine which after-package action to take
 
-          # if format == 'zip'
-          if @export_type == 'pushed_zip_job'
-            # DocumentsToPushedZip 
-
-            # uses @temp_file var (defined in ExportService#initialize) to send zip from tmp location to aapb
+          if @export_type == 'pushed_zip_job' # DocumentsToPushedZip 
+            
+            # send zip from tmp location to aapb
             scp_to_aapb
-          elsif ['csv_job', 'pbcore_job'].include?(@export_type)
-            # DocumentsToPbcoreXml or DocumentsToCsv
+          elsif ['csv_job', 'pbcore_job'].include?(@export_type) # DocumentsToPbcoreXml or DocumentsToCsv
 
             # upload zip to s3 for download
             upload_to_s3
             Ams2Mailer.export_notification(@user, @export_data.s3_path).deliver_later
           end
         ensure
-          @temp_file.close
-          @temp_file.unlink # deletes the temp file.
+
+          File.delete(@temp_file_path)
         end
       end
 
@@ -74,10 +71,9 @@ module AMS
         )
         s3 = Aws::S3::Resource.new(region: 'us-east-1')
 
-        export_file = File.read(@temp_file)
         # send file to s3
         obj = s3.bucket(ENV['S3_EXPORT_BUCKET']).object("#{ENV['S3_EXPORT_DIR']}/#{SecureRandom.uuid}/#{@filename}")
-        File.open(@temp_file, 'r') do |f|
+        File.open(@temp_file_path, 'r') do |f|
           if format == 'csv'
             obj.upload_file(f, acl: 'public-read', content_disposition: 'attachment', content_type: 'text/csv')
           else
@@ -94,13 +90,12 @@ module AMS
       end
 
       def scp_to_aapb
-        filepath = @temp_file.path
 
-        if aapb_key_path && AMS::AAPB.reachable? && filepath.present?
+        if aapb_key_path && AMS::AAPB.reachable? && @temp_file_path.present?
           aapb_host = AMS::AAPB.host
           output = []
 
-          output << `scp #{aapb_key_path} #{filepath} ec2-user@#{aapb_host}:/home/ec2-user/ingest_zips/#{@filename}`
+          output << `scp #{aapb_key_path} #{@temp_file_path} ec2-user@#{aapb_host}:/home/ec2-user/ingest_zips/#{@filename}`
           output << `ssh #{aapb_key_path} ec2-user@#{aapb_host} 'unzip -d /home/ec2-user/ingest_zips -o /home/ec2-user/ingest_zips/#{@filename}'`
           output << `ssh #{aapb_key_path} ec2-user@#{aapb_host} 'cd /var/www/aapb/current && RAILS_ENV=production /home/ec2-user/.gem/ruby/gems/bundler-1.16.5/exe/bundle exec /usr/bin/ruby scripts/download_clean_ingest.rb --files /home/ec2-user/ingest_zips/*.xml'`
 
