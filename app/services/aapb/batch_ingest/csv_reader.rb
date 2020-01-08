@@ -79,12 +79,18 @@ module AAPB
 
           else
 
+            # initialize array of contributions or instantiations etc
+            model_hash[model] ||= []
+
+              # (require('pry');binding.pry) if model == 'Contribution'
             # not an asset
             if attribute.nil?
 
-              model_hash[model] ||= [{}]
+              # if we're on a 'new object' column, add a new blank hash to our attrs
+              model_hash[model] << {}
             else
 
+              # otherwise, pick up the last-added hash from array and fill out values
               last_hash = model_hash[model].last
 
               if multi_value_attr?(attribute, model)
