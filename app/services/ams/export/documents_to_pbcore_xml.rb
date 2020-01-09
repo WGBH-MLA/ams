@@ -4,9 +4,13 @@ require 'zip'
 module AMS::Export
   # Class is responsible for generating the zip file containing the PBCore xml files.
   class DocumentsToPbcoreXml < ExportService
+    def format
+      'zip'
+    end
+    
     def process_export
       tmp_hash = []
-      ::Zip::File.open(@file_path.path, Zip::File::CREATE) do |zip_file|
+      ::Zip::File.open(@temp_file_path, Zip::File::CREATE) do |zip_file|
         @solr_documents.each do |doc|
           file_name = "#{doc.id}.xml"
           tmp = Tempfile.new(file_name)
@@ -18,10 +22,6 @@ module AMS::Export
         end
       end
       tmp_hash.each(&:unlink)
-    end
-
-    def clean
-      @file_path.unlink
     end
   end
 end
