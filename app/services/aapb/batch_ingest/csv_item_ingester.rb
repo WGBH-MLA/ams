@@ -93,7 +93,6 @@ module AAPB
               # ingest asset's childrens
               node.children.each do |c_node|
                 with_data[c_node.object_class].each do |c_data|
-
                   ingest_object_at(c_node, c_data, parent_node)
                 end
               end

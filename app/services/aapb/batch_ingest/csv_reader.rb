@@ -82,7 +82,6 @@ module AAPB
             # initialize array of contributions or instantiations etc
             model_hash[model] ||= []
 
-              # (require('pry');binding.pry) if model == 'Contribution'
             # not an asset
             if attribute.nil?
 
