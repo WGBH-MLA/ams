@@ -28,13 +28,16 @@ class PushesController < ApplicationController
     query = ""
     if ids.count > 1
       ids.each_with_index do |id, index|
+        # skip the last one
         next if index == (ids.count-1)
-        query += %(#{id} OR )
+        query += %(id: #{id} OR )
       end
     end
-    query += %(#{ids.last})
+
+    query += %(id: #{ids.last})
 
     query_params = {q: query}
+    
     query_params[:format] = 'zip-pbcore'
     query_params = delete_extra_params(query_params)
 
@@ -52,13 +55,15 @@ class PushesController < ApplicationController
     if requested_ids.count > 1
       requested_ids.each_with_index do |id, index|
         next if index == (requested_ids.count-1)
-        query += %(#{id} OR )
+        query += %(id:#{id} OR )
       end
     end
 
-    query += %(#{requested_ids.last})
-    query_params = {q: query}
-    response, response_documents = search_results(query_params)
+    query += %(id:#{requested_ids.last})
+    # response, response_documents = search_results(query_params)
+    response, response_documents = search_results({q: query}) do |builder|
+      AMS::PushSearchBuilder.new(self)
+    end
 
     found_ids_set = Set.new( response_documents.map(&:id) )
     requested_ids_set = Set.new(requested_ids)
@@ -85,7 +90,7 @@ class PushesController < ApplicationController
   def needs_updating
     # Pass a block in to override default search builder's monkeying around
     # Pushbuilder forces correct query params, which are otherwise wiped out
-    response, docs = search_results({}) do |builder|
+    response, docs = search_results({q: 'needs_update:true'}) do |builder|
       AMS::PushSearchBuilder.new(self)
     end
 
