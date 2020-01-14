@@ -26,15 +26,7 @@ class PushesController < ApplicationController
     end
 
     query = ""
-    if ids.count > 1
-      ids.each_with_index do |id, index|
-        # skip the last one
-        next if index == (ids.count-1)
-        query += %(id: #{id} OR )
-      end
-    end
-
-    query += %(id: #{ids.last})
+    query += ids.map { |id| "id:#{id}" }.join(' OR ')
 
     query_params = {q: query}
     
@@ -52,14 +44,8 @@ class PushesController < ApplicationController
     return render json: {error: "There was a problem parsing your IDs. Please check your input and try again."} unless requested_ids && requested_ids.count > 0
 
     query = ""
-    if requested_ids.count > 1
-      requested_ids.each_with_index do |id, index|
-        next if index == (requested_ids.count-1)
-        query += %(id:#{id} OR )
-      end
-    end
+    query += requested_ids.map { |id| "id:#{id}" }.join(' OR ')
 
-    query += %(id:#{requested_ids.last})
     # use this builder so default one doesnt add fq to break our query!!
     response, response_documents = search_results({q: query}) do |builder|
       AMS::PushSearchBuilder.new(self)
