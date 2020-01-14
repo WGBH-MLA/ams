@@ -23,13 +23,9 @@ class ExportRecordsJob < ApplicationJob
     self.current_ability = Ability.new(user)
 
     format = search_params.delete :format
-    # response, response_documents = search_results(search_params)
     response, response_documents = search_results(search_params) do |builder|
       AMS::PushSearchBuilder.new(self)
     end
-
-    puts "WITH DOCUMENTSSSSSSSSS"
-    puts response_documents.inspect
     
     if format == "csv"
       object_type = search_params.delete :object_type

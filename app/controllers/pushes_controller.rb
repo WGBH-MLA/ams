@@ -60,7 +60,7 @@ class PushesController < ApplicationController
     end
 
     query += %(id:#{requested_ids.last})
-    # response, response_documents = search_results(query_params)
+    # use this builder so default one doesnt add fq to break our query!!
     response, response_documents = search_results({q: query}) do |builder|
       AMS::PushSearchBuilder.new(self)
     end
@@ -82,6 +82,7 @@ class PushesController < ApplicationController
     query_params = delete_extra_params(params)
     query_params[:fl] = 'id'
 
+    # regular query
     response, response_documents = search_results(query_params)
     ids = response_documents.map(&:id).join("\n")
     redirect_to action: 'new', id_field: ids
