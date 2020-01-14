@@ -26,15 +26,10 @@ class PushesController < ApplicationController
     end
 
     query = ""
-    if ids.count > 1
-      ids.each_with_index do |id, index|
-        next if index == (ids.count-1)
-        query += %(#{id} OR )
-      end
-    end
-    query += %(#{ids.last})
+    query += ids.map { |id| "id:#{id}" }.join(' OR ')
 
     query_params = {q: query}
+    
     query_params[:format] = 'zip-pbcore'
     query_params = delete_extra_params(query_params)
 
@@ -49,16 +44,12 @@ class PushesController < ApplicationController
     return render json: {error: "There was a problem parsing your IDs. Please check your input and try again."} unless requested_ids && requested_ids.count > 0
 
     query = ""
-    if requested_ids.count > 1
-      requested_ids.each_with_index do |id, index|
-        next if index == (requested_ids.count-1)
-        query += %(#{id} OR )
-      end
-    end
+    query += requested_ids.map { |id| "id:#{id}" }.join(' OR ')
 
-    query += %(#{requested_ids.last})
-    query_params = {q: query}
-    response, response_documents = search_results(query_params)
+    # use this builder so default one doesnt add fq to break our query!!
+    response, response_documents = search_results({q: query}) do |builder|
+      AMS::PushSearchBuilder.new(self)
+    end
 
     found_ids_set = Set.new( response_documents.map(&:id) )
     requested_ids_set = Set.new(requested_ids)
@@ -77,6 +68,7 @@ class PushesController < ApplicationController
     query_params = delete_extra_params(params)
     query_params[:fl] = 'id'
 
+    # regular query
     response, response_documents = search_results(query_params)
     ids = response_documents.map(&:id).join("\n")
     redirect_to action: 'new', id_field: ids
@@ -85,7 +77,7 @@ class PushesController < ApplicationController
   def needs_updating
     # Pass a block in to override default search builder's monkeying around
     # Pushbuilder forces correct query params, which are otherwise wiped out
-    response, docs = search_results({}) do |builder|
+    response, docs = search_results({q: 'needs_update:true'}) do |builder|
       AMS::PushSearchBuilder.new(self)
     end
 
