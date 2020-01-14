@@ -97,7 +97,7 @@ module AMS
 
           output << `scp #{aapb_key_path} #{@temp_file_path} ec2-user@#{aapb_host}:/home/ec2-user/ingest_zips/#{@filename}`
           output << `ssh #{aapb_key_path} ec2-user@#{aapb_host} 'unzip -d /home/ec2-user/ingest_zips -o /home/ec2-user/ingest_zips/#{@filename}'`
-          output << `ssh #{aapb_key_path} ec2-user@#{aapb_host} 'cd /var/www/aapb/current && RAILS_ENV=production /home/ec2-user/.gem/ruby/gems/bundler-1.16.5/exe/bundle exec /usr/bin/ruby scripts/download_clean_ingest.rb --files /home/ec2-user/ingest_zips/*.xml'`
+          output << `ssh #{aapb_key_path} ec2-user@#{aapb_host} 'cd /var/www/aapb/current && RAILS_ENV=production /home/ec2-user/.gem/ruby/gems/bundler-1.17.1/exe/bundle exec /usr/bin/ruby scripts/download_clean_ingest.rb --files /home/ec2-user/ingest_zips/*.xml'`
 
           # print and email
           Rails.logger.info output
