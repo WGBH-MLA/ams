@@ -23,10 +23,10 @@ class ExportRecordsJob < ApplicationJob
     self.current_ability = Ability.new(user)
 
     format = search_params.delete :format
-    response, response_documents = search_results(search_params) do |builder|
-      AMS::PushSearchBuilder.new(self)
+    response, response_documents = search_results({}) do |builder|
+      AMS::PushSearchBuilder.new(self).with(search_params)
     end
-    
+
     if format == "csv"
       object_type = search_params.delete :object_type
       AMS::Export::DocumentsToCsv.new(response_documents, object_type: object_type, export_type: 'csv_job')
@@ -35,6 +35,7 @@ class ExportRecordsJob < ApplicationJob
     elsif format == 'zip-pbcore'
 
       assets = response_documents.map {|doc| Asset.find(doc[:id])}
+
       assets.each do |asset|
         now = Time.now.to_i
 

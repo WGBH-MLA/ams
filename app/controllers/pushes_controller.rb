@@ -44,11 +44,12 @@ class PushesController < ApplicationController
     return render json: {error: "There was a problem parsing your IDs. Please check your input and try again."} unless requested_ids && requested_ids.count > 0
 
     query = ""
-    query += requested_ids.map { |id| "id:#{id}" }.join(' OR ')
+    query += requested_ids.map { |id| %(id:#{id}) }.join(' OR ')
 
     # use this builder so default one doesnt add fq to break our query!!
-    response, response_documents = search_results({q: query}) do |builder|
-      AMS::PushSearchBuilder.new(self)
+    response, response_documents = search_results({}) do |builder|
+      # must pass in with .with here, search_results({q: ...}) is discarded
+      AMS::PushSearchBuilder.new(self).with({q: query})
     end
 
     found_ids_set = Set.new( response_documents.map(&:id) )
@@ -77,8 +78,8 @@ class PushesController < ApplicationController
   def needs_updating
     # Pass a block in to override default search builder's monkeying around
     # Pushbuilder forces correct query params, which are otherwise wiped out
-    response, docs = search_results({q: 'needs_update:true'}) do |builder|
-      AMS::PushSearchBuilder.new(self)
+    response, docs = search_results({}) do |builder|
+      AMS::PushSearchBuilder.new(self).with({q: 'needs_update:true'})
     end
 
     if docs.count > 0
