@@ -87,7 +87,7 @@ class PushesController < ApplicationController
       redirect_to action: 'new', id_field: ids
     else
       # sorry!
-      redirect_to pushes_path
+      redirect_to new_push_path
     end
   end
 end
