@@ -49,7 +49,7 @@ class PushesController < ApplicationController
     # use this builder so default one doesnt add fq to break our query!!
     response, response_documents = search_results({}) do |builder|
       # must pass in with .with here, search_results({q: ...}) is discarded
-      AMS::PushSearchBuilder.new(self).with({q: query})
+      AMS::PushSearchBuilder.new(self).with({q: query, rows: 2147483647})
     end
 
     found_ids_set = Set.new( response_documents.map(&:id) )
@@ -79,7 +79,7 @@ class PushesController < ApplicationController
     # Pass a block in to override default search builder's monkeying around
     # Pushbuilder forces correct query params, which are otherwise wiped out
     response, docs = search_results({}) do |builder|
-      AMS::PushSearchBuilder.new(self).with({q: 'needs_update:true'})
+      AMS::PushSearchBuilder.new(self).with({q: 'needs_update:true', rows: 2147483647})
     end
 
     if docs.count > 0

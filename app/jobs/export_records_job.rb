@@ -23,6 +23,7 @@ class ExportRecordsJob < ApplicationJob
     self.current_ability = Ability.new(user)
 
     format = search_params.delete :format
+    search_params[:rows] = 2147483647
     response, response_documents = search_results({}) do |builder|
       AMS::PushSearchBuilder.new(self).with(search_params)
     end
