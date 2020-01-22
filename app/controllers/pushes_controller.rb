@@ -45,6 +45,7 @@ class PushesController < ApplicationController
 
     query = ""
     query += requested_ids.map { |id| %(id:#{id}) }.join(' OR ')
+    query = "(#{query})"
 
     # use this builder so default one doesnt add fq to break our query!!
     response, response_documents = search_results({}) do |builder|
