@@ -13,8 +13,9 @@ module ApplicationHelper
     params.delete :page
     params.delete :per_page
     params.delete :action
-    params.delete :controller
+    # params.delete :controller
     params.delete :locale
+    params.delete :transfer
     # woo!
     params
   end
