@@ -4,6 +4,8 @@ class PushesController < ApplicationController
   before_action :authenticate_user!
 
   include Blacklight::Configurable
+  # this v is required - advanced_search will crash without it
+  copy_blacklight_config_from(CatalogController)
   configure_blacklight do |config|
     # This is necessary to prevent Blacklight's default value of 100 for
     # config.max_per_page from capping the number of results.
@@ -52,16 +54,17 @@ class PushesController < ApplicationController
     # bad input
     return render json: {error: "There was a problem parsing your IDs. Please check your input and try again."} unless requested_ids && requested_ids.count > 0
 
-    missing_ids = []
+    found_ids = []
     requested_ids.each_slice(100).each do |segment|
-      query = build_query(requested_ids)
-      missing_ids += verify_ids(query)
+      query = build_query(segment)
+      found_ids += query_ids(query)
     end
+
+    missing_ids = verify_id_set(requested_ids, found_ids)
 
     all_valid = missing_ids.count == 0 ? true : false
     id_response = {all_valid: all_valid}
     id_response[:missing_ids] = missing_ids unless missing_ids.empty?
-    id_response[:id_query] = query
     render json: id_response
   end
 
@@ -97,26 +100,4 @@ class PushesController < ApplicationController
       redirect_to new_push_path
     end
   end
-
-  private
-    def build_query(ids)
-      query = ""
-      query += ids.map { |id| %(id:#{id}) }.join(' OR ')
-      query = "(#{query})"
-    end
-
-    def verify_ids(query)
-
-      response, response_documents = search_results({}) do |builder|
-        # must pass in with .with here, search_results({q: ...}) is discarded
-        AMS::PushSearchBuilder.new(self).with({q: query})
-      end
-
-      found_ids_set = Set.new( response_documents.map(&:id) )
-      requested_ids_set = Set.new(requested_ids)
-
-      # get exclusive items, remove those exclusive to found_ids
-      (requested_ids_set ^ found_ids_set).subtract(found_ids_set)
-    end
-
 end

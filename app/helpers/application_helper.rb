@@ -40,4 +40,32 @@ module ApplicationHelper
   def user_can_delete?(user)
     user.roles.any? {|r| r.name == 'aapb-admin'}
   end
+
+  def build_query(ids)
+    query = ""
+    query += ids.map { |id| %(id:#{id}) }.join(' OR ')
+    query = "(#{query})"
+  end
+
+  def query_docs(query)
+
+    response, response_documents = search_results({}) do |builder|
+      # must pass in with .with here, search_results({q: ...}) is discarded
+      AMS::PushSearchBuilder.new(self).with({q: query, rows: 2147483647})
+    end
+
+    response_documents
+  end
+
+  def query_ids(query)
+    query_docs(query).map(&:id)
+  end
+
+  def verify_id_set(requested_ids, found_ids)
+    found_ids_set = Set.new( found_ids )
+    requested_ids_set = Set.new( requested_ids )
+
+    # get exclusive items, remove those exclusive to found_ids
+    (requested_ids_set ^ found_ids_set).subtract(found_ids_set)
+  end
 end
