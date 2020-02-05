@@ -70,7 +70,7 @@ class PushesController < ApplicationController
 
   def new
     if params[:transfer] == 'true'
-      ze_params = params
+      ze_params = params.dup
       query_params = delete_extra_params(ze_params)
       query_params[:fl] = 'id'
       query_params[:rows] = 2147483647
