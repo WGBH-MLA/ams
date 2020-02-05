@@ -3,6 +3,16 @@ class PushesController < ApplicationController
   include Blacklight::SearchHelper
   before_action :authenticate_user!
 
+  include Blacklight::Configurable
+  # this v is required - advanced_search will crash without it
+  copy_blacklight_config_from(CatalogController)
+  configure_blacklight do |config|
+    # This is necessary to prevent Blacklight's default value of 100 for
+    # config.max_per_page from capping the number of results.
+    config.max_per_page = 2147483647
+    # config.rows = 2147483647
+  end
+
   def index
     # show all previous pushes
     @pushes = Push.all
@@ -32,6 +42,7 @@ class PushesController < ApplicationController
     
     query_params[:format] = 'zip-pbcore'
     query_params = delete_extra_params(query_params)
+    query_params.delete :controller
 
     ExportRecordsJob.perform_later(query_params, current_user)
     push = Push.create(user_id: current_user.id, pushed_id_csv: ids.join(',') )
@@ -43,44 +54,42 @@ class PushesController < ApplicationController
     # bad input
     return render json: {error: "There was a problem parsing your IDs. Please check your input and try again."} unless requested_ids && requested_ids.count > 0
 
-    query = ""
-    query += requested_ids.map { |id| %(id:#{id}) }.join(' OR ')
-    query = "(#{query})"
-
-    # use this builder so default one doesnt add fq to break our query!!
-    response, response_documents = search_results({}) do |builder|
-      # must pass in with .with here, search_results({q: ...}) is discarded
-      AMS::PushSearchBuilder.new(self).with({q: query, rows: 2147483647})
+    found_ids = []
+    requested_ids.each_slice(100).each do |segment|
+      query = build_query(segment)
+      found_ids += query_ids(query)
     end
 
-    found_ids_set = Set.new( response_documents.map(&:id) )
-    requested_ids_set = Set.new(requested_ids)
-
-    # get exclusive items, remove those exclusive to found_ids
-    missing_ids = (requested_ids_set ^ found_ids_set).subtract(found_ids_set)
+    missing_ids = verify_id_set(requested_ids, found_ids)
 
     all_valid = missing_ids.count == 0 ? true : false
     id_response = {all_valid: all_valid}
     id_response[:missing_ids] = missing_ids unless missing_ids.empty?
-    id_response[:id_query] = query
     render json: id_response
   end
 
-  def transfer_query
-    query_params = delete_extra_params(params)
-    query_params[:fl] = 'id'
+  def new
+    if params[:transfer] == 'true'
+      ze_params = params.dup
+      query_params = delete_extra_params(ze_params)
+      query_params[:fl] = 'id'
+      query_params[:rows] = 2147483647
 
-    # regular query
-    response, response_documents = search_results(query_params)
-    ids = response_documents.map(&:id).join("\n")
-    redirect_to action: 'new', id_field: ids
+      # regular query
+      response, response_documents = search_results(query_params) do |builder|
+        builder = AMS::SearchBuilder.new(self).with(query_params)
+      end
+      params[:id_field] = response_documents.map(&:id).join("\n")
+    end
+
+    render 'new'
   end
 
   def needs_updating
     # Pass a block in to override default search builder's monkeying around
     # Pushbuilder forces correct query params, which are otherwise wiped out
     response, docs = search_results({}) do |builder|
-      AMS::PushSearchBuilder.new(self).with({q: 'needs_update:true', rows: 2147483647})
+      AMS::PushSearchBuilder.new(self).with({q: 'needs_update:true'})
     end
 
     if docs.count > 0
