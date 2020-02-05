@@ -6,11 +6,12 @@ class ExportRecordsJob < ApplicationJob
   # performing searches.
   include Blacklight::Configurable
   include Blacklight::SearchHelper
+  include ApplicationHelper
 
   class_attribute :current_ability
-
+  
+  # this v is required - advanced_search will crash without it
   copy_blacklight_config_from(CatalogController)
-
   configure_blacklight do |config|
     # This is necessary to prevent Blacklight's default value of 100 for
     # config.max_per_page from capping the number of results.
@@ -21,11 +22,27 @@ class ExportRecordsJob < ApplicationJob
   # @param [User] user
   def perform(search_params, user)
     self.current_ability = Ability.new(user)
-
     format = search_params.delete :format
-    search_params[:rows] = 2147483647
-    response, response_documents = search_results({}) do |builder|
-      AMS::PushSearchBuilder.new(self).with(search_params)
+    
+    # these push queries can be huge (500+), so slice up id queries to kid-size pieces
+    if format == 'zip-pbcore' 
+
+      ids = search_params[:q].gsub('id:', '').split(' OR ')
+      response_documents = [] 
+      docs = nil
+
+      ids.each_slice(100).each do |segment|
+        query = build_query(segment)
+        docs = query_docs(query)
+        response_documents += docs
+      end
+
+    else
+
+      # nothing to see here, folks!
+      response, response_documents = search_results({}) do |builder|
+        AMS::PushSearchBuilder.new(self).with(search_params)
+      end
     end
 
     if format == "csv"

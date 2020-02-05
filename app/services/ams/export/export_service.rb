@@ -91,21 +91,23 @@ module AMS
 
       def scp_to_aapb
 
-        if aapb_key_path && AMS::AAPB.reachable? && @temp_file_path.present?
-          aapb_host = AMS::AAPB.host
-          output = []
+        # ABG, AnyBody can Get it
+        [AMS::AAPB.production, AMS::AAPB.demoduction].each do |aapb_host|
 
+          raise "Auth path was not defined! #{aapb_key_path}" unless aapb_key_path
+          raise "AAPB was unreachable! #{aapb_host}" unless AMS::AAPB.reachable?(aapb_host)
+          raise "Temp File was not found!" unless @temp_file_path.present?
+
+          output = []
           output << `scp #{aapb_key_path} #{@temp_file_path} ec2-user@#{aapb_host}:/home/ec2-user/ingest_zips/#{@filename}`
           output << `ssh #{aapb_key_path} ec2-user@#{aapb_host} 'unzip -d /home/ec2-user/ingest_zips -o /home/ec2-user/ingest_zips/#{@filename}'`
           output << `ssh #{aapb_key_path} ec2-user@#{aapb_host} 'bash -l -c "cd /var/www/aapb/current && RAILS_ENV=production bundle exec /usr/bin/ruby scripts/download_clean_ingest.rb --files /home/ec2-user/ingest_zips/*.xml"'`
-          
 
           # print and email
           Rails.logger.info output
           Ams2Mailer.scp_to_aapb_notification(@user, output.join("\n\n")).deliver_later
-        else
-          raise "AAPB was unreachable! #{ENV['AAPB_HOST']}"
         end
+
       end
     end
   end
