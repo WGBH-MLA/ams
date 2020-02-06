@@ -9,6 +9,9 @@ class Contribution < ActiveFedora::Base
   # self.valid_child_concerns = []
 
 
+  property :contributor, predicate: ::RDF::URI.new("http://www.w3.org/2006/vcard/ns#hasName"), multiple: false do |index|
+    index.as :stored_searchable
+  end
 
   property :contributor_role, predicate: ::RDF::URI.new("http://www.w3.org/2006/vcard/ns#hasRole"), multiple: false do |index|
     index.as :stored_searchable

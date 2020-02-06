@@ -1,0 +1,15 @@
+#!/usr/bin/env ruby
+puts "Loading Rails environment..."
+require_relative '../../config/environment'
+puts "Rails done loading."
+
+# Fetch the file containing all the Asset IDs to destroy.
+asset_ids_file_path = ARGV.first.to_s
+raise ArgumentError, "File '#{asset_ids_file_path}' does not exist" unless File.exists? asset_ids_file_path
+
+# Fetch the Asset IDs from the file.
+asset_ids = File.readlines asset_ids_file_path, chomp: true
+
+# Destroy the assets.
+asset_destroyer = AMS::AssetDestroyer.new
+asset_destroyer.destroy asset_ids

@@ -54,7 +54,7 @@
         $('#valid-box').addClass("green").removeClass("red");
       } else if(resp.error) {
         message = resp.error;
-        $('#valid-box').addClass("green").removeClass("red");     
+        $('#valid-box').addClass("red").removeClass("green");     
       } else {
         message = "The following IDs were not found (" + resp.missing_ids.length + "): " + resp.missing_ids;
         $('#valid-box').addClass("red").removeClass("green");
