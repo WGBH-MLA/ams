@@ -40,3 +40,9 @@ RSpec::Matchers.define :exist_in_repository do
     ActiveFedora::Base.exists? obj_id
   end
 end
+
+RSpec::Matchers.define :not_exist_in_repository do
+  match do |obj_id|
+    !ActiveFedora::Base.exists? obj_id
+  end
+end

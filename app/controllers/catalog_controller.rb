@@ -528,17 +528,27 @@ class CatalogController < ApplicationController
 
     respond_to do |format|
       format.csv {
-        export_data = AMS::Export::DocumentsToCsv.new(response_documents, object_type: params[:object_type])
-        export_data.process do
-          export_file = File.read(export_data.file_path)
-          send_data export_file, :type => 'text/csv; charset=utf-8; header=present', :disposition => "attachment; filename=#{export_data.filename}", :filename => "#{export_data.filename}"
+        exporter = AMS::Export::DocumentsToCsv.new(response_documents, object_type: params[:object_type], export_type: 'csv_download')
+        export_file_path = exporter.temp_file_path
+        export_file_name = exporter.filename
+
+        begin
+          export_file = File.read(export_file_path)
+          send_data export_file, :type => 'text/csv; charset=utf-8; header=present', :disposition => "attachment; filename=#{export_file_name}", :filename => "#{export_file_name}"
+        ensure
+          File.delete(export_file_path)
         end
       }
       format.pbcore {
-        export_data = AMS::Export::DocumentsToPbcoreXml.new(response_documents)
-        export_data.process do
-          export_file = File.read(export_data.file_path)
-          send_data export_file, :type => 'application/zip', :filename => "#{export_data.filename}"
+        exporter = AMS::Export::DocumentsToPbcoreXml.new(response_documents, export_type: 'pbcore_download')
+        export_file_path = exporter.temp_file_path
+        export_file_name = exporter.filename
+
+        begin
+          export_file = File.read(export_file_path)
+          send_data export_file, :type => 'application/zip', :filename => "#{export_file_name}"
+        ensure
+          File.delete(export_file_path)
         end
       }
     end
