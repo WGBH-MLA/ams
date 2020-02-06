@@ -1,6 +1,6 @@
 class ExportRecordsJob < ApplicationJob
   # Sepcify queue name
-  queue_as :default
+  queue_as :mailers
 
   # Include Blacklight modules that provide methods for configurating and
   # performing searches.
