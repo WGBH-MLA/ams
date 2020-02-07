@@ -17,19 +17,19 @@ RSpec.describe AAPB::BatchIngest::CSVItemIngester do
   let(:user) { create(:aapb_admin_user) }
 
   let(:new_batch) { build(:batch, ingest_type: 'aapb_csv_reader_1', submitter_email: user.email) }
-  let(:new_batch_item) { build(:batch_item, batch: new_batch, source_data: new_source_data, source_location: nil) }
+  let(:new_batch_item) { build(:batch_item, batch: new_batch, source_data: new_source_data, source_location: nil, status: 'initialized') }
   let(:new_asset) { described_class.new(new_batch_item).ingest }
 
   let(:update_batch) { build(:batch, ingest_type: 'aapb_csv_reader_3', submitter_email: user.email) }
-  let(:update_batch_item) { build(:batch_item, batch: update_batch, source_data: update_source_data, source_location: nil) }
+  let(:update_batch_item) { build(:batch_item, batch: update_batch, source_data: update_source_data, source_location: nil, status: 'initialized') }
   let(:update_asset) { described_class.new(update_batch_item).ingest }
 
   let(:multivalue_attribute_batch) { build(:batch, ingest_type: 'aapb_csv_reader_4', submitter_email: user.email) }
-  let(:multivalue_attribute_batch_item) { build(:batch_item, batch: multivalue_attribute_batch, source_data: multivalue_add_source_data, source_location: nil) }
+  let(:multivalue_attribute_batch_item) { build(:batch_item, batch: multivalue_attribute_batch, source_data: multivalue_add_source_data, source_location: nil, status: 'initialized') }
   let(:multivalue_attribute_update_asset) { described_class.new(multivalue_attribute_batch_item).ingest }
 
   let(:invalid_batch) { build(:batch, ingest_type: 'aapb_csv_reader_1', submitter_email: user.email) }
-  let(:invalid_batch_item) { build(:batch_item, batch: invalid_batch, source_data: invalid_source_data, source_location: nil) }
+  let(:invalid_batch_item) { build(:batch_item, batch: invalid_batch, source_data: invalid_source_data, source_location: nil, status: 'initialized') }
   let(:invalid_asset) { described_class.new(invalid_batch_item).ingest }
 
 
