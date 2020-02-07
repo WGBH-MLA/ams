@@ -11,3 +11,4 @@
   - [default, 3]
   - [ingest, 1]
   - [mailers, 10]
+  - [exports, 10]

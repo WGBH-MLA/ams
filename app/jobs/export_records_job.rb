@@ -1,6 +1,6 @@
 class ExportRecordsJob < ApplicationJob
-  # Sepcify queue name
-  queue_as :mailers
+  # special queue, so it jumps the ingest-queue line
+  queue_as :exports
 
   # Include Blacklight modules that provide methods for configurating and
   # performing searches.
