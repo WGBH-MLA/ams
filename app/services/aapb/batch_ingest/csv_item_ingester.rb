@@ -8,6 +8,8 @@ module AAPB
         set_options
         @source_data = JSON.parse(@batch_item.source_data)
         ingest_object_at options, @source_data
+
+        raise "Batch item contained invalid data.\n\n#{@batch_item.error}" unless @batch_item.error.nil?
         @works_ingested.first
       end
 
@@ -75,6 +77,7 @@ module AAPB
                 end
               end
             end
+
             actor_stack_status = actor.update(::Hyrax::Actors::Environment.new(model_object, ability, attributes))
           end
 
@@ -92,9 +95,11 @@ module AAPB
 
               # ingest asset's childrens
               node.children.each do |c_node|
+                # We won't always have data from the CSV for the children, so don't
+                # fail if it is not included with the with_data
                 with_data[c_node.object_class].each do |c_data|
-                  ingest_object_at(c_node, c_data, parent_node)
-                end
+                  ingest_object_at(c_node,c_data,parent_node)
+                end unless with_data[c_node.object_class].nil?
               end
             end
             if model_object.errors.any?
