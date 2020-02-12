@@ -220,7 +220,7 @@ module AMS::PbcoreXmlExportExtension
       end
 
       instantiation.annotation.to_a.each { |annTxt| instantiation_node.instantiationAnnotation { instantiation_node.cdata(annTxt) } }
-      instantiation.holding_organization.to_a.each { |org| instantiation_node.instantiationAnnotation(annotationType: 'Organization') { instantiation_node.text(org) } }
+      instantiation.holding_organization.to_a.each { |org| instantiation_node.instantiationAnnotation(annotationType: 'organization') { instantiation_node.text(org) } }
 
     end
   end
@@ -286,7 +286,7 @@ module AMS::PbcoreXmlExportExtension
       end
 
       instantiation.annotation.to_a.each { |annTxt| instantiation_node.instantiationAnnotation { instantiation_node.cdata(annTxt) } }
-      instantiation.holding_organization.to_a.each { |org| instantiation_node.instantiationAnnotation(annotationType: 'Organization') { instantiation_node.text(org) } }
+      instantiation.holding_organization.to_a.each { |org| instantiation_node.instantiationAnnotation(annotationType: 'organization') { instantiation_node.text(org) } }
     end
   end
 
