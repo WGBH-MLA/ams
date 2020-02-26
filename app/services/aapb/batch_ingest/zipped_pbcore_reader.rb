@@ -24,11 +24,14 @@ module AAPB
         end
 
         def unzipped_file_paths
-          @unzipped_file_paths  ||= zip_file.glob('**/*.xml').map do |entry|
-            unzipped_file_path = File.join(extraction_path, entry.name)
-            FileUtils.mkdir_p File.dirname(unzipped_file_path)
-            zip_file.extract(entry, unzipped_file_path)
-            unzipped_file_path
+          @unzipped_file_paths  ||= begin
+            files = zip_file.glob('**/*.xml') + zip_file.glob('**/*.pbcore')
+            files.map do |entry|
+              unzipped_file_path = File.join(extraction_path, entry.name)
+              FileUtils.mkdir_p File.dirname(unzipped_file_path)
+              zip_file.extract(entry, unzipped_file_path)
+              unzipped_file_path
+            end
           end
         ensure
           # TODO: Be more specific, i.e. "batch is empty"?
