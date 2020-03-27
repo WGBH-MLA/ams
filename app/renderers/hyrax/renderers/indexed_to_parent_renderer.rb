@@ -16,7 +16,6 @@ module Hyrax
         markup.html_safe
       end
 
-
       private
 
       def search_field
