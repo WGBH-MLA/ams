@@ -37,7 +37,8 @@ module AAPB
           "transcript status" => :transcript_status,
           "licensing info" => :licensing_info,
           "playlist group" => :playlist_group,
-          "playlist order" => :playlist_order
+          "playlist order" => :playlist_order,
+          "organization" => :organization
         }
       end
 

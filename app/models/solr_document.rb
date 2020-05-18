@@ -348,6 +348,10 @@ class SolrDocument
     self[Solrizer.solr_name('transcript_status')]
   end
 
+  def organization
+    self[Solrizer.solr_name('organization','ssim')]
+  end
+
   def sonyci_id
     self[Solrizer.solr_name('sonyci_id')]
   end
