@@ -6,6 +6,7 @@ class AdminData < ApplicationRecord
 
   serialize :special_collection, Array
   serialize :sonyci_id, Array
+  serialize :special_collection_category, Array
 
   # Find the admin data associated with the Global Identifier (gid)
   # @param [String] gid - Global Identifier for this admin_data (e.g.gid://ams/admindata/1)
