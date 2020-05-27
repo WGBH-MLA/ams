@@ -66,7 +66,7 @@ class Ability
          :update_outside_url, :update_sonyci_id, :update_licensing_info,
          :update_playlist_group, :update_playlist_order,
          :update_hyrax_batch_ingest_batch_id, :update_last_pushed,
-         :update_last_updated, :update_needs_update], AdminData
+         :update_last_updated, :update_needs_update, :update_special_collection_category], AdminData
   end
 
   # Sets permissions for 'aapb-admin' users.

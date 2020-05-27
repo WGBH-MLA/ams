@@ -11,7 +11,7 @@ module Hyrax
              :promo_description, :clip_description, :copyright_date,
              :level_of_user_access, :minimally_cataloged, :outside_url, :special_collection, :transcript_status, :organization,
              :sonyci_id, :licensing_info, :producing_organization, :series_title, :series_description,
-             :playlist_group, :playlist_order, :hyrax_batch_ingest_batch_id, :last_pushed, :last_update, :needs_update,
+             :playlist_group, :playlist_order, :hyrax_batch_ingest_batch_id, :last_pushed, :last_update, :needs_update, :special_collection_category, :canonical_meta_tag,
              to: :solr_document
 
     def batch
@@ -63,6 +63,7 @@ module Hyrax
     end
 
     def display_aapb_admin_data?
+      require 'pry'; binding.pry
       ! ( level_of_user_access.blank? &&
           minimally_cataloged.blank? &&
           outside_url.blank? &&
@@ -76,7 +77,9 @@ module Hyrax
           last_updated.blank? &&
           last_pushed.blank? &&
           needs_update.blank? &&
-          organization.blank?
+          organization.blank? &&
+          special_collection_category.blank? &&
+          canonical_meta_tag.blank?
         )
     end
 
