@@ -38,7 +38,9 @@ module AAPB
           "licensing info" => :licensing_info,
           "playlist group" => :playlist_group,
           "playlist order" => :playlist_order,
-          "organization" => :organization
+          "organization" => :organization,
+          "special collection category" => :special_collection_category,
+          "canonical meta tag" => :canonical_meta_tag
         }
       end
 
@@ -53,7 +55,7 @@ module AAPB
             value = admindata[annotation_type]
             if value
               # 'sepcial_collection' field is single-valued
-              value = value.first if field_name == 'special_collection'
+              value = value.first if ['special_collection', 'organization'].include?(field_name)
               attrs[field_name] = value
             end
           end

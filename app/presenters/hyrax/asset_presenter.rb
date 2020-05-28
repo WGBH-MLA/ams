@@ -63,7 +63,6 @@ module Hyrax
     end
 
     def display_aapb_admin_data?
-      require 'pry'; binding.pry
       ! ( level_of_user_access.blank? &&
           minimally_cataloged.blank? &&
           outside_url.blank? &&
