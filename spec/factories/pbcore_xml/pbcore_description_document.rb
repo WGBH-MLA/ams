@@ -27,7 +27,11 @@ FactoryBot.define do
           build(:pbcore_annotation, type: "special_collections" , value: Faker::TvShows::Simpsons.character),
           build(:pbcore_annotation, type: "Licensing Info" , value: Faker::Lorem.paragraph),
           build(:pbcore_annotation, type: "Playlist Group" , value: Faker::Lorem.word),
-          build(:pbcore_annotation, type: "Playlist Order" , value: rand(1..5))
+          build(:pbcore_annotation, type: "Playlist Order" , value: rand(1..5)),
+          build(:pbcore_annotation, type: "organization" , value: Faker::Company.name),
+          build(:pbcore_annotation, type: "Special Collection Category" , value: Faker::Hipster.word),
+          build(:pbcore_annotation, type: "Canonical Meta Tag" , value: Faker::Internet.url),
+          build(:pbcore_annotation, type: "Sony Ci" , value: Faker::Alphanumeric.alphanumeric(31))
         ]
 
         # In addition to the admin data annotations, throw in some arbitrary
