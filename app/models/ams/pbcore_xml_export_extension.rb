@@ -148,7 +148,7 @@ module AMS::PbcoreXmlExportExtension
 
     # AAPB Admin Data
     level_of_user_access.to_a.each { |annotation| xml.pbcoreAnnotation(annotationType: 'Level of User Access') { xml.cdata(annotation) } }
-    minimally_cataloged.to_a.each { |annotation| xml.pbcoreAnnotation(annotationType: 'cataloging staus') { xml.cdata(annotation) } }
+    minimally_cataloged.to_a.each { |annotation| xml.pbcoreAnnotation(annotationType: 'cataloging status') { xml.cdata(annotation) } }
     outside_url.to_a.each { |annotation| xml.pbcoreAnnotation(annotationType: 'Outside URL') { xml.cdata(annotation) } }
     transcript_status.to_a.each { |annotation| xml.pbcoreAnnotation(annotationType: 'Transcript Status') { xml.cdata(annotation) } }
     licensing_info.to_a.each { |annotation| xml.pbcoreAnnotation(annotationType: 'Licensing Info') { xml.cdata(annotation) } }
