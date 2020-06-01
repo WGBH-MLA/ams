@@ -10,7 +10,6 @@ module AAPB
       end
 
       def attribute_to_html(field, options = {})
-        require 'pry'; binding.pry
         options.merge!({:html_dl=> true})
 
         solr_document = ::SolrDocument.find(id)
