@@ -123,6 +123,8 @@ RSpec.describe Hyrax::AssetPresenter do
         asset.admin_data[:transcript_status] = ""
         asset.admin_data[:sonyci_id] = []
         asset.admin_data[:licensing_info] = ""
+        asset.admin_data[:organization] = ""
+        asset.admin_data[:special_collection_category] = []
         asset.save
         expect(asset.admin_data[:level_of_user_access]).to be_empty
         expect(asset.admin_data[:minimally_cataloged]).to be_empty
