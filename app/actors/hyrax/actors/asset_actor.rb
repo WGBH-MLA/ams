@@ -34,10 +34,12 @@ module Hyrax
 
         def set_admin_data_attributes(admin_data, env)
           admin_data_attributes.each do |k|
-            # these are serialized on AdminData, so send an array
             if AdminData::SERIALIZED_FIELDS.include?(k) && env.attributes[k].present?
+              # these are serialized on AdminData, so send an array
               admin_data.send("#{k}=", Array(env.attributes[k]))
-            elsif env.attributes[k].present?
+            elsif !AdminData::SERIALIZED_FIELDS.include?(k) && env.attributes[k].present?
+              admin_data.send("#{k}=", env.attributes[k].to_s)
+            elsif !AdminData::SERIALIZED_FIELDS.include?(k) && (admin_data.send(k).present? && !env.attributes[k].present?)
               admin_data.send("#{k}=", env.attributes[k].to_s)
             end
           end

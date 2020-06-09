@@ -7,6 +7,8 @@ FactoryBot.define do
     transcript_status { "Indexing Only Transcript" }
     sonyci_id { ["Sony-1","Sony-2"] }
     licensing_info { "Licensing Info" }
+    organization { "American Archive of Public Broadcasting" }
+    special_collection_category { ["Outside"] }
     trait :no_sony_ci_id do
       sonyci_id { [] }
     end
