@@ -69,6 +69,10 @@ module PBCoreXPathHelper
         licensing_info:                 '//pbcoreAnnotation[@annotationType="Licensing Info"]',
         playlist_group:                 '//pbcoreAnnotation[@annotationType="Playlist Group"]',
         playlist_order:                 '//pbcoreAnnotation[@annotationType="Playlist Order"]',
+        sonyci_id:                      '//pbcoreAnnotation[@annotationType="Sony Ci"]',
+        organization:                   '//pbcoreAnnotation[@annotationType="organization"]',
+        canonical_meta_tag:             '//pbcoreAnnotation[@annotationType="Canonical Meta Tag"]',
+        special_collection_category:    '//pbcoreAnnotation[@annotationType="Special Collection Category"]',
         rights_summary:                 '//pbcoreRightsSummary/rightsSummary',
         rights_link:                    '//pbcoreRightsSummary/rightsLink',
         local_identifier:               '//pbcoreIdentifier[@source="Local Identifier"]',
@@ -153,7 +157,11 @@ module PBCoreXPathHelper
                    values_from_xpath(:transcript_status) +
                    values_from_xpath(:licensing_info) +
                    values_from_xpath(:playlist_group) +
-                   values_from_xpath(:playlist_order)
+                   values_from_xpath(:playlist_order) +
+                   values_from_xpath(:sonyci_id) +
+                   values_from_xpath(:organization) +
+                   values_from_xpath(:canonical_meta_tag) +
+                   values_from_xpath(:special_collection_category)
       remove_exactly_once_from_array all_vals, with_types
     end
 

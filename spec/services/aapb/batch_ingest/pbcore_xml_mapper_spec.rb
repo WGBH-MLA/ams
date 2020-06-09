@@ -49,19 +49,26 @@ RSpec.describe AAPB::BatchIngest::PBCoreXMLMapper, :pbcore_xpath_helper do
 
     it 'correctly maps admin data coming from annotations' do
       admin_data_fields = [
-        :level_of_user_access,
         :minimally_cataloged,
         :outside_url,
+        :sonyci_id,
         :special_collection,
         :transcript_status,
         :licensing_info,
         :playlist_group,
-        :playlist_order
+        :playlist_order,
+        :organization,
+        :special_collection_category,
+        :canonical_meta_tag
       ]
 
       admin_data_fields.each do |admin_data_field|
         expect(attrs).to have_key admin_data_field
         expect(attrs[admin_data_field]).not_to be_nil
+      end
+
+      AdminData::SERIALIZED_FIELDS.each do |serialized_field|
+        expect(attrs[serialized_field]).to be_an_instance_of(Array)
       end
     end
 

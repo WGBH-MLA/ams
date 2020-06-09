@@ -34,7 +34,8 @@ module Hyrax
 
         def set_admin_data_attributes(admin_data, env)
           admin_data_attributes.each do |k|
-            if [:special_collection, :sonyci_id].include?(k) && env.attributes[k].present?
+            # these are serialized on AdminData, so send an array
+            if AdminData::SERIALIZED_FIELDS.include?(k) && env.attributes[k].present?
               admin_data.send("#{k}=", Array(env.attributes[k]))
             elsif env.attributes[k].present?
               admin_data.send("#{k}=", env.attributes[k].to_s)

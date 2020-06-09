@@ -254,7 +254,9 @@ module AAPB
             :update_hyrax_batch_ingest_batch_id,
             :update_last_pushed,
             :update_last_updated,
-            :update_needs_update
+            :update_needs_update,
+            :update_special_collection_category,
+            :update_canonical_meta_tag
           ].all? do |action|
             ability.can? action, AdminData
           end
