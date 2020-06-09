@@ -38,7 +38,10 @@ module AAPB
           "licensing info" => :licensing_info,
           "playlist group" => :playlist_group,
           "playlist order" => :playlist_order,
-          "organization" => :organization
+          "organization" => :organization,
+          "special collection category" => :special_collection_category,
+          "canonical meta tag" => :canonical_meta_tag,
+          "sony ci" => :sonyci_id
         }
       end
 
@@ -52,8 +55,9 @@ module AAPB
           self.class.annotation_type_to_field_name.each do |annotation_type, field_name|
             value = admindata[annotation_type]
             if value
-              # 'sepcial_collection' field is single-valued
-              value = value.first if field_name == 'special_collection'
+              # these are single valued fields on AdminData
+              # multivalued fields get sorted out in the AssetActor
+              value = value.first if !AdminData::SERIALIZED_FIELDS.include?(field_name)
               attrs[field_name] = value
             end
           end

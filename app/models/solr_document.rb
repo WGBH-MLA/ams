@@ -408,6 +408,14 @@ class SolrDocument
     self[Solrizer.solr_name('needs_update')]
   end
 
+  def special_collection_category
+    self[Solrizer.solr_name('special_collection_category')]
+  end
+
+  def canonical_meta_tag
+    self[Solrizer.solr_name('canonical_meta_tag')]
+  end
+
   def md5
     # this nonsensical ':symbol' option indicates that I am selecting the _ssim suffix from down in solrizer - default was _tesim, which was wrong for this field
     self[Solrizer.solr_name('md5', :symbol)]

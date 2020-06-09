@@ -59,7 +59,7 @@ module Hyrax
     end
 
     def self.multiple?(field)
-      if [:child_contributors,:special_collection,:sonyci_id].include?(field.to_sym)
+      if [:child_contributors,:special_collection,:sonyci_id,:special_collection_category].include?(field.to_sym)
         true
       else
         super
@@ -197,6 +197,22 @@ module Hyrax
     def organization
       if model.admin_data
         model.admin_data.organization
+      else
+        ""
+      end
+    end
+
+    def special_collection_category
+      if model.admin_data
+        Array(model.admin_data.special_collection_category)
+      else
+        []
+      end
+    end
+
+    def canonical_meta_tag
+      if model.admin_data
+        model.admin_data.canonical_meta_tag
       else
         ""
       end

@@ -157,6 +157,8 @@ module AMS::PbcoreXmlExportExtension
     special_collection.to_a.each { |annotation| xml.pbcoreAnnotation(annotationType: 'special_collections') { xml.cdata(annotation) } }
     self.sonyci_id.to_a.each { |annotation| xml.pbcoreAnnotation(annotationType: 'Sony Ci') { xml.cdata(annotation) } }
     organization.to_a.each { |annotation| xml.pbcoreAnnotation(annotationType: 'organization') { xml.cdata(annotation) } }
+    special_collection_category.to_a.each { |annotation| xml.pbcoreAnnotation(annotationType: 'Special Collection Category') { xml.cdata(annotation) } }
+    canonical_meta_tag.to_a.each { |annotation| xml.pbcoreAnnotation(annotationType: 'Canonical Meta Tag') { xml.cdata(annotation) } }
   end
 
   def prepare_instantiations(xml)
