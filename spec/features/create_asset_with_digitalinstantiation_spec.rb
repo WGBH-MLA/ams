@@ -98,7 +98,9 @@ RSpec.feature 'Create and Validate Asset,Digital Instantiation, EssenseTrack', j
       fill_in('Temporal coverage', with: asset_attributes[:temporal_coverage])
       fill_in('Audience level', with: asset_attributes[:audience_level])
       fill_in('Audience rating', with: asset_attributes[:audience_rating])
-      fill_in('Annotation', with: asset_attributes[:annotation])
+
+      # Use ID for asset_annotation on asset since we have related Annotations.
+      fill_in('asset_annotation', with: asset_attributes[:annotation])
       fill_in('Rights summary', with: asset_attributes[:rights_summary])
 
       click_link "Relationships" # define adminset relation

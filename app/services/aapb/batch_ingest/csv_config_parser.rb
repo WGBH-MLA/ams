@@ -17,6 +17,7 @@ module AAPB
 
             if klass.instance_methods.include?(:admin_data)
               whitelisted_properties += AdminData.attribute_names
+              whitelisted_properties += Annotation.ingestable_attributes
             elsif klass.instance_methods.include?(:instantiation_admin_data)
               whitelisted_properties += InstantiationAdminData.attribute_names
             end
@@ -44,7 +45,7 @@ module AAPB
                else
                  extra_attr=[]
                  if object_class == "Asset"
-                   extra_attr=(AdminData.attribute_names.dup - ['id', 'created_at', 'updated_at'])
+                   extra_attr=(AdminData.attribute_names.dup - ['id', 'created_at', 'updated_at'] + Annotation.ingestable_attributes).uniq
                  elsif object_class.include?("Instantiation")
                    extra_attr=(InstantiationAdminData.attribute_names.dup - ['id', 'created_at', 'updated_at'])
                  end

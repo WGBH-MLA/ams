@@ -7,7 +7,7 @@ FactoryBot.define do
     trait :full_aapb do
       # NOTE: Additional identifiers may be added with :other_identifiers.
       # See transient attribute below.
-      identifiers       { [ build(:pbcore_identifier, :aapb) ] }
+      identifiers       { [ build(:pbcore_identifier, :aapb), build(:pbcore_identifier, :sony_ci_video) ] }
       audience_levels   { build_list(:pbcore_audience_level, rand(1..3)) }
       audience_ratings  { build_list(:pbcore_audience_rating, rand(1..3)) }
       asset_types       { build_list(:pbcore_asset_type, rand(1..3)) }
@@ -30,13 +30,9 @@ FactoryBot.define do
           build(:pbcore_annotation, type: "Playlist Order" , value: rand(1..5)),
           build(:pbcore_annotation, type: "organization" , value: Faker::Company.name),
           build(:pbcore_annotation, type: "Special Collection Category" , value: Faker::Hipster.word),
-          build(:pbcore_annotation, type: "Canonical Meta Tag" , value: Faker::Internet.url),
-          build(:pbcore_annotation, type: "Sony Ci" , value: Faker::Alphanumeric.alphanumeric(31))
+          build(:pbcore_annotation, type: "Canonical Meta Tag" , value: Faker::Internet.url)
         ]
 
-        # In addition to the admin data annotations, throw in some arbitrary
-        # annotations that are not admin data to show they can also be handled.
-        admin_data_annotations + build_list(:pbcore_annotation, rand(1..3))
       end
 
       titles do

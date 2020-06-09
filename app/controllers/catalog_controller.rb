@@ -141,14 +141,6 @@ class CatalogController < ApplicationController
     config.add_show_field solr_name("topic", :stored_searchable)
     config.add_show_field solr_name("subject", :stored_searchable)
 
-    #from admindata
-    config.add_show_field solr_name("outside_url", :stored_searchable)
-    config.add_show_field solr_name("special_collection", :stored_searchable)
-    config.add_show_field solr_name("sonyci_id", :stored_searchable)
-    config.add_show_field solr_name("special_collection_cateory", :stored_searchable)
-    config.add_show_field solr_name("canonical_meta_tag", :stored_searchable)
-    config.add_show_field solr_name("organization", :stored_searchable)
-
     #from instantiation model
     config.add_show_field solr_name("local_instantiation_identifier", :stored_searchable)
     config.add_show_field solr_name("holding_organization", :stored_searchable)

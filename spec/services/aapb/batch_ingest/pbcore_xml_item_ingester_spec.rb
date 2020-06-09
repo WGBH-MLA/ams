@@ -70,19 +70,12 @@ RSpec.describe AAPB::BatchIngest::PBCoreXMLItemIngester, reset_data: false do
       end
 
       it 'ingests Admin Data' do
-        expect(@admin_data).not_to be_nil
-        expect(@admin_data.level_of_user_access).not_to be_nil
-        expect(@admin_data.minimally_cataloged).not_to be_nil
-        expect(@admin_data.outside_url).not_to be_nil
-        expect(@admin_data.special_collection).not_to be_nil
-        expect(@admin_data.transcript_status).not_to be_nil
         expect(@admin_data.sonyci_id).not_to be_nil
-        expect(@admin_data.licensing_info).not_to be_nil
-        expect(@admin_data.created_at).not_to be_nil
-        expect(@admin_data.updated_at).not_to be_nil
-        expect(@admin_data.playlist_group).not_to be_nil
-        expect(@admin_data.playlist_order).not_to be_nil
         expect(@admin_data.hyrax_batch_ingest_batch_id).not_to be_nil
+      end
+
+      it 'ingests Annotations' do
+        expect(@admin_data.annotations.length).to eq(11)
       end
 
       it 'propagates additional batch items as part of the batch' do

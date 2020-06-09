@@ -1,3 +1,37 @@
 terms:
-  - id: Supplemental Material
+  - id: canonical_meta_tag
+    term: Canonical Meta Tag
+  - id: captions_url
+    term: Captions URL
+  - id: cataloging_status
+    term: cataloging status
+  - id: external_reference_url
+    term: External Reference URL
+  - id: level_of_user_access
+    term: Level of User Access
+  - id: last_modified
+    term: last_modified
+  - id: licensing_info
+    term: Licensing Info
+  - id: mavis_number
+    term: MAVIS Number
+  - id: organization
+    term: organization
+  - id: outside_url
+    term: Outside URL
+  - id: project_code
+    term: Project Code
+  - id: playlist_group
+    term: Playlist Group
+  - id: playlist_order
+    term: Playlist Order
+  - id: special_collections
+    term: special_collections
+  - id: special_collection_category
+    term: Special Collection Category
+  - id: supplemental_material
     term: Supplemental Material
+  - id: transcript_status
+    term: Transcript Status
+  - id: transcript_url
+    term: Transcript URL

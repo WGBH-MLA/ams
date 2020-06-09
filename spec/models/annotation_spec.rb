@@ -36,6 +36,13 @@ RSpec.describe Annotation, type: :model do
           expect(admin_data.annotations.first).to eq(annotation)
         end
       end
+
+      context "has a Supplemental Material annotation_type and no ref attribute" do
+        let!(:annotation) { FactoryBot.build(:annotation, annotation_type: "supplemental_material", ref: nil, admin_data: admin_data) }
+        it "is invalid without a ref attribute" do
+          expect(annotation.valid?).to be false
+        end
+      end
     end
   end
 end
