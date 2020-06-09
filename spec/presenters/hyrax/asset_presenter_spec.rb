@@ -123,6 +123,8 @@ RSpec.describe Hyrax::AssetPresenter do
         asset.admin_data[:transcript_status] = ""
         asset.admin_data[:sonyci_id] = []
         asset.admin_data[:licensing_info] = ""
+        asset.admin_data[:organization] = ""
+        asset.admin_data[:special_collection_category] = []
         asset.save
         expect(asset.admin_data[:level_of_user_access]).to be_empty
         expect(asset.admin_data[:minimally_cataloged]).to be_empty
@@ -182,9 +184,15 @@ RSpec.describe Hyrax::AssetPresenter do
     it { is_expected.to delegate_method(:level_of_user_access).to(:solr_document) }
     it { is_expected.to delegate_method(:minimally_cataloged).to(:solr_document) }
     it { is_expected.to delegate_method(:outside_url).to(:solr_document) }
-    it { is_expected.to delegate_method(:special_collection).to(:solr_document) }
+    it { is_expected.to delegate_method(:special_collections).to(:solr_document) }
     it { is_expected.to delegate_method(:transcript_status).to(:solr_document) }
     it { is_expected.to delegate_method(:sonyci_id).to(:solr_document) }
     it { is_expected.to delegate_method(:licensing_info).to(:solr_document) }
+    it { is_expected.to delegate_method(:cataloging_status).to(:solr_document) }
+    it { is_expected.to delegate_method(:canonical_meta_tag).to(:solr_document) }
+    it { is_expected.to delegate_method(:special_collection_category).to(:solr_document) }
+    it { is_expected.to delegate_method(:playlist_group).to(:solr_document) }
+    it { is_expected.to delegate_method(:playlist_order).to(:solr_document) }
+    it { is_expected.to delegate_method(:organization).to(:solr_document) }
   end
 end

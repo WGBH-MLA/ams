@@ -25,6 +25,8 @@ en:
         local_instantiation_identifier:   'Local ID'
         generations:   'Generation'
         duration:   'Duration'
+      annotations:
+        annotations: 'Annotations'
     select_type:
       asset:
         name:               "Asset"

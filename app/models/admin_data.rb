@@ -9,7 +9,9 @@ class AdminData < ApplicationRecord
   serialize :sonyci_id, Array
   serialize :special_collection_category, Array
 
-  SERIALIZED_FIELDS = [ :special_collection, :sonyci_id, :special_collection_category ]
+  SERIALIZED_FIELDS = [ :sonyci_id ]
+
+  DEPRECATED_ADMIN_DATA_FIELDS = [ :level_of_user_access, :minimally_cataloged, :outside_url, :special_collection, :transcript_status, :licensing_info, :playlist_group, :playlist_order, :organization, :special_collection_category, :canonical_meta_tag ]
 
   # Find the admin data associated with the Global Identifier (gid)
   # @param [String] gid - Global Identifier for this admin_data (e.g.gid://ams/admindata/1)

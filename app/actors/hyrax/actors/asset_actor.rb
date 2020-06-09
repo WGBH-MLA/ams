@@ -30,26 +30,99 @@ module Hyrax
           env.curation_concern.admin_data_gid = env.curation_concern.admin_data.gid
           set_admin_data_attributes(env.curation_concern.admin_data, env) if env.current_ability.can?(:create, AdminData)
           remove_admin_data_from_env_attributes(env)
+          delete_removed_annotations(env.curation_concern.admin_data, env)
+          set_annotations_attributes(env.curation_concern.admin_data, env) if env.current_ability.can?(:create, Annotation)
+          remove_annotations_from_env_attributes(env)
+
+          # This can be removed after data migration
+          remove_deprecated_admin_data_fields(env)
         end
 
         def set_admin_data_attributes(admin_data, env)
           admin_data_attributes.each do |k|
-            # these are serialized on AdminData, so send an array
-            if AdminData::SERIALIZED_FIELDS.include?(k) && env.attributes[k].present?
-              admin_data.send("#{k}=", Array(env.attributes[k]))
-            elsif env.attributes[k].present?
-              admin_data.send("#{k}=", env.attributes[k].to_s)
+            case AdminData::SERIALIZED_FIELDS.include?(k)
+            # these are serialized on AdminData, so always send an array
+            when true
+              if env.attributes[k].present?
+                admin_data.send("#{k}=", Array(env.attributes[k]))
+              elsif admin_data.send(k).present? && !env.attributes[k].present?
+                admin_data.send("#{k}=", Array.new)
+              end
+            when false
+              if env.attributes[k].present?
+                admin_data.send("#{k}=", env.attributes[k].to_s)
+              elsif admin_data.send(k).present? && !env.attributes[k].present?
+                admin_data.send("#{k}=", env.attributes[k].to_s)
+              end
             end
           end
+        end
+
+        def delete_removed_annotations(admin_data, env)
+          return if admin_data.annotations.empty?
+          return if env.attributes["annotations"].nil?
+          ids_in_env = env.attributes["annotations"].select{ |ann| ann["id"].present? }.map{ |ann| ann["id"].to_i }
+          admin_data.annotations.each do |annotation|
+            annotation.destroy unless ids_in_env.include?(annotation.id)
+          end
+        end
+
+        def set_annotations_attributes(admin_data, env)
+          return if env.attributes["annotations"].nil?
+          env.attributes["annotations"].each do |annotation|
+            # Fixes an issue where manually deleting annotations sent an
+            # empty annotation to the env
+            next if annotation_empty?(annotation)
+            # We should always have an AdminData object by this point
+            annotation["admin_data_id"] = admin_data.id
+            case annotation["id"].present?
+            when true
+              a = Annotation.find(annotation["id"])
+              annotation_attributes.each do |attr|
+                if annotation[attr].present?
+                  a.send("#{attr}=", annotation[attr].to_s)
+                elsif !annotation[attr].present? && a.send(attr).present?
+                  a.send("#{attr}=", annotation[attr].to_s)
+                end
+              end
+              a.save!
+            when false
+              a = Annotation.create!(annotation)
+            end
+          end
+        end
+
+        def annotation_empty?(annotation_env)
+          return true if annotation_env.values.uniq.length == 1 && annotation_env.values.uniq.first.empty?
         end
 
         def remove_admin_data_from_env_attributes(env)
           admin_data_attributes.each { |k| env.attributes.delete(k) }
         end
 
+        def remove_annotations_from_env_attributes(env)
+          # Remove anotations from ENV so that we can save the Asset
+          env.attributes.delete("annotations")
+        end
+
+        def remove_deprecated_admin_data_fields(env)
+          # Remove deprecated admin data fields from ENV so that we can save the Asset
+          # and they should be ignored before we migrate data and remove
+          AdminData::DEPRECATED_ADMIN_DATA_FIELDS.each do |field|
+            env.attributes.delete(field.to_s)
+          end
+        end
+
         def admin_data_attributes
           # removing id, created_at & updated_at from attributes
-          (AdminData.attribute_names.dup - ['id', 'created_at', 'updated_at']).map &:to_sym
+          # This essentially only returns the sonyci_id for now, but it removes the attributes
+          # that are we are migrating to annotations and this could be refactored after that.
+          (AdminData.attribute_names.dup - ['id', 'created_at', 'updated_at']).map(&:to_sym) - AdminData::DEPRECATED_ADMIN_DATA_FIELDS
+        end
+
+        def annotation_attributes
+          # removing id, created_at & updated_at from attributes
+          (Annotation.attribute_names.dup - ['id', 'created_at', 'updated_at']).map(&:to_sym)
         end
 
         def find_or_create_admin_data(env)

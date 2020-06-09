@@ -7,7 +7,7 @@ RSpec.describe MediaController, type: :controller do
     let(:sony_ci_id) { '4567' }
     let(:fake_sony_ci_url) { "https://fakesonyci.com/download/#{sony_ci_id}"}
     let(:fake_sony_ci_api) { instance_double("SonyCiBasic") }
-    let(:fake_solr_document) { { 'sonyci_id_tesim' => [sony_ci_id] } }
+    let(:fake_solr_document) { { 'sonyci_id_ssim' => [sony_ci_id] } }
 
     before do
       allow(fake_sony_ci_api).to receive(:download).with(sony_ci_id).and_return(fake_sony_ci_url)

@@ -1297,6 +1297,7 @@ en:
         visibility_during_embargo: Restricted to
         visibility_during_lease: Is available to
         child_contributors: Contributor
+        child_annotations: Create or Edit Annotations
         sonyci_id: Sony's Ci ID
       proxy_deposit_request:
         sender_comment: Comments

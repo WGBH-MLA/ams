@@ -30,7 +30,8 @@ class Ability
                    PhysicalInstantiation,
                    DigitalInstantiation,
                    Collection,
-                   Contribution ]
+                   Contribution,
+                   Annotation ]
 
     # Explicitly forbid these actions.
     cannot [:destroy, :update], [ AdminData,
@@ -40,7 +41,8 @@ class Ability
                                   PhysicalInstantiation,
                                   DigitalInstantiation,
                                   Collection,
-                                  Contribution ]
+                                  Contribution,
+                                  Annotation ]
   end
 
   # Sets permisisons for 'admin' users.
@@ -59,7 +61,8 @@ class Ability
                               Collection,
                               Contribution,
                               AdminData,
-                              InstantiationAdminData ]
+                              InstantiationAdminData,
+                              Annotation ]
 
     # Field-level permissions for Admin Data
     can [:update_level_of_user_access, :update_minimally_cataloged,
@@ -79,6 +82,7 @@ class Ability
                                         PhysicalInstantiation,
                                         DigitalInstantiation,
                                         Collection,
-                                        Contribution ]
+                                        Contribution,
+                                        Annotation ]
   end
 end

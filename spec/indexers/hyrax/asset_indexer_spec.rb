@@ -6,15 +6,18 @@ RSpec.describe AssetIndexer do
 
   let(:admin_data) { create(:admin_data) }
   let(:admin_data_no_sony_ci_id) { create(:admin_data, :no_sony_ci_id)}
+  let(:admin_data_with_annotation) { create(:admin_data, :with_annotation)}
 
   let(:work) { build(:asset, with_admin_data:admin_data.gid, date:["2010"], broadcast_date:['2011-05'], copyright_date:['2011-05'], created_date:['2011-05-11'], ) }
   let(:work_no_sony_ci_id) { build(:asset_no_sonyci_id, with_admin_data:admin_data_no_sony_ci_id.gid, date:["2010"], broadcast_date:['2011-05'], copyright_date:['2011-05'], created_date:['2011-05-11'], ) }
 
   let(:asset) { create(:asset) }
   let(:asset_no_sonyci_id) { create(:asset, with_admin_data:admin_data_no_sony_ci_id.gid) }
+  let(:asset_with_annotation) { create(:asset, with_admin_data:admin_data_with_annotation.gid) }
 
   let(:asset_solr_doc) { described_class.new(asset) }
   let(:asset_solr_doc_no_sony_ci_id) { described_class.new(asset_no_sonyci_id) }
+  let(:asset_solr_doc_with_annotations) { described_class.new(asset_with_annotation)}
 
   let(:digital_instantiation_work) { create(:digital_instantiation) }
   let(:aapb_moving_image_digital_instantiation_work) { create(:digital_instantiation, :aapb_moving_image) }
@@ -27,14 +30,7 @@ RSpec.describe AssetIndexer do
 
   context "indexes admin data" do
     it "indexes the correct fields" do
-      expect(solr_document.fetch('admin_data_tesim')).to eq admin_data.gid
-      expect(solr_document.fetch('level_of_user_access_tesim')).to eq admin_data.level_of_user_access
-      expect(solr_document.fetch('minimally_cataloged_tesim')).to eq admin_data.minimally_cataloged
-      expect(solr_document.fetch('outside_url_tesim')).to eq admin_data.outside_url
-      expect(solr_document.fetch('special_collection_tesim')).to eq admin_data.special_collection
-      expect(solr_document.fetch('transcript_status_tesim')).to eq admin_data.transcript_status
-      expect(solr_document.fetch('sonyci_id_tesim')).to eq admin_data.sonyci_id
-      expect(solr_document.fetch('licensing_info_tesim')).to eq admin_data.licensing_info
+      expect(solr_document.fetch('sonyci_id_ssim')).to eq asset.sonyci_id
     end
   end
 
@@ -142,6 +138,14 @@ RSpec.describe AssetIndexer do
       solr_doc = asset_solr_doc.generate_solr_document
       expect(solr_doc.fetch('media_type_ssim')).not_to be_empty
 
+    end
+  end
+
+  context "annotations" do
+    it "indexes annotation data on asset's solr document" do
+      annotation = asset_with_annotation.admin_data.annotations.first
+      solr_doc = asset_solr_doc_with_annotations.generate_solr_document
+      expect(solr_doc.fetch(Solrizer.solr_name(annotation.annotation_type,'ssim'))).to eq([annotation.value])
     end
   end
 end

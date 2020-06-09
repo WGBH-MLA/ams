@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20200527175240) do
+ActiveRecord::Schema.define(version: 20200611175611) do
 
   create_table "admin_data", force: :cascade do |t|
     t.string "level_of_user_access"
@@ -32,6 +32,19 @@ ActiveRecord::Schema.define(version: 20200527175240) do
     t.string "special_collection_category"
     t.string "canonical_meta_tag"
     t.index ["hyrax_batch_ingest_batch_id"], name: "index_admin_data_on_hyrax_batch_ingest_batch_id"
+  end
+
+  create_table "annotations", force: :cascade do |t|
+    t.string "annotation_type"
+    t.string "ref"
+    t.string "source"
+    t.string "annotation"
+    t.string "version"
+    t.string "value"
+    t.integer "admin_data_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["admin_data_id"], name: "index_annotations_on_admin_data_id"
   end
 
   create_table "bookmarks", force: :cascade do |t|
