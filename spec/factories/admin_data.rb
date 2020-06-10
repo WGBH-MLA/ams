@@ -9,6 +9,7 @@ FactoryBot.define do
     licensing_info { "Licensing Info" }
     organization { "American Archive of Public Broadcasting" }
     special_collection_category { ["Outside"] }
+    canonical_meta_tag { nil }
     trait :no_sony_ci_id do
       sonyci_id { [] }
     end
@@ -18,6 +19,19 @@ FactoryBot.define do
 
     trait :needs_update do
       needs_update {true}
+    end
+
+    trait :empty do
+      level_of_user_access { nil }
+      minimally_cataloged { nil }
+      outside_url { nil }
+      special_collection { [] }
+      transcript_status { nil }
+      sonyci_id { [] }
+      licensing_info { nil }
+      organization { nil }
+      special_collection_category { [] }
+      canonical_meta_tag { nil }
     end
   end
 end
