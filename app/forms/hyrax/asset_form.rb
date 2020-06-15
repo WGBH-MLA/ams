@@ -218,6 +218,14 @@ module Hyrax
       end
     end
 
+    def annotations
+      if model.admin_data
+        Array(model.admin_data.annotations)
+      else
+        []
+      end
+    end
+
     # Augment the list of permmitted params to accept our fields that have
     # types associated with them, e.g. title + title type
     # NOTE: `super` in this case is HyraxEditor::Form.permitted_params
