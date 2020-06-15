@@ -1,5 +1,6 @@
 class AdminData < ApplicationRecord
-  belongs_to :hyrax_batch_ingest_batch, optional: true
+  belongs_to  :hyrax_batch_ingest_batch, optional: true
+  has_many    :annotations
 
   self.table_name = "admin_data"
   include ::EmptyDetection
