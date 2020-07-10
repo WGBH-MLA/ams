@@ -40,22 +40,18 @@ module Hyrax
 
         def set_admin_data_attributes(admin_data, env)
           admin_data_attributes.each do |k|
-            case AdminData::SERIALIZED_FIELDS.include?(k)
-            # these are serialized on AdminData, so always send an array
-            when true
-              if env.attributes[k].present?
-                admin_data.send("#{k}=", Array(env.attributes[k]))
-              elsif admin_data.send(k).present? && !env.attributes[k].present?
-                admin_data.send("#{k}=", Array.new)
-              end
-            when false
-              if env.attributes[k].present?
-                admin_data.send("#{k}=", env.attributes[k].to_s)
-              elsif admin_data.send(k).present? && !env.attributes[k].present?
-                admin_data.send("#{k}=", env.attributes[k].to_s)
-              end
+            # Some attributes are serialized on AdminData, so always send an array
+            if should_empty_admin_data_value?(k, admin_data, env)
+              AdminData::SERIALIZED_FIELDS.include?(k) ? admin_data.send("#{k}=", Array.new) : admin_data.send("#{k}=", "")
+            elsif env.attributes[k].present?
+              AdminData::SERIALIZED_FIELDS.include?(k) ? admin_data.send("#{k}=", Array(env.attributes[k])) : admin_data.send("#{k}=", env.attributes[k].to_s)
             end
           end
+        end
+
+        def should_empty_admin_data_value?(key, admin_data, env)
+          return true if admin_data.send(key).present? && !env.attributes[key].present?
+          false
         end
 
         def delete_removed_annotations(admin_data, env)

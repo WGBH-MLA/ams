@@ -420,6 +420,38 @@ class SolrDocument
     self[Solrizer.solr_name('cataloging_status', 'ssim')]
   end
 
+  def captions_url
+    self[Solrizer.solr_name('captions_url', 'ssim')]
+  end
+
+  def captions_url
+    self[Solrizer.solr_name('captions_url', 'ssim')]
+  end
+
+  def external_reference_url
+    self[Solrizer.solr_name('external_reference_url','ssim')]
+  end
+
+  def last_modified
+    self[Solrizer.solr_name('last_modified','ssim')]
+  end
+
+  def mavis_number
+    self[Solrizer.solr_name('mavis_number','ssim')]
+  end
+
+  def project_code
+    self[Solrizer.solr_name('project_code','ssim')]
+  end
+
+  def supplemental_material
+    self[Solrizer.solr_name('supplemental_material','ssim')]
+  end
+
+  def transcript_url
+    self[Solrizer.solr_name('transcript_url','ssim')]
+  end
+
   def md5
     # this nonsensical ':symbol' option indicates that I am selecting the _ssim suffix from down in solrizer - default was _tesim, which was wrong for this field
     self[Solrizer.solr_name('md5', :symbol)]

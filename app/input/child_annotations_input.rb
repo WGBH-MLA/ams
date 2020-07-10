@@ -1,10 +1,10 @@
 class ChildAnnotationsInput < MultiValueInput
-  def build_field(value, _index)
+  def build_field(value, index)
 
     annotation_types_service = AnnotationTypesService.new
     type_choices = [""] + annotation_types_service.select_all_options
 
-    input_dom_id_prefix = "#{object_name}_#{attribute_name}_#{_index}"
+    input_dom_id_prefix = "#{object_name}_#{attribute_name}_#{index}"
 
     id_hidden_options = input_html_options.dup.merge(
         value: value[0],
