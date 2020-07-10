@@ -51,11 +51,6 @@ class ExportRecordsJob < ApplicationJob
     elsif format == "pbcore"
       AMS::Export::DocumentsToPbcoreXml.new(response_documents, export_type: 'pbcore_job')
     elsif format == 'zip-pbcore'
-
-
-      # Get lists of ids to update?
-      # AdminData.update(needs_update: false, last_pushed: Time.now.to_i, where: "id IN (#{ids.join(',')})")
-
       assets = response_documents.map {|doc| Asset.find(doc[:id])}
 
       assets.each do |asset|

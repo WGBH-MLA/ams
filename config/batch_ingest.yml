@@ -128,7 +128,7 @@ ingest_types:
           - series_description
           - producing_organization
           - sonyci_id
-          - special_collection
+          - special_collections
   zipped_pbcore_digital_instantiation:
     label: "AAPB Digital Instantiation PBCore - Zipped"
     reader: "AAPB::BatchIngest::ZippedPBCoreDigitalInstantiationReader"

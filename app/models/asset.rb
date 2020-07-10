@@ -53,6 +53,10 @@ class Asset < ActiveFedora::Base
     self[:admin_data_gid] = new_admin_data.gid
   end
 
+  def annotations
+    @annotations ||= admin_data.annotations
+  end
+
   # TODO: Use RDF::Vocab for applicable terms.
   # See https://github.com/ruby-rdf/rdf-vocab/tree/develop/lib/rdf/vocab
 
@@ -284,6 +288,7 @@ class Asset < ActiveFedora::Base
     canonical_meta_tag ||= find_annotation_attribute("canonical_meta_tag")
   end
 
+  # CAN BE REFACTORED TO LOOK AT ANNOTATIONS OR ADMINDATA ONLY AFTER ANNOTATION MIGRATION
   def find_annotation_attribute(attribute)
     # always return an Array
     if admin_data.annotations.select { |a| a.annotation_type == attribute }.present?

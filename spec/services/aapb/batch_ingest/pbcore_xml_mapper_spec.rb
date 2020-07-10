@@ -21,6 +21,8 @@ RSpec.describe AAPB::BatchIngest::PBCoreXMLMapper, :pbcore_xpath_helper do
     let(:attrs_with_xpath_shortcuts) { attr_names - [:title, :description, :date, :spatial_coverage, :temporal_coverage, :id, :holding_organization, :annotation] }
     let(:attrs) { subject.asset_attributes }
 
+    let(:pbcore_annotation_types) { attrs[:annotations].map{ |anno| anno["annotation_type"] } }
+
     it 'maps all attributes from PBCore XML' do
       # For each attribute in attr_names, make sure it has a that comes from
       # the PBCore XML factory.
@@ -54,6 +56,15 @@ RSpec.describe AAPB::BatchIngest::PBCoreXMLMapper, :pbcore_xpath_helper do
     it 'correctly maps annotation data' do
       expect(attrs).to have_key :annotations
       expect(attrs[:annotations].length).to eq (11)
+
+      # Every Annotation in the attrs should have a value from the PBCore
+      attrs[:annotations].each do |anno|
+        expect(pbcore_values_from_xpath(pbcore_xml, anno["annotation_type"].to_sym)).to include(anno["value"])
+      end
+      # Every Annotation in the attrs should have a type registered with the AnnotationTypesService
+      pbcore_annotation_types.each do |type|
+        expect(AnnotationTypesService.new.select_all_options.to_h.values).to include(type)
+      end
     end
 
     context 'when dates are of a known invalid type' do

@@ -62,6 +62,15 @@ module AAPB
               raise("Unable to find object  for `id` #{object_id}")
             end
 
+            # We delete associated Annotations of the same type but need to preserve
+            # annotations of different types.
+            if attributes.keys.include?("annotations")
+              new_annotation_types = attributes["annotations"].map{ |ann| ann["annotation_type"] }
+              annotations_to_keep = model_object.admin_data.annotations.select{ |ann| !new_annotation_types.include?(ann.annotation_type) }
+
+              annotations_to_keep.map{ |ann| attributes["annotations"] << { "id" => ann.id, "annotation_type" => ann.annotation_type, "ref" => ann.ref, "source" => ann.source, "annotation" => ann.annotation, "version" => ann.version, "value" => ann.value } }
+            end
+
             actor_stack_status = actor.update(::Hyrax::Actors::Environment.new(model_object, ability, attributes))
           elsif node.ingest_type == "add"
             object_id = attributes.delete("id")
@@ -70,9 +79,17 @@ module AAPB
             end
 
             attributes.keys.each do |k|
-              if @options.attributes.include?(k)
+              # If it is an annotations array, add existing annotations for the env
+              # Skip @options.attributes check
+              if k == 'annotations'
+                annotations_objects = model_object.admin_data.annotations
+
+                attributes[k] = model_object.admin_data.annotations.map{ |ann| { id: ann.id, annotation_type: ann.annotation_type, ref: ann.ref, source: ann.source, annotation: ann.annotation, version: ann.version, value: ann.value }.stringify_keys } + attributes[k]
+
+              elsif @options.attributes.include?(k)
                 if model_object.is_a?(Asset)
                   admin_data_object = model_object.admin_data
+
                   attributes[k] = (attributes[k] + model_object.try(k).to_a + admin_data_object.try(k).to_a ).uniq
                 end
               end

@@ -5,18 +5,20 @@ RSpec.describe AssetIndexer do
   let(:service) { described_class.new(work) }
 
   let(:admin_data) { create(:admin_data) }
-  let(:admin_data_no_sony_ci_id) { create(:admin_data, :no_sony_ci_id)}
+  let(:admin_data_no_sony_ci_id) { create(:admin_data, :empty)}
   let(:admin_data_with_annotation) { create(:admin_data, :with_annotation)}
 
-  let(:work) { build(:asset, with_admin_data:admin_data.gid, date:["2010"], broadcast_date:['2011-05'], copyright_date:['2011-05'], created_date:['2011-05-11'], ) }
-  let(:work_no_sony_ci_id) { build(:asset_no_sonyci_id, with_admin_data:admin_data_no_sony_ci_id.gid, date:["2010"], broadcast_date:['2011-05'], copyright_date:['2011-05'], created_date:['2011-05-11'], ) }
+  let(:work) { build(:asset, with_admin_data: admin_data.gid, date:["2010"], broadcast_date:['2011-05'], copyright_date:['2011-05'], created_date:['2011-05-11'], ) }
+  let(:work_no_sony_ci_id) { build(:asset_no_sonyci_id, with_admin_data: admin_data_no_sony_ci_id.gid, date:["2010"], broadcast_date:['2011-05'], copyright_date:['2011-05'], created_date:['2011-05-11'], ) }
 
   let(:asset) { create(:asset) }
-  let(:asset_no_sonyci_id) { create(:asset, with_admin_data:admin_data_no_sony_ci_id.gid) }
-  let(:asset_with_annotation) { create(:asset, with_admin_data:admin_data_with_annotation.gid) }
+  let(:asset_no_sonyci_id) { create(:asset, with_admin_data: admin_data_no_sony_ci_id.gid) }
+  let(:asset_with_annotation) { create(:asset, with_admin_data: admin_data_with_annotation.gid ) }
 
   let(:asset_solr_doc) { described_class.new(asset) }
   let(:asset_solr_doc_no_sony_ci_id) { described_class.new(asset_no_sonyci_id) }
+
+  #
   let(:asset_solr_doc_with_annotations) { described_class.new(asset_with_annotation)}
 
   let(:digital_instantiation_work) { create(:digital_instantiation) }
@@ -145,6 +147,8 @@ RSpec.describe AssetIndexer do
     it "indexes annotation data on asset's solr document" do
       annotation = asset_with_annotation.admin_data.annotations.first
       solr_doc = asset_solr_doc_with_annotations.generate_solr_document
+      # We randomize the annotation_type, so use Solrizer on the annotation_type since it
+      # gets indexed in Solr by the annotation_type.
       expect(solr_doc.fetch(Solrizer.solr_name(annotation.annotation_type,'ssim'))).to eq([annotation.value])
     end
   end

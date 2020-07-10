@@ -31,13 +31,8 @@ module Hyrax
       @batch_ingest_date ||= Date.parse(batch.created_at.to_s)
     end
 
-    def admin_data
-      @admin_data ||= AdminData.find_by_gid(solr_document['admin_data_tesim'].first)
-    end
-
     def annotations
-      return [] if admin_data.nil?
-      @annotations ||= admin_data.annotations
+      @annotations ||= Asset.find(solr_document['id']).annotations
     end
 
     def last_pushed
@@ -78,6 +73,11 @@ module Hyrax
           last_pushed.blank? &&
           needs_update.blank?
         )
+    end
+
+    def display_annotations?
+      return true if Annotation.registered_annotation_types.values.map{ |type| solr_document.send(type.to_sym).present? }.uniq.include?(true)
+      false
     end
 
     def iiif_version

@@ -156,7 +156,8 @@ module Hyrax
       dates_with_types
     end
 
-
+    # WE CAN REMOVE THESE ADMIN_DATA ACCESSORS AFTER MIGRATING
+    # ADMIN_DATA DATA TO ANNOTATIONS
     def level_of_user_access
       if model.admin_data
         model.admin_data.level_of_user_access
@@ -198,14 +199,6 @@ module Hyrax
       end
     end
 
-    def sonyci_id
-      if model.admin_data
-        Array(model.admin_data.sonyci_id)
-      else
-        []
-      end
-    end
-
     def licensing_info
       if model.admin_data
         model.admin_data.licensing_info
@@ -235,6 +228,33 @@ module Hyrax
         model.admin_data.canonical_meta_tag
       else
         ""
+      end
+    end
+
+    def playlist_group
+      if model.admin_data
+        model.admin_data.playlist_group
+      else
+        ""
+      end
+    end
+
+    def playlist_order
+      if model.admin_data
+        model.admin_data.playlist_order
+      else
+        ""
+      end
+    end
+
+    # KEEP THESE AFTER MIGRATING ADMIN_DATA
+    # DATA TO ANNOTATIONS
+
+    def sonyci_id
+      if model.admin_data
+        Array(model.admin_data.sonyci_id)
+      else
+        []
       end
     end
 

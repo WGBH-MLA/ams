@@ -5,12 +5,16 @@ class AdminData < ApplicationRecord
   self.table_name = "admin_data"
   include ::EmptyDetection
 
+  # CAN BE REMOVED AFTER MIGRATION TO ANNOTATIONS
   serialize :special_collection, Array
-  serialize :sonyci_id, Array
+  # CAN BE REMOVED AFTER MIGRATION TO ANNOTATIONS
   serialize :special_collection_category, Array
+
+  serialize :sonyci_id, Array
 
   SERIALIZED_FIELDS = [ :sonyci_id ]
 
+  # CAN BE REMOVED AFTER MIGRATION
   DEPRECATED_ADMIN_DATA_FIELDS = [ :level_of_user_access, :minimally_cataloged, :outside_url, :special_collection, :transcript_status, :licensing_info, :playlist_group, :playlist_order, :organization, :special_collection_category, :canonical_meta_tag ]
 
   # Find the admin data associated with the Global Identifier (gid)

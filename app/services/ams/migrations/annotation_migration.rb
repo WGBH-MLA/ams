@@ -1,28 +1,31 @@
 module AMS
   module Migrations
     class AnnotationMigration
-      attr_accessor :admin_data_objects
+      attr_accessor :assets
 
-      FIELDS_TO_MIGRATE = [ :level_of_user_access, :minimally_cataloged, :outside_url, :special_collections, :transcript_status, :licensing_info, :playlist_group, :playlist_order, :organization, :special_collection_category, :canonical_meta_tag ]
+      FIELDS_TO_MIGRATE = [ :level_of_user_access, :minimally_cataloged, :outside_url, :special_collection, :transcript_status, :licensing_info, :playlist_group, :playlist_order, :organization, :special_collection_category, :canonical_meta_tag ]
 
       FIELDS_WITH_MAP = { :minimally_cataloged => :cataloging_status, :special_collection => :special_collections }
 
       def initialize
-        @admin_data_objects = AdminData.all
+        # Use Assets because they are 1-to-1 with AdminData
+        # and we want to use the AssetActor for indexing
+        @assets = Asset.all
         @errors = []
       end
 
       def run
-        migrate_data(admin_data_objects)
+        migrate_data(assets)
         puts @errors
       end
 
       private
 
       def migrate_data(admin_data_objects)
-        processed_admin_data = []
+        processed_assets = []
 
-        admin_data_objects.each do |admin_data|
+        assets.each do |asset|
+          admin_data = asset.admin_data
           hot_package = []
           FIELDS_TO_MIGRATE.each do |field|
             field_value = admin_data.send(field)
@@ -32,7 +35,7 @@ module AMS
             # Deals with fields that don't precisely track to new annotation_type ids
             field_name = ( FIELDS_WITH_MAP.keys.include?(field) ? FIELDS_WITH_MAP[field] : field )
 
-            if AdminData::SERIALIZED_FIELDS.include?(field_name)
+            if [ :special_collections, :special_collection_category ].include?(field_name)
               field_value[0..-1].each do |v|
                 anno = Annotation.new(admin_data_id: admin_data.id, annotation_type: field_name.to_s, value: v)
                 if anno.valid?
@@ -56,11 +59,11 @@ module AMS
             end
           end
 
-          hot_package << admin_data if hot_package.map(&:class).include?(Annotation)
-          processed_admin_data << hot_package if hot_package.map(&:class).include?(AdminData)
+          hot_package << asset if hot_package.map(&:class).include?(Annotation)
+          processed_assets << hot_package if hot_package.map(&:class).include?(Asset)
         end
 
-        processed_admin_data.each do |package|
+        processed_assets.each do |package|
           ActiveRecord::Base.transaction do
             package.map(&:save!)
           end
