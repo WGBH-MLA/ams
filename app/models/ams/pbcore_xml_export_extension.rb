@@ -143,6 +143,10 @@ module AMS::PbcoreXmlExportExtension
     # make sure that manipulating 'xml' inside this func is still in scope
     prepare_instantiations(xml)
 
+
+    # Annotation from the annotation property on Asset
+    annotation.to_a.each { |annotation| xml.pbcoreAnnotation { xml.cdata(annotation) } }
+
     # Add method here to process associated Annotations
     prepare_annotations(xml)
   end
