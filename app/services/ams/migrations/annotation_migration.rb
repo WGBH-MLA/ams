@@ -41,6 +41,7 @@ module AMS
           FIELDS_TO_MIGRATE.each do |field|
             field_value = admin_data.send(field)
             next if field_value.nil?
+            # Skip if its an empty Array
             next if field_value.is_a?(Array) && field_value.empty?
 
             # Deals with fields that don't precisely track to new annotation_type ids
@@ -48,15 +49,20 @@ module AMS
 
             if [ :special_collections, :special_collection_category ].include?(field_name)
               field_value[0..-1].each do |v|
+                # Skip if v is an empty string
+                next if v.empty?
                 anno = Annotation.new(admin_data_id: admin_data.id, annotation_type: field_name.to_s, value: v)
                 if anno.valid?
                   puts "ADDING ANNOTATION TO PACKAGE: [ ADMIN_DATA_ID: #{admin_data.id}, TYPE: #{field_name.to_s}, VALUE: #{v} ]"
                   hot_package << anno
                   field_value.delete(v)
                 else
-                  @errors << "Annotations Migration Error: Annotation invalid for AdminData object( id: #{admin_data.id.to_s}, #{field_name}: #{v} \n"
+                  @errors << "Annotations Migration Error: Annotation invalid for AdminData object( id: #{admin_data.id.to_s}, #{field_name}: #{v})\n"
                 end
               end
+
+              # This maintains whatever is there currently unless we create an Annotation which will delete the value if it is valid.
+              # This is necessary since the special_collections and special_collection_category are serialized.
               admin_data.send("#{field_name}=", field_value) unless FIELDS_WITH_MAP.values.include?(field_name)
               admin_data.send("#{FIELDS_WITH_MAP.key(field_name)}=", field_value) if FIELDS_WITH_MAP.values.include?(field_name)
             else
@@ -67,7 +73,7 @@ module AMS
                 admin_data.send("#{field_name}=", nil) unless FIELDS_WITH_MAP.values.include?(field_name)
                 admin_data.send("#{FIELDS_WITH_MAP.key(field_name)}=", nil) if FIELDS_WITH_MAP.values.include?(field_name)
               else
-                @errors << "Annotations Migration Error: Annotation invalid for AdminData object( id: #{admin_data.id.to_s}, #{field_name}: #{field_value} \n"
+                @errors << "Annotations Migration Error: Annotation invalid for AdminData object( id: #{admin_data.id.to_s}, #{field_name}: #{field_value})\n"
               end
             end
           end
