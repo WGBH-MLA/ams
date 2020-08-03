@@ -67,7 +67,7 @@ module AAPB
             # an asset
             if attribute.nil?
               model_hash[model] ||= {}
-            elsif annotation_attr?(attribute, model)
+            elsif annotation_attr?(attribute)
               model_hash[model]["annotations"] ||= []
               model_hash[model]["annotations"] << { "annotation_type" => attribute.to_s, "value" => value } unless value.empty?
             elsif multi_value_attr?(attribute, model)
@@ -115,13 +115,9 @@ module AAPB
         false
       end
 
-      def annotation_attr?(attribute,klass)
-        if !attribute.nil? && attribute != "id" && Annotation.ingestable_attributes.include?(attribute)
-          return true
-        end
-        false
+      def annotation_attr?(attribute)
+        !attribute.nil? && attribute != "id" && Annotation.ingestable_attributes.include?(attribute)
       end
-
 
       def multi_value_fedora_attribute?(attribute,klass)
         klass.constantize.properties[attribute] && klass.constantize.properties[attribute].multiple?
