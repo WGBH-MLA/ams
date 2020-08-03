@@ -1,6 +1,3 @@
-
-# CAN WE REMOVE ALL THE FIELDS THAT HAVE BEEN MOVED TO ANNOTATIONS
-# REMOVE AND RUN SPECS?
 FactoryBot.define do
   factory :admin_data, class: AdminData do
     sonyci_id { ["Sony-1","Sony-2"] }
