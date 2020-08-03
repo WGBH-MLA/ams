@@ -143,22 +143,12 @@ module AMS::PbcoreXmlExportExtension
     # make sure that manipulating 'xml' inside this func is still in scope
     prepare_instantiations(xml)
 
-    # Anotations
+
+    # Annotation from the annotation property on Asset
     annotation.to_a.each { |annotation| xml.pbcoreAnnotation { xml.cdata(annotation) } }
 
-    # AAPB Admin Data
-    level_of_user_access.to_a.each { |annotation| xml.pbcoreAnnotation(annotationType: 'Level of User Access') { xml.cdata(annotation) } }
-    minimally_cataloged.to_a.each { |annotation| xml.pbcoreAnnotation(annotationType: 'cataloging status') { xml.cdata(annotation) } }
-    outside_url.to_a.each { |annotation| xml.pbcoreAnnotation(annotationType: 'Outside URL') { xml.cdata(annotation) } }
-    transcript_status.to_a.each { |annotation| xml.pbcoreAnnotation(annotationType: 'Transcript Status') { xml.cdata(annotation) } }
-    licensing_info.to_a.each { |annotation| xml.pbcoreAnnotation(annotationType: 'Licensing Info') { xml.cdata(annotation) } }
-    playlist_group.to_a.each { |annotation| xml.pbcoreAnnotation(annotationType: 'Playlist Group') { xml.cdata(annotation) } }
-    playlist_order.to_a.each { |annotation| xml.pbcoreAnnotation(annotationType: 'Playlist Order') { xml.cdata(annotation) } }
-    special_collection.to_a.each { |annotation| xml.pbcoreAnnotation(annotationType: 'special_collections') { xml.cdata(annotation) } }
-    self.sonyci_id.to_a.each { |annotation| xml.pbcoreAnnotation(annotationType: 'Sony Ci') { xml.cdata(annotation) } }
-    organization.to_a.each { |annotation| xml.pbcoreAnnotation(annotationType: 'organization') { xml.cdata(annotation) } }
-    special_collection_category.to_a.each { |annotation| xml.pbcoreAnnotation(annotationType: 'Special Collection Category') { xml.cdata(annotation) } }
-    canonical_meta_tag.to_a.each { |annotation| xml.pbcoreAnnotation(annotationType: 'Canonical Meta Tag') { xml.cdata(annotation) } }
+    # Add method here to process associated Annotations
+    prepare_annotations(xml)
   end
 
   def prepare_instantiations(xml)
@@ -325,6 +315,15 @@ module AMS::PbcoreXmlExportExtension
       essence_track.language.to_a.each { |lang| essence_track_node.essenceTrackLanguage { essence_track_node.text(lang) } }
 
       essence_track.annotation.to_a.each { |annTxt| essence_track_node.essenceTrackAnnotation { essence_track_node.text(annTxt) } }
+    end
+  end
+
+  def prepare_annotations(xml)
+    annotations = Asset.find(self.id).admin_data.annotations
+    return if annotations.empty?
+
+    annotations.each do |annotation|
+      xml.pbcoreAnnotation(annotationType: AnnotationTypesService.new.label(annotation.annotation_type), ref: annotation.ref, source: annotation.source, annotation: annotation.annotation, version: annotation.version) { xml.text(annotation.value) }
     end
   end
 

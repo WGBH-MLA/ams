@@ -19,29 +19,16 @@ class AssetIndexer < AMS::WorkIndexer
       solr_doc['copyright_date_drsim'] = object.copyright_date if object.copyright_date
 
       if object.admin_data
-        #Indexing as english text so we can use it on asset show page
+        # Index the admin_data_gid
         solr_doc['admin_data_tesim'] = object.admin_data.gid if !object.admin_data.gid.blank?
-        solr_doc['level_of_user_access_ssim'] = solr_doc['level_of_user_access_tesim'] = object.admin_data.level_of_user_access if !object.admin_data.level_of_user_access.blank?
-        solr_doc['minimally_cataloged_ssim'] = solr_doc['minimally_cataloged_tesim'] = object.admin_data.minimally_cataloged if !object.admin_data.minimally_cataloged.to_s.blank?
-        solr_doc['outside_url_ssim'] = solr_doc['outside_url_tesim'] = object.admin_data.outside_url if !object.admin_data.outside_url.blank?
-        solr_doc['special_collection_ssim'] = solr_doc['special_collection_tesim'] = object.admin_data.special_collection if object.admin_data.special_collection.any?(&:present?)
-        solr_doc['transcript_status_ssim'] = solr_doc['transcript_status_tesim'] = object.admin_data.transcript_status if !object.admin_data.transcript_status.blank?
-        solr_doc['sonyci_id_ssim'] = solr_doc['sonyci_id_tesim'] = object.admin_data.sonyci_id if object.admin_data.sonyci_id.any?(&:present?)
-        solr_doc['licensing_info_ssim'] = solr_doc['licensing_info_tesim'] = object.admin_data.licensing_info if !object.admin_data.licensing_info.blank?
-        solr_doc['playlist_group_tesim']  = object.admin_data.playlist_group if !object.admin_data.playlist_group.blank?
-        solr_doc['playlist_order_tesim']  = object.admin_data.playlist_order if !object.admin_data.playlist_order.blank?
-        solr_doc['organization_ssim']  = object.admin_data.organization if !object.admin_data.organization.blank?
-        solr_doc['special_collection_category_ssim'] = solr_doc['special_collection_category_tesim'] = object.admin_data.special_collection_category if object.admin_data.special_collection_category.any?(&:present?)
-        solr_doc['canonical_meta_tag_ssim'] = solr_doc['canonical_meta_tag_tesim'] = object.admin_data.canonical_meta_tag if !object.admin_data.canonical_meta_tag.blank?
+        solr_doc['sonyci_id_ssim'] = object.admin_data.sonyci_id if !object.admin_data.sonyci_id.blank?
 
-        #Indexing for Facets
-        solr_doc['level_of_user_access_ssim'] =  object.admin_data.level_of_user_access if !object.admin_data.level_of_user_access.blank?
-        solr_doc['minimally_cataloged_ssim'] =  object.admin_data.minimally_cataloged if !object.admin_data.minimally_cataloged.to_s.blank?
-        solr_doc['outside_url_ssim']  = object.admin_data.outside_url if !object.admin_data.outside_url.blank?
-        solr_doc['special_collection_ssim'] = object.admin_data.special_collection if object.admin_data.special_collection.any?(&:present?)
-        solr_doc['transcript_status_ssim'] = object.admin_data.transcript_status if !object.admin_data.transcript_status.blank?
-        solr_doc['sonyci_id_ssim'] = object.admin_data.sonyci_id if object.admin_data.sonyci_id.any?(&:present?)
-        solr_doc['licensing_info_ssim'] = object.admin_data.licensing_info if !object.admin_data.licensing_info.blank?
+        # Programmatically assign annotations by type from controlled vocab
+        AnnotationTypesService.new.select_all_options.each do |type|
+          # Use the ID defined in the AnnotationType service
+          type_id = type[1]
+          solr_doc[ Solrizer.solr_name(type_id.underscore,'ssim') ] = object.try(type_id.to_sym) unless object.try(type_id.to_sym).empty?
+        end
 
         #Indexing for search by batch_id
         solr_doc['hyrax_batch_ingest_batch_id_tesim'] = object.admin_data.hyrax_batch_ingest_batch_id if !object.admin_data.hyrax_batch_ingest_batch_id.blank?

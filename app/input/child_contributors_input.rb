@@ -1,10 +1,10 @@
 class ChildContributorsInput < MultiValueInput
-  def build_field(value, _index)
+  def build_field(value, index)
 
     contributor_role_service = ContributorRoleService.new
     role_choices = [""] + contributor_role_service.select_all_options
 
-    input_dom_id_prefix = "#{object_name}_#{attribute_name}_#{_index}"
+    input_dom_id_prefix = "#{object_name}_#{attribute_name}_#{index}"
 
     role_select_input_html_options = input_html_options.dup.merge(
       name: "#{@builder.object_name}[contributors][][contributor_role]",

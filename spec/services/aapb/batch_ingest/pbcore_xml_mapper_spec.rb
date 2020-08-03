@@ -13,13 +13,15 @@ RSpec.describe AAPB::BatchIngest::PBCoreXMLMapper, :pbcore_xpath_helper do
       :program_description, :episode_description, :segment_description,
       :clip_description, :promo_description, :raw_footage_description,
       :audience_level, :audience_rating, :asset_types, :genre,
-      :spatial_coverage, :temporal_coverage, :annotation, :rights_summary,
+      :spatial_coverage, :temporal_coverage, :rights_summary,
       :rights_link, :local_identifier, :pbs_nola_code, :eidr_id, :topics,
       :date, :broadcast_date, :copyright_date, :created_date, :subject]
     end
 
     let(:attrs_with_xpath_shortcuts) { attr_names - [:title, :description, :date, :spatial_coverage, :temporal_coverage, :id, :holding_organization, :annotation] }
     let(:attrs) { subject.asset_attributes }
+
+    let(:pbcore_annotation_types) { attrs[:annotations].map{ |anno| anno["annotation_type"] } }
 
     it 'maps all attributes from PBCore XML' do
       # For each attribute in attr_names, make sure it has a that comes from
@@ -40,35 +42,28 @@ RSpec.describe AAPB::BatchIngest::PBCoreXMLMapper, :pbcore_xpath_helper do
       expect(attrs[:description]).to  eq pbcore_xpath_helper(pbcore_xml).descriptions_without_type
       expect(attrs[:date]).to         eq pbcore_xpath_helper(pbcore_xml).dates_without_type
       expect(attrs[:id]).to           eq pbcore_xpath_helper(pbcore_xml).ams_id
-      expect(attrs[:annotation]).to   eq pbcore_xpath_helper(pbcore_xml).annotations_without_type
     end
 
     it 'maps Contribution data from PBCore XML' do
       expect(attrs[:contributors]).to eq pbcore_xpath_helper(pbcore_xml).contributors_attrs
     end
 
-    it 'correctly maps admin data coming from annotations' do
-      admin_data_fields = [
-        :minimally_cataloged,
-        :outside_url,
-        :sonyci_id,
-        :special_collection,
-        :transcript_status,
-        :licensing_info,
-        :playlist_group,
-        :playlist_order,
-        :organization,
-        :special_collection_category,
-        :canonical_meta_tag
-      ]
+    it 'correctly maps admin data' do
+      expect(attrs).to have_key :sonyci_id
+      expect(attrs[:sonyci_id]).not_to be_nil
+    end
 
-      admin_data_fields.each do |admin_data_field|
-        expect(attrs).to have_key admin_data_field
-        expect(attrs[admin_data_field]).not_to be_nil
+    it 'correctly maps annotation data' do
+      expect(attrs).to have_key :annotations
+      expect(attrs[:annotations].length).to eq (11)
+
+      # Every Annotation in the attrs should have a value from the PBCore
+      attrs[:annotations].each do |anno|
+        expect(pbcore_values_from_xpath(pbcore_xml, anno["annotation_type"].to_sym)).to include(anno["value"])
       end
-
-      AdminData::SERIALIZED_FIELDS.each do |serialized_field|
-        expect(attrs[serialized_field]).to be_an_instance_of(Array)
+      # Every Annotation in the attrs should have a type registered with the AnnotationTypesService
+      pbcore_annotation_types.each do |type|
+        expect(AnnotationTypesService.new.select_all_options.to_h.values).to include(type)
       end
     end
 

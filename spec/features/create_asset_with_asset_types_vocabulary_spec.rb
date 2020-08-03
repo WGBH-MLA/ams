@@ -72,7 +72,7 @@ RSpec.feature 'Create Asset with Asset Type', js: true, asset_form_helpers: true
 
       # open asset with detail show
       click_on(asset_attributes[:title])
-      click_on('Asset Details')
+
       expect(page).to have_content asset_attributes[:asset_type]
     end
   end

@@ -329,47 +329,47 @@ class SolrDocument
   end
 
   def level_of_user_access
-    self[Solrizer.solr_name('level_of_user_access')]
+    self[Solrizer.solr_name('level_of_user_access', 'ssim')]
   end
 
   def minimally_cataloged
-    self[Solrizer.solr_name('minimally_cataloged')]
+    self[Solrizer.solr_name('minimally_cataloged', 'ssim')]
   end
 
   def outside_url
-    self[Solrizer.solr_name('outside_url')]
+    self[Solrizer.solr_name('outside_url', 'ssim')]
   end
 
-  def special_collection
-    self[Solrizer.solr_name('special_collection')]
+  def special_collections
+    self[Solrizer.solr_name('special_collections', 'ssim')]
   end
 
   def transcript_status
-    self[Solrizer.solr_name('transcript_status')]
+    self[Solrizer.solr_name('transcript_status', 'ssim')]
   end
 
   def organization
-    self[Solrizer.solr_name('organization','ssim')]
+    self[Solrizer.solr_name('organization', 'ssim')]
   end
 
   def sonyci_id
-    self[Solrizer.solr_name('sonyci_id')]
+    self[Solrizer.solr_name('sonyci_id', 'ssim')]
   end
 
   def licensing_info
-    self[Solrizer.solr_name('licensing_info')]
+    self[Solrizer.solr_name('licensing_info', 'ssim')]
     end
 
   def producing_organization
-    self[Solrizer.solr_name('producing_organization')]
+    self[Solrizer.solr_name('producing_organization', 'ssim')]
   end
 
   def playlist_group
-    self[Solrizer.solr_name('playlist_group')]
+    self[Solrizer.solr_name('playlist_group', 'ssim')]
   end
 
   def playlist_order
-    self[Solrizer.solr_name('playlist_order')]
+    self[Solrizer.solr_name('playlist_order', 'ssim')]
   end
 
   def media_src(part)
@@ -414,6 +414,42 @@ class SolrDocument
 
   def canonical_meta_tag
     self[Solrizer.solr_name('canonical_meta_tag')]
+  end
+
+  def cataloging_status
+    self[Solrizer.solr_name('cataloging_status', 'ssim')]
+  end
+
+  def captions_url
+    self[Solrizer.solr_name('captions_url', 'ssim')]
+  end
+
+  def captions_url
+    self[Solrizer.solr_name('captions_url', 'ssim')]
+  end
+
+  def external_reference_url
+    self[Solrizer.solr_name('external_reference_url','ssim')]
+  end
+
+  def last_modified
+    self[Solrizer.solr_name('last_modified','ssim')]
+  end
+
+  def mavis_number
+    self[Solrizer.solr_name('mavis_number','ssim')]
+  end
+
+  def project_code
+    self[Solrizer.solr_name('project_code','ssim')]
+  end
+
+  def supplemental_material
+    self[Solrizer.solr_name('supplemental_material','ssim')]
+  end
+
+  def transcript_url
+    self[Solrizer.solr_name('transcript_url','ssim')]
   end
 
   def md5

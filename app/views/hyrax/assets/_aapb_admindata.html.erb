@@ -7,21 +7,8 @@
     <div class="collapse" id="collapse-<%= t('.aapb_admin').parameterize.underscore %>">
       <div class="well">
         <dl>
-
-          <%= presenter.attribute_to_html(:level_of_user_access, html_dl: true) %>
-          <%= presenter.attribute_to_html(:minimally_cataloged, html_dl: true) %>
-          <%= presenter.attribute_to_html(:outside_url, html_dl: true) %>
-          <%= presenter.attribute_to_html(:organization, html_dl: true) %>
-          <%= presenter.attribute_to_html(:special_collection, html_dl: true) %>
-          <%= presenter.attribute_to_html(:special_collection_category, html_dl: true) %>
-          <%= presenter.attribute_to_html(:transcript_status, html_dl: true) %>
           <%= presenter.attribute_to_html(:sonyci_id, html_dl: true) %>
-          <%= presenter.attribute_to_html(:licensing_info, html_dl: true) %>
-          <%= presenter.attribute_to_html(:canonical_meta_tag, html_dl: true) %>
-          <%= presenter.attribute_to_html(:playlist_group, html_dl: true) %>
-          <%= presenter.attribute_to_html(:playlist_order, html_dl: true) %>
           <%= presenter.attribute_to_html(:last_pushed, html_dl: true) %>
-
           <%= render 'batch', presenter: presenter %>
         </dl>
       </div>
