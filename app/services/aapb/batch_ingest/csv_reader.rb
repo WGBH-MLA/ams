@@ -44,6 +44,7 @@ module AAPB
             rowData << [@workbook.cell(1, col), @workbook.cell(row, col).to_s]
           end
           formatted_row_data = csv_row_to_hash(rowData)
+
           @batch_items << Hyrax::BatchIngest::BatchItem.new(id_within_batch: row,
                                                             source_data: formatted_row_data.to_json, status: :initialized)
         end
@@ -63,17 +64,16 @@ module AAPB
           end
 
           if model.include?('Asset')
-
             # an asset
             if attribute.nil?
-        
               model_hash[model] ||= {}
+            elsif annotation_attr?(attribute)
+              model_hash[model]["annotations"] ||= []
+              model_hash[model]["annotations"] << { "annotation_type" => attribute.to_s, "value" => value } unless value.empty?
             elsif multi_value_attr?(attribute, model)
-
               model_hash[model][attribute] ||= []
               model_hash[model][attribute] << value.first
             else
-
               model_hash[model][attribute] = value unless value.empty?
             end
 
@@ -104,6 +104,7 @@ module AAPB
           end
 
         end
+
         validate_row_data model_hash, @options_structure
       end
 
@@ -114,12 +115,16 @@ module AAPB
         false
       end
 
+      def annotation_attr?(attribute)
+        !attribute.nil? && attribute != "id" && Annotation.ingestable_attributes.include?(attribute)
+      end
+
       def multi_value_fedora_attribute?(attribute,klass)
         klass.constantize.properties[attribute] && klass.constantize.properties[attribute].multiple?
       end
 
       def instantiation_multi_attr?(attribute,klass)
-        asset_multi_value_admin_data_attr = [:special_collection, :sonyci_id]
+        asset_multi_value_admin_data_attr = [:sonyci_id]
         return true if klass == "Asset" && asset_multi_value_admin_data_attr.include?(attribute.to_sym)
         false
       end

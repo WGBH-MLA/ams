@@ -21,3 +21,14 @@ input.child_contributors
     width: 22% !important;
     margin-left: 5px !important;
 }
+
+select.child_annotations
+{
+    width: 16% !important;
+}
+
+input.child_annotations
+{
+    width: 16% !important;
+    margin-left: 3px !important;
+}

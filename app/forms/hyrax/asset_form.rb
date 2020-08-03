@@ -22,15 +22,18 @@ module Hyrax
     class_attribute :field_groups
 
     #removing id, created_at & updated_at from attributes
-    admin_data_attributes = (AdminData.attribute_names.dup - ['id', 'created_at', 'updated_at', 'hyrax_batch_ingest_batch_id', 'last_pushed', 'last_updated', 'needs_update']).map &:to_sym
+    admin_data_attributes = (AdminData.attribute_names.dup - ['id', 'created_at', 'updated_at']).map &:to_sym
 
     self.field_groups = {
       identifying_info: [:titles_with_types, :producing_organization, :local_identifier, :pbs_nola_code, :eidr_id, :asset_types, :dates_with_types, :descriptions_with_types],
       subject_info: [:genre, :topics, :subject, :spatial_coverage, :temporal_coverage, :audience_level, :audience_rating, :annotation],
       rights: [:rights_summary, :rights_link],
       credits: [:child_contributors],
-      aapb_admin_data: admin_data_attributes
+      aapb_admin_data: admin_data_attributes,
+      annotations: [:child_annotations]
     }
+
+    self.hidden_fields += [ :hyrax_batch_ingest_batch_id, :last_pushed, :last_updated, :needs_update ]
 
     self.terms += (self.required_fields + field_groups.values.map(&:to_a).flatten).uniq
 
@@ -58,8 +61,13 @@ module Hyrax
       disabled_fields.include?(field)
     end
 
+    def hidden?(field)
+      hidden_fields = self.hidden_fields.dup
+      hidden_fields.include?(field)
+    end
+
     def self.multiple?(field)
-      if [:child_contributors,:special_collection,:sonyci_id,:special_collection_category].include?(field.to_sym)
+      if [:child_contributors, :child_annotations, :special_collection, :sonyci_id, :special_collection_category].include?(field.to_sym)
         true
       else
         super
@@ -100,6 +108,18 @@ module Hyrax
       child_contributions
     end
 
+    def child_annotations
+      child_annotations = []
+
+      if model.admin_data
+        model.admin_data.annotations.each do |annotation|
+          child_annotations << [annotation.id, annotation.admin_data_id, annotation.annotation_type, annotation.ref, annotation.source, annotation.value, annotation.annotation, annotation.version]
+        end
+      end
+
+      child_annotations
+    end
+
     def titles_with_types
       titles_with_types = []
       title_type_service = TitleTypesService.new
@@ -136,7 +156,8 @@ module Hyrax
       dates_with_types
     end
 
-
+    # WE CAN REMOVE THESE ADMIN_DATA ACCESSORS AFTER MIGRATING
+    # ADMIN_DATA DATA TO ANNOTATIONS
     def level_of_user_access
       if model.admin_data
         model.admin_data.level_of_user_access
@@ -178,14 +199,6 @@ module Hyrax
       end
     end
 
-    def sonyci_id
-      if model.admin_data
-        Array(model.admin_data.sonyci_id)
-      else
-        []
-      end
-    end
-
     def licensing_info
       if model.admin_data
         model.admin_data.licensing_info
@@ -218,6 +231,73 @@ module Hyrax
       end
     end
 
+    def playlist_group
+      if model.admin_data
+        model.admin_data.playlist_group
+      else
+        ""
+      end
+    end
+
+    def playlist_order
+      if model.admin_data
+        model.admin_data.playlist_order
+      else
+        ""
+      end
+    end
+
+    # KEEP THESE AFTER MIGRATING ADMIN_DATA
+    # DATA TO ANNOTATIONS
+
+    def sonyci_id
+      if model.admin_data
+        Array(model.admin_data.sonyci_id)
+      else
+        []
+      end
+    end
+
+    def annotations
+      if model.admin_data
+        Array(model.admin_data.annotations)
+      else
+        []
+      end
+    end
+
+    def hyrax_batch_ingest_batch_id
+      if model.admin_data
+        model.admin_data.hyrax_batch_ingest_batch_id
+      else
+        ""
+      end
+    end
+
+    def last_pushed
+      if model.admin_data
+        model.admin_data.last_pushed
+      else
+        ""
+      end
+    end
+
+    def last_updated
+      if model.admin_data
+        model.admin_data.last_updated
+      else
+        ""
+      end
+    end
+
+    def needs_update
+      if model.admin_data
+        model.admin_data.needs_update
+      else
+        ""
+      end
+    end
+
     # Augment the list of permmitted params to accept our fields that have
     # types associated with them, e.g. title + title type
     # NOTE: `super` in this case is HyraxEditor::Form.permitted_params
@@ -230,6 +310,7 @@ module Hyrax
         permitted_params << { date_type: [] }
         permitted_params << { date_value: [] }
         permitted_params << { contributors: [[:id,:contributor_role,:contributor, :affiliation,:portrayal]] }
+        permitted_params << { annotations: [[:id, :admin_data_id, :annotation_type, :ref, :source ,:value, :annotation, :version]] }
         permitted_params << { titles_with_types: [[:type,:value]] }
         permitted_params << { descriptions_with_types: [[:type,:value]] }
         permitted_params << { dates_with_types: [[:type,:value]] }

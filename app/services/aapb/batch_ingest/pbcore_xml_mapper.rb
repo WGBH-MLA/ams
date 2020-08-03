@@ -22,51 +22,39 @@ module AAPB
         grouped
       end
 
-      # Provides a mapping of annotation types to field names, used in
-      # #asset_attributes. NOTE: The case of the annotation types are normalized
-      # to be lowercase in this mapping, but the incoming PBCore may contain
-      # capitalization.
-      # @return [Hash] a mapping of possible values for the `type` attribute of
-      # <pbcoreAnnotation> elements to their corresponding field names.
-      def self.annotation_type_to_field_name
-        {
-          "level of user access" => :level_of_user_access,
-          "cataloging status" => :minimally_cataloged,
-          "outside url" => :outside_url,
-          "special_collections" => :special_collection,
-          "transcript status" => :transcript_status,
-          "licensing info" => :licensing_info,
-          "playlist group" => :playlist_group,
-          "playlist order" => :playlist_order,
-          "organization" => :organization,
-          "special collection category" => :special_collection_category,
-          "canonical meta tag" => :canonical_meta_tag,
-          "sony ci" => :sonyci_id
-        }
+      def prepare_annotations(annotations)
+        final_annotations = []
+
+        annotations.each do |anno|
+          annotation_type = find_annotation_type_id(anno.type)
+
+          anno_hash = {
+            "ref" => anno.ref,
+            "annotation_type" => annotation_type,
+            "source" => anno.source,
+            "value" => anno.value,
+            "annotation" => anno.annotation,
+            "version" => anno.version
+          }
+
+          final_annotations << anno_hash
+        end
+        final_annotations
+      end
+
+      def find_annotation_type_id(type)
+        type_id = Annotation.find_annotation_type_id(type)
+        return type_id if type_id.present?
+        raise "annotation_type not registered with the AnnotationTypesService: #{type}."
       end
 
       def asset_attributes
         @asset_attributes ||= {}.tap do |attrs|
-          annotations, admindata = separate_admindata(pbcore.annotations)
 
-          # normalize the case of the annotation type keys in admindata
-          admindata =  admindata.map { |k, v| [ k.downcase, v ] }.to_h
-
-          self.class.annotation_type_to_field_name.each do |annotation_type, field_name|
-            value = admindata[annotation_type]
-            if value
-              # these are single valued fields on AdminData
-              # multivalued fields get sorted out in the AssetActor
-              value = value.first if !AdminData::SERIALIZED_FIELDS.include?(field_name)
-              attrs[field_name] = value
-            end
-          end
+          attrs[:annotations]                 = prepare_annotations(pbcore.annotations)
 
           # Saves Asset with AAPB ID if present
           attrs[:id]                          = normalized_aapb_id(aapb_id) if aapb_id
-
-          # map the non admindata annotations
-          attrs[:annotation]                  = annotations
 
           # grouped by title type
           grouped_titles = categorize(pbcore.titles)
@@ -130,13 +118,6 @@ module AAPB
         end
       end
 
-      def separate_admindata(all_annotations)
-        annotations = categorize(all_annotations)
-        no_type = annotations[""]
-        admindata = annotations.except("")
-        return [no_type, admindata]
-      end
-
       def aapb_id
         @aapb_id ||= pbcore.identifiers.select do |id|
           id.source == "http://americanarchiveinventory.org"
@@ -166,7 +147,7 @@ module AAPB
         {
           contributor: (person.value if person),
           contributor_role: (role.value if role),
-          # pbcorecontributor ONLY v
+          # pbcorecontributor ONLY
           affiliation: (person.affiliation if defined? person.affiliation),
           portrayal: (role.portrayal if role && defined? role.portrayal),
         }

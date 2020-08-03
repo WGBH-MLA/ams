@@ -9,7 +9,7 @@ class ExportRecordsJob < ApplicationJob
   include ApplicationHelper
 
   class_attribute :current_ability
-  
+
   # this v is required - advanced_search will crash without it
   copy_blacklight_config_from(CatalogController)
   configure_blacklight do |config|
@@ -23,12 +23,12 @@ class ExportRecordsJob < ApplicationJob
   def perform(search_params, user)
     self.current_ability = Ability.new(user)
     format = search_params.delete :format
-    
+
     # these push queries can be huge (500+), so slice up id queries to kid-size pieces
-    if format == 'zip-pbcore' 
+    if format == 'zip-pbcore'
 
       ids = search_params[:q].gsub('id:', '').split(' OR ')
-      response_documents = [] 
+      response_documents = []
       docs = nil
 
       ids.each_slice(100).each do |segment|
@@ -51,7 +51,6 @@ class ExportRecordsJob < ApplicationJob
     elsif format == "pbcore"
       AMS::Export::DocumentsToPbcoreXml.new(response_documents, export_type: 'pbcore_job')
     elsif format == 'zip-pbcore'
-
       assets = response_documents.map {|doc| Asset.find(doc[:id])}
 
       assets.each do |asset|

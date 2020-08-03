@@ -9,9 +9,9 @@ module Hyrax
              :program_title, :episode_title, :segment_title, :raw_footage_title, :promo_title, :clip_title, :description,
              :program_description, :episode_description, :segment_description, :raw_footage_description,
              :promo_description, :clip_description, :copyright_date,
-             :level_of_user_access, :minimally_cataloged, :outside_url, :special_collection, :transcript_status, :organization,
+             :level_of_user_access, :minimally_cataloged, :outside_url, :special_collections, :transcript_status, :organization,
              :sonyci_id, :licensing_info, :producing_organization, :series_title, :series_description,
-             :playlist_group, :playlist_order, :hyrax_batch_ingest_batch_id, :last_pushed, :last_update, :needs_update, :special_collection_category, :canonical_meta_tag,
+             :playlist_group, :playlist_order, :hyrax_batch_ingest_batch_id, :last_pushed, :last_update, :needs_update, :special_collection_category, :canonical_meta_tag, :cataloging_status,
              to: :solr_document
 
     def batch
@@ -29,6 +29,10 @@ module Hyrax
 
     def batch_ingest_date
       @batch_ingest_date ||= Date.parse(batch.created_at.to_s)
+    end
+
+    def annotations
+      @annotations ||= Asset.find(solr_document['id']).annotations
     end
 
     def last_pushed
@@ -63,23 +67,17 @@ module Hyrax
     end
 
     def display_aapb_admin_data?
-      ! ( level_of_user_access.blank? &&
-          minimally_cataloged.blank? &&
-          outside_url.blank? &&
-          special_collection.blank? &&
-          transcript_status.blank? &&
-          sonyci_id.blank? &&
-          licensing_info.blank? &&
-          playlist_group.blank? &&
-          playlist_order.blank? &&
+      ! ( sonyci_id.blank? &&
           hyrax_batch_ingest_batch_id.blank? &&
           last_updated.blank? &&
           last_pushed.blank? &&
-          needs_update.blank? &&
-          organization.blank? &&
-          special_collection_category.blank? &&
-          canonical_meta_tag.blank?
+          needs_update.blank?
         )
+    end
+
+    def display_annotations?
+      return true if Annotation.registered_annotation_types.values.map{ |type| solr_document.send(type.to_sym).present? }.uniq.include?(true)
+      false
     end
 
     def iiif_version

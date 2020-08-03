@@ -16,7 +16,7 @@ class MediaController < ApplicationController
   private
 
     def download_url
-      @download_url ||= ci.download(solr_document['sonyci_id_tesim'][(params['part'] || 0).to_i])
+      @download_url ||= ci.download(solr_document['sonyci_id_ssim'][(params['part'] || 0).to_i])
     end
 
     def ci

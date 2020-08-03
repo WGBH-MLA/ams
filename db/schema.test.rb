@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20200527175240) do
+ActiveRecord::Schema.define(version: 20200611175611) do
 
   create_table "admin_data", force: :cascade do |t|
     t.string "level_of_user_access"
@@ -534,6 +534,15 @@ ActiveRecord::Schema.define(version: 20200527175240) do
     t.boolean "active"
     t.boolean "allows_access_grant"
     t.index ["permission_template_id", "name"], name: "index_sipity_workflows_on_permission_template_and_name", unique: true
+  end
+
+  create_table "supplemental_materials", force: :cascade do |t|
+    t.string "href"
+    t.string "value"
+    t.integer "admin_data_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["admin_data_id"], name: "index_supplemental_materials_on_admin_data_id"
   end
 
   create_table "tinymce_assets", force: :cascade do |t|

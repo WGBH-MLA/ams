@@ -16,6 +16,7 @@ ingest_types:
           ingest_type: new
         - object_class: PhysicalInstantiation
           ingest_type: new
+
   aapb_csv_reader_2:
     label: "AAPB CSV Physical Instantiation Ingester"
     reader: "AAPB::BatchIngest::CSVReader"
@@ -74,7 +75,7 @@ ingest_types:
           - series_description
           - producing_organization
           - level_of_user_access
-          - minimally_cataloged
+          - cataloging_status
           - outside_url
           - special_collection
           - transcript_status
@@ -127,7 +128,7 @@ ingest_types:
           - series_description
           - producing_organization
           - sonyci_id
-          - special_collection
+          - special_collections
   zipped_pbcore_digital_instantiation:
     label: "AAPB Digital Instantiation PBCore - Zipped"
     reader: "AAPB::BatchIngest::ZippedPBCoreDigitalInstantiationReader"

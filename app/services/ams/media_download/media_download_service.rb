@@ -44,8 +44,8 @@ module AMS
 
         ::Zip::File.open(file_path.path, Zip::File::CREATE) do |zip_file|
           solr_document['media'].each_with_index do | instantiation, index |
-            if solr_document['sonyci_id_tesim'][(index || 0).to_i].present?
-              sonyci_file_location = get_sonyci_file_location(solr_document['sonyci_id_tesim'][(index || 0).to_i])
+            if solr_document['sonyci_id_ssim'][(index || 0).to_i].present?
+              sonyci_file_location = get_sonyci_file_location(solr_document['sonyci_id_ssim'][(index || 0).to_i])
               sonyci_file_name = parse_sonyci_file_name(sonyci_file_location)
               sonyci_file_path = generate_sonyci_file_path(sonyci_file_name)
               download_media_file(sonyci_file_path, sonyci_file_location)

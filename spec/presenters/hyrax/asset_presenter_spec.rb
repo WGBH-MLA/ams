@@ -104,33 +104,13 @@ RSpec.describe Hyrax::AssetPresenter do
 
       it "returns true when any AAPBAdmin Data attribute is not blank" do
         # defaul asset have admin data
-
-        expect(asset.admin_data[:level_of_user_access]).to eq admin_data_attr[:level_of_user_access]
-        expect(asset.admin_data[:minimally_cataloged]).to eq admin_data_attr[:minimally_cataloged]
-        expect(asset.admin_data[:outside_url]).to eq admin_data_attr[:outside_url]
-        expect(asset.admin_data[:special_collection]).to eq admin_data_attr[:special_collection]
-        expect(asset.admin_data[:transcript_status]).to eq admin_data_attr[:transcript_status]
         expect(asset.admin_data[:sonyci_id]).to eq admin_data_attr[:sonyci_id]
-        expect(asset.admin_data[:licensing_info]).to eq admin_data_attr[:licensing_info]
         expect(presenter.display_aapb_admin_data?).to eq true
       end
 
       it "returns false when all AAPBAdmin Data attributes are empty" do
-        asset.admin_data[:level_of_user_access] = ""
-        asset.admin_data[:minimally_cataloged] = ""
-        asset.admin_data[:outside_url] = ""
-        asset.admin_data[:special_collection] = []
-        asset.admin_data[:transcript_status] = ""
         asset.admin_data[:sonyci_id] = []
-        asset.admin_data[:licensing_info] = ""
         asset.save
-        expect(asset.admin_data[:level_of_user_access]).to be_empty
-        expect(asset.admin_data[:minimally_cataloged]).to be_empty
-        expect(asset.admin_data[:outside_url]).to be_empty
-        expect(asset.admin_data[:special_collection]).to be_empty
-        expect(asset.admin_data[:transcript_status]).to be_empty
-        expect(asset.admin_data[:sonyci_id]).to be_empty
-        expect(asset.admin_data[:licensing_info]).to be_empty
         expect(presenter.display_aapb_admin_data?).to eq false
       end
     end
@@ -182,9 +162,15 @@ RSpec.describe Hyrax::AssetPresenter do
     it { is_expected.to delegate_method(:level_of_user_access).to(:solr_document) }
     it { is_expected.to delegate_method(:minimally_cataloged).to(:solr_document) }
     it { is_expected.to delegate_method(:outside_url).to(:solr_document) }
-    it { is_expected.to delegate_method(:special_collection).to(:solr_document) }
+    it { is_expected.to delegate_method(:special_collections).to(:solr_document) }
     it { is_expected.to delegate_method(:transcript_status).to(:solr_document) }
     it { is_expected.to delegate_method(:sonyci_id).to(:solr_document) }
     it { is_expected.to delegate_method(:licensing_info).to(:solr_document) }
+    it { is_expected.to delegate_method(:cataloging_status).to(:solr_document) }
+    it { is_expected.to delegate_method(:canonical_meta_tag).to(:solr_document) }
+    it { is_expected.to delegate_method(:special_collection_category).to(:solr_document) }
+    it { is_expected.to delegate_method(:playlist_group).to(:solr_document) }
+    it { is_expected.to delegate_method(:playlist_order).to(:solr_document) }
+    it { is_expected.to delegate_method(:organization).to(:solr_document) }
   end
 end

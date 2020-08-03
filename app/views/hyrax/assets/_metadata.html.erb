@@ -9,7 +9,7 @@
       </a>
 
       <div class="collapse in" id="collapse-<%= t('.details') %>">
-        
+
         <dl class="work-show <%= dom_class(@presenter) %>" <%= presenter.microdata_type_to_html %>>
 
           <%= render 'attribute_rows', presenter: @presenter %>
@@ -26,6 +26,8 @@
 
       <%= render 'contributions', presenter: @presenter %>
       <%= render 'aapb_admindata', presenter: @presenter %>
+      <%= render 'annotations', presenter: @presenter %>
+
     </div>
   </div>
 </div>
