@@ -33,9 +33,6 @@ module Hyrax
           delete_removed_annotations(env.curation_concern.admin_data, env)
           set_annotations_attributes(env.curation_concern.admin_data, env) if env.current_ability.can?(:create, Annotation)
           remove_annotations_from_env_attributes(env)
-
-          # This can be removed after data migration
-          remove_deprecated_admin_data_fields(env)
         end
 
         def set_admin_data_attributes(admin_data, env)
@@ -99,14 +96,6 @@ module Hyrax
         def remove_annotations_from_env_attributes(env)
           # Remove anotations from ENV so that we can save the Asset
           env.attributes.delete("annotations")
-        end
-
-        def remove_deprecated_admin_data_fields(env)
-          # Remove deprecated admin data fields from ENV so that we can save the Asset
-          # and they should be ignored before we migrate data and remove
-          AdminData::DEPRECATED_ADMIN_DATA_FIELDS.each do |field|
-            env.attributes.delete(field.to_s)
-          end
         end
 
         def admin_data_attributes
