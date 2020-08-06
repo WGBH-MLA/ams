@@ -1,4 +1,6 @@
 class AdminData < ApplicationRecord
+  attr_reader :asset_error
+
   belongs_to  :hyrax_batch_ingest_batch, optional: true
   has_many    :annotations
 
@@ -43,4 +45,19 @@ class AdminData < ApplicationRecord
     URI::GID.build(app: GlobalID.app, model_name: model_name.name.parameterize.to_sym, model_id: id).to_s if id
   end
 
+  def solr_doc(refresh: false)
+    @solr_doc = nil if refresh
+    @solr_doc ||= ActiveFedora::Base.search_with_conditions(
+      { admin_data_gid_ssim: gid },
+      { rows: 99999 }
+    ).first
+  end
+
+  def asset(refresh: false)
+    @asset = @asset_error = nil if refresh
+    @asset ||= Asset.find(solr_doc[:id]) unless @asset_error
+  rescue => error
+    @asset_error = error
+    nil
+  end
 end
