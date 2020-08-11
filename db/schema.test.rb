@@ -34,6 +34,19 @@ ActiveRecord::Schema.define(version: 20200611175611) do
     t.index ["hyrax_batch_ingest_batch_id"], name: "index_admin_data_on_hyrax_batch_ingest_batch_id"
   end
 
+  create_table "annotations", force: :cascade do |t|
+    t.string "annotation_type"
+    t.string "ref"
+    t.string "source"
+    t.string "annotation"
+    t.string "version"
+    t.string "value"
+    t.integer "admin_data_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["admin_data_id"], name: "index_annotations_on_admin_data_id"
+  end
+
   create_table "bookmarks", force: :cascade do |t|
     t.integer "user_id", null: false
     t.string "user_type"
@@ -534,15 +547,6 @@ ActiveRecord::Schema.define(version: 20200611175611) do
     t.boolean "active"
     t.boolean "allows_access_grant"
     t.index ["permission_template_id", "name"], name: "index_sipity_workflows_on_permission_template_and_name", unique: true
-  end
-
-  create_table "supplemental_materials", force: :cascade do |t|
-    t.string "href"
-    t.string "value"
-    t.integer "admin_data_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["admin_data_id"], name: "index_supplemental_materials_on_admin_data_id"
   end
 
   create_table "tinymce_assets", force: :cascade do |t|
