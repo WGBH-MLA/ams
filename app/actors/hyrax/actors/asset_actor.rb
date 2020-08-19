@@ -8,6 +8,7 @@ module Hyrax
         add_title_types(env)
         add_description_types(env)
         add_date_types(env)
+
         save_aapb_admin_data(env) && super && create_or_update_contributions(env, contributions)
       end
 
@@ -34,8 +35,9 @@ module Hyrax
           set_annotations_attributes(env.curation_concern.admin_data, env) if env.current_ability.can?(:create, Annotation)
           remove_annotations_from_env_attributes(env)
 
-          # This can be removed after data migration
-          remove_deprecated_admin_data_fields(env)
+          # Adding a Boolean return so that this method returns one for it's role in the Hyrax ActorStack
+          return true if env.curation_concern.admin_data
+          false
         end
 
         def set_admin_data_attributes(admin_data, env)
@@ -50,8 +52,7 @@ module Hyrax
         end
 
         def should_empty_admin_data_value?(key, admin_data, env)
-          return true if admin_data.send(key).present? && !env.attributes[key].present?
-          false
+          admin_data.send(key).present? && !env.attributes[key].present?
         end
 
         def delete_removed_annotations(admin_data, env)
@@ -89,7 +90,7 @@ module Hyrax
         end
 
         def annotation_empty?(annotation_env)
-          return true if annotation_env.values.uniq.length == 1 && annotation_env.values.uniq.first.empty?
+          annotation_env.values.uniq.length == 1 && annotation_env.values.uniq.first.empty?
         end
 
         def remove_admin_data_from_env_attributes(env)
@@ -101,19 +102,11 @@ module Hyrax
           env.attributes.delete("annotations")
         end
 
-        def remove_deprecated_admin_data_fields(env)
-          # Remove deprecated admin data fields from ENV so that we can save the Asset
-          # and they should be ignored before we migrate data and remove
-          AdminData::DEPRECATED_ADMIN_DATA_FIELDS.each do |field|
-            env.attributes.delete(field.to_s)
-          end
-        end
-
         def admin_data_attributes
           # removing id, created_at & updated_at from attributes
           # This essentially only returns the sonyci_id for now, but it removes the attributes
           # that are we are migrating to annotations and this could be refactored after that.
-          (AdminData.attribute_names.dup - ['id', 'created_at', 'updated_at']).map(&:to_sym) - AdminData::DEPRECATED_ADMIN_DATA_FIELDS
+          (AdminData.attribute_names.dup - ['id', 'created_at', 'updated_at']).map(&:to_sym)
         end
 
         def annotation_attributes

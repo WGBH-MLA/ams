@@ -77,7 +77,7 @@ ingest_types:
           - level_of_user_access
           - cataloging_status
           - outside_url
-          - special_collection
+          - special_collections
           - transcript_status
           - sonyci_id
           - licensing_info
