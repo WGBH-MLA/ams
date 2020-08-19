@@ -20,7 +20,7 @@ module Hyrax
         save_aapb_admin_data(env) && super && create_or_update_contributions(env, contributions)
       end
 
-      def destory(env)
+      def destroy(env)
         super && destroy_admin_data(env)
       end
 
