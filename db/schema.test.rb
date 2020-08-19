@@ -10,27 +10,16 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20200611175611) do
+ActiveRecord::Schema.define(version: 20200803200219) do
 
   create_table "admin_data", force: :cascade do |t|
-    t.string "level_of_user_access"
-    t.string "minimally_cataloged"
-    t.string "outside_url"
-    t.text "special_collection"
-    t.string "transcript_status"
     t.text "sonyci_id"
-    t.text "licensing_info"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "playlist_group"
-    t.integer "playlist_order"
     t.integer "hyrax_batch_ingest_batch_id"
     t.integer "last_pushed"
     t.integer "last_updated"
     t.boolean "needs_update"
-    t.string "organization"
-    t.string "special_collection_category"
-    t.string "canonical_meta_tag"
     t.index ["hyrax_batch_ingest_batch_id"], name: "index_admin_data_on_hyrax_batch_ingest_batch_id"
   end
 

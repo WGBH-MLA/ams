@@ -213,7 +213,7 @@ class Asset < ActiveFedora::Base
   end
 
   def sonyci_id
-    sonyci_id ||= find_annotation_attribute("sonyci_id")
+    sonyci_id ||= find_admin_data_attribute("sonyci_id")
   end
 
   def supplemental_material
@@ -288,12 +288,16 @@ class Asset < ActiveFedora::Base
     canonical_meta_tag ||= find_annotation_attribute("canonical_meta_tag")
   end
 
-  # CAN BE REFACTORED TO LOOK AT ANNOTATIONS OR ADMINDATA ONLY AFTER ANNOTATION MIGRATION
   def find_annotation_attribute(attribute)
-    # always return an Array
     if admin_data.annotations.select { |a| a.annotation_type == attribute }.present?
       return admin_data.annotations.select { |a| a.annotation_type == attribute }.map(&:value)
-    elsif admin_data.try(attribute.to_sym).present?
+    else
+      []
+    end
+  end
+
+  def find_admin_data_attribute(attribute)
+    if admin_data.try(attribute.to_sym).present?
       return [ admin_data.try(attribute.to_sym) ] unless admin_data.try(attribute.to_sym).is_a?(Array)
       return admin_data.try(attribute.to_sym)
     else
