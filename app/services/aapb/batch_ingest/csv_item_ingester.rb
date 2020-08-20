@@ -62,13 +62,11 @@ module AAPB
               raise("Unable to find object  for `id` #{object_id}")
             end
 
-            # We delete associated Annotations of the same type but need to preserve
-            # annotations of different types.
-            if attributes.keys.include?("annotations")
-              new_annotation_types = attributes["annotations"].map{ |ann| ann["annotation_type"] }
-              annotations_to_keep = model_object.admin_data.annotations.select{ |ann| !new_annotation_types.include?(ann.annotation_type) }
-
-              annotations_to_keep.map{ |ann| attributes["annotations"] << { "id" => ann.id, "annotation_type" => ann.annotation_type, "ref" => ann.ref, "source" => ann.source, "annotation" => ann.annotation, "version" => ann.version, "value" => ann.value } }
+            # the AssetActor expects the env to include the admin_data values in order to keep them.
+            # the AssetActor does not expect the existing Annotions unless Annotations are in the env
+            if model_object.is_a?(Asset)
+              admin_data_object = model_object.admin_data
+              attributes = set_related_object_attributes_for_update(admin_data_object, attributes)
             end
 
             actor_stack_status = actor.update(::Hyrax::Actors::Environment.new(model_object, ability, attributes))
@@ -81,10 +79,10 @@ module AAPB
             attributes.keys.each do |k|
               # If it is an annotations array, add existing annotations for the env
               # Skip @options.attributes check
-              if k == 'annotations'
+              if k == 'annotations' && model_object.is_a?(Asset)
                 annotations_objects = model_object.admin_data.annotations
 
-                attributes[k] = model_object.admin_data.annotations.map{ |ann| { id: ann.id, annotation_type: ann.annotation_type, ref: ann.ref, source: ann.source, annotation: ann.annotation, version: ann.version, value: ann.value }.stringify_keys } + attributes[k]
+                attributes[k] = annotations_objects.map{ |ann| { id: ann.id, annotation_type: ann.annotation_type, ref: ann.ref, source: ann.source, annotation: ann.annotation, version: ann.version, value: ann.value }.stringify_keys } + attributes[k]
 
               elsif @options.attributes.include?(k)
                 if model_object.is_a?(Asset)
@@ -153,6 +151,28 @@ module AAPB
         def reader_options
           config = Hyrax::BatchIngest::Config.new
           config.ingest_types[@batch_item.batch.ingest_type.to_sym].reader_options.deep_dup
+        end
+
+        def set_related_object_attributes_for_update(admin_data, attributes)
+          update_attrs = attributes
+
+          # add existing admin_data values so they're preserved in the AssetActor
+          AdminData.attributes_for_update.each do |admin_attr|
+            # let it overwrite existing data if there are new values in the attributes
+            next if update_attrs.keys.include?(admin_attr.to_s)
+            # add existing data to the attributes if they don't have new values in the attributes
+            update_attrs[admin_attr.to_s] = admin_data.send(admin_attr)
+          end
+
+          # add existing annotations if present in the env so they're preserved in the AssetActor
+          if update_attrs.keys.include?("annotations")
+            new_annotation_types = update_attrs["annotations"].map{ |ann| ann["annotation_type"] }
+            annotations_to_keep = admin_data.annotations.select{ |ann| !new_annotation_types.include?(ann.annotation_type) }
+
+            annotations_to_keep.map{ |ann| update_attrs["annotations"] << { "id" => ann.id, "annotation_type" => ann.annotation_type, "ref" => ann.ref, "source" => ann.source, "annotation" => ann.annotation, "version" => ann.version, "value" => ann.value } }
+          end
+
+          update_attrs
         end
     end
   end

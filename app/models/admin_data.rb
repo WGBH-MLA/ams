@@ -7,17 +7,9 @@ class AdminData < ApplicationRecord
   self.table_name = "admin_data"
   include ::EmptyDetection
 
-  # CAN BE REMOVED AFTER MIGRATION TO ANNOTATIONS
-  serialize :special_collection, Array
-  # CAN BE REMOVED AFTER MIGRATION TO ANNOTATIONS
-  serialize :special_collection_category, Array
-
   serialize :sonyci_id, Array
 
   SERIALIZED_FIELDS = [ :sonyci_id ]
-
-  # CAN BE REMOVED AFTER MIGRATION
-  DEPRECATED_ADMIN_DATA_FIELDS = [ :level_of_user_access, :minimally_cataloged, :outside_url, :special_collection, :transcript_status, :licensing_info, :playlist_group, :playlist_order, :organization, :special_collection_category, :canonical_meta_tag ]
 
   # Find the admin data associated with the Global Identifier (gid)
   # @param [String] gid - Global Identifier for this admin_data (e.g.gid://ams/admindata/1)
@@ -37,6 +29,11 @@ class AdminData < ApplicationRecord
     result = find_by_gid(gid)
     raise ActiveRecord::RecordNotFound, "Couldn't find AdminData matching GID #{gid}" unless result
     result
+  end
+
+  # These are the attributes that could be edited through a form or through ingest.
+  def self.attributes_for_update
+    (AdminData.attribute_names.dup - ['id', 'created_at', 'updated_at']).map(&:to_sym)
   end
 
   # Return the Global Identifier for this admin data.

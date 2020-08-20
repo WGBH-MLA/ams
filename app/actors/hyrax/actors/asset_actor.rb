@@ -41,7 +41,7 @@ module Hyrax
         end
 
         def set_admin_data_attributes(admin_data, env)
-          admin_data_attributes.each do |k|
+          AdminData.attributes_for_update.each do |k|
             # Some attributes are serialized on AdminData, so always send an array
             if should_empty_admin_data_value?(k, admin_data, env)
               AdminData::SERIALIZED_FIELDS.include?(k) ? admin_data.send("#{k}=", Array.new) : admin_data.send("#{k}=", "")
@@ -94,19 +94,12 @@ module Hyrax
         end
 
         def remove_admin_data_from_env_attributes(env)
-          admin_data_attributes.each { |k| env.attributes.delete(k) }
+          AdminData.attributes_for_update.each { |k| env.attributes.delete(k) }
         end
 
         def remove_annotations_from_env_attributes(env)
           # Remove anotations from ENV so that we can save the Asset
           env.attributes.delete("annotations")
-        end
-
-        def admin_data_attributes
-          # removing id, created_at & updated_at from attributes
-          # This essentially only returns the sonyci_id for now, but it removes the attributes
-          # that are we are migrating to annotations and this could be refactored after that.
-          (AdminData.attribute_names.dup - ['id', 'created_at', 'updated_at']).map(&:to_sym)
         end
 
         def annotation_attributes
