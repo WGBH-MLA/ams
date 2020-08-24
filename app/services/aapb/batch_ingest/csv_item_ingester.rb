@@ -25,6 +25,7 @@ module AAPB
         def ingest_object_at(node, with_data, with_parent = false)
           actor = ::Hyrax::CurationConcern.actor
           ability = ::Ability.new(User.find_by_email(@batch_item.submitter_email))
+          ingest_type = node.ingest_type
 
           attributes = if !with_parent
                          with_data[node.object_class]
@@ -35,62 +36,32 @@ module AAPB
 
           attributes["admin_set_id"] = @batch_item.batch.admin_set_id
 
-          if node.ingest_type == "new"
+          if ingest_type == "new"
             model_object = node.object_class.constantize.new
 
-            # If ingest is new add batch_id to Asset for tracking
-            if model_object.is_a?(Asset)
-              attributes["hyrax_batch_ingest_batch_id"] = batch_id
-            end
-
-            if attributes[:in_works_ids].present?
-              attributes[:in_works_ids].each do |work_id|
-                unless asset = Asset.find(work_id)
-                  raise 'Cannot find Asset with ID: #{work_id}.'
-                end
-                asset_actor = ::Hyrax::CurationConcern.actor
-                asset_attrs = { hyrax_batch_ingest_batch_id: batch_id }
-                asset_env = Hyrax::Actors::Environment.new(asset, ability, asset_attrs)
-                asset_actor.update(asset_env)
-              end
-            end
+            attributes = set_attributes_for_new_ingest_type(model_object, attributes, ability)
 
             actor_stack_status = actor.create(::Hyrax::Actors::Environment.new(model_object, ability, attributes))
-          elsif node.ingest_type == "update"
+          elsif ingest_type == "update"
             object_id = attributes.delete("id")
+
             unless model_object = node.object_class.constantize.find(object_id)
-              raise("Unable to find object  for `id` #{object_id}")
+              raise("Unable to find object for `id` #{object_id}")
             end
 
-            # the AssetActor expects the env to include the admin_data values in order to keep them.
-            # the AssetActor does not expect the existing Annotions unless Annotations are in the env
             if model_object.is_a?(Asset)
-              admin_data_object = model_object.admin_data
-              attributes = set_related_object_attributes_for_update(admin_data_object, attributes)
+              attributes = set_asset_objects_attributes(model_object, attributes, ingest_type)
             end
 
             actor_stack_status = actor.update(::Hyrax::Actors::Environment.new(model_object, ability, attributes))
-          elsif node.ingest_type == "add"
+          elsif ingest_type == "add"
             object_id = attributes.delete("id")
             unless model_object = node.object_class.constantize.find(object_id)
               raise("Unable to find object  for `id` #{object_id}")
             end
 
-            attributes.keys.each do |k|
-              # If it is an annotations array, add existing annotations for the env
-              # Skip @options.attributes check
-              if k == 'annotations' && model_object.is_a?(Asset)
-                annotations_objects = model_object.admin_data.annotations
-
-                attributes[k] = annotations_objects.map{ |ann| { id: ann.id, annotation_type: ann.annotation_type, ref: ann.ref, source: ann.source, annotation: ann.annotation, version: ann.version, value: ann.value }.stringify_keys } + attributes[k]
-
-              elsif @options.attributes.include?(k)
-                if model_object.is_a?(Asset)
-                  admin_data_object = model_object.admin_data
-
-                  attributes[k] = (attributes[k] + model_object.try(k).to_a + admin_data_object.try(k).to_a ).uniq
-                end
-              end
+            if model_object.is_a?(Asset)
+              attributes = set_asset_objects_attributes(model_object, attributes, ingest_type)
             end
 
             actor_stack_status = actor.update(::Hyrax::Actors::Environment.new(model_object, ability, attributes))
@@ -153,26 +124,94 @@ module AAPB
           config.ingest_types[@batch_item.batch.ingest_type.to_sym].reader_options.deep_dup
         end
 
-        def set_related_object_attributes_for_update(admin_data, attributes)
-          update_attrs = attributes
+        def set_attributes_for_new_ingest_type(model_object, attributes, ability)
+          new_attributes = attributes
+
+          if model_object.is_a?(Asset)
+            new_attributes["hyrax_batch_ingest_batch_id"] = batch_id
+          end
+
+          if new_attributes[:in_works_ids].present?
+            new_attributes[:in_works_ids].each do |work_id|
+              set_batch_ingest_id_on_related_asset(work_id, ability)
+            end
+          end
+
+          new_attributes
+        end
+
+        def set_asset_objects_attributes(model_object, attributes, ingest_type)
+          new_attributes = attributes
+          admin_data = model_object.admin_data
+
+          case ingest_type
+          when 'update'
+            # the AssetActor expects the env to include the admin_data values in order to keep them.
+            # the AssetActor does not expect the existing Annotions unless Annotations are in the env.
+            new_attributes = set_admin_data_attributes(admin_data, attributes)
+            # annotations work the same for both update and add
+            new_attributes = set_annotations_attributes(admin_data, attributes)
+          when 'add'
+            # serialized fields need to preserve exising data in an add ingest
+            # handles asset, admin_data, and annotations
+            new_attributes = add_asset_objects_attributes(model_object, attributes)
+          end
+
+          new_attributes
+        end
+
+        def set_batch_ingest_id_on_related_asset(work_id, ability)
+          unless asset = Asset.find(work_id)
+            raise 'Cannot find Asset with ID: #{work_id}.'
+          end
+          asset_actor = ::Hyrax::CurationConcern.actor
+          asset_attrs = { hyrax_batch_ingest_batch_id: batch_id }
+          asset_env = Hyrax::Actors::Environment.new(asset, ability, asset_attrs)
+          asset_actor.update(asset_env)
+        end
+
+        def set_admin_data_attributes(admin_data, attributes)
+          new_attributes = attributes
 
           # add existing admin_data values so they're preserved in the AssetActor
           AdminData.attributes_for_update.each do |admin_attr|
             # let it overwrite existing data if there are new values in the attributes
-            next if update_attrs.keys.include?(admin_attr.to_s)
+            next if new_attributes.keys.include?(admin_attr.to_s)
             # add existing data to the attributes if they don't have new values in the attributes
-            update_attrs[admin_attr.to_s] = admin_data.send(admin_attr)
+            new_attributes[admin_attr.to_s] = admin_data.send(admin_attr)
           end
+          new_attributes
+        end
+
+        def add_asset_objects_attributes(model_object, attributes)
+          new_attributes = attributes
+
+          new_attributes.keys.each do |k|
+            # If it is an annotations array, add existing annotations for the env
+            # Skip @options.attributes check
+            if k == 'annotations'
+              annotations_objects = model_object.admin_data.annotations
+              new_attributes[k] = annotations_objects.map{ |ann| { id: ann.id, annotation_type: ann.annotation_type, ref: ann.ref, source: ann.source, annotation: ann.annotation, version: ann.version, value: ann.value }.stringify_keys } + new_attributes[k]
+            elsif @options.attributes.include?(k)
+              admin_data_object = model_object.admin_data
+              new_attributes[k] = (new_attributes[k] + model_object.try(k).to_a + admin_data_object.try(k).to_a ).uniq
+            end
+          end
+
+          new_attributes
+        end
+
+        def set_annotations_attributes(admin_data, attributes)
+          new_attributes = attributes
 
           # add existing annotations if present in the env so they're preserved in the AssetActor
-          if update_attrs.keys.include?("annotations")
-            new_annotation_types = update_attrs["annotations"].map{ |ann| ann["annotation_type"] }
+          if new_attributes.keys.include?("annotations")
+            new_annotation_types = new_attributes["annotations"].map{ |ann| ann["annotation_type"] }
             annotations_to_keep = admin_data.annotations.select{ |ann| !new_annotation_types.include?(ann.annotation_type) }
 
-            annotations_to_keep.map{ |ann| update_attrs["annotations"] << { "id" => ann.id, "annotation_type" => ann.annotation_type, "ref" => ann.ref, "source" => ann.source, "annotation" => ann.annotation, "version" => ann.version, "value" => ann.value } }
+            annotations_to_keep.map{ |ann| new_attributes["annotations"] << { "id" => ann.id, "annotation_type" => ann.annotation_type, "ref" => ann.ref, "source" => ann.source, "annotation" => ann.annotation, "version" => ann.version, "value" => ann.value } }
           end
-
-          update_attrs
+          new_attributes
         end
     end
   end
