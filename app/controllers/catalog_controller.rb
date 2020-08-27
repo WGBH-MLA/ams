@@ -59,9 +59,9 @@ class CatalogController < ApplicationController
     config.add_facet_field "level_of_user_access_ssim", label: "Level of user access", limit: 5, collapse: true
     config.add_facet_field "transcript_status_ssim", label: "Transcript Status", limit: 5, collapse: true
 
-    config.add_facet_field 'minimally_cataloged_ssim', query: {
-        yes: { label: 'Yes', fq: 'minimally_cataloged_ssim:Yes' },
-        no: { label: 'No', fq: '-minimally_cataloged_ssim:[* TO *]' }
+    config.add_facet_field 'cataloging_status_ssim', query: {
+        yes: { label: 'Yes', fq: 'cataloging_status_ssim:Yes' },
+        no: { label: 'No', fq: '-cataloging_status_ssim:[* TO *]' }
      }, label:"Minimally Cataloged", collapse: true
 
     config.add_facet_field 'outside_url_ssim', query: {

@@ -244,19 +244,11 @@ module AAPB
           # Otherwise, if use can update all these specific fiels, then return
           # true.
           [
-            :update_level_of_user_access,
-            :update_minimally_cataloged,
-            :update_outside_url,
             :update_sonyci_id,
-            :update_licensing_info,
-            :update_playlist_group,
-            :update_playlist_order,
             :update_hyrax_batch_ingest_batch_id,
             :update_last_pushed,
             :update_last_updated,
             :update_needs_update,
-            :update_special_collection_category,
-            :update_canonical_meta_tag
           ].all? do |action|
             ability.can? action, AdminData
           end

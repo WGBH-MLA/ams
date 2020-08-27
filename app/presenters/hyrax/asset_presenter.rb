@@ -9,7 +9,7 @@ module Hyrax
              :program_title, :episode_title, :segment_title, :raw_footage_title, :promo_title, :clip_title, :description,
              :program_description, :episode_description, :segment_description, :raw_footage_description,
              :promo_description, :clip_description, :copyright_date,
-             :level_of_user_access, :minimally_cataloged, :outside_url, :special_collections, :transcript_status, :organization,
+             :level_of_user_access, :outside_url, :special_collections, :transcript_status, :organization,
              :sonyci_id, :licensing_info, :producing_organization, :series_title, :series_description,
              :playlist_group, :playlist_order, :hyrax_batch_ingest_batch_id, :last_pushed, :last_update, :needs_update, :special_collection_category, :canonical_meta_tag, :cataloging_status,
              to: :solr_document
