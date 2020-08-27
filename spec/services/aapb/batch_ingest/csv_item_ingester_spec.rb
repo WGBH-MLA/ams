@@ -4,6 +4,9 @@ require 'aapb/batch_ingest'
 RSpec.describe AAPB::BatchIngest::CSVItemIngester do
   let(:new_source_data) { "{\"Asset\":{\"annotations\":[{\"annotation_type\":\"level_of_user_access\",\"value\":\"On Location\"},{\"annotation_type\":\"cataloging_status\",\"value\":\"Yes\"},{\"annotation_type\":\"outside_url\",\"value\":\"https://www.outsideurl.com\"},{\"annotation_type\":\"special_collections\",\"value\":\"A1\"},{\"annotation_type\":\"transcript_status\",\"value\":\"Correct\"}],\"id\":\"cpb-aacip_600-4746q1sh20\",\"sonyci_id\":[\"b91781c13b414d7f9ce610879d9c5b6e\"],\"pbs_nola_code\":[\"10\"],\"eidr_id\":[\"1wsx\"],\"asset_types\":[\"Clip\"],\"broadcast_date\":[\"2010-01-01\"],\"created_date\":[\"2010-01-01\"],\"copyright_date\":[\"2010-01-01\"],\"series_title\":[\"Series Title\"],\"episode_description\":[\"asd\"],\"genre\":[\"Debate\"],\"topics\":[\"Dance\"],\"subject\":[\"Stuff\"],\"spatial_coverage\":[\"Jupiter\"],\"audience_level\":[\"Mature\"],\"rights_summary\":[\"Summary of rights\"],\"rights_link\":[\"In Copyright\"],\"producing_organization\":[\"KLOS\"]},\"Contribution\":[{\"contributor\":[\"Patti Smith\"],\"contributor_role\":\"Everything\"}],\"PhysicalInstantiation\":[{\"format\":\"1 inch videotape\",\"media_type\":\"Moving Image\",\"location\":\"Boston\",\"aapb_preservation_disk\":\"disk1\",\"aapb_preservation_lto\":\"lto2\"}]}"
   }
+  let(:physical_instantiation_data) {
+
+  }
   let(:update_source_data) {
     "{\"Asset\":{\"id\":\"cpb-aacip_600-4746q1sh21\",\"asset_types\":[\"Album\"],\"local_identifier\":[\"wfreu5\"],\"sonyci_id\":[\"wfreu6\"],\"annotations\":[{\"annotation_type\":\"special_collections\",\"value\":\"Snowflake Collection\"}]}}"
   }
@@ -52,6 +55,18 @@ RSpec.describe AAPB::BatchIngest::CSVItemIngester do
       end
     end
   end
+
+  describe '#ingest new PhysicalInstantiation' do
+    context 'using aapb_csv_reader_2' do
+      let(:admin_data) { create(:admin_data) }
+      let(:asset) { create(:asset, id: 'cpb-aacip_600-4746q1sh21', with_admin_data: admin_data.gid) }
+      it 'creates and associates a new PhysicalInstantiation' do
+
+
+      end
+    end
+  end
+
 
   describe '#ingest and overwrite Asset, AdminData, and Annotation attributes' do
     context 'using aapb_csv_reader_3' do
