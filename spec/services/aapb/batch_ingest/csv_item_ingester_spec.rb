@@ -4,8 +4,7 @@ require 'aapb/batch_ingest'
 RSpec.describe AAPB::BatchIngest::CSVItemIngester do
   let(:new_source_data) { "{\"Asset\":{\"annotations\":[{\"annotation_type\":\"level_of_user_access\",\"value\":\"On Location\"},{\"annotation_type\":\"cataloging_status\",\"value\":\"Yes\"},{\"annotation_type\":\"outside_url\",\"value\":\"https://www.outsideurl.com\"},{\"annotation_type\":\"special_collections\",\"value\":\"A1\"},{\"annotation_type\":\"transcript_status\",\"value\":\"Correct\"}],\"id\":\"cpb-aacip_600-4746q1sh20\",\"sonyci_id\":[\"b91781c13b414d7f9ce610879d9c5b6e\"],\"pbs_nola_code\":[\"10\"],\"eidr_id\":[\"1wsx\"],\"asset_types\":[\"Clip\"],\"broadcast_date\":[\"2010-01-01\"],\"created_date\":[\"2010-01-01\"],\"copyright_date\":[\"2010-01-01\"],\"series_title\":[\"Series Title\"],\"episode_description\":[\"asd\"],\"genre\":[\"Debate\"],\"topics\":[\"Dance\"],\"subject\":[\"Stuff\"],\"spatial_coverage\":[\"Jupiter\"],\"audience_level\":[\"Mature\"],\"rights_summary\":[\"Summary of rights\"],\"rights_link\":[\"In Copyright\"],\"producing_organization\":[\"KLOS\"]},\"Contribution\":[{\"contributor\":[\"Patti Smith\"],\"contributor_role\":\"Everything\"}],\"PhysicalInstantiation\":[{\"format\":\"1 inch videotape\",\"media_type\":\"Moving Image\",\"location\":\"Boston\",\"aapb_preservation_disk\":\"disk1\",\"aapb_preservation_lto\":\"lto2\"}]}"
   }
-  let(:physical_instantiation_data) {
-
+  let(:physical_instantiation_source_data) { "{\"Asset\":{\"id\":\"cpb-aacip_600-4746q1sh21\"},\"PhysicalInstantiation\":[{\"format\":\"1 inch videotape\",\"media_type\":\"Moving Image\",\"location\":\"loc1_updated_20812\",\"holding_organization\":\"University of Houston\",\"generations\":[\"\"],\"date\":[\"\"],\"dimensions\":[\"\"],\"time_start\":[\"\"],\"language\":[\"\",\"\"],\"rights_summary\":[\"\",\"\"],\"rights_link\":[\"\",\"\"]}]}"
   }
   let(:update_source_data) {
     "{\"Asset\":{\"id\":\"cpb-aacip_600-4746q1sh21\",\"asset_types\":[\"Album\"],\"local_identifier\":[\"wfreu5\"],\"sonyci_id\":[\"wfreu6\"],\"annotations\":[{\"annotation_type\":\"special_collections\",\"value\":\"Snowflake Collection\"}]}}"
@@ -26,6 +25,10 @@ RSpec.describe AAPB::BatchIngest::CSVItemIngester do
   let(:new_batch) { build(:batch, ingest_type: 'aapb_csv_reader_1', submitter_email: user.email) }
   let(:new_batch_item) { build(:batch_item, batch: new_batch, source_data: new_source_data, source_location: nil, status: 'initialized') }
   let(:new_asset) { described_class.new(new_batch_item).ingest }
+
+  let(:physical_instantiation_batch) { build(:batch, ingest_type: 'aapb_csv_reader_2', submitter_email: user.email) }
+  let(:new_pi_batch_item) { build(:batch_item, batch: physical_instantiation_batch, source_data: physical_instantiation_source_data, source_location: nil, status: 'initialized') }
+  let(:new_physical_instantiation) { described_class.new(new_pi_batch_item).ingest }
 
   let(:update_batch) { build(:batch, ingest_type: 'aapb_csv_reader_3', submitter_email: user.email) }
   let(:update_batch_item) { build(:batch_item, batch: update_batch, source_data: update_source_data, source_location: nil, status: 'initialized') }
@@ -61,12 +64,17 @@ RSpec.describe AAPB::BatchIngest::CSVItemIngester do
       let(:admin_data) { create(:admin_data) }
       let(:asset) { create(:asset, id: 'cpb-aacip_600-4746q1sh21', with_admin_data: admin_data.gid) }
       it 'creates and associates a new PhysicalInstantiation' do
-
-
+        expect(asset.members.select { |member| member.is_a? PhysicalInstantiation }.length).to eq(0)
+        new_physical_instantiation
+        asset.reload
+        expect(asset.members.select { |member| member.is_a? PhysicalInstantiation }.length).to eq(1)
+        physical_instantiation = asset.members.select { |member| member.is_a? PhysicalInstantiation }.first
+        expect(physical_instantiation.format).to eq('1 inch videotape')
+        expect(physical_instantiation.media_type).to eq('Moving Image')
+        expect(physical_instantiation.holding_organization).to eq('University of Houston')
       end
     end
   end
-
 
   describe '#ingest and overwrite Asset, AdminData, and Annotation attributes' do
     context 'using aapb_csv_reader_3' do
