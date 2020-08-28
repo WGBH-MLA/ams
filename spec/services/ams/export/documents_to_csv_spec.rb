@@ -7,16 +7,18 @@ RSpec.describe AMS::Export::DocumentsToCsv do
   let(:search_results) { [SolrDocument.new(asset.to_solr)] }
 
   describe "#process_export" do
+    # Adding back an explicit call to process export, because the test would have caught an IOError
+    let(:service) { described_class.new(search_results, object_type: 'asset', export_type: 'csv_download') }
+
     describe "with 'asset' set as the object_type" do
-      let(:service) do
-        expect{ described_class.new(search_results, object_type: 'asset', export_type: 'csv_download') }.to_not raise_error
+      it "does not raise an error" do
+        expect{ service.process_export }.to_not raise_error
       end
     end
 
     describe "with 'physical_instantiation' set as the object type" do
       let(:asset_with_physical_instantiation) { create(:asset, :with_physical_instantiation) }
       let(:service) do
-        # removed 'call #process_export test' because that now happens during initialize of service
         expect{ described_class.new(search_results, object_type: 'physical_instantiation', export_type: 'csv_download') }.to_not raise_error
       end
     end
