@@ -42,13 +42,7 @@ RSpec.describe Ability do
     [ :create,
       :update,
       :destroy,
-      :update_level_of_user_access,
-      :update_minimally_cataloged,
-      :update_outside_url,
       :update_sonyci_id,
-      :update_licensing_info,
-      :update_playlist_group,
-      :update_playlist_order,
       :update_hyrax_batch_ingest_batch_id,
       :update_last_pushed,
       :update_last_updated,
@@ -74,13 +68,7 @@ RSpec.describe Ability do
     it { is_expected.to be_able_to(:create, AdminData) }
 
     # An 'ingestser' user may update specific fields on AdminData objects.
-    it { is_expected.to be_able_to(:update_level_of_user_access, AdminData) }
-    it { is_expected.to be_able_to(:update_minimally_cataloged, AdminData) }
-    it { is_expected.to be_able_to(:update_outside_url, AdminData) }
     it { is_expected.to be_able_to(:update_sonyci_id, AdminData) }
-    it { is_expected.to be_able_to(:update_licensing_info, AdminData) }
-    it { is_expected.to be_able_to(:update_playlist_group, AdminData) }
-    it { is_expected.to be_able_to(:update_playlist_order, AdminData) }
     it { is_expected.to be_able_to(:update_hyrax_batch_ingest_batch_id, AdminData) }
     it { is_expected.to be_able_to(:update_last_pushed, AdminData) }
     it { is_expected.to be_able_to(:update_last_updated, AdminData) }

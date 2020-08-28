@@ -20,8 +20,8 @@ FactoryBot.define do
           # The incoming PBCore XML values for "Level of User Access" and
           # "Transcript Status" match our controlled vocabulary, so we can take
           # a random sampling from there.
-          build(:pbcore_annotation, type: "Level of User Access", value: LevelOfUserAccessService.new.select_all_options.to_h.values.sample),
-          build(:pbcore_annotation, type: "Transcript Status", value: TranscriptStatusService.new.select_all_options.to_h.values.sample),
+          build(:pbcore_annotation, type: "Level of User Access", value: [ "Online Reading Room", "On Location", "Private" ].sample),
+          build(:pbcore_annotation, type: "Transcript Status", value: [ "Uncorrected", "Correcting", "Correct" ].sample),
           build(:pbcore_annotation, type: "cataloging status", value: "Minimally Cataloged"),
           build(:pbcore_annotation, type: "Outside URL", value: Faker::Internet.url),
           build(:pbcore_annotation, type: "special_collections" , value: Faker::TvShows::Simpsons.character),
