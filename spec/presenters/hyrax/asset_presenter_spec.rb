@@ -160,7 +160,6 @@ RSpec.describe Hyrax::AssetPresenter do
     it { is_expected.to delegate_method(:clip_description).to(:solr_document) }
     it { is_expected.to delegate_method(:copyright_date).to(:solr_document) }
     it { is_expected.to delegate_method(:level_of_user_access).to(:solr_document) }
-    it { is_expected.to delegate_method(:minimally_cataloged).to(:solr_document) }
     it { is_expected.to delegate_method(:outside_url).to(:solr_document) }
     it { is_expected.to delegate_method(:special_collections).to(:solr_document) }
     it { is_expected.to delegate_method(:transcript_status).to(:solr_document) }

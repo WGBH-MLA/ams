@@ -328,12 +328,12 @@ class SolrDocument
     self[Solrizer.solr_name('affiliation')]
   end
 
-  def level_of_user_access
-    self[Solrizer.solr_name('level_of_user_access', 'ssim')]
+  def producing_organization
+    self[Solrizer.solr_name('producing_organization')]
   end
 
-  def minimally_cataloged
-    self[Solrizer.solr_name('minimally_cataloged', 'ssim')]
+  def level_of_user_access
+    self[Solrizer.solr_name('level_of_user_access', 'ssim')]
   end
 
   def outside_url
@@ -359,10 +359,6 @@ class SolrDocument
   def licensing_info
     self[Solrizer.solr_name('licensing_info', 'ssim')]
     end
-
-  def producing_organization
-    self[Solrizer.solr_name('producing_organization', 'ssim')]
-  end
 
   def playlist_group
     self[Solrizer.solr_name('playlist_group', 'ssim')]
@@ -409,19 +405,15 @@ class SolrDocument
   end
 
   def special_collection_category
-    self[Solrizer.solr_name('special_collection_category')]
+    self[Solrizer.solr_name('special_collection_category', 'ssim')]
   end
 
   def canonical_meta_tag
-    self[Solrizer.solr_name('canonical_meta_tag')]
+    self[Solrizer.solr_name('canonical_meta_tag', 'ssim')]
   end
 
   def cataloging_status
     self[Solrizer.solr_name('cataloging_status', 'ssim')]
-  end
-
-  def captions_url
-    self[Solrizer.solr_name('captions_url', 'ssim')]
   end
 
   def captions_url

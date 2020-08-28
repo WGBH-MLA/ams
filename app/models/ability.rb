@@ -65,11 +65,8 @@ class Ability
                               Annotation ]
 
     # Field-level permissions for Admin Data
-    can [:update_level_of_user_access, :update_minimally_cataloged,
-         :update_outside_url, :update_sonyci_id, :update_licensing_info,
-         :update_playlist_group, :update_playlist_order,
-         :update_hyrax_batch_ingest_batch_id, :update_last_pushed,
-         :update_last_updated, :update_needs_update, :update_special_collection_category], AdminData
+    can [ :update_sonyci_id, :update_hyrax_batch_ingest_batch_id, :update_last_pushed,
+         :update_last_updated, :update_needs_update ], AdminData
   end
 
   # Sets permissions for 'aapb-admin' users.
