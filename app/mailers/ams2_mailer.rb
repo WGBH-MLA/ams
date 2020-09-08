@@ -8,4 +8,8 @@ class Ams2Mailer < ApplicationMailer
   def scp_to_aapb_notification(user, output)
     mail(to: user.email, subject: 'AMS2 to AAPB Copy Output', body: output)
   end
+
+  def export_job_failure(user)
+    mail(to: user, subject: 'AMS2 to AAPB Failed')
+  end
 end
