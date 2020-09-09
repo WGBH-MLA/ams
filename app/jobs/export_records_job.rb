@@ -18,6 +18,16 @@ class ExportRecordsJob < ApplicationJob
     config.max_per_page = Rails.application.config.max_export_limit
   end
 
+  before_perform do |job|
+    @search_params = job.arguments[0]
+    @user = job.arguments[1]
+  end
+
+  rescue_from StandardError do |error|
+    Rails.logger.error "#{error.class}: #{error.message}\n\nBacktrace:\n#{error.backtrace.join("\n")}"
+    Ams2Mailer.export_job_failure(@user).deliver_now
+  end
+
   # @param [Hash] search params
   # @param [User] user
   def perform(search_params, user)
