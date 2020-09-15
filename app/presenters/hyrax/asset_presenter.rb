@@ -36,11 +36,11 @@ module Hyrax
     end
 
     def last_pushed
-      DateTime.new(solr_document['last_pushed']).strftime('%m-%e-%y %H:%M') if solr_document['last_pushed']
+      timestamp_to_display_date solr_document['last_pushed']
     end
 
     def last_updated
-      DateTime.new(solr_document['last_updated']).strftime('%m-%e-%y %H:%M') if solr_document['last_updated']
+      timestamp_to_display_date solr_document['last_updated']
     end
 
     def needs_update
@@ -155,6 +155,10 @@ module Hyrax
 
       def instantiation_have_holding_organization_aapb(instantiation)
         (instantiation.holding_organization && instantiation.holding_organization.include?("American Archive of Public Broadcasting"))
+      end
+
+      def timestamp_to_display_date(timestamp)
+        ApplicationHelper.display_date(timestamp, format: '%m-%e-%y %H:%M %Z', from_format: '%s', time_zone: 'US/Eastern')
       end
   end
 end
