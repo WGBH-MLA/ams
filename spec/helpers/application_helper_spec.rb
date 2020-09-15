@@ -14,5 +14,18 @@ RSpec.describe ApplicationHelper do
     it 'eats bad dates, returns nil' do
       expect(helper.display_date('bad date')).to eq nil
     end
+
+    it 'can convert a timestamp to a readable EDT date time' do
+      # Create an arbitrary date (during daylight savings) and make it a timestamp.
+      timestamp = Time.new(2020, 9, 15, 5, 00, 00, "+00:00").strftime('%s')
+      # Format a pretty date from the timestamp AND change the timezone.
+      display_date = helper.display_date(timestamp, format: '%Y-%m-%d %H:%M:%S %Z',
+                                                    from_format: '%s',
+                                                    time_zone: 'US/Eastern')
+
+      # Expect the EDT time to be 4 hours earlier (i.e. Eastern time during
+      # daylight savings).
+      expect(display_date).to eq '2020-09-15 00:00:00 EDT'
+    end
   end
 end
