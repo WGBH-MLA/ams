@@ -116,60 +116,38 @@ RSpec.describe Hyrax::AssetPresenter do
     end
   end
 
-  context "delegate_methods" do
-    subject { presenter }
-    let(:asset) { create(:asset) }
+  context "delegation" do
+    let(:solr_doc) { instance_double(SolrDocument) }
+    subject { described_class.new(solr_doc, nil) }
 
-    let(:presenter) do
-      described_class.new(SolrDocument.new(asset.to_solr), nil)
+    let(:expected_delegated_methods) { [ :title, :genre, :asset_types,
+      :broadcast_date, :created_date, :episode_number, :description,
+      :spatial_coverage, :temporal_coverage, :audience_level, :audience_rating,
+      :annotation, :rights_summary, :rights_link, :date, :local_identifier,
+      :pbs_nola_code, :eidr_id, :topics, :subject, :program_title,
+      :episode_title, :segment_title, :raw_footage_title, :promo_title,
+      :clip_title, :program_description, :episode_description,
+      :segment_description, :raw_footage_description, :promo_description,
+      :clip_description, :copyright_date, :level_of_user_access, :outside_url,
+      :special_collections, :transcript_status, :sonyci_id, :licensing_info,
+      :cataloging_status, :canonical_meta_tag, :special_collection_category,
+      :playlist_group, :playlist_order, :organization
+    ] }
+
+    it 'delegates methods to :solr_document' do
+      expected_delegated_methods.each do |expected_delegated_method|
+        expect(subject).to delegate_method(expected_delegated_method).to :solr_document
+      end
     end
+  end
 
-    # If the fields require no addition logic for display, you can simply delegate
-    # them to the solr document
-    it { is_expected.to delegate_method(:title).to(:solr_document) }
-    it { is_expected.to delegate_method(:genre).to(:solr_document) }
-    it { is_expected.to delegate_method(:asset_types).to(:solr_document) }
-    it { is_expected.to delegate_method(:broadcast_date).to(:solr_document) }
-    it { is_expected.to delegate_method(:created_date).to(:solr_document) }
-    it { is_expected.to delegate_method(:episode_number).to(:solr_document) }
-    it { is_expected.to delegate_method(:description).to(:solr_document) }
-    it { is_expected.to delegate_method(:spatial_coverage).to(:solr_document) }
-    it { is_expected.to delegate_method(:temporal_coverage).to(:solr_document) }
-    it { is_expected.to delegate_method(:audience_level).to(:solr_document) }
-    it { is_expected.to delegate_method(:audience_rating).to(:solr_document) }
-    it { is_expected.to delegate_method(:annotation).to(:solr_document) }
-    it { is_expected.to delegate_method(:rights_summary).to(:solr_document) }
-    it { is_expected.to delegate_method(:rights_link).to(:solr_document) }
-    it { is_expected.to delegate_method(:date).to(:solr_document) }
-    it { is_expected.to delegate_method(:local_identifier).to(:solr_document) }
-    it { is_expected.to delegate_method(:pbs_nola_code).to(:solr_document) }
-    it { is_expected.to delegate_method(:eidr_id).to(:solr_document) }
-    it { is_expected.to delegate_method(:topics).to(:solr_document) }
-    it { is_expected.to delegate_method(:subject).to(:solr_document) }
-    it { is_expected.to delegate_method(:program_title).to(:solr_document) }
-    it { is_expected.to delegate_method(:episode_title).to(:solr_document) }
-    it { is_expected.to delegate_method(:segment_title).to(:solr_document) }
-    it { is_expected.to delegate_method(:raw_footage_title).to(:solr_document) }
-    it { is_expected.to delegate_method(:promo_title).to(:solr_document) }
-    it { is_expected.to delegate_method(:clip_title).to(:solr_document) }
-    it { is_expected.to delegate_method(:program_description).to(:solr_document) }
-    it { is_expected.to delegate_method(:episode_description).to(:solr_document) }
-    it { is_expected.to delegate_method(:segment_description).to(:solr_document) }
-    it { is_expected.to delegate_method(:raw_footage_description).to(:solr_document) }
-    it { is_expected.to delegate_method(:promo_description).to(:solr_document) }
-    it { is_expected.to delegate_method(:clip_description).to(:solr_document) }
-    it { is_expected.to delegate_method(:copyright_date).to(:solr_document) }
-    it { is_expected.to delegate_method(:level_of_user_access).to(:solr_document) }
-    it { is_expected.to delegate_method(:outside_url).to(:solr_document) }
-    it { is_expected.to delegate_method(:special_collections).to(:solr_document) }
-    it { is_expected.to delegate_method(:transcript_status).to(:solr_document) }
-    it { is_expected.to delegate_method(:sonyci_id).to(:solr_document) }
-    it { is_expected.to delegate_method(:licensing_info).to(:solr_document) }
-    it { is_expected.to delegate_method(:cataloging_status).to(:solr_document) }
-    it { is_expected.to delegate_method(:canonical_meta_tag).to(:solr_document) }
-    it { is_expected.to delegate_method(:special_collection_category).to(:solr_document) }
-    it { is_expected.to delegate_method(:playlist_group).to(:solr_document) }
-    it { is_expected.to delegate_method(:playlist_order).to(:solr_document) }
-    it { is_expected.to delegate_method(:organization).to(:solr_document) }
+  describe '#last_pushed' do
+    let(:solr_doc) { instance_double(SolrDocument) }
+    let(:timestamp) { Time.new(2020, 9, 15, 5, 00, 00, "+00:00").strftime('%s') }
+    subject { described_class.new(solr_doc, nil) }
+    before { allow(solr_doc).to receive(:[]).with('last_pushed').and_return(timestamp.to_i) }
+    it 'converts a Unix timestamp into a readable EDT date string with time zone' do
+      expect(subject.last_pushed).to eq '09-15-20 00:00 EDT'
+    end
   end
 end
