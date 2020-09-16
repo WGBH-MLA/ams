@@ -8,7 +8,7 @@ RSpec.describe ApplicationHelper do
     end
 
     it 'can output a custom date format' do
-      expect(helper.display_date('2014-01-16', format: '%Y hello %m world %d')).to eq '2014 hello 01 world 16'
+      expect(helper.display_date('2014-01-16', format: '%Y hello %m world %d', from_format: '%Y-%m-%d')).to eq '2014 hello 01 world 16'
     end
 
     it 'eats bad dates, returns nil' do
@@ -17,7 +17,7 @@ RSpec.describe ApplicationHelper do
 
     it 'can convert a timestamp to a readable EDT date time' do
       # Create an arbitrary date (during daylight savings) and make it a timestamp.
-      timestamp = Time.new(2020, 9, 15, 5, 00, 00, "+00:00").strftime('%s')
+      timestamp = Time.new(2020, 9, 15, 5, 10, 15, "+00:00").strftime('%s')
       # Format a pretty date from the timestamp AND change the timezone.
       display_date = helper.display_date(timestamp, format: '%Y-%m-%d %H:%M:%S %Z',
                                                     from_format: '%s',
@@ -25,7 +25,7 @@ RSpec.describe ApplicationHelper do
 
       # Expect the EDT time to be 4 hours earlier (i.e. Eastern time during
       # daylight savings).
-      expect(display_date).to eq '2020-09-15 00:00:00 EDT'
+      expect(display_date).to eq '2020-09-15 01:10:15 EDT'
     end
   end
 end
