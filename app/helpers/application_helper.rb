@@ -20,16 +20,24 @@ module ApplicationHelper
     params
   end
 
-  def display_date(date_time, format: '%Y-%m-%d', from_format: nil)
+  # Module method for displaying dates consistently.
+  # Usage: ApplicationHelper.display_date
+  def self.display_date(date_time, format: '%Y-%m-%d', from_format: nil, time_zone: 'US/Eastern')
     parsed_time = if from_format
-      Date.strptime(date_time, from_format)
+      Date.strptime(date_time.to_s, from_format)
     else
-      Date.strptime(date_time)
+      Date.strptime(date_time.to_s)
     end
+
+    parsed_time = parsed_time.in_time_zone(time_zone) if time_zone
     parsed_time.strftime(format)
-  rescue => e
+  rescue => error
+    Rails.logger.warn "Caught exception #{error.class}: #{error.message}\n#{error.backtrace.join("\n")}"
     nil
   end
+
+  # Instance method delegates to ApplicationHelper.display_date.
+  def display_date(*args); ApplicationHelper.display_date(*args); end
 
   def render_thumbnail(document, options)
     # send(blacklight_config.view_config(document_index_view_type).thumbnail_method, document, image_options)
