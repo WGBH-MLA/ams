@@ -62,7 +62,7 @@ module Hyrax
             # TODO: pbcore gem currently has time_starts, which is wrong.
             # It should be changed to time_start in the pbcore gem, but until then
             # just grab the first one.
-            env.attributes[:time_start] = pbcore_doc.time_starts.first.value if pbcore_doc.time_starts.first && env.attributes[:time_start].blank?
+            env.attributes[:time_start] = pbcore_doc.time_start.value if pbcore_doc.time_start && env.attributes[:time_start].blank?
             env.attributes[:duration] = pbcore_doc.duration.value  if pbcore_doc.duration && env.attributes[:duration].blank?
             env.attributes[:data_rate] = pbcore_doc.data_rate.value  if pbcore_doc.data_rate && env.attributes[:data_rate].blank?
             env.attributes[:colors] = pbcore_doc.colors.value  if pbcore_doc.colors && env.attributes[:colors].blank?

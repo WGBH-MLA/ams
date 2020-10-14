@@ -5,7 +5,7 @@ FactoryBot.define do
     skip_create
 
     # Uses Digest to ensure the values are unique.
-    value { Digest::SHA1.hexdigest([Time.now, rand].join)[0..10] + Faker::HitchhikersGuideToTheGalaxy.quote }
+    value { Digest::SHA1.hexdigest([Time.now, rand].join)[0..10] + Faker::Movie.quote }
 
     initialize_with { new(attributes) }
   end
