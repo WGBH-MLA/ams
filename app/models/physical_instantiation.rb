@@ -18,10 +18,9 @@ class PhysicalInstantiation < ActiveFedora::Base
   validates :duration, format: { with: AMS::TimeCodeService.regex, allow_blank: true, message: "Invalid format for duration. Use HH:MM:SS, H:MM:SS, MM:SS, or M:SS" }
   # Custom validation block for time_start multi-valued field.
   validate do |physical_instantiation|
-    physical_instantiation.time_start.each do |time_start|
-      if time_start.present? && AMS::TimeCodeService.regex !~ time_start
-        errors.add(:time_start, "Invalid format for duration. Use HH:MM:SS, H:MM:SS, MM:SS, or M:SS")
-      end
+    time_start = physical_instantiation.time_start
+    if time_start.present? && AMS::TimeCodeService.regex !~ time_start
+      errors.add(:time_start, "Invalid format for duration. Use HH:MM:SS, H:MM:SS, MM:SS, or M:SS")
     end
   end
 
@@ -57,7 +56,7 @@ class PhysicalInstantiation < ActiveFedora::Base
     index.as :stored_searchable, :facetable
   end
 
-  property :time_start, predicate: ::RDF::URI.new("http://www.ebu.ch/metadata/ontologies/ebucore/ebucore#start"), multiple: true do |index|
+  property :time_start, predicate: ::RDF::URI.new("http://www.ebu.ch/metadata/ontologies/ebucore/ebucore#start"), multiple: false do |index|
     index.as :stored_searchable
   end
 
