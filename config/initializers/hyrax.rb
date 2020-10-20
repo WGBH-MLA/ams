@@ -9,7 +9,7 @@ Hyrax.config do |config|
   config.register_curation_concern :essence_track
   # Injected via `rails g hyrax:work Contribution`
   config.register_curation_concern :contribution
-  
+
   # Register roles that are expected by your implementation.
   # @see Hyrax::RoleRegistry for additional details.
   # @note there are magical roles as defined in Hyrax::RoleRegistry::MAGIC_ROLES
@@ -202,16 +202,8 @@ Hyrax.config do |config|
   # Location where BagIt files should be exported
   # config.bagit_dir = "tmp/descriptions"
 
-  # If browse-everything has been configured, load the configs.  Otherwise, set to nil.
-  begin
-    if defined? BrowseEverything
-      config.browse_everything = BrowseEverything.config
-    else
-      Rails.logger.warn "BrowseEverything is not installed"
-    end
-  rescue Errno::ENOENT
-    config.browse_everything = nil
-  end
+  # Disable BrowseEverything, we're not using it atm.
+  config.browse_everything = nil
 
   #Register custom Actor
   #

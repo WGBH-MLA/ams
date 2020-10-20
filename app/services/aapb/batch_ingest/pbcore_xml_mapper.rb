@@ -100,8 +100,8 @@ module AAPB
           attrs[:spatial_coverage]            = grouped_coverages["spatial"] if grouped_coverages["spatial"]
           attrs[:temporal_coverage]           = grouped_coverages["temporal"] if grouped_coverages["temporal"]
 
-          attrs[:rights_summary]              = pbcore.rights_summaries.map(&:rights_summary).compact.map(&:value)
-          attrs[:rights_link]                 = pbcore.rights_summaries.map(&:rights_link).compact.map(&:value)
+          attrs[:rights_summary]              = pbcore.rights_summaries.map(&:summary).compact.map(&:value)
+          attrs[:rights_link]                 = pbcore.rights_summaries.map(&:link).compact.map(&:value)
 
           grouped_identifiers = categorize(pbcore.identifiers, criteria: [:source,:to_s,:downcase])
           attrs[:pbs_nola_code]               = (grouped_identifiers.fetch("nola code", []) + grouped_identifiers.fetch("nola", []))
@@ -177,11 +177,11 @@ module AAPB
           attrs[:media_type]                      = pbcore.media_type&.value
           attrs[:format]                          = pbcore.physical&.value
           attrs[:generations]                     = pbcore.generations.map(&:value)
-          attrs[:time_start]                      = pbcore.time_starts.map(&:value)
+          attrs[:time_start]                      = pbcore.time_start.value
           attrs[:duration]                        = pbcore.duration&.value&.gsub('?', '')
           attrs[:colors]                          = pbcore.colors&.value
-          attrs[:rights_summary]                  = pbcore.rights.map(&:rights_summary).map(&:value)
-          attrs[:rights_link]                     = pbcore.rights.map(&:rights_link).map(&:value)
+          attrs[:rights_summary]                  = pbcore.rights.map(&:summary).map(&:value)
+          attrs[:rights_link]                     = pbcore.rights.map(&:link).map(&:value)
           attrs[:local_instantiation_identifier]  = pbcore.identifiers.select { |identifier| identifier.source.to_s.downcase.strip != "ams" }.map(&:value)
           attrs[:tracks]                          = pbcore.tracks&.value
           attrs[:channel_configuration]           = pbcore.channel_configuration&.value
