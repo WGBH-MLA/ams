@@ -78,9 +78,9 @@ RSpec.describe PhysicalInstantiation do
   context "time_start" do
     let(:physical_instantiation) { FactoryBot.build(:physical_instantiation) }
     it "has time_start" do
-      physical_instantiation.time_start = "12:34:56"
+      physical_instantiation.time_start = ["Test time_start"]
       expect(physical_instantiation.resource.dump(:ttl)).to match(/ebucore#start/)
-      expect(physical_instantiation.time_start.include?("12:34:56")).to be true
+      expect(physical_instantiation.time_start.include?("Test time_start")).to be true
     end
   end
 
