@@ -77,7 +77,7 @@ group :development do
   gem 'xray-rails'
 end
 
-gem 'hyrax', '2.9.0'
+gem 'hyrax', '2.5.1'
 gem 'blacklight_advanced_search', '~> 6.4.0'
 gem 'rsolr', '>= 1.0'
 gem 'jquery-rails'
@@ -99,4 +99,3 @@ gem 'react-rails'
 gem 'faker'
 gem 'database_cleaner'
 gem 'redlock', '~> 1.0'
-gem 'httparty', '~> 0.18'

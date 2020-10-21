@@ -72,7 +72,7 @@ class Ability
   # Sets permissions for 'aapb-admin' users.
   def ams_aapb_admin_permissions
     return unless user_groups.include?('aapb-admin')
-    can [:create, :update, :destroy ], [ AdminData,
+    can [:create, :update, :destroy], [ AdminData,
                                         InstantiationAdminData,
                                         Asset,
                                         EssenceTrack,
