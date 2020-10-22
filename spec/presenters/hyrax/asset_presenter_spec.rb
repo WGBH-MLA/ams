@@ -143,11 +143,11 @@ RSpec.describe Hyrax::AssetPresenter do
 
   describe '#last_pushed' do
     let(:solr_doc) { instance_double(SolrDocument) }
-    let(:timestamp) { Time.new(2020, 9, 15, 5, 00, 00, "+00:00").strftime('%s') }
+    let(:timestamp) { Time.new(2020, 9, 15, 5, 10, 15, "+00:00").strftime('%s') }
     subject { described_class.new(solr_doc, nil) }
     before { allow(solr_doc).to receive(:[]).with('last_pushed').and_return(timestamp.to_i) }
     it 'converts a Unix timestamp into a readable EDT date string with time zone' do
-      expect(subject.last_pushed).to eq '09-15-20 00:00 EDT'
+      expect(subject.last_pushed).to eq '09-15-20 01:10 EDT'
     end
   end
 end
