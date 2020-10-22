@@ -22,11 +22,11 @@ module ApplicationHelper
 
   # Module method for displaying dates consistently.
   # Usage: ApplicationHelper.display_date
-  def self.display_date(date_time, format: '%Y-%m-%d', from_format: nil, time_zone: 'US/Eastern')
+  def self.display_date(date_time, format: '%Y-%m-%d', from_format: nil, time_zone: nil)
     parsed_time = if from_format
-      Date.strptime(date_time.to_s, from_format)
+      DateTime.strptime(date_time.to_s, from_format)
     else
-      Date.strptime(date_time.to_s)
+      DateTime.strptime(date_time.to_s)
     end
 
     parsed_time = parsed_time.in_time_zone(time_zone) if time_zone
