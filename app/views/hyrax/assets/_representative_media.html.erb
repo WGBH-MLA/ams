@@ -1,16 +1,24 @@
-<%
-# This is an override of Hyrax 2.1.0 [master] [samvera-labs/hyrax-iiif_av/blob/master/app/views/hyrax/base/_representative_media.html.erb]
-# WARNING: upgrading Hyrax may break this override.
-# Gets default thumbnail from solr document instead of using default.png
-%>
+<% media_type = presenter.solr_document['media_type_ssim'].first %>
 
-<%# if presenter.representative_id.present? && presenter.representative_presenter.present?%>
-<% if true %>
-  <% if defined?(viewer) && viewer %>
-    <%= iiif_viewer_display presenter %>
-  <% else %>
-    <%= media_display presenter.representative_presenter %>
-  <% end %>
+<% if ["Moving Image", "Audio"].include? media_type
+  content_tag_type, source_type = if media_type == "Moving Image"
+    ["video", "video/mp4"]
+  else
+    ["audio", "audio/mp3"]
+  end
+
+  puts content_tag(content_tag_type,
+              controls: true,
+              "class" => "video-js vjs-default-skin vjs-fluid",
+              "id" => "player_media",
+              "aria-label" => "video player",
+              oncontextmenu: 'return false;',
+              preload: 'auto',
+              crossorigin: 'with-credentials',
+              :"data-setup" => '{}',
+              poster: 's') do %>
+                <source src="/media/<%= presenter.id %>" type='<%= source_type %>' />
+              <% end %>
 <% else %>
-  <%= image_tag "#{presenter.solr_document.fetch('thumbnail_path_ss')}", class: "canonical-image" %>
+  Not playable
 <% end %>
