@@ -1,13 +1,9 @@
 <% media_type = presenter.solr_document['media_type_ssim'].first %>
+<% if ["Moving Image", "Audio"].include? media_type %>
+  <% content_tag_type, source_type = media_type == "Moving Image" ? ["video", "video/mp4"] : ["audio", "audio/mp3"] %>
 
-<% if ["Moving Image", "Audio"].include? media_type
-  content_tag_type, source_type = if media_type == "Moving Image"
-    ["video", "video/mp4"]
-  else
-    ["audio", "audio/mp3"]
-  end
 
-  puts content_tag(content_tag_type,
+ <%= content_tag(content_tag_type,
               controls: true,
               "class" => "video-js vjs-default-skin vjs-fluid",
               "id" => "player_media",
