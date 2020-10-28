@@ -10,7 +10,7 @@
               "aria-label" => "video player",
               oncontextmenu: 'return false;',
               preload: 'auto',
-              crossorigin: 'with-credentials',
+              crossorigin: 'anonymous',
               :"data-setup" => '{}',
               poster: 's') do %>
                 <source src="/media/<%= presenter.id %>" type='<%= source_type %>' />
