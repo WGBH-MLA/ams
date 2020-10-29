@@ -11,10 +11,7 @@ module AMS
 
       attr_reader :temp_file_path
 
-      attr_accessor :export_data
-
-
-      # user is needed to 
+      # user is needed to
       def initialize(solr_documents, filename: nil, user: nil, export_type: nil)
         # this is used for emailing push-to-aapb summaries in a PushedZip export_records_job
         @user = user
@@ -33,7 +30,7 @@ module AMS
 
         # call this my damn self
         # this actually creates the export data, using a #process_export method defined in each subclass of ExportService
-        @export_data = process_export
+        process_export
 
         if @export_type.end_with?('_job')
           process_job
@@ -48,15 +45,15 @@ module AMS
         begin
           # determine which after-package action to take
 
-          if @export_type == 'pushed_zip_job' # DocumentsToPushedZip 
-            
+          if @export_type == 'pushed_zip_job' # DocumentsToPushedZip
+
             # send zip from tmp location to aapb
             scp_to_aapb
           elsif ['csv_job', 'pbcore_job'].include?(@export_type) # DocumentsToPbcoreXml or DocumentsToCsv
 
             # upload zip to s3 for download
             upload_to_s3
-            Ams2Mailer.export_notification(@user, @export_data.s3_path).deliver_later
+            Ams2Mailer.export_notification(@user, @s3_path).deliver_later
           end
         ensure
 
