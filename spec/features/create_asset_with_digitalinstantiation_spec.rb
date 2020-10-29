@@ -66,7 +66,7 @@ RSpec.feature 'Create and Validate Asset,Digital Instantiation, EssenseTrack', j
         permission_template_id: permission_template.id,
         agent_type: 'user',
         agent_id: user_with_role.email,
-        access: 'manage'
+        access: 'deposit'
       )
       # Login role user to create asset
       login_as(user_with_role)
