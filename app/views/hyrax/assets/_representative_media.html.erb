@@ -2,19 +2,18 @@
 <% if ["Moving Image", "Audio"].include? media_type %>
   <% content_tag_type, source_type = media_type == "Moving Image" ? ["video", "video/mp4"] : ["audio", "audio/mp3"] %>
 
-
- <%= content_tag(content_tag_type,
-              controls: true,
-              "class" => "video-js vjs-default-skin vjs-fluid",
-              "id" => "player_media",
-              "aria-label" => "video player",
-              oncontextmenu: 'return false;',
-              preload: 'auto',
-              crossorigin: 'anonymous',
-              :"data-setup" => '{}',
-              poster: 's') do %>
-                <source src="/media/<%= presenter.id %>" type='<%= source_type %>' />
-              <% end %>
+  <%= content_tag(content_tag_type,
+    controls: true,
+    "class" => "video-js vjs-default-skin vjs-fluid",
+    "id" => "player_media",
+    "aria-label" => "video player",
+    oncontextmenu: 'return false;',
+    preload: 'auto',
+    crossorigin: 'anonymous',
+    :"data-setup" => '{}',
+    poster: 's') do %>
+      <source src="/media/<%= presenter.id %>" type='<%= source_type %>' />
+  <% end %>
 <% else %>
-  Not playable
+  Not playable: unrecognized media type: "<%= media type %>".
 <% end %>
