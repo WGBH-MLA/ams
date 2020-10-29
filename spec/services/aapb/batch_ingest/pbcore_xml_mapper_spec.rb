@@ -93,14 +93,13 @@ RSpec.describe AAPB::BatchIngest::PBCoreXMLMapper, :pbcore_xpath_helper do
     let(:attr_names) { multi_value_attr_names + single_value_attr_names }
 
     let(:multi_value_attr_names) do
-      [ :dimensions, :generations, :rights_summary,
+      [ :dimensions, :generations, :time_start, :rights_summary,
         :rights_link ]
     end
 
     let(:single_value_attr_names) do
       [ :standard, :format, :location, :media_type, :duration, :colors, :tracks,
-        :channel_configuration, :alternative_modes, :digitization_date,
-        :holding_organization, :time_start ]
+        :channel_configuration, :alternative_modes, :digitization_date, :holding_organization ]
     end
 
     it 'maps all attributes from PBCore XML' do
