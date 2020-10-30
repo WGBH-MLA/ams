@@ -23,7 +23,7 @@ before_install:
 - cp config/travis/fcrepo_wrapper_test.yml config/fcrepo_wrapper_test.yml
 - gem update bundler
 - gem update --system 3.0.6
-- nvm install 8.16.0
+- nvm install 12.9.0
 before_script:
 - export DISPLAY=:99.0
 - RAILS_ENV=test bundle exec rake db:environment:set db:create db:migrate --trace

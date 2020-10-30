@@ -1,6 +1,9 @@
 {
   "name": "AMS",
   "private": true,
+  "engines": {
+    "node": "12.9.0"
+  },
   "dependencies": {
     "@rails/webpacker": "3.5",
     "babel-preset-react": "^6.24.1",
