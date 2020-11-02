@@ -1,4 +1,4 @@
-<% media_type = presenter.solr_document['media_type_ssim'].first %>
+<% media_type = presenter.solr_document['media_type_ssim'].first if presenter.solr_document['media_type_ssim'] %>
 <% if ["Moving Image", "Audio"].include? media_type %>
   <% content_tag_type, source_type = media_type == "Moving Image" ? ["video", "video/mp4"] : ["audio", "audio/mp3"] %>
 
