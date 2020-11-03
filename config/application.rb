@@ -26,7 +26,7 @@ module AMS
     config.load_defaults 5.1
 
     # Sets the max allowed results in any export.
-    config.max_export_limit = 9999999
+    config.max_export_limit = 9_999_999
 
     # Sets the max allowed results for a browser download.
     # config.max_export_to_browser_limit = 100

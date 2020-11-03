@@ -1,0 +1,41 @@
+---
+exports:
+  - type: asset
+    fields:
+      - name: "Asset ID"
+        method: :id
+      - name: "Local Identifier"
+      - name: "Title"
+      - name: "Dates"
+      - name: "Producing Organization"
+      - name: "Description"
+      - name: "Level of User Access"
+      - name: "Cataloging Status"
+      - name: "Holding Organization"
+        method: organization
+  - type: digital_instantiation
+    fields:
+      - name: "Asset ID"
+        method: parent_asset_id
+      - name: "Digital Instantiation ID"
+        method: :id
+      - name: "Local Instantiation Identifier"
+      - name: "MD5"
+      - name: "Media Type"
+      - name: "Generations"
+      - name: "Duration"
+      - name: "File Size"
+  - type: physical_instantiation
+    fields:
+      - name: "Asset ID"
+        method: parent_asset_id
+      - name: "Physical Instantiation ID"
+        method: :id
+      - name: "Local Instantiation Identifier"
+      - name: "Holding Organization"
+      - name: "Physical Format"
+        method: :format
+      - name: "Title"
+      - name: "Date"
+      - name: "Digitized"
+        method: :digitized?

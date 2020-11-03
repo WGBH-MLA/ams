@@ -104,7 +104,6 @@ module AMS
           Rails.logger.info output
           Ams2Mailer.scp_to_aapb_notification(@user, output.join("\n\n")).deliver_later
         end
-
       end
     end
   end

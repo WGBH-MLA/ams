@@ -167,11 +167,6 @@ module PBCoreXPathHelper
       noko.xpath('//pbcoreCreator').select{ |creator| creator.xpath('.//creatorRole').text == "Producing Organization" }.map{ |e| e.xpath('.//creator').text }
     end
 
-    def digital_instantiations
-      require 'pry'; binding.pry
-    end
-
-
     # Shortcut method to pull out all annotations that don't match special
     # annotation types.
     # Usage: In your spec, do this..

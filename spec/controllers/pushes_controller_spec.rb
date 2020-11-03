@@ -1,67 +1,113 @@
 require 'rails_helper'
 
-RSpec.describe "Pushes", type: :controller, js: true do
-  include Warden::Test::Helpers
-  include Devise::Test::ControllerHelpers
+RSpec.describe PushesController, type: :controller do
 
-  # let it bang
+  # Use a real memoized method to generate test user once.
   let!(:user) { create :admin_user }
-  let!(:asset) { create(:asset, user: user, program_title: ['foo']) }
-  let!(:asset2) { create(:asset, user: user, program_title: ['foo bar']) }
-  let!(:asset3) { create(:asset, user: user, needs_update: true) }
 
-  context '#pushes' do
-    before :each do
-      login_as(user)
+  # Use a real memoized method to generate test assets once.
+  let!(:assets) { create_list :asset, rand(2..4) }
+
+  # Ensure user is signed in before each test.
+  before { sign_in(user) }
+
+  describe 'GET /pushes/index' do
+    let(:pushes) { create_list(:push, rand(2..4), user: user) }
+    before { get :index }
+    it 'assigns @pushes to all Push model instances' do
+      expect(assigns(:pushes)).to eq pushes
+    end
+  end
+
+  describe 'GET /pushes/:id' do
+    let(:push) { create(:push, user: user) }
+    before { get :show, params: { id: push.id } }
+    it 'assign @push to the Push instance for the ID given' do
+      expect(assigns(:push)).to eq push
+    end
+  end
+
+  describe 'GET /pushes/new' do
+    render_views
+    let(:params) { {} }
+    let(:only_whitespace) { /\A\s*\Z/ }
+    before { get :new, params: params }
+    context 'with no params' do
+      it 'renders the "new" view with an empty text box for GUIDs' do
+        expect(response.body).to have_css("textarea", text: only_whitespace)
+      end
     end
 
-    after :each do
-      Warden.test_reset!
+    context 'with search params' do
+      # An empty :q in the search just returns all results.
+      let(:params) { {q: ''} }
+
+      # Extract the IDs from the rendered textarea
+      let(:actual_ids) do
+        page = Capybara::Node::Simple.new(response.body)
+        page.find('textarea').text.split(/\s+/).reject(&:empty?)
+      end
+
+      it 'performs the search to get the IDs, and renders the "new" view with' \
+         'the IDs in the id_field' do
+        expect(Set.new(actual_ids)).to eq Set.new(assets.map(&:id))
+      end
+    end
+  end
+
+  describe 'POST /pushes/validate_ids' do
+    before { post :validate_ids, params: { id_field: id_field } }
+    let(:json_response) { JSON.parse(response.body) }
+
+    context 'with some invalid IDs' do
+      let(:asset_ids) { assets.map(&:id) }
+      let(:missing_ids) { ["cpb-aacip-xxxxxxxxxxx", "cpb-aacip-xxxxxxxxxxx", "cpb-aacip-yyyyyyyyyyy"] }
+      let(:id_field) { (asset_ids + missing_ids).shuffle.join("\n") }
+      it 'returns error message that includes the invalid IDs but not any valid
+          IDs' do
+        missing_ids.each do |missing_id|
+          expect(json_response['error']).to include missing_id
+        end
+
+        asset_ids.each do |asset_id|
+          expect(json_response['error']).not_to include asset_id
+        end
+      end
     end
 
-    it 'gives validation error when invalid GUID input data' do
-      visit '/pushes/new'
-      fill_in(id: 'id_field', with: 'xxx133' )
-      expect(page).to have_text('There was a problem parsing your IDs. Please check your input and try again.')
+    context 'with valid ids' do
+      let(:id_field) { assets.map(&:id).join("\n") }
+      it 'returns no error' do
+        expect(json_response).not_to have_key('error')
+      end
+    end
+  end
+
+  describe 'POST /pushes/create' do
+    let(:asset_ids) { assets.map(&:id) }
+    # Simulate a list of IDs passed into the id_field param.
+    let(:params) { { id_field: asset_ids.join("\n") } }
+
+    # The params with which we expect to run the ExportRecordsJob
+    let(:expected_job_params) do
+      { user: user,
+        export_type: :push_to_aapb,
+        # The search params that PushesController passes to ExportRecordJob should
+        # include an :fq value of all IDs OR'd together.
+        search_params: { fq: "id:(#{asset_ids.join(' OR ')})" } }
     end
 
-    it 'gives all clear for valid GUID input data' do
-      visit '/pushes/new'
-      fill_in(id: 'id_field', with: asset.id )
-      expect(page).to have_text('All GUIDs are valid!')
+    # Hook up the mocks
+    before do
+      allow(ExportRecordsJob).to receive(:perform_later).with(expected_job_params)
     end
 
-    it 'gets the correct record set for needs_updating' do
-      # this i do
-      # just for u
-      visit '/pushes/needs_updating'
-      expect(page.find('textarea')).to have_text(asset3.id)
-    end
-
-    it 'gets the correct record set when navigating from a catalog search' do
-      # uri = %(/catalog?q=foo)
-      # visit uri
-      visit '/catalog'
-      fill_in(id: 'q', with: 'foo')
-      click_button(id: 'search-submit-header')
-      click_link('Push To AAPB', class: 'aapb-push-button')
-
-      expect(page.find('textarea')).to have_text(asset.id)
-      expect(page.find('textarea')).to have_text(asset2.id)
-    end
-
-    it 'can submit a push successfully' do
-      allow(ExportRecordsJob).to receive(:perform_later)
-      visit '/pushes/new'
-      fill_in('id_field', with: asset.id )
-      click_button(id: 'push-submit')
-
-      # this will have the output mail
-      # output_mail = ActionMailer::Base.deliveries.last
-      expect(ExportRecordsJob).to have_received(:perform_later)
-      push = Push.last
-      expect(push.user_id).to eq(user.id)
-      expect(push.pushed_id_csv).to eq(asset.id)
+    it 'creates a new Push instance and calls :perform_later on ' \
+       'ExportRecordJob with correct search params' do
+      expect { post :create, params: params }.to change { Push.count }.by(1)
+      expect(ExportRecordsJob).to have_received(:perform_later).
+                                  with(expected_job_params).
+                                  exactly(1).times
     end
   end
 end
