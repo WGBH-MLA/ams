@@ -180,8 +180,10 @@ module AAPB
           attrs[:time_start]                      = pbcore.time_start&.value
           attrs[:duration]                        = pbcore.duration&.value&.gsub('?', '')
           attrs[:colors]                          = pbcore.colors&.value
-          attrs[:rights_summary]                  = pbcore.rights_summaries.map(&:summary).map(&:value)
-          attrs[:rights_link]                     = pbcore.rights_summaries.map(&:link).map(&:value)
+
+          # TODO: change left side to rights_summaries (because multiple: true), or to rights (to agree with PBCore gem's Instantiation#rights)
+          attrs[:rights_summary]                  = pbcore.rights.map(&:summary).map(&:value)
+          attrs[:rights_link]                     = pbcore.rights.map(&:link).map(&:value)
           attrs[:local_instantiation_identifier]  = pbcore.identifiers.select { |identifier| identifier.source.to_s.downcase.strip != "ams" }.map(&:value)
           attrs[:tracks]                          = pbcore.tracks&.value
           attrs[:channel_configuration]           = pbcore.channel_configuration&.value
