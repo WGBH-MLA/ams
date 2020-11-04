@@ -21,7 +21,7 @@ FactoryBot.define do
     tracks                  { build(:pbcore_instantiation_tracks) }
     channel_configuration   { build(:pbcore_instantiation_channel_configuration) }
     alternative_modes       { build(:pbcore_instantiation_alternative_modes) }
-    annotations             { [ build(:pbcore_instantiation_annotation, type: "Organization", value: "American Archive of Public Broadcasting") ] }
+    annotations             { [ build(:pbcore_instantiation_annotation, type: "organization", value: "American Archive of Public Broadcasting") ] }
 
     initialize_with { new(attributes) }
 

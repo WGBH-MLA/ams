@@ -34,7 +34,7 @@ RSpec.describe AAPB::BatchIngest::PBCoreXMLMapper, :pbcore_xpath_helper do
     it 'maps PBCore XML values to the correct attributes for AssetActor' do
       # For each attribute that has an xpath shortcut helper
       attrs_with_xpath_shortcuts.each do |attr|
-        expect(attrs[attr]).to eq pbcore_values_from_xpath(pbcore_xml, attr)
+        expect(attrs[attr]).to match_array pbcore_values_from_xpath(pbcore_xml, attr)
       end
 
       # Check :title, :description, :id separately with specific helpers.
