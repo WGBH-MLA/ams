@@ -10,7 +10,7 @@ FactoryBot.define do
     initialize_with { new(attributes) }
 
     trait :topic do
-      source { "AAPB Format Topic" }
+      source { "AAPB Topical Genre" }
       value { Faker::Book.genre }
       annotation { "topic" }
     end

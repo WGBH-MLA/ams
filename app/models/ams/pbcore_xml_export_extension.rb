@@ -63,10 +63,10 @@ module AMS::PbcoreXmlExportExtension
     raw_footage_description.to_a.each { |description| xml.pbcoreDescription(descriptionType: 'Raw Footage') { xml.text(description) } }
 
     # Genre
-    genre.to_a.each { |genre| xml.pbcoreGenre(annotation: 'genre') { xml.text(genre) } }
+    genre.to_a.each { |genre| xml.pbcoreGenre(source: 'AAPB Format Genre', annotation: 'genre') { xml.text(genre) } }
 
     # Topic
-    topics.to_a.each { |topic| xml.pbcoreGenre(annotation: 'topic') { xml.text(topic) } }
+    topics.to_a.each { |topic| xml.pbcoreGenre(source: 'AAPB Topical Genre', annotation: 'topic') { xml.text(topic) } }
 
     # no pbcoreRelation
       # no pbcoreRelationType
