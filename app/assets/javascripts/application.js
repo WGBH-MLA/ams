@@ -23,6 +23,7 @@
 //= require dataTables/jquery.dataTables
 //= require dataTables/bootstrap/3/jquery.dataTables.bootstrap
 //= require blacklight/blacklight
+//= require video
 
 //= require_tree ./global
 //= require hyrax

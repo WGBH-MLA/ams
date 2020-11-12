@@ -59,10 +59,7 @@ module Hyrax
             env.attributes[:media_type] = pbcore_doc.media_type.value  if pbcore_doc.media_type && env.attributes[:media_type].blank?
             env.attributes[:generations] = pbcore_doc.generations.map(&:value)  if pbcore_doc.generations && env.attributes[:generations].blank?
             env.attributes[:file_size] = pbcore_doc.file_size.value  if pbcore_doc.file_size && env.attributes[:file_size].blank?
-            # TODO: pbcore gem currently has time_starts, which is wrong.
-            # It should be changed to time_start in the pbcore gem, but until then
-            # just grab the first one.
-            env.attributes[:time_start] = pbcore_doc.time_starts.first.value if pbcore_doc.time_starts.first && env.attributes[:time_start].blank?
+            env.attributes[:time_start] = pbcore_doc.time_start.value if pbcore_doc.time_start && env.attributes[:time_start].blank?
             env.attributes[:duration] = pbcore_doc.duration.value  if pbcore_doc.duration && env.attributes[:duration].blank?
             env.attributes[:data_rate] = pbcore_doc.data_rate.value  if pbcore_doc.data_rate && env.attributes[:data_rate].blank?
             env.attributes[:colors] = pbcore_doc.colors.value  if pbcore_doc.colors && env.attributes[:colors].blank?
