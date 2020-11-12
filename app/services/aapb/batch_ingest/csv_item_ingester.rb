@@ -120,8 +120,7 @@ module AAPB
         end
 
         def reader_options
-          config = Hyrax::BatchIngest::Config.new
-          config.ingest_types[@batch_item.batch.ingest_type.to_sym].reader_options.deep_dup
+          Hyrax::BatchIngest.config.ingest_types[@batch_item.batch.ingest_type.to_sym].reader_options
         end
 
         def set_attributes_for_new_ingest_type(model_object, attributes, ability)
