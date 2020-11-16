@@ -444,6 +444,10 @@ class SolrDocument
     self[Solrizer.solr_name('transcript_url','ssim')]
   end
 
+  def transcript_source
+    self[Solrizer.solr_name('transcript_source','ssim')]
+  end
+
   def md5
     # this nonsensical ':symbol' option indicates that I am selecting the _ssim suffix from down in solrizer - default was _tesim, which was wrong for this field
     self[Solrizer.solr_name('md5', :symbol)]
