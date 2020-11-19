@@ -22,14 +22,14 @@ module AMS
 
       def reachable?(host)
         !!head(host)
-      rescue SocketError, Errno::ECONNREFUSED
+      rescue SocketError, Errno::ECONNREFUSED, OpenSSL::SSL::SSLError
         false
       end
 
       private
         def make_url(host, *url_args)
           # HEAD check requires http://, while ssh requires it naught! joining them like this because URI#join messes up //
-          url_args.unshift('http://' + host)
+          url_args.unshift('https://' + host)
           URI.join(*url_args)
         end
     end

@@ -9,7 +9,7 @@ class Ams2Mailer < ApplicationMailer
     mail(to: user.email, subject: 'AMS2 to AAPB Copy Output', body: output)
   end
 
-  def export_job_failure(user)
-    mail(to: user, subject: 'AMS2 to AAPB Failed')
+  def export_job_failure(user, environment)
+    mail(to: user, subject: "(#{environment}) AMS2 to AAPB Failed")
   end
 end

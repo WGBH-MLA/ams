@@ -25,7 +25,10 @@ class ExportRecordsJob < ApplicationJob
 
   rescue_from StandardError do |error|
     Rails.logger.error "#{error.class}: #{error.message}\n\nBacktrace:\n#{error.backtrace.join("\n")}"
-    Ams2Mailer.export_job_failure(@user).deliver_now
+
+    env_name = RAILS_ENV == 'production' ? "Production" : "Demo"
+    Ams2Mailer.export_job_failure(@user, env_name).deliver_now
+    raise error
   end
 
   # @param [Hash] search params
