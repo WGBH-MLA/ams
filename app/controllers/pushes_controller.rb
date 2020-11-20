@@ -1,3 +1,4 @@
+require_relative '../../lib/ams/aapb'
 class PushesController < ApplicationController
   include ApplicationHelper
   include Blacklight::SearchHelper
@@ -44,9 +45,12 @@ class PushesController < ApplicationController
     query_params = delete_extra_params(query_params)
     query_params.delete :controller
 
-    ExportRecordsJob.perform_later(query_params, current_user)
-    push = Push.create(user_id: current_user.id, pushed_id_csv: ids.join(',') )
-    redirect_to "/pushes/#{push.id}"
+    pushes = []
+    [AMS::AAPB.production, AMS::AAPB.demoduction].each do |aapb_host|
+      ExportRecordsJob.perform_later(query_params, current_user, aapb_host)
+      pushes.push( Push.create(user_id: current_user.id, pushed_id_csv: ids.join(','), destination: aapb_host ) )
+    end
+    redirect_to "/pushes/#{pushes.first.id}"
   end
 
   def validate_ids

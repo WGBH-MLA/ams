@@ -21,16 +21,18 @@ class ExportRecordsJob < ApplicationJob
   before_perform do |job|
     @search_params = job.arguments[0]
     @user = job.arguments[1]
+    @aapb_host = job.arguments[2]
   end
 
   rescue_from StandardError do |error|
+
     Rails.logger.error "#{error.class}: #{error.message}\n\nBacktrace:\n#{error.backtrace.join("\n")}"
-    Ams2Mailer.export_job_failure(@user).deliver_now
+    Ams2Mailer.export_job_failure(@user, @aapb_host).deliver_now
   end
 
   # @param [Hash] search params
   # @param [User] user
-  def perform(search_params, user)
+  def perform(search_params, user, aapb_host)
     self.current_ability = Ability.new(user)
     format = search_params.delete :format
 
@@ -48,7 +50,6 @@ class ExportRecordsJob < ApplicationJob
       end
 
     else
-
       # nothing to see here, folks!
       response, response_documents = search_results({}) do |builder|
         AMS::PushSearchBuilder.new(self).with(search_params)
@@ -80,7 +81,7 @@ class ExportRecordsJob < ApplicationJob
         asset.update_index
       end
 
-      AMS::Export::DocumentsToPushedZip.new(response_documents, export_type: 'pushed_zip_job', user: user)
+      AMS::Export::DocumentsToPushedZip.new(response_documents, export_type: 'pushed_zip_job', user: user, aapb_host: aapb_host)
     else
       raise "Unknown export format"
     end

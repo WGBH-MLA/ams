@@ -12,7 +12,7 @@ module AMS
       attr_reader :temp_file_path
 
       # user is needed to
-      def initialize(solr_documents, filename: nil, user: nil, export_type: nil)
+      def initialize(solr_documents, filename: nil, user: nil, export_type: nil, aapb_host: nil)
         # this is used for emailing push-to-aapb summaries in a PushedZip export_records_job
         @user = user
 
@@ -33,7 +33,7 @@ module AMS
         process_export
 
         if @export_type.end_with?('_job')
-          process_job
+          process_job(aapb_host: aapb_host)
         end
       end
 
@@ -41,14 +41,15 @@ module AMS
         raise 'Whoa there! Format is required! Did you define a #format method in your export adaptor class?'
       end
 
-      def process_job
+      def process_job(aapb_host: nil)
         begin
           # determine which after-package action to take
 
           if @export_type == 'pushed_zip_job' # DocumentsToPushedZip
 
             # send zip from tmp location to aapb
-            scp_to_aapb
+
+            scp_to_aapb(aapb_host)
           elsif ['csv_job', 'pbcore_job'].include?(@export_type) # DocumentsToPbcoreXml or DocumentsToCsv
 
             # upload zip to s3 for download
@@ -86,25 +87,20 @@ module AMS
         end
       end
 
-      def scp_to_aapb
+      def scp_to_aapb(aapb_host)
+        #formerly ABG, AnyBody can Get it
+        raise "Auth path was not defined! #{aapb_key_path}" unless aapb_key_path
+        raise "AAPB was unreachable! #{aapb_host}" unless AMS::AAPB.reachable?(aapb_host)
+        raise "Temp File was not found!" unless @temp_file_path.present?
 
-        # ABG, AnyBody can Get it
-        [AMS::AAPB.production, AMS::AAPB.demoduction].each do |aapb_host|
+        output = []
+        output << `scp #{aapb_key_path} #{@temp_file_path} ec2-user@#{aapb_host}:/home/ec2-user/ingest_zips/#{@filename}`
+        output << `ssh #{aapb_key_path} ec2-user@#{aapb_host} 'unzip -d /home/ec2-user/ingest_zips -o /home/ec2-user/ingest_zips/#{@filename}'`
+        output << `ssh #{aapb_key_path} ec2-user@#{aapb_host} 'bash -l -c "cd /var/www/aapb/current && RAILS_ENV=production bundle exec /usr/bin/ruby scripts/download_clean_ingest.rb --files /home/ec2-user/ingest_zips/*.xml"'`
 
-          raise "Auth path was not defined! #{aapb_key_path}" unless aapb_key_path
-          raise "AAPB was unreachable! #{aapb_host}" unless AMS::AAPB.reachable?(aapb_host)
-          raise "Temp File was not found!" unless @temp_file_path.present?
-
-          output = []
-          output << `scp #{aapb_key_path} #{@temp_file_path} ec2-user@#{aapb_host}:/home/ec2-user/ingest_zips/#{@filename}`
-          output << `ssh #{aapb_key_path} ec2-user@#{aapb_host} 'unzip -d /home/ec2-user/ingest_zips -o /home/ec2-user/ingest_zips/#{@filename}'`
-          output << `ssh #{aapb_key_path} ec2-user@#{aapb_host} 'bash -l -c "cd /var/www/aapb/current && RAILS_ENV=production bundle exec /usr/bin/ruby scripts/download_clean_ingest.rb --files /home/ec2-user/ingest_zips/*.xml"'`
-
-          # print and email
-          Rails.logger.info output
-          Ams2Mailer.scp_to_aapb_notification(@user, output.join("\n\n")).deliver_later
-        end
-
+        # print and email
+        Rails.logger.info output
+        Ams2Mailer.scp_to_aapb_notification(@user, output.join("\n\n"), aapb_host).deliver_later
       end
     end
   end

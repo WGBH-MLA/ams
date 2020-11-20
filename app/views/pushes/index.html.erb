@@ -6,7 +6,7 @@
     
   <% @pushes.each do |push| %>
     <li>
-      <%= link_to %(Push ##{push.id}), push %>
+      <%= link_to %((#{push.destination}) Push ##{push.id}), push %>
     </li>  
   <% end %>
 
