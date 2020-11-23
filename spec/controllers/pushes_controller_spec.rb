@@ -58,7 +58,7 @@ RSpec.describe "Pushes", type: :controller, js: true do
 
       # this will have the output mail
       # output_mail = ActionMailer::Base.deliveries.last
-      expect(ExportRecordsJob).to have_received(:perform_later)
+      expect(ExportRecordsJob).to have_received(:perform_later).exactly(2).times
       push = Push.last
       expect(push.user_id).to eq(user.id)
       expect(push.pushed_id_csv).to eq(asset.id)
