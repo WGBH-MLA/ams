@@ -236,6 +236,10 @@ class Asset < ActiveFedora::Base
     transcript_url ||= find_annotation_attribute("transcript_url")
   end
 
+  def transcript_source
+    transcript_source ||= find_annotation_attribute("transcript_source")
+  end
+
   def cataloging_status
     cataloging_status ||= find_annotation_attribute("cataloging_status")
   end

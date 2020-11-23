@@ -12,7 +12,7 @@ FactoryBot.define do
     location                { build(:pbcore_instantiation_location) }
     media_type              { build(:pbcore_instantiation_media_type) }
     generations             { [ build(:pbcore_instantiation_generations) ] }
-    time_starts             { [ build(:pbcore_instantiation_time_start) ] }
+    time_start             { build(:pbcore_instantiation_time_start) }
     duration                { build(:pbcore_instantiation_duration) }
     colors                  { build(:pbcore_instantiation_colors) }
     rights                  { [ build(:pbcore_instantiation_rights) ] }

@@ -81,6 +81,7 @@ module PBCoreXPathHelper
         project_code:                   '//pbcoreAnnotation[@annotationType="Project Code"]',
         supplemental_material:          '//pbcoreAnnotation[@annotationType="Supplemental Material"]',
         transcript_url:                 '//pbcoreAnnotation[@annotationType="Transcript URL"]',
+        transcript_source:              '//pbcoreAnnotation[@annotationType="Transcript Source"]',
         rights_summary:                 '//pbcoreRightsSummary/rightsSummary',
         rights_link:                    '//pbcoreRightsSummary/rightsLink',
         local_identifier:               '//pbcoreIdentifier[@source="Local Identifier"]',
