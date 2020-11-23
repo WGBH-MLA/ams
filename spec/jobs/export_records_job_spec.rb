@@ -21,7 +21,7 @@ RSpec.describe ExportRecordsJob, type: :job do
 
     it 'does not retry, and the error is logged' do
       perform_enqueued_jobs do
-        described_class.perform_later(search_params, user)
+        described_class.perform_later(search_params, user, 'demo.aapb.wgbh-mla.org')
       end
       assert_performed_jobs 1
       assert_emails delivery_count + 1
