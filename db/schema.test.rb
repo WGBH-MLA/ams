@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20200803200219) do
+ActiveRecord::Schema.define(version: 20201120144958) do
 
   create_table "admin_data", force: :cascade do |t|
     t.text "sonyci_id"
@@ -331,6 +331,7 @@ ActiveRecord::Schema.define(version: 20200803200219) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "user_id"
+    t.string "destination", default: "Both"
   end
 
   create_table "qa_local_authorities", force: :cascade do |t|

@@ -26,7 +26,7 @@ RSpec.describe ExportRecordsJob, type: :job do
       assert_performed_jobs 1
       assert_emails delivery_count + 1
       expect(Rails.logger).to have_received(:error).with(/Foo/).exactly(1).times
-      expect(most_recent_mail.subject).to eq "AMS2 to AAPB Failed"
+      expect(most_recent_mail.subject).to eq "(demo.aapb.wgbh-mla.org) AMS2 to AAPB Failed"
     end
   end
 end
