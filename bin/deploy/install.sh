@@ -8,10 +8,11 @@ cd $APP_HOME
 echo "Ensuring bundler is installed..."
 gem install bundler
 bundle install --deployment --without development test
+
+# Print out versions of things for debugging
 echo "ruby version:`ruby -v`"
 echo "rails versions:`bundle exec rails -v`"
 echo "node version:`node -v`"
-echo "yarn version:`yarn -v`"
 if [ -z $SECRET_KEY_BASE ]; then
   sudo echo "export SECRET_KEY_BASE=`bin/rails secret`" >> ~/.bashrc
   source ~/.bashrc

@@ -5,11 +5,11 @@ FactoryBot.define do
     skip_create
 
     trait :summary do
-      rights_summary { PBCore::RightsSummary::RightsSummary.new(value: Faker::GreekPhilosophers.quote) }
+      summary { PBCore::RightsSummary::Summary.new(value: Faker::GreekPhilosophers.quote) }
     end
 
     trait :link do
-      rights_link { PBCore::RightsSummary::RightsLink.new(value: Faker::Internet.url )}
+      link { PBCore::RightsSummary::Link.new(value: Faker::Internet.url )}
     end
 
     initialize_with { new(attributes) }

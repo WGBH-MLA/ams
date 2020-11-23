@@ -35,3 +35,5 @@ terms:
     term: Transcript Status
   - id: transcript_url
     term: Transcript URL
+  - id: transcript_source
+    term: Transcript Source
