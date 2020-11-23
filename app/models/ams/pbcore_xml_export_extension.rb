@@ -10,6 +10,8 @@ module AMS::PbcoreXmlExportExtension
     pbcore_builder.to_xml # Return PBCore XML
   end
 
+  private
+
   def pbcore_xml_builder
     Nokogiri::XML::Builder.new(encoding: 'UTF-8') do |xml|
       xml.pbcoreDescriptionDocument('xmlns' => 'http://www.pbcore.org/PBCore/PBCoreNamespace.html', 'xmlns:xsi' => 'http://www.w3.org/2001/XMLSchema-instance', 'xsi:schemaLocation' => 'http://www.pbcore.org/PBCore/PBCoreNamespace.html http://www.pbcore.org/xsd/pbcore-2.1.xsd') do
@@ -24,9 +26,9 @@ module AMS::PbcoreXmlExportExtension
     # Asset Type
     asset_types.to_a.each { |type| xml.pbcoreAssetType { xml.text(type) } }
     # Dates
-    created_date.to_a.each { |date| xml.pbcoreAssetDate(dateType: 'created') { xml.text(date) } }
-    broadcast_date.to_a.each { |date|  xml.pbcoreAssetDate(dateType: 'broadcast') { xml.text(date) }  }
-    copyright_date.to_a.each { |date|  xml.pbcoreAssetDate(dateType: 'copyright') { xml.text(date) }  }
+    created_date.to_a.each { |date| xml.pbcoreAssetDate(dateType: 'Created') { xml.text(date) } }
+    broadcast_date.to_a.each { |date|  xml.pbcoreAssetDate(dateType: 'Broadcast') { xml.text(date) }  }
+    copyright_date.to_a.each { |date|  xml.pbcoreAssetDate(dateType: 'Copyright') { xml.text(date) }  }
     self.date.to_a.each { |date| xml.pbcoreAssetDate { xml.text(date) } }
 
     # Identifiers
@@ -38,32 +40,33 @@ module AMS::PbcoreXmlExportExtension
 
     # Titles
     self['title_tesim'].to_a.each { |title| xml.pbcoreTitle { xml.text(title) } }
-    series_title.to_a.each { |title| xml.pbcoreTitle(source: 'Series') { xml.text(title) } }
-    program_title.to_a.each { |title| xml.pbcoreTitle(source: 'Program') { xml.text(title) } }
-    episode_title.to_a.each { |title| xml.pbcoreTitle(source: 'Episode') { xml.text(title) } }
-    episode_number.to_a.each { |title| xml.pbcoreTitle(source: 'Episode Number') { xml.text(title) } }
-    segment_title.to_a.each { |title| xml.pbcoreTitle(source: 'Segment') { xml.text(title) } }
-    clip_title.to_a.each { |title| xml.pbcoreTitle(source: 'Clip') { xml.text(title) } }
-    promo_title.to_a.each { |title| xml.pbcoreTitle(source: 'Promo') { xml.text(title) } }
-    raw_footage_title.to_a.each { |title| xml.pbcoreTitle(source: 'Raw Footage') { xml.text(title) } }
+    series_title.to_a.each { |title| xml.pbcoreTitle(titleType: 'Series') { xml.text(title) } }
+    program_title.to_a.each { |title| xml.pbcoreTitle(titleType: 'Program') { xml.text(title) } }
+    episode_title.to_a.each { |title| xml.pbcoreTitle(titleType: 'Episode') { xml.text(title) } }
+    episode_number.to_a.each { |title| xml.pbcoreTitle(titleType: 'Episode Number') { xml.text(title) } }
+    segment_title.to_a.each { |title| xml.pbcoreTitle(titleType: 'Segment') { xml.text(title) } }
+    clip_title.to_a.each { |title| xml.pbcoreTitle(titleType: 'Clip') { xml.text(title) } }
+    promo_title.to_a.each { |title| xml.pbcoreTitle(titleType: 'Promo') { xml.text(title) } }
+    raw_footage_title.to_a.each { |title| xml.pbcoreTitle(titleType: 'Raw Footage') { xml.text(title) } }
 
     # Subject
     subject.to_a.each { |subject| xml.pbcoreSubject { xml.text(subject) } }
 
     # Descriptions
     self['description_tesim'].to_a.each { |description| xml.pbcoreDescription { xml.text(description) } }
-    series_description.to_a.each { |description| xml.pbcoreDescription(source: 'Series') { xml.text(description) } }
-    program_description.to_a.each { |description| xml.pbcoreDescription(source: 'Program') { xml.text(description) } }
-    episode_description.to_a.each { |description| xml.pbcoreDescription(source: 'Episode') { xml.text(description) } }
-    segment_description.to_a.each { |description| xml.pbcoreDescription(source: 'Segment') { xml.text(description) } }
-    clip_description.to_a.each { |description| xml.pbcoreDescription(source: 'Clip') { xml.text(description) } }
-    promo_description.to_a.each { |description| xml.pbcoreDescription(source: 'Promo') { xml.text(description) } }
-    raw_footage_description.to_a.each { |description| xml.pbcoreDescription(source: 'Raw Footage') { xml.text(description) } }
+    series_description.to_a.each { |description| xml.pbcoreDescription(descriptionType: 'Series') { xml.text(description) } }
+    program_description.to_a.each { |description| xml.pbcoreDescription(descriptionType: 'Program') { xml.text(description) } }
+    episode_description.to_a.each { |description| xml.pbcoreDescription(descriptionType: 'Episode') { xml.text(description) } }
+    segment_description.to_a.each { |description| xml.pbcoreDescription(descriptionType: 'Segment') { xml.text(description) } }
+    clip_description.to_a.each { |description| xml.pbcoreDescription(descriptionType: 'Clip') { xml.text(description) } }
+    promo_description.to_a.each { |description| xml.pbcoreDescription(descriptionType: 'Promo') { xml.text(description) } }
+    raw_footage_description.to_a.each { |description| xml.pbcoreDescription(descriptionType: 'Raw Footage') { xml.text(description) } }
 
     # Genre
-    genre.to_a.each { |genre| xml.pbcoreGenre(source: 'AAPB Format Genre') { xml.text(genre) } }
+    genre.to_a.each { |genre| xml.pbcoreGenre(source: 'AAPB Format Genre', annotation: 'genre') { xml.text(genre) } }
+
     # Topic
-    topics.to_a.each { |topic| xml.pbcoreGenre(source: 'AAPB Topical Genre') { xml.text(topic) } }
+    topics.to_a.each { |topic| xml.pbcoreGenre(source: 'AAPB Topical Genre', annotation: 'topic') { xml.text(topic) } }
 
     # no pbcoreRelation
       # no pbcoreRelationType
@@ -140,9 +143,16 @@ module AMS::PbcoreXmlExportExtension
       end
     end
 
+    # Rights Link
+    rights_link.to_a.each do |rights_link|
+      # xml.pbcoreRightsSummary( xml.rightsSummary(  ) )
+      xml.pbcoreRightsSummary do |rights_node|
+        rights_node.rightsLink { xml.cdata(rights_link) }
+      end
+    end
+
     # make sure that manipulating 'xml' inside this func is still in scope
     prepare_instantiations(xml)
-
 
     # Annotation from the annotation property on Asset
     annotation.to_a.each { |annotation| xml.pbcoreAnnotation { xml.cdata(annotation) } }
@@ -220,7 +230,6 @@ module AMS::PbcoreXmlExportExtension
 
   def prepare_digital_instantiation(xml, instantiation)
     xml.pbcoreInstantiation do |instantiation_node|
-
       instantiation_node.instantiationIdentifier { instantiation_node.text(instantiation.id) }
       instantiation.local_instantiation_identifier.to_a.each { |local_instantiation_identifier| instantiation_node.instantiationIdentifier { instantiation_node.text(local_instantiation_identifier) } }
 
@@ -231,7 +240,7 @@ module AMS::PbcoreXmlExportExtension
 
       instantiation.dimensions.to_a.each { |dimension| instantiation_node.instantiationDimensions(unitsOfMeasure: '') { instantiation_node.text(dimension) } }
 
-      instantiation.format.to_a.each { |format| instantiation_node.instantiationPhysical { instantiation_node.text(format) } }
+      instantiation.digital_format.to_a.each { |format| instantiation_node.instantiationDigital { instantiation_node.text(format) } }
 
       instantiation.standard.to_a.each { |standard|  instantiation_node.instantiationStandard { instantiation_node.text(standard) }  }
 

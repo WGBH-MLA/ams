@@ -41,6 +41,7 @@ module PBCoreXPathHelper
 
     def xpath_presets
       @xpath_presets ||= {
+        series_title:                   '//pbcoreTitle[@titleType="Series"]',
         program_title:                  '//pbcoreTitle[@titleType="Program"]',
         episode_title:                  '//pbcoreTitle[@titleType="Episode" or @titleType="Episode Title"]',
         segment_title:                  '//pbcoreTitle[@titleType="Segment"]',
@@ -48,6 +49,7 @@ module PBCoreXPathHelper
         promo_title:                    '//pbcoreTitle[@titleType="Promo"]',
         raw_footage_title:              '//pbcoreTitle[@titleType="Raw Footage"]',
         episode_number:                 '//pbcoreTitle[@titleType="Episode Number"]',
+        series_description:             '//pbcoreDescription[@descriptionType="Series"]',
         program_description:            '//pbcoreDescription[@descriptionType="Program"]',
         episode_description:            '//pbcoreDescription[@descriptionType="Episode" or @descriptionType="Episode Description"]',
         segment_description:            '//pbcoreDescription[@descriptionType="Segment"]',
@@ -60,7 +62,7 @@ module PBCoreXPathHelper
         broadcast_date:                 '//pbcoreAssetDate[@dateType="Broadcast"]',
         copyright_date:                 '//pbcoreAssetDate[@dateType="Copyright"]',
         created_date:                   '//pbcoreAssetDate[@dateType="Created"]',
-        genre:                          '//pbcoreGenre',
+        genre:                          '//pbcoreGenre[@annotation="genre"]',
         level_of_user_access:           '//pbcoreAnnotation[@annotationType="Level of User Access"]',
         cataloging_status:              '//pbcoreAnnotation[@annotationType="cataloging status"]',
         outside_url:                    '//pbcoreAnnotation[@annotationType="Outside URL"]',
@@ -83,10 +85,12 @@ module PBCoreXPathHelper
         rights_summary:                 '//pbcoreRightsSummary/rightsSummary',
         rights_link:                    '//pbcoreRightsSummary/rightsLink',
         local_identifier:               '//pbcoreIdentifier[@source="Local Identifier"]',
-        pbs_nola_code:                  '//pbcoreIdentifier[@source="NOLA"]',
+        pbs_nola_code:                  '//pbcoreIdentifier[@source="NOLA Code"]',
         eidr_id:                        '//pbcoreIdentifier[@source="EIDR"]',
-        topics:                         '//pbcoreGenre[@source="AAPB Topical Genre"]',
+        sonyci_id:                      '//pbcoreIdentifier[@source="Sony Ci"]',
+        topics:                         '//pbcoreGenre[@annotation="topic"]',
         subject:                        '//pbcoreSubject',
+        digital_format:                 '//instantiationDigital',
         dimensions:                     '//instantiationDimensions',
         standard:                       '//instantiationStandard',
         generations:                    '//instantiationGenerations',
@@ -103,7 +107,7 @@ module PBCoreXPathHelper
         tracks:                         '//instantiationTracks',
         channel_configuration:          '//instantiationChannelConfiguration',
         digitization_date:              '//instantiationDate[@dateType="Digitized"]',
-        holding_organization:           '//instantiationAnnotation[@annotationType="Organization"]',
+        holding_organization:           '//instantiationAnnotation[@annotationType="organization"]',
         # Essence track xpath helper shortcuts
         ess_track_type:                 '//essenceTrackType',
         ess_track_id:                   '//essenceTrackIdentifier',
@@ -127,7 +131,7 @@ module PBCoreXPathHelper
     #   pbcore_xpath_helper(pbcore_xml).titles_without_type
     def titles_without_type
       all_titles = values_from_xpath('//pbcoreTitle')
-      with_types = values_from_xpath(:program_title) + values_from_xpath(:episode_title) + values_from_xpath(:segment_title) + values_from_xpath(:clip_title) + values_from_xpath(:promo_title) + values_from_xpath(:raw_footage_title) + values_from_xpath(:episode_number)
+      with_types = values_from_xpath(:series_title) + values_from_xpath(:program_title) + values_from_xpath(:episode_title) + values_from_xpath(:segment_title) + values_from_xpath(:clip_title) + values_from_xpath(:promo_title) + values_from_xpath(:raw_footage_title) + values_from_xpath(:episode_number)
       remove_exactly_once_from_array all_titles, with_types
     end
 
@@ -137,7 +141,7 @@ module PBCoreXPathHelper
     #   pbcore_xpath_helper(pbcore_xml).descriptions_without_type
     def descriptions_without_type
       all_descs = values_from_xpath('//pbcoreDescription')
-      with_types = values_from_xpath(:program_description) + values_from_xpath(:episode_description) + values_from_xpath(:segment_description) + values_from_xpath(:clip_description) + values_from_xpath(:promo_description) + values_from_xpath(:raw_footage_description) + values_from_xpath(:episode_number)
+      with_types = values_from_xpath(:series_description) + values_from_xpath(:program_description) + values_from_xpath(:episode_description) + values_from_xpath(:segment_description) + values_from_xpath(:clip_description) + values_from_xpath(:promo_description) + values_from_xpath(:raw_footage_description) + values_from_xpath(:episode_number)
       remove_exactly_once_from_array all_descs, with_types
     end
 
@@ -151,6 +155,23 @@ module PBCoreXPathHelper
       remove_exactly_once_from_array all_dates, with_types
     end
 
+    def spatial_coverage
+      noko.xpath('//pbcoreCoverage').select{ |coverage| coverage.xpath('.//coverageType').text == "Spatial" }.map{ |e| e.xpath('.//coverage').text }
+    end
+
+    def temporal_coverage
+      noko.xpath('//pbcoreCoverage').select{ |coverage| coverage.xpath('.//coverageType').text == "Temporal" }.map{ |e| e.xpath('.//coverage').text }
+    end
+
+    def producing_organization
+      noko.xpath('//pbcoreCreator').select{ |creator| creator.xpath('.//creatorRole').text == "Producing Organization" }.map{ |e| e.xpath('.//creator').text }
+    end
+
+    def digital_instantiations
+      require 'pry'; binding.pry
+    end
+
+
     # Shortcut method to pull out all annotations that don't match special
     # annotation types.
     # Usage: In your spec, do this..
@@ -158,9 +179,9 @@ module PBCoreXPathHelper
     def annotations_without_type
       all_vals = values_from_xpath('//pbcoreAnnotation')
       with_types = values_from_xpath(:level_of_user_access) +
-                   values_from_xpath(:minimally_cataloged) +
+                   values_from_xpath(:cataloging_status) +
                    values_from_xpath(:outside_url) +
-                   values_from_xpath(:special_collection) +
+                   values_from_xpath(:special_collections) +
                    values_from_xpath(:transcript_status) +
                    values_from_xpath(:licensing_info) +
                    values_from_xpath(:playlist_group) +

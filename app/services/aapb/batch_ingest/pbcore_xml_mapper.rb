@@ -93,7 +93,7 @@ module AAPB
           attrs[:audience_level]              = pbcore.audience_levels.map(&:value)
           attrs[:audience_rating]             = pbcore.audience_ratings.map(&:value)
           attrs[:asset_types]                 = pbcore.asset_types.map(&:value)
-          attrs[:genre]                       = pbcore.genres.map(&:value)
+          attrs[:genre]                       = pbcore.genres.select { |genre| genre.source.to_s.downcase == "aapb format genre" }.map(&:value)
           attrs[:topics]                      = pbcore.genres.select { |genre| genre.source.to_s.downcase == "aapb topical genre" }.map(&:value)
 
           grouped_coverages = categorize(pbcore.coverages, criteria: [:type,:value,:downcase,:strip], accessor: [:coverage, :value])

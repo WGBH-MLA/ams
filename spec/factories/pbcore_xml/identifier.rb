@@ -11,7 +11,7 @@ FactoryBot.define do
     end
 
     trait :nola_code do
-      source { "NOLA" }
+      source { "NOLA Code" }
       # 4 capital letters followed by number with leading zeros.
       value { ('A'..'Z').to_a.sample(4).join + '%04i' % rand(1..99) }
     end
