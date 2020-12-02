@@ -104,8 +104,10 @@ module AAPB
           attrs[:rights_link]                 = pbcore.rights_summaries.map(&:link).compact.map(&:value)
 
           grouped_identifiers = categorize(pbcore.identifiers, criteria: [:source,:to_s,:downcase])
+          # pull out identifiers with an unknown source and add as local identifiers
+          other_identifiers                   = grouped_identifiers.slice!(*identifier_sources)
+          attrs[:local_identifier]            = (grouped_identifiers.fetch("local identifier", []) + other_identifiers.values).flatten
           attrs[:pbs_nola_code]               = (grouped_identifiers.fetch("nola code", []) + grouped_identifiers.fetch("nola", []))
-          attrs[:local_identifier]            = grouped_identifiers["local identifier"] if grouped_identifiers["local identifier"]
           attrs[:eidr_id]                     = grouped_identifiers["eidr"] if grouped_identifiers["eidr"]
           attrs[:sonyci_id]                   = grouped_identifiers["sony ci"] if grouped_identifiers["sony ci"]
 
@@ -262,6 +264,10 @@ module AAPB
 
         def date_types
           @date_types ||= ['broadcast', 'copyright', 'created']
+        end
+
+        def identifier_sources
+          @identifier_sources ||= ['nola code','local identifier','eidr','sony ci', 'http://americanarchiveinventory.org']
         end
 
         # Transforms one or more dates.

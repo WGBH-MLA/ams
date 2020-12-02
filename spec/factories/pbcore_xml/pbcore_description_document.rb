@@ -103,7 +103,7 @@ FactoryBot.define do
       end
 
       transient do
-        other_identifiers { [:nola_code, :eidr, :local] }
+        other_identifiers { [:nola_code, :eidr, :local, :random_id] }
       end
 
       after(:build) do |pbcore_description_document, evaluator|
