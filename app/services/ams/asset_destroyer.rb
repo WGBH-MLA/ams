@@ -21,9 +21,8 @@ module AMS
           Asset.find asset_id
         rescue Ldp::Gone
           eradicate_tombstone_by_id asset_id
-          delete_sipity_entity_by_id asset_id
         else
-          puts "Lookup of Asset with ID '#{asset_id}', did not return a Tombstone. Skipping..."
+          puts "Lookup of Asset with ID '#{asset_id}' did not return a Tombstone. Skipping..."
         end
       end
     end
@@ -40,9 +39,7 @@ module AMS
 
         puts "Asset '#{asset_id}' destroyed."
       rescue => e
-        msg = e.class.to_s
-        msg += ": #{e.message}" unless e.message.empty?
-        puts "Error destroying Asset '#{asset_id}'. #{msg}"
+        error_rescue(e, "Asset", asset_id)
       end
 
       def actor
@@ -67,17 +64,24 @@ module AMS
       end
 
       def eradicate_tombstone_by_id(asset_id)
-         ActiveFedora::Base.eradicate(asset_id)
+         ActiveFedora::Base.eradicate asset_id
          puts "Tombstone '#{asset_id}' destroyed."
-       rescue => e
-        msg = e.class.to_s
-        msg += ": #{e.message}" unless e.message.empty?
-        puts "Error destroying Fedora Tombstone '#{asset_id}'. #{msg}"
+         delete_sipity_entity_by_id asset_id
+      rescue => e
+        error_rescue(e, "Tombstone", asset_id)
       end
 
       def delete_sipity_entity_by_id(asset_id)
         Sipity::Entity.find_by(proxy_for_global_id: global_id(asset_id)).destroy
         puts "Sipity::Entity '#{asset_id}' destroyed."
+      rescue => e
+        error_rescue(e, "Sipity::Entity", asset_id)
+      end
+
+      def error_rescue(error, object, asset_id)
+        msg = error.class.to_s
+        msg += ": #{error.message}" unless error.message.empty?
+        puts "Error destroying '#{object}' for '#{asset_id}'. #{msg}"
       end
   end
 end
