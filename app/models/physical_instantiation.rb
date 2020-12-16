@@ -20,7 +20,6 @@ class PhysicalInstantiation < ActiveFedora::Base
   validate do |physical_instantiation|
     time_start = physical_instantiation.time_start
     if time_start.present? && AMS::TimeCodeService.regex !~ time_start
-      raise "HEY FUCKFACE"
       errors.add(:time_start, "Invalid format for duration. Use HH:MM:SS, H:MM:SS, MM:SS, or M:SS")
     end
   end
