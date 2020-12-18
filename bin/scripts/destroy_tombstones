@@ -12,4 +12,4 @@ tombstone_ids = File.readlines tombstone_ids_file_path, chomp: true
 
 # Destroy the assets.
 asset_destroyer = AMS::AssetDestroyer.new
-asset_destroyer.eradicate_tombstones tombstone_ids
+asset_destroyer.eradicate_asset_tombstones tombstone_ids
