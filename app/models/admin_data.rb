@@ -2,7 +2,7 @@ class AdminData < ApplicationRecord
   attr_reader :asset_error
 
   belongs_to  :hyrax_batch_ingest_batch, optional: true
-  has_many    :annotations
+  has_many    :annotations, dependent: :destroy
 
   self.table_name = "admin_data"
   include ::EmptyDetection

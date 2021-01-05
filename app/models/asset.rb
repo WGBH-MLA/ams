@@ -3,6 +3,7 @@ class Asset < ActiveFedora::Base
   include ::AMS::CreateMemberMethods
   include ::AMS::IdentifierService
   include ::AMS::CascadeDestroyMembers
+  include ::AMS::AllNestedMembersMethods
 
   self.indexer = AssetIndexer
   before_save :save_admin_data
@@ -55,6 +56,10 @@ class Asset < ActiveFedora::Base
 
   def annotations
     @annotations ||= admin_data.annotations
+  end
+
+  def all_members
+    @all_members ||= all_nested_members
   end
 
   # TODO: Use RDF::Vocab for applicable terms.
