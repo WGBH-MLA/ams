@@ -21,7 +21,7 @@ bin/rails db:migrate
 bin/rails assets:precompile
 
 bin/rails g deployment_info_page --deployment_id $DEPLOYMENT_ID
-sudo service httpd restart
+sudo systemctl restart httpd
 sleep 2
 SIDEKIQ_RESET=true bundle exec ruby bin/scripts/ensure_sidekiq_running.rb
 sleep 2
