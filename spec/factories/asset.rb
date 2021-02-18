@@ -73,6 +73,13 @@ FactoryBot.define do
       ] }
     end
 
+    trait :with_physical_digital_and_essence_track do
+      ordered_members { [
+        create(:physical_instantiation),
+        create(:digital_instantiation, :aapb_moving_image_with_essence_track),
+      ] }
+    end
+
     before(:create) do |work, evaluator|
       if evaluator.admin_set
         work.admin_set_id = evaluator.admin_set.id
