@@ -13,7 +13,7 @@ module AMS
             physical_instantiation: ExportToS3Notification,
             digital_instantiation: ExportToS3Notification,
             pbcore_zip: ExportToS3Notification
-          }.fetch(export_type)
+          }.fetch(export_type.to_sym)
         end
       end
     end

@@ -9,12 +9,12 @@ module AMS
       class << self
         def for_export_type(export_type)
           {
-            'asset' => AssetsSearch,
-            'pbcore_zip' => AssetsSearch,
-            'push_to_aapb' => AssetsSearch,
-            'digital_instantiation' => DigitalInstantiationsSearch,
-            'physical_instantiation' => PhysicalInstantiationsSearch
-          }[export_type]
+            asset: AssetsSearch,
+            pbcore_zip: AssetsSearch,
+            push_to_aapb: AssetsSearch,
+            digital_instantiation: DigitalInstantiationsSearch,
+            physical_instantiation: PhysicalInstantiationsSearch
+          }.fetch(export_type.to_sym)
         end
       end
     end
