@@ -23,7 +23,7 @@ module AMS
           end
 
           def instantiations_search_params
-            { q: "+id:(#{instantiation_ids.join(' OR ')}) has_model_ssim:#{model_name}" }
+            { q: "+id:(#{instantiation_ids.join(' OR ')}) has_model_ssim:#{model_name}", rows: MAX_LIMIT }
           end
 
           def instantiation_ids
