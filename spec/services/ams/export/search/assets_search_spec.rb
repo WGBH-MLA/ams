@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe AMS::Export::Search::AssetsSearch do
   describe '#solr_documents' do
     # create assets first with let!
-    let!(:assets) { create_list(:asset, rand(4), title: [ searchable_title ] ) }
+    let!(:assets) { create_list(:asset, rand(11..14), title: [ searchable_title ] ) }
     let(:searchable_title) { Faker::Lorem.sentence }
     let(:search_params) { { q: searchable_title } }
     let(:solr_documents) { subject.solr_documents }

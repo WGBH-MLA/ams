@@ -31,7 +31,8 @@ module AMS
         attr_reader :user, :search_params
 
         def initialize(search_params:, user:)
-          @search_params = search_params
+          # Set rows: MAX_LIMIT in search params to return all rows by default.
+          @search_params = search_params.merge(rows: MAX_LIMIT)
           @user = user
         end
 
