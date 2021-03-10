@@ -4,7 +4,7 @@ require 'ams/migrations/audit/ams1_asset'
 
 RSpec.describe AMS::Migrations::Audit::AMS1Asset do
 
-  let(:ams1_asset) { described_class.new(id) }
+  let(:ams1_asset) { described_class.new(id: id) }
 
   context 'with an invalid AMS 1 ID' do
 

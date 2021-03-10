@@ -6,16 +6,12 @@ module AMS
       class AMS1Asset
         attr_reader :id
 
-        def initialize(id)
+        def initialize(id:)
           @id = id
         end
 
         def pbcore
-          http_response if pbcore_description_doc_found?
-        end
-
-        def pbcore_present?
-          pbcore.present?
+          pbcore_description_doc_found? ? http_response : nil
         end
 
         def digital_instantiations_count

@@ -2,18 +2,11 @@ module AMS
   module Migrations
     module Audit
       class AMS2Asset
-        attr_reader :id
+        attr_reader :solr_document
 
-        def initialize(id)
-          @id = id
-        end
-
-        def solr_document
-          @solr_document ||= find_solr_doc
-        end
-
-        def solr_document_present?
-          solr_document.present?
+        def initialize(solr_document:)
+          raise 'AMS2Asset must be initialized with a SolrDocument' unless solr_document.class == SolrDocument
+          @solr_document = solr_document
         end
 
         def digital_instantiations_count
@@ -29,12 +22,6 @@ module AMS
         end
 
         private
-
-        def find_solr_doc
-          SolrDocument.find id
-        rescue Blacklight::Exceptions::RecordNotFound
-          nil
-        end
 
         def asset_members
           @asset_members ||= solr_document.all_nested_member_ids.map{ |id| SolrDocument.find(id)}
