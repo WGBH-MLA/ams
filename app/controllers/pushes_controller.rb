@@ -14,8 +14,7 @@ class PushesController < ApplicationController
   def create
     @push = Push.new(user_id: current_user.id, pushed_id_csv: pushed_id_csv_from_id_field )
     if @push.valid?
-      search_for_ids_only = { fq: "id:(#{@push.push_ids.join(' OR ')})"}
-      ExportRecordsJob.perform_later(export_type: :push_to_aapb, search_params: search_for_ids_only, user: current_user)
+      PushToAAPBJob.perform_later(ids: @push.push_ids, user: current_user)
       @push.save!
       redirect_to @push
     else
@@ -54,7 +53,7 @@ class PushesController < ApplicationController
     end
 
     def assets_search
-      @asset_search ||= AMS::Export::Search::AssetsSearch.new(search_params: search_params, user: current_user)
+      @asset_search ||= AMS::Export::Search::CatalogSearch.new(search_params: search_params, user: current_user)
     end
 
     def search_params

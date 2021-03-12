@@ -52,14 +52,14 @@ RSpec.describe "Pushes features", type: :controller, js: true do
     end
 
     it 'can submit a push successfully' do
-      allow(ExportRecordsJob).to receive(:perform_later)
+      allow(PushToAAPBJob).to receive(:perform_later)
       visit '/pushes/new'
       fill_in('id_field', with: asset.id )
       click_button(id: 'push-submit')
 
       # this will have the output mail
       # output_mail = ActionMailer::Base.deliveries.last
-      expect(ExportRecordsJob).to have_received(:perform_later)
+      expect(PushToAAPBJob).to have_received(:perform_later)
       push = Push.last
       expect(push.user_id).to eq(user.id)
       expect(push.pushed_id_csv).to eq(asset.id)

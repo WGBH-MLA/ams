@@ -28,14 +28,9 @@ class Push < ApplicationRecord
     end
 
     # NOTE: do not memoize
-    # @return [AMS::Export::Search::AssetSearch] instance used for performing
+    # @return [AMS::Export::Search::CombinedIDSearch] instance used for performing
     #   search and returning solr document results.
     def export_search
-      AMS::Export::Search::AssetsSearch.new(search_params: search_params, user: user)
-    end
-
-    # NOTE: do not memoize
-    def search_params
-      { fq: "id:(\"#{push_ids.join('" OR "')}\")", rows: AMS::Export::Search::Base::MAX_LIMIT }
+      AMS::Export::Search::CombinedIDSearch.new(ids: push_ids, user: user)
     end
 end

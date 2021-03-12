@@ -6,7 +6,7 @@ RSpec.describe AMS::Export::Search do
 
     context 'with "asset"' do
       let(:export_type) { 'asset' }
-      it { is_expected.to eq AMS::Export::Search::AssetsSearch }
+      it { is_expected.to eq AMS::Export::Search::CatalogSearch }
     end
 
     context 'with "physical_instantiation"' do

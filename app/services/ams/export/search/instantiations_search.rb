@@ -1,38 +1,32 @@
 module AMS
   module Export
     module Search
-      class InstantiationsSearch < Base
-        def response
-          @response ||= solr.search(instantiations_search_params)
+      class InstantiationsSearch < CatalogSearch
+        def solr_documents
+          combined_id_search.solr_documents
         end
 
-        def response_without_rows
-          params = instantiations_search_params.merge(rows: 0)
-          @response_without_rows ||= solr.search(params)
+        def num_found
+          combined_id_search.num_found
         end
 
         private
 
-          def model_name
+          def model_class_name
             raise "#{self.class}##{__method__} must be implemented to return " \
                   "the value for has_model_ssim."
           end
 
-          def solr
-            @solr ||= Blacklight::Solr::Repository.new(blacklight_config)
+          def combined_id_search
+            @combined_id_search ||= AMS::Export::Search::CombinedIDSearch.new(ids: asset_member_ids, model_class_name: model_class_name, user: user)
           end
 
-          def instantiations_search_params
-            { q: "+id:(#{instantiation_ids.join(' OR ')}) has_model_ssim:#{model_name}", rows: MAX_LIMIT }
+          def asset_member_ids
+            @asset_member_ids ||= assets_search.solr_documents.map(&:member_ids).flatten
           end
 
-          def instantiation_ids
-            @instantiation_ids ||= asset_results.map(&:member_ids).flatten
-          end
-
-          def asset_results
-            asset_search = AMS::Export::Search::AssetsSearch.new(search_params: search_params, user: user)
-            asset_search.solr_documents
+          def assets_search
+            @assets_search ||= AMS::Export::Search::CatalogSearch.new(search_params: search_params, user: user)
           end
       end
     end

@@ -11,22 +11,10 @@ module AMS
       # The export searches need to be done both in CatalogController and in
       # export jobs, hence the abstraction into this class.
       class Base
-
-        # Include Blacklight modules that provide methods for configurating and
-        # performing searches.
-        include Blacklight::SearchHelper
-        include Blacklight::Configurable
         include ActiveModel::Validations
+        include Blacklight::Configurable
 
         MAX_LIMIT = Rails.configuration.max_export_limit
-
-        # this is required - advanced_search will crash without it
-        copy_blacklight_config_from(CatalogController)
-        configure_blacklight do |config|
-          # This is necessary to prevent Blacklight's default value of 100 for
-          # config.max_per_page from capping the number of results.
-          config.max_per_page = MAX_LIMIT
-        end
 
         attr_reader :user, :search_params
 
@@ -37,13 +25,13 @@ module AMS
         end
 
         validate do |search|
-          errors.add(:base, "Export of size #{search.num_found} is too large. Max " \
-                            "export limit is #{MAX_LIMIT}.") if (search.num_found > MAX_LIMIT)
+          errors.add(:base, "Export of size #{num_found} is too large. Max " \
+                            "export limit is #{MAX_LIMIT}.") if (num_found > MAX_LIMIT)
         end
 
-        # Used by Blacklight::AccessControls because we have to bring Blacklight's
-        # search interface into this class.
-        def current_ability; Ability.new(user); end
+        def current_ability
+          @current_ability ||= Ability.new(user)
+        end
 
         def solr_documents
           response.fetch('response').fetch('docs').map do |solr_response_hash|
@@ -55,17 +43,19 @@ module AMS
           response_without_rows.fetch('response').fetch('numFound').to_i
         end
 
+
         private
 
           def response
-            raise "#{self.class}##{__method__} must be implemented to return " \
-                  "a Solr response including all results."
+            @response ||= repository.search(search_params)
           end
 
           def response_without_rows
-            raise "#{self.class}##{__method__} must be implemented to " \
-                  "return a Solr response without any documents by " \
-                  "setting the :rows search parameter to 0."
+            @response_without_rows ||= repository.search(search_params.merge(rows: 0))
+          end
+
+          def repository
+            @repository ||= Blacklight::Solr::Repository.new(blacklight_config)
           end
       end
     end

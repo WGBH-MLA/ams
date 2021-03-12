@@ -88,26 +88,20 @@ RSpec.describe PushesController, type: :controller do
     # Simulate a list of IDs passed into the id_field param.
     let(:params) { { id_field: asset_ids.join("\n") } }
 
-    # The params with which we expect to run the ExportRecordsJob
-    let(:expected_job_params) do
-      { user: user,
-        export_type: :push_to_aapb,
-        # The search params that PushesController passes to ExportRecordJob should
-        # include an :fq value of all IDs OR'd together.
-        search_params: { fq: "id:(#{asset_ids.join(' OR ')})" } }
-    end
+    # The params with which we expect to run the PushToAAPBJob
+    let(:expected_job_params) { { user: user, ids: asset_ids } }
 
     # Hook up the mocks
     before do
-      allow(ExportRecordsJob).to receive(:perform_later).with(expected_job_params)
+      allow(PushToAAPBJob).to receive(:perform_later).with(expected_job_params)
     end
 
     it 'creates a new Push instance and calls :perform_later on ' \
        'ExportRecordJob with correct search params' do
       expect { post :create, params: params }.to change { Push.count }.by(1)
-      expect(ExportRecordsJob).to have_received(:perform_later).
-                                  with(expected_job_params).
-                                  exactly(1).times
+      expect(PushToAAPBJob).to have_received(:perform_later).
+                               with(expected_job_params).
+                               exactly(1).times
     end
   end
 end
