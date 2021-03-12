@@ -2,17 +2,22 @@ require 'rails_helper'
 
 RSpec.describe AMS::Export::Search::Base do
   let(:user) { create(:user) }
-  let(:search_params) { { } }
+  let(:search_params) { { } } # override in contexts below
   subject { described_class.new(search_params: search_params, user: user) }
 
-  describe 'validation' do
-    context 'when the number of search results exceeds the max' do
-      let(:max) { described_class::MAX_LIMIT }
-      let(:num_found) { max + 1 }
-      before { allow(subject).to receive(:num_found).and_return(num_found) }
-      it 'is invalid with an error message' do
-        expect(subject).not_to be_valid
-        expect(subject.errors[:base]).to include "Export of size #{num_found} is too large. Max export limit is #{max}."
+  describe '#solr_documents' do
+    context 'when searching for Asset records' do
+      # create assets first with let!
+      let!(:assets) { create_list(:asset, rand(11..14), title: [ searchable_title ] ) }
+      let(:searchable_title) { Faker::Lorem.sentence }
+      let(:search_params) { { q: searchable_title } }
+      let(:solr_documents) { subject.solr_documents }
+      let(:asset_ids) { Set.new(assets.map(&:id)) }
+      let(:solr_doc_ids) { Set.new(solr_documents.map(&:id)) }
+
+      it 'is expected to return solr documents for the found Asset records' do
+        expect(solr_documents.count).to eq assets.count
+        expect(asset_ids).to eq solr_doc_ids
       end
     end
   end
@@ -24,31 +29,14 @@ RSpec.describe AMS::Export::Search::Base do
     end
   end
 
-  context 'subclasses' do
-    let(:subclass) do
-      Class.new(described_class) do
-        def response
-          # The bare minimum of what this method is expected to return.
-          { 'response' => { 'docs' => [ {id: 123}, {id: 234} ] } }
-        end
-
-        def response_without_rows
-          # The bare minimum of what this method is expected to return.
-          { 'response' => { 'numFound' => 500 } }
-        end
-      end.new(search_params: search_params, user: user)
-    end
-
-    describe '#solr_documents' do
-      it "returns SolrDocument instances containing data from #response['response']['docs']" do
-        solr_doc_ids = Set.new(subclass.solr_documents.map(&:id))
-        expect(solr_doc_ids).to eq Set.new([123, 234])
-      end
-    end
-
-    describe '#num_found' do
-      it "is a shortcut to #response_without_rows['response']['numFound']" do
-        expect(subclass.num_found).to eq 500
+  describe 'validation' do
+    context 'when the number of search results exceeds the max' do
+      let(:max) { described_class::MAX_LIMIT }
+      let(:num_found) { max + 1 }
+      before { allow(subject).to receive(:num_found).and_return(num_found) }
+      it 'is invalid with an error message' do
+        expect(subject).not_to be_valid
+        expect(subject.errors[:base]).to include "Export of size #{num_found} is too large. Max export limit is #{max}."
       end
     end
   end

@@ -31,7 +31,7 @@ class Push < ApplicationRecord
     # @return [AMS::Export::Search::AssetSearch] instance used for performing
     #   search and returning solr document results.
     def export_search
-      AMS::Export::Search::AssetsSearch.new(search_params: search_params, user: user)
+      AMS::Export::Search::Base.new(search_params: search_params, user: user)
     end
 
     # NOTE: do not memoize
