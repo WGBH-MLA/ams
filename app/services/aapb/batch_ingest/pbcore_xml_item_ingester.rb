@@ -82,6 +82,26 @@ module AAPB
           asset = Asset.new
           env = Hyrax::Actors::Environment.new(asset, current_ability, attrs)
 
+          digital_instantiation_attribute_sets.each do |dig_inst_attrs|
+            di = DigitalInstantiation.new
+            env = Hyrax::Actors::Environment.new(di, current_ability, dig_inst_attrs)
+
+            get_essence_track_attribute_sets(dig_inst_attrs).each do |ess_track_attrs|
+              et = EssenceTrack.new
+              env = Hyrax::Actors::Environment.new(et, current_ability, ess_track_attrs)
+            end
+          end
+
+          physical_instantiation_attribute_sets.each do |dig_inst_attrs|
+            di = DigitalInstantiation.new
+            env = Hyrax::Actors::Environment.new(di, current_ability, dig_inst_attrs)
+            
+            get_essence_track_attribute_sets(dig_inst_attrs).each do |ess_track_attrs|
+              et = EssenceTrack.new
+              env = Hyrax::Actors::Environment.new(et, current_ability, ess_track_attrs)
+            end
+          end
+
           # Get the actor and call #create with teh actor environment.
           # If #create fails, raise any exception that was set on the Asset
           # object.
