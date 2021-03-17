@@ -23,8 +23,8 @@ module AMS
 
         def build_comparisons
           found_ids.map{ |id| AMSComparison.new(
-            ams1_asset: ams1_assets.find{ |asset| id == asset.id
-            ams2_asset: ams2_assets.find{ |asset| id == asset.solr_document["id"]
+            ams1_asset: ams1_assets.find{ |asset| id == asset.id }
+            ams2_asset: ams2_assets.find{ |asset| id == asset.solr_document["id"] }
           ) }
         end
 
