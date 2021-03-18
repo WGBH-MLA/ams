@@ -23,7 +23,7 @@ module AMS
         end
 
         def essence_tracks_count
-          @essence_tracks_count ||= pbcore.present? ? parsed_pbcore.instantiations.map{ |i| i.essence_tracks }.count : nil
+          @essence_tracks_count ||= pbcore.present? ? parsed_pbcore.instantiations.map{ |i| i.essence_tracks.count }.sum : nil
         end
 
         private

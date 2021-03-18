@@ -5,10 +5,11 @@ module AMS
     module Audit
       class AuditingService
 
-        attr_reader :asset_ids
+        attr_reader :asset_ids, :user
 
-        def initialize(asset_ids: [])
+        def initialize(asset_ids: [], user:)
           @asset_ids = Array(asset_ids)
+          @user = user
         end
 
         def report
@@ -18,12 +19,8 @@ module AMS
         private
 
         def ams_comparisons
-          @ams_comparisons ||= build_comparisons
-        end
-
-        def build_comparisons
-          found_ids.map{ |id| AMSComparison.new(
-            ams1_asset: ams1_assets.find{ |asset| id == asset.id }
+          @ams_comparisons ||= found_ids.map{ |id| AMSComparison.new(
+            ams1_asset: ams1_assets.find{ |asset| id == asset.id },
             ams2_asset: ams2_assets.find{ |asset| id == asset.solr_document["id"] }
           ) }
         end
@@ -37,8 +34,7 @@ module AMS
         end
 
         def ams2_solr_documents
-          # What happens when a particular ID isn't found? Just not included?
-          @ams2_solr_docs ||= AMS::Export::Search::IDSearch.new(ids: asset_member_ids, model_name: Asset)
+          @ams2_solr_docs ||= AMS::Export::Search::CombinedIDSearch.new(ids: asset_ids, user: user, model_class_name: 'Asset').solr_documents
         end
 
         def found_ids
@@ -46,7 +42,7 @@ module AMS
         end
 
         def asset_ids_not_found
-          (ams1_asset_ids_not_found + ams2_asset_ids_not_found).uniq
+          @asset_ids_not_found ||= (ams1_asset_ids_not_found + ams2_asset_ids_not_found).uniq
         end
 
         def ams1_asset_ids_not_found
@@ -54,7 +50,7 @@ module AMS
         end
 
         def ams2_asset_ids_not_found
-          @ams2_asset_ids_not_found ||= asset_ids.select{ |id| !ams2_solr_documents.map{ |doc| doc["id"] }.include?(id) }
+          asset_ids.select{ |id| !ams2_solr_documents.map{ |doc| doc["id"] }.include?(id) }
         end
 
         def build_report
@@ -62,26 +58,25 @@ module AMS
         end
 
         def matches
-          @matches ||= ams_comparisons.select{ |comp| comp.assets_match? }
+          ams_comparisons.select{ |comp| comp.assets_match? }
         end
 
         def mismatches
-          @mismatches ||= ams_comparisons.select{ |comp| !comp.assets_match? }
+          ams_comparisons.select{ |comp| !comp.assets_match? }
         end
 
         def errors
-          @errors ||= asset_ids_not_found.map{ |id| error_report(id) }
+          asset_ids_not_found.map{ |id| error_report(id) }
         end
 
         def error_report(id)
           { "id" => id,
             "ams1" => {
-              "pbcore_present?" => ams1_asset_ids_not_found.include?(id) },
+              "pbcore_not_found?" => ams1_asset_ids_not_found.include?(id) },
             "ams2" => {
-              "solr_document_present?" => ams2_asset_ids_not_found.include?(id) }
+              "solr_document_not_found?" => ams2_asset_ids_not_found.include?(id) }
           }
         end
-
       end
     end
   end

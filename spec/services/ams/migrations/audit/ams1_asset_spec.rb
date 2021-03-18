@@ -38,12 +38,6 @@ RSpec.describe AMS::Migrations::Audit::AMS1Asset do
         expect(ams1_asset.essence_tracks_count).to eq(nil)
       end
     end
-
-    describe '#pbcore_present?' do
-      it 'returns false' do
-        expect(ams1_asset.pbcore_present?).to eq(false)
-      end
-    end
   end
 
   context 'with a valid AMS 1 ID' do
@@ -76,12 +70,6 @@ RSpec.describe AMS::Migrations::Audit::AMS1Asset do
     describe '#essence_tracks_count' do
       it 'returns the number of essence tracks' do
         expect(ams1_asset.essence_tracks_count).to eq(2)
-      end
-    end
-
-    describe '#pbcore_present?' do
-      it 'returns true' do
-        expect(ams1_asset.pbcore_present?).to eq(true)
       end
     end
   end

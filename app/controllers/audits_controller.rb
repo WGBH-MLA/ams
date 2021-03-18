@@ -5,13 +5,9 @@ class AuditsController < ApplicationController
   end
 
   def create
-    ids = split_and_validate_ids(params[:id_field])
-    unless ids
-      flash[:error] = "There was a problem with your IDs, please try again."
-      return render 'new'
-    end
+    ids = params.fetch(:id_field, '').split(/\s+/).reject(&:empty?).uniq
 
-    audit_report = AMS::Migrations::Audit::AuditingService.new(asset_ids: ids).report
+    audit_report = AMS::Migrations::Audit::AuditingService.new(asset_ids: ids, user: current_user).report
     @matches = audit_report["matches"]
     @mismatches = audit_report["mismatches"]
     @errors = audit_report["errors"]

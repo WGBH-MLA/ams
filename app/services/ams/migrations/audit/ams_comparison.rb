@@ -10,11 +10,12 @@ module AMS
           raise 'AMSComparison must be initialized with an AMS1Asset and AMS2Asset' unless ams1_asset.class == AMS1Asset && ams2_asset.class == AMS2Asset
           @ams1_asset = ams1_asset
           @ams2_asset = ams2_asset
+          # Confirm that we have the right AMS1Asset and AMS2Asset
           @id = confirm_asset_id
         end
 
         def report
-          @report ||= ams1_asset.pbcore.present? ? asset_report : error_report
+          @report ||= asset_report
         end
 
         def assets_match?
@@ -53,17 +54,6 @@ module AMS
               "essence_tracks" => ams2_asset.essence_tracks_count }
           }
         end
-
-        # Probably need to move to the Service since we'll be building all the AMS1Assets and AMS2Assets there
-        # def error_report
-        #   { "id" => id,
-        #     "ams1" => {
-        #       "pbcore_present?" => ams1_asset.pbcore_present? },
-        #     "ams2" => {
-        #       "solr_document_present?" => ams2_asset.solr_document_present? }
-        #   }
-        # end
-
       end
     end
   end

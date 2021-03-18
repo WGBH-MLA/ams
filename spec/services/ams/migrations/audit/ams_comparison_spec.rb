@@ -12,14 +12,13 @@ RSpec.describe AMS::Migrations::Audit::AMSComparison do
   let(:ams2_asset) { double() }
   let(:id) { 'cpb-aacip-bupkus1' }
   let(:ams_comparison) { described_class.new(ams1_asset: ams1_asset, ams2_asset: ams2_asset) }
-  let(:pbcore) { File.open(File.join(fixture_path, 'batch_ingest', 'sample_pbcore2_xml', 'cpb-aacip_600-g73707wt6r.xml' )).read }
 
   before do
     allow(ams1_asset).to receive(:class).and_return AMS::Migrations::Audit::AMS1Asset
     allow(ams2_asset).to receive(:class).and_return AMS::Migrations::Audit::AMS2Asset
     allow(ams1_asset).to receive(:id).and_return id
     allow(ams2_asset).to receive(:id).and_return id
-    allow(ams1_asset).to receive(:pbcore).and_return pbcore
+    allow(ams1_asset).to receive(:pbcore_description_doc_found?).and_return true
     allow(ams2_asset).to receive(:solr_document).and_return SolrDocument.new('id' => id )
   end
 

@@ -1,22 +1,23 @@
 require 'rails_helper'
 
 RSpec.describe AMS::Migrations::Audit::AuditingService do
-  let(:auditing_service) { described_class.new(asset_ids: [ "bupkus" ]) }
-
-  describe '#initialize' do
-    it 'creates creates readers for ids and ams cmmparisons' do
-      expect(auditing_service.asset_ids).to eq(Array("bupkus"))
-    end
-  end
+  let(:asset) { create(:asset) }
+  let(:user) { create(:user) }
 
   context 'when an Asset is not on AMS1 or AMS2' do
-    let(:error_report) { { "ams1" => { "pbcore_present?" => false }, "ams2" => { "solr_document_present?" => false } } }
+    let(:auditing_service) { described_class.new(asset_ids: [ "bupkus" ], user: user ) }
+    let(:error_report) { { "id" => "bupkus", "ams1" => { "pbcore_not_found?" => true }, "ams2" => { "solr_document_not_found?" => true } } }
     let(:expected_service_report) { { "matches" => [], "mismatches" => [], "errors" => [ error_report ] } }
+
+    describe '#initialize' do
+      it 'creates creates reader for asset_ids' do
+        expect(auditing_service.asset_ids).to eq(Array("bupkus"))
+      end
+    end
 
     describe '#report' do
       before do
-        allow_any_instance_of(AMS::Migrations::Audit::AMSComparison).to receive(:assets_found?).and_return false
-        allow_any_instance_of(AMS::Migrations::Audit::AMSComparison).to receive(:report).and_return error_report
+        allow_any_instance_of(AMS::Migrations::Audit::AMS1Asset).to receive(:pbcore_description_doc_found?).and_return false
       end
 
       it 'adds the expected errors' do
@@ -26,6 +27,7 @@ RSpec.describe AMS::Migrations::Audit::AuditingService do
   end
 
   context 'when an AMS1Asset and AMS2Asset match' do
+    let(:auditing_service) { described_class.new(asset_ids: [ asset.id ], user: user ) }
     let(:match_report) {
       { "ams1" => {
           "digital_instantiations" => 1,
@@ -41,8 +43,8 @@ RSpec.describe AMS::Migrations::Audit::AuditingService do
 
     describe '#report' do
       before do
-        allow_any_instance_of(AMS::Migrations::Audit::AMSComparison).to receive(:assets_found?).and_return true
         allow_any_instance_of(AMS::Migrations::Audit::AMSComparison).to receive(:assets_match?).and_return true
+        allow_any_instance_of(AMS::Migrations::Audit::AMS1Asset).to receive(:pbcore_description_doc_found?).and_return true
         allow_any_instance_of(AMS::Migrations::Audit::AMSComparison).to receive(:report).and_return match_report
       end
 
@@ -53,6 +55,7 @@ RSpec.describe AMS::Migrations::Audit::AuditingService do
   end
 
   context 'when an AMS1Asset and AMS2Asset donna match' do
+    let(:auditing_service) { described_class.new(asset_ids: [ asset.id ], user: user ) }
     let(:mismatch_report) {
       { "ams1" => {
           "digital_instantiations" => 1,
@@ -68,8 +71,8 @@ RSpec.describe AMS::Migrations::Audit::AuditingService do
 
     describe '#report' do
       before do
-        allow_any_instance_of(AMS::Migrations::Audit::AMSComparison).to receive(:assets_found?).and_return true
         allow_any_instance_of(AMS::Migrations::Audit::AMSComparison).to receive(:assets_match?).and_return false
+        allow_any_instance_of(AMS::Migrations::Audit::AMS1Asset).to receive(:pbcore_description_doc_found?).and_return true
         allow_any_instance_of(AMS::Migrations::Audit::AMSComparison).to receive(:report).and_return mismatch_report
       end
 
