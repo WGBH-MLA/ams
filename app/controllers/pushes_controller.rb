@@ -1,17 +1,5 @@
 class PushesController < ApplicationController
-  include ApplicationHelper
-  include Blacklight::SearchHelper
   before_action :authenticate_user!
-
-  include Blacklight::Configurable
-  # this v is required - advanced_search will crash without it
-  copy_blacklight_config_from(CatalogController)
-  configure_blacklight do |config|
-    # This is necessary to prevent Blacklight's default value of 100 for
-    # config.max_per_page from capping the number of results.
-    config.max_per_page = 2147483647
-    # config.rows = 2147483647
-  end
 
   def index
     # show all previous pushes
@@ -24,80 +12,54 @@ class PushesController < ApplicationController
   end
 
   def create
-    # new push
-    # -get set of ids from form + click 'push to aapb'
-    # -pull solr_documents from list of ids
-    # -render xml for each, and zip dat
-    # -return zip
-    ids = split_and_validate_ids(params[:id_field])
-    unless ids
-      flash[:error] = "There was a problem with your IDs, please try again."
-      return render 'new'
+    @push = Push.new(user_id: current_user.id, pushed_id_csv: pushed_id_csv_from_id_field )
+    if @push.valid?
+      PushToAAPBJob.perform_later(ids: @push.push_ids, user: current_user)
+      @push.save!
+      redirect_to @push
+    else
+      render :new
     end
-
-    query = ""
-    query += ids.map { |id| "id:#{id}" }.join(' OR ')
-
-    query_params = {q: query}
-    
-    query_params[:format] = 'zip-pbcore'
-    query_params = delete_extra_params(query_params)
-    query_params.delete :controller
-
-    ExportRecordsJob.perform_later(query_params, current_user)
-    push = Push.create(user_id: current_user.id, pushed_id_csv: ids.join(',') )
-    redirect_to "/pushes/#{push.id}"
   end
 
+  # #validate_ids aynchronous validation of IDs to be pushed to AAPB.
   def validate_ids
-    requested_ids = split_and_validate_ids(params[:id_field])
-    # bad input
-    return render json: {error: "There was a problem parsing your IDs. Please check your input and try again."} unless requested_ids && requested_ids.count > 0
-
-    found_ids = []
-    requested_ids.each_slice(100).each do |segment|
-      query = build_query(segment)
-      found_ids += query_ids(query)
-    end
-
-    missing_ids = verify_id_set(requested_ids, found_ids)
-
-    all_valid = missing_ids.count == 0 ? true : false
-    id_response = {all_valid: all_valid}
-    id_response[:missing_ids] = missing_ids unless missing_ids.empty?
-    render json: id_response
+    response = {}
+    @push = Push.new(user: current_user, pushed_id_csv: pushed_id_csv_from_id_field)
+    response[:error] = @push.errors.values.flatten.join("\n\n") if @push.invalid?
+    render json: response
   end
 
   def new
-    if params[:transfer] == 'true'
-      ze_params = params.dup
-      query_params = delete_extra_params(ze_params)
-      query_params[:fl] = 'id'
-      query_params[:rows] = 2147483647
-
-      # regular query
-      response, response_documents = search_results(query_params) do |builder|
-        builder = AMS::SearchBuilder.new(self).with(query_params)
-      end
-      params[:id_field] = response_documents.map(&:id).join("\n")
+    # If we have search params but no explicitly passed IDs in :id_field, then
+    # do the search and set the :id_field to the found IDs.
+    if (search_params[:q] || search_params[:fq] && !params[:id_field])
+      params[:id_field] = assets_search.solr_documents.map(&:id).join("\n")
     end
-
-    render 'new'
   end
 
+  # TODO: Is anyone using this? I don't see it linked anywhere, so I think it's
+  # just a convenience route that users would have to remember.
   def needs_updating
-    # Pass a block in to override default search builder's monkeying around
-    # Pushbuilder forces correct query params, which are otherwise wiped out
-    response, docs = search_results({}) do |builder|
-      AMS::PushSearchBuilder.new(self).with({q: 'needs_update:true'})
+    redirect_to action: :new, fq: 'needs_update:true'
+  end
+
+  private
+
+    # Converting a list of values from the id_field (a texteara in the #new
+    # view) to a comma-separated list of IDs.
+    def pushed_id_csv_from_id_field
+      params.fetch(:id_field, '').split(/\s+/).reject(&:empty?).uniq.join(',')
     end
 
-    if docs.count > 0
-      ids = docs.map {|doc| doc[:id]}.join("\n")
-      redirect_to action: 'new', id_field: ids
-    else
-      # sorry!
-      redirect_to new_push_path
+    def assets_search
+      @asset_search ||= AMS::Export::Search::CatalogSearch.new(search_params: search_params, user: current_user)
     end
-  end
+
+    def search_params
+      @search_params ||= params.dup.
+                                permit!.
+                                except(:page, :per_page, :action, :controller, :locale).
+                                merge(rows: AMS::Export::Search::Base::MAX_LIMIT)
+    end
 end

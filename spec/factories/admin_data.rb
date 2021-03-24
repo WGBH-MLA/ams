@@ -32,5 +32,11 @@ FactoryBot.define do
       end
 
     end
+
+    after(:build) do |ad, evaluator|
+      if evaluator.annotations.present?
+        ad.annotations = evaluator.annotations
+      end
+    end
   end
 end

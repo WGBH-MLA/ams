@@ -1,71 +1,78 @@
+require 'dry-schema'
+
 module AMS
   module CsvExportExtension
-    CSV_FIELDS = {'asset' =>
-                    { :GUID=>:id,:local_identifier=>:local_identifier,:title=>:title,:dates=>:all_dates,:producing_organization=>:producing_organization, :description=>:description,:level_of_user_access=>:level_of_user_access,:cataloging_status=>:cataloging_status, :holding_organization =>:holding_organization_ssim}.freeze,
-                  'digital_instantiation' =>
-                    { :asset_id=>:id,:digital_instantiation_id=>:id,:local_identifier=>:local_instantiation_identifier,:md5=>:md5, :media_type=>:media_type,:generations=>:generations,:duration=>:duration,:file_size=>:file_size }.freeze,
-                  'physical_instantiation' =>
-                    { :asset_id=>:id,:physical_instantiation_id=>:id,:local_identifier=>:local_instantiation_identifier,:holding_organization=>:holding_organization,:physical_format=>:format,:title=>:title,:date=>:all_dates,:digitized=>:digitized? }.freeze,
-                  }
-
-    ASSET_DATA_FOR_INSTANTIATION_ROW = [ :asset_id, :titles, :digitized, :date ]
-
-    def self.get_csv_header(object)
-      return CSV.generate do |csv|
-        header_row = []
-        CSV_FIELDS[object].each do |label,responder|
-          header_row << label
-        end
-        csv << header_row
-      end
-    end
+    CONFIG_FILE = File.expand_path('../../../../config/csv_export.yml', __FILE__)
 
     def self.extended(document)
       document.will_export_as(:csv, "application/csv")
     end
 
-    def export_as_csv(object)
-      return CSV.generate do |csv|
-        case object
-        when 'asset'
-          row = []
-          CSV_FIELDS['asset'].each do |csv_field,responder|
-            val = self.send(responder)
-            val = val.join("; ") if val.respond_to?(:each)
-            row << val
-          end
-          csv << row
-        when 'digital_instantiation'
-          member_ids = self["member_ids_ssim"]
-          digital_instantiation_docs = member_ids.map{ |id| SolrDocument.find(id) }.select{ |inst| inst["has_model_ssim"].include?("DigitalInstantiation")}
-          digital_instantiation_docs.each do |doc|
-            csv << construct_instantiation_row(object,doc)
-          end
-        when 'physical_instantiation'
-          member_ids = self["member_ids_ssim"]
-          digital_instantiation_docs = member_ids.map{ |id| SolrDocument.find(id) }.select{ |inst| inst["has_model_ssim"].include?("PhysicalInstantiation")}
-          digital_instantiation_docs.each do |doc|
-            csv << construct_instantiation_row(object,doc)
+    # MODULE METHODS
+    class << self
+
+      def export_config(export_type)
+        export_type = export_type.to_s
+        raise "No CSV export with name: '#{export_type}' is defined in #{CONFIG_FILE}; available exports are '#{export_types}'" unless export_types.include?(export_type)
+        config[:exports].detect { |export_config| export_config[:type] == export_type }
+      end
+
+      def export_types
+        config[:exports].map { |export_config| export_config[:type] }
+      end
+
+      def fields_for(export_type)
+        field_configs_for(export_type).map { |field_config| field_config[:name] }
+      end
+
+      def field_configs_for(export_type)
+        export_config(export_type)[:fields]
+      end
+
+      private
+
+        def config_schema
+          @config_schema ||= Dry::Schema.Params do
+            required(:exports).array(:hash) do
+              required(:type).filled(:string)
+              required(:fields).value(:array, min_size?: 1).each do
+                hash do
+                  required(:name)
+                  optional(:method)
+                end
+              end
+            end
           end
         end
-      end
+
+
+        # Loads CSV Export config from file, validates it, and returns a hash
+        # of the config.
+        # @raise [RuntimeError] when config file does not exist.
+        # @raise [RuntimeError] when config file causes a YAML parsing error.
+        # @return [Hash] the CSV export configuration keyed by export.
+        def config
+          @config ||= config_schema.call(YAML.load_file(CONFIG_FILE)).to_h
+        rescue Errno::ENOENT => e
+          raise "No CSV export config file found at '#{CONFIG_FILE}'"
+        rescue Psych::SyntaxError => e
+          raise "Invalid CSV export config file '#{CONFIG_FILE}'. #{e.class}: #{e.message}"
+        end
     end
 
-    private
+    def export_as_csv(export_type)
+      csv_row_for(export_type).join(",")
+    end
 
-    def construct_instantiation_row(object, doc)
-      row = []
-      CSV_FIELDS[object].each do |csv_field,responder|
-        val = nil
-        if ASSET_DATA_FOR_INSTANTIATION_ROW.include?(csv_field)
-          val = self.send(responder)
-        else
-          val = doc.send(responder)
-        end
-        val = val.join("; ") if val.class == Array
-        row << val
+    def csv_row_for(export_type)
+      CsvExportExtension.field_configs_for(export_type).map do |field_config|
+        method = field_config[:method] || field_config[:name].gsub(/\s+/, '_').downcase.to_sym
+        value = send(method)
+        # Values may be single-valued or multi-valued (an Array), but the output
+        # for CSV should always be a string, so here we ensure the value is a
+        # string and, if multi-valued, is joined together with a ; delimiter.
+        Array(value).map(&:to_s).join('; ')
       end
-      row
     end
   end
 end

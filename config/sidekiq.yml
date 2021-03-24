@@ -12,3 +12,4 @@
   - [ingest, 1]
   - [mailers, 10]
   - [exports, 10]
+  - [push_to_aapb, 1]

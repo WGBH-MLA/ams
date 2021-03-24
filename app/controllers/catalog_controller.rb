@@ -481,71 +481,62 @@ class CatalogController < ApplicationController
   end
 
   def export
-    search_params = params.dup
-    search_params.delete :page
-    search_params.delete :per_page
-    search_params.delete :action
-    search_params.delete :controller
-    search_params.delete :locale
+    params.permit!
 
-    # Start by setting the row limit to the max_export_to_browser_limit.
-    # If the number of results exceeds this, the :rows option will be increased
-    # to the max_export_limit, and the search will be re-run in a background
-    # job that will save the reults in S3 and notify the user with a link to
-    # download.
-    search_params[:rows] = Rails.configuration.max_export_to_browser_limit
-
-    response, response_documents = search_results(search_params)
-    num_found = response[:response][:numFound]
-
-    if (num_found > Rails.configuration.max_export_to_browser_limit)
-      params.permit!
-      if (num_found > Rails.configuration.max_export_limit)
-        # Number of results exceeds max export limit.
-        flash[:notice] = "Results set of #{num_found} exceeds max export " \
-                         "of #{Rails.configuration.max_export_limit}. Try " \
-                         "limiting your search to a smaller set of records."
-      else
-        # Results are too much for browser, but do not exceed max export limit.
-        # Reset the :rows option to be max_export_limit, and kick off background
-        # job which will re-run the search with the new upper limit.
-        params[:rows] = Rails.configuration.max_export_limit
-        ExportRecordsJob.perform_later(params.to_h, current_user)
-        flash[:notice] = view_context.t('blacklight.search.messages.export_will_be_emailed', application_name: view_context.application_name)
-      end
-
-      # Go back to search results page with appropriate flash message.
-      params.delete :action
-      params.delete :controller
-      params.delete :format
-      redirect_to(search_catalog_url(params)) and return true
+    if !export_search.valid?
+      alert_msg = export_search.errors.messages.values.flatten.join("\n")
+      redirect_to(search_catalog_url(search_params), alert: alert_msg) and return
     end
 
+    if export_too_big_for_browser?
+      ExportRecordsJob.perform_later(export_type: export_type, search_params: search_params, user: current_user)
+      # TODO: add some job details to the flash msg
+      msg = "Export job enqueued!"
+      redirect_to(search_catalog_url(search_params), notice: msg) and return
+    end
+
+    # Export is not too big. Send the export they asked for.
     respond_to do |format|
       format.csv {
-        exporter = AMS::Export::DocumentsToCsv.new(response_documents, object_type: params[:object_type], export_type: 'csv_download')
-        export_file_path = exporter.temp_file_path
-        export_file_name = exporter.filename
-
-        begin
-          export_file = File.read(export_file_path)
-          send_data export_file, :type => 'text/csv; charset=utf-8; header=present', :disposition => "attachment; filename=#{export_file_name}", :filename => "#{export_file_name}"
-        ensure
-          File.delete(export_file_path)
-        end
+        send_file export_results.filepath, type: 'text/csv; charset=utf-8; header=present', filename: File.basename(export_results.filepath)
       }
-      format.pbcore {
-        exporter = AMS::Export::DocumentsToPbcoreXml.new(response_documents, export_type: 'pbcore_download')
-        export_file_path = exporter.temp_file_path
-        export_file_name = exporter.filename
 
-        begin
-          export_file = File.read(export_file_path)
-          send_data export_file, :type => 'application/zip', :filename => "#{export_file_name}"
-        ensure
-          File.delete(export_file_path)
-        end
+      format.pbcore {
+        send_file export_results.filepath, type: 'application/zip', filename: File.basename(export_results.filepath)
       }
     end
   end
+
+  private
+
+    def export_search
+      @export_search ||= AMS::Export::Search.for_export_type(export_type).new(search_params: search_params, user: current_user)
+    end
+
+    def export_results
+      AMS::Export::Results.for_export_type(export_type).new(solr_documents: export_search.solr_documents)
+    end
+
+    def search_params
+      @search_params ||= params.except(:page,
+                                       :action,
+                                       :controller,
+                                       :locale,
+                                       :object_type,
+                                       :format).permit!.to_h
+    end
+
+    def export_type
+      # TODO: change param from :object_type to :export_type in the form for
+      # clarity and consistency.
+      params[:object_type]
+    end
+
+    def export_too_big_for_browser?
+      export_search.num_found > Rails.configuration.max_export_to_browser_limit
+    end
+
+    def export_job_class
+      AMS::Export::Job.get_job_class_for(export_type)
+    end
 end

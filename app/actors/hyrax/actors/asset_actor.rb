@@ -3,6 +3,10 @@
 module Hyrax
   module Actors
     class AssetActor < Hyrax::Actors::BaseActor
+
+      # TODO: Create and update are exactly the same EXCEPT for the call to
+      # super, which will call #create or #update of parent class. We can dry
+      # this up a bit.
       def create(env)
         contributions = extract_contributions(env)
         add_title_types(env)
@@ -28,7 +32,6 @@ module Hyrax
 
         def save_aapb_admin_data(env)
           env.curation_concern.admin_data = find_or_create_admin_data(env)
-          env.curation_concern.admin_data_gid = env.curation_concern.admin_data.gid
           set_admin_data_attributes(env.curation_concern.admin_data, env) if env.current_ability.can?(:create, AdminData)
           remove_admin_data_from_env_attributes(env)
           delete_removed_annotations(env.curation_concern.admin_data, env)
@@ -111,8 +114,6 @@ module Hyrax
           admin_data = ::AdminData.create unless env.curation_concern.admin_data_gid.present?
           if admin_data
             Rails.logger.debug "Create AdminData at #{admin_data.gid}"
-            admin_data.save
-            env.curation_concern.admin_data_gid = admin_data.gid
             return admin_data
           else
             return env.curation_concern.admin_data
