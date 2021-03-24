@@ -29,6 +29,51 @@ class SolrDocument
 
   use_extension(Hydra::ContentNegotiation)
 
+  # Determine which type of Fedora record this SolrDocument instance represents.
+  def record_type
+    self['has_model_ssim'].first
+  end
+
+  # Define boolean predicates for determining record type.
+  def is_asset?; record_type == "Asset"; end
+  def is_physical_instantiation?; record_type == "PhysicalInstantiation"; end
+  def is_digital_instantiation?; record_type == "DigitalInstantiation"; end
+
+  # Specific ID accessors based on record type.
+  def asset_id; id if is_asset?; end
+  def physical_instantiation_id; id if is_physical_instantiation?; end
+  def digital_instantiation_id; id if is_digital_instantiation?; end
+
+  # Returns an array of SolrDocument instances for members.
+  # NOTE: This is not ideal to have the SolrDocument running additional Solr
+  #   queries, but it's all we've got currently.
+  def members
+    # TODO: Use just one query to return all docs?
+    Array(member_ids).map { |id| SolrDocument.find(id) }
+  end
+
+  def member_of
+    self.class.repository.search("q" => "member_ids_ssim:#{id}")['response']['docs'].map do |doc|
+      SolrDocument.new(doc)
+    end
+  end
+
+  def parent_asset
+    @parent_asset ||= member_of.detect { |parent| parent.is_asset? }
+  end
+
+  def parent_asset_id
+    parent_asset.id
+  end
+
+  def physical_instantiations
+    members.select { |member| member.is_physical_instantiation? }
+  end
+
+  def digital_instantiations
+    members.select { |member| member.is_physical_instantiation? }
+  end
+
   def asset_types
     self[Solrizer.solr_name('asset_types')]
   end
@@ -286,11 +331,16 @@ class SolrDocument
   end
 
   def all_dates
-    concatenated_dates = [date,
-                          broadcast_date,
-                          created_date,
-                          copyright_date].flatten.select(&:present?).join('; ')
+    [
+      date,
+      broadcast_date,
+      created_date,
+      copyright_date
+    ].flatten.select(&:present?).join('; ')
   end
+
+  # alias
+  def dates; all_dates; end
 
   def display_dates
     { Solrizer.solr_name('date') => date,
