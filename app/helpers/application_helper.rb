@@ -12,7 +12,7 @@ module ApplicationHelper
     parsed_time = parsed_time.in_time_zone(time_zone) if time_zone
     parsed_time.strftime(format)
   rescue => error
-    Rails.logger.warn "Caught exception #{error.class}: #{error.message}\n#{error.backtrace.join("\n")}"
+    Rails.logger.warn "Problem displaying date: '#{date_time}'. Rescued from #{error.class}: #{error.message}. Continuing."
     nil
   end
 

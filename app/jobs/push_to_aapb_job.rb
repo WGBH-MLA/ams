@@ -2,14 +2,6 @@ require 'ams/export'
 
 class PushToAAPBJob < ApplicationJob
   queue_as :push_to_aapb
-  #
-  # before_perform do |_job|
-  #
-  #   require "pry"; binding.pry
-  #
-  #   user = named_arguments[:user]
-  #   raise "Expected :user to be a User but '#{user.class}' was given" unless user.is_a? User
-  # end
 
   rescue_from StandardError do |error|
     Rails.logger.error "#{error.class}: #{error.message}\n\nBacktrace:\n#{error.backtrace.join("\n")}"
