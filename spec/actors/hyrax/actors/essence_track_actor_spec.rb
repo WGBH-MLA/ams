@@ -1,4 +1,5 @@
 require 'rails_helper'
+require 'pbcore/factories'
 
 RSpec.describe Hyrax::Actors::EssenceTrackActor do
 
@@ -12,13 +13,26 @@ RSpec.describe Hyrax::Actors::EssenceTrackActor do
 
   describe '#create' do
     let(:essence_track) { EssenceTrack.new }
-    let(:attrs) { {} }
+
+    # Attributes used to build the record. Override in contexts below.
+    let(:attrs) { { } }
     let(:env) { Hyrax::Actors::Environment.new(essence_track, current_ability, attrs) }
 
+    # Call the method under test before specs, test side effects.
     before { subject.create(env) }
 
-    it 'creates an EssenceTrack' do
-      expect(essence_track).to be_persisted
+    context 'with valid input data' do
+      # Minimal valid input data
+      let(:attrs) do
+        { track_type: "blerg",
+          track_id: [ 123 ] }
+      end
+
+      before { expect(essence_track).to be_valid }
+
+      it 'creates a EssenceTrack' do
+        expect(essence_track).to be_persisted
+      end
     end
   end
 end

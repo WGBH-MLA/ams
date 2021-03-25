@@ -8,7 +8,6 @@ module Hyrax
         add_title_types(env)
         add_description_types(env)
         add_date_types(env)
-
         save_aapb_admin_data(env) && super && create_or_update_contributions(env, contributions)
       end
 
@@ -145,7 +144,7 @@ module Hyrax
 
                   if actor.create(Actors::Environment.new(contributor, env.current_ability, param_contributor))
                     env.curation_concern.ordered_members << contributor
-                    env.curation_concern.save
+                    # env.curation_concern.save
                   end
                 elsif (contributor = Contribution.find(param_contributor[:id]))
                   param_contributor.delete(:id)

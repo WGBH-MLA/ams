@@ -19,16 +19,28 @@ RSpec.describe Hyrax::Actors::DigitalInstantiationActor do
       ).to_xml
     end
 
+    let(:digital_instantiation) do
+      DigitalInstantiation.new.tap do |di|
+        di.skip_file_upload_validation = true
+      end
+    end
+
+    # Attributes used to build the record. Override in contexts below.
     let(:attrs) { { pbcore_xml: pbcore_xml } }
-
-    let(:digital_instantiation) { DigitalInstantiation.new }
-
     let(:env) { Hyrax::Actors::Environment.new(digital_instantiation, current_ability, attrs) }
 
+    # Call the method under test before specs, test side effects.
     before { subject.create(env) }
 
-    it 'creates a DigitalInstantiation' do
-      expect(digital_instantiation).to be_persisted
+    context 'with valid input data' do
+      # Minimal valid input data
+      let(:attrs) { { pbcore_xml: pbcore_xml } }
+
+      before { expect(digital_instantiation).to be_valid }
+
+      it 'creates a DigitalInstantiation' do
+        expect(digital_instantiation).to be_persisted
+      end
     end
   end
 end
