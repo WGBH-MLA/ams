@@ -1,4 +1,5 @@
 require 'rails_helper'
+require 'pbcore/factories'
 
 RSpec.describe Hyrax::Actors::DigitalInstantiationActor do
 
@@ -11,8 +12,17 @@ RSpec.describe Hyrax::Actors::DigitalInstantiationActor do
   subject { described_class.new(Hyrax::Actors::Terminator.new) }
 
   describe '#create' do
-    let(:digital_instantiation) { build(:digital_instantiation) }
-    let(:attrs) { {} }
+    let(:pbcore_xml) do
+      build(:pbcore_instantiation,
+        physical: nil,
+        digital: build(:pbcore_instantiation_digital)
+      ).to_xml
+    end
+
+    let(:attrs) { { pbcore_xml: pbcore_xml } }
+
+    let(:digital_instantiation) { DigitalInstantiation.new }
+
     let(:env) { Hyrax::Actors::Environment.new(digital_instantiation, current_ability, attrs) }
 
     before { subject.create(env) }

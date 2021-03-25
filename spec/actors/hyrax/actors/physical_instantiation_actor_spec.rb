@@ -11,7 +11,7 @@ RSpec.describe Hyrax::Actors::PhysicalInstantiationActor do
   subject { described_class.new(Hyrax::Actors::Terminator.new) }
 
   describe '#create' do
-    let(:physical_instantiation) { build(:physical_instantiation) }
+    let(:physical_instantiation) { PhysicalInstantiation.new }
     let(:attrs) { {} }
     let(:env) { Hyrax::Actors::Environment.new(physical_instantiation, current_ability, attrs) }
 

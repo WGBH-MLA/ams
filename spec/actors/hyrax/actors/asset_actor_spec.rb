@@ -13,7 +13,7 @@ RSpec.describe Hyrax::Actors::AssetActor do
   subject { described_class.new(Hyrax::Actors::Terminator.new) }
 
   describe '#create' do
-    let(:asset) { build(:asset) }
+    let(:asset) { Asset.new }
     let(:attrs) { {} }
     let(:env) { Hyrax::Actors::Environment.new(asset, current_ability, attrs) }
 

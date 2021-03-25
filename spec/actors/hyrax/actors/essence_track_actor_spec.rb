@@ -11,7 +11,7 @@ RSpec.describe Hyrax::Actors::EssenceTrackActor do
   subject { described_class.new(Hyrax::Actors::Terminator.new) }
 
   describe '#create' do
-    let(:essence_track) { build(:essence_track) }
+    let(:essence_track) { EssenceTrack.new }
     let(:attrs) { {} }
     let(:env) { Hyrax::Actors::Environment.new(essence_track, current_ability, attrs) }
 
