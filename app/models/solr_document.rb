@@ -506,7 +506,7 @@ class SolrDocument
   def all_nested_member_ids
     all_member_ids = self.member_ids.clone
     self.member_ids.each do |member_id|
-      all_member_ids << get_members(member_id)
+      all_member_ids << SolrDocument.get_members(member_id)
     end
     all_member_ids.flatten
   end
@@ -514,7 +514,7 @@ class SolrDocument
   private
 
   # Recursively get all members off of members
-  def get_members(id)
+  def self.get_members(id)
     ids = []
     object = SolrDocument.find(id)
     object.member_ids.each do |member_id|
