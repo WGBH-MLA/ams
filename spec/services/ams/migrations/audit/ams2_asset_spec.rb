@@ -3,15 +3,25 @@ require 'pbcore'
 require 'ams/migrations/audit/ams2_asset'
 
 RSpec.describe AMS::Migrations::Audit::AMS2Asset do
+  let(:digital_instantiations) {
+    create_list(:digital_instantiation, rand(1..3)) do |di, i|
+      di.ordered_members = create_list(:essence_track, rand(0..3))
+    end
+  }
 
-  let(:asset) { create(:asset, :with_two_digital_instantiations_and_essence_tracks) }
+  let(:physical_instantiations) {
+    create_list(:physical_instantiation, rand(1..3)) do |pi, i|
+      pi.ordered_members = create_list(:essence_track, rand(0..3))
+    end
+  }
+
+  let(:ordered_members) { [ digital_instantiations + physical_instantiations ].flatten }
+  let(:asset) { create(:asset, ordered_members: ordered_members) }
   let(:solr_document) { SolrDocument.find(asset.id) }
 
   context 'with a valid AMS 2 SolrDocument' do
-
     let(:ams2_asset) { described_class.new(solr_document: solr_document) }
-    let(:di_et_count) { asset.digital_instantiations.map{ |inst| DigitalInstantiation.find(inst["id"]).essence_tracks }.count }
-    let(:pi_et_count) { asset.physical_instantiations.map{ |inst| PhysicalInstantiation.find(inst["id"]).essence_tracks }.count }
+    let(:essence_track_count) { asset.all_nested_members.select{ |member| member.class == EssenceTrack  }.count }
 
     describe '#solr_document' do
       it 'returns the correct SolrDocument' do
@@ -33,7 +43,7 @@ RSpec.describe AMS::Migrations::Audit::AMS2Asset do
 
     describe '#essence_tracks_count' do
       it 'returns the number of essence tracks' do
-        expect(ams2_asset.essence_tracks_count).to eq(di_et_count + pi_et_count)
+        expect(ams2_asset.essence_tracks_count).to eq(essence_track_count)
       end
     end
   end
