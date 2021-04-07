@@ -502,4 +502,11 @@ class SolrDocument
     # this nonsensical ':symbol' option indicates that I am selecting the _ssim suffix from down in solrizer - default was _tesim, which was wrong for this field
     self[Solrizer.solr_name('md5', :symbol)]
   end
+
+  # Recursively get all members
+  def self.get_members(id, all_members = [])
+    all_members << id
+    SolrDocument.find(id).member_ids.each { |member_id| get_members(member_id, all_members) }
+    all_members
+  end
 end

@@ -19,6 +19,7 @@ module AMS
 
               # Write PBCore XML to a tmpfile.
               tmpfiles << File.open(tmp_path, 'w') { |f| f << solr_doc.export_as_pbcore }
+
               # Add tmpfile to the zip with a filename based on the ID.
               zip_file.add("#{solr_doc.id}.xml", tmpfiles.last.path)
             end

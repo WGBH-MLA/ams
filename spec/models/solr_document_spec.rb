@@ -2,7 +2,12 @@ require 'rails_helper'
 
 describe SolrDocument do
   let(:solr_document) { described_class.new }
-  let(:asset) { create(:asset) }
+  let(:asset) { create(:asset, :with_physical_digital_and_essence_track) }
+  let(:asset_solr_doc) { SolrDocument.find(asset.id) }
+  let(:digital_instantiation_ids) { asset.digital_instantiations.map(&:id).flatten }
+  let(:physical_instantiation_ids) { asset.physical_instantiations.map(&:id).flatten }
+  let(:essence_track_ids) { asset.digital_instantiations.map(&:id).map{ |id| DigitalInstantiation.find(id).essence_tracks.map(&:id) }.flatten }
+  let(:all_member_ids) { (Array(asset.id) + digital_instantiation_ids + physical_instantiation_ids + essence_track_ids).sort }
 
   describe '#title' do
     context 'when other titles are present' do
@@ -113,7 +118,6 @@ describe SolrDocument do
 
   describe '#display_dates' do
     context 'when a solr doc has dates' do
-      let(:asset_solr_doc) { SolrDocument.find(asset.id) }
       let(:expected_dates) {
         {
           "date_tesim" => asset.date.sort,
@@ -136,7 +140,6 @@ describe SolrDocument do
   end
 
   describe '#identifying_data' do
-    let(:asset_solr_doc) { SolrDocument.find(asset.id) }
     let(:expected_id_data) {
       {
         "id" => asset_solr_doc.id,
@@ -148,4 +151,11 @@ describe SolrDocument do
       expect(asset_solr_doc.identifying_data).to eq expected_id_data
     end
   end
+
+  describe ".get_members" do
+    it 'returns all the IDs for DigitalInstantiations, PhysicalInstantiations, and EssenceTracks associated with an Asset' do
+      expect(SolrDocument.get_members(asset.id).sort).to eq(all_member_ids)
+    end
+  end
+
 end
