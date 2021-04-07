@@ -24,7 +24,7 @@ module AMS
         private
 
         def asset_members
-          @asset_members ||= solr_document.all_nested_member_ids.map{ |id| SolrDocument.find(id)}
+          @asset_members ||= SolrDocument.get_members(solr_document["id"]).map{ |id| SolrDocument.find(id)}
         end
       end
     end

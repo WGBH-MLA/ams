@@ -21,7 +21,7 @@ RSpec.describe AMS::Migrations::Audit::AMS2Asset do
 
   context 'with a valid AMS 2 SolrDocument' do
     let(:ams2_asset) { described_class.new(solr_document: solr_document) }
-    let(:essence_track_count) { asset.all_nested_members.select{ |member| member.class == EssenceTrack  }.count }
+    let(:essence_track_count) { SolrDocument.get_members(asset.id).select{ |member_id| SolrDocument.find(member_id)["has_model_ssim"].include?("EssenceTrack") }.count }
 
     describe '#solr_document' do
       it 'returns the correct SolrDocument' do

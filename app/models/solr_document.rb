@@ -503,27 +503,10 @@ class SolrDocument
     self[Solrizer.solr_name('md5', :symbol)]
   end
 
-  def all_nested_member_ids
-    all_member_ids = self.member_ids.clone
-    self.member_ids.each do |member_id|
-      all_member_ids << SolrDocument.get_members(member_id)
-    end
-    all_member_ids.flatten
+  # Recursively get all members
+  def self.get_members(id, all_members = [])
+    all_members << id
+    SolrDocument.find(id).member_ids.each { |member_id| get_members(member_id, all_members) }
+    all_members
   end
-
-  private
-
-  # Recursively get all members off of members
-  def self.get_members(id)
-    ids = []
-    object = SolrDocument.find(id)
-    object.member_ids.each do |member_id|
-      ids << member_id
-      SolrDocument.find(member_id).member_ids.each do |mem_id|
-        get_members(mem_id)
-      end
-    end
-    ids
-  end
-
 end

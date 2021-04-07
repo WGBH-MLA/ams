@@ -7,6 +7,7 @@ describe SolrDocument do
   let(:digital_instantiation_ids) { asset.digital_instantiations.map(&:id).flatten }
   let(:physical_instantiation_ids) { asset.physical_instantiations.map(&:id).flatten }
   let(:essence_track_ids) { asset.digital_instantiations.map(&:id).map{ |id| DigitalInstantiation.find(id).essence_tracks.map(&:id) }.flatten }
+  let(:all_member_ids) { (Array(asset.id) + digital_instantiation_ids + physical_instantiation_ids + essence_track_ids).sort }
 
   describe '#title' do
     context 'when other titles are present' do
@@ -151,10 +152,9 @@ describe SolrDocument do
     end
   end
 
-  describe "#all_nested_member_ids" do
+  describe ".get_members" do
     it 'returns all the IDs for DigitalInstantiations, PhysicalInstantiations, and EssenceTracks associated with an Asset' do
-      all_member_ids = (digital_instantiation_ids + physical_instantiation_ids + essence_track_ids).sort
-      expect(asset_solr_doc.all_nested_member_ids.sort).to eq(all_member_ids)
+      expect(SolrDocument.get_members(asset.id).sort).to eq(all_member_ids)
     end
   end
 
