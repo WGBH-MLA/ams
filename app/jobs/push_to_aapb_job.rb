@@ -2,7 +2,7 @@ require 'ams/export'
 
 class PushToAAPBJob < ApplicationJob
   queue_as :push_to_aapb
-  
+
   rescue_from StandardError do |error|
     Rails.logger.error "#{error.class}: #{error.message}\n\nBacktrace:\n#{error.backtrace.join("\n")}"
     notification.send_failure(error_message: error.message)

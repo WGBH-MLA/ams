@@ -1,0 +1,18 @@
+<h1>AMS Migration Audit</h1>
+<form action="/audits/new" method="post">
+  <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
+  <textarea style="width:100%; height: 12vw;" id="id_field" type="text" name="id_field" placeholder="GUIDs (one per line)"></textarea>
+  <input id="audit-submit" class="audit-button" type="submit" value="Run Audit" name="">
+</form>
+<% if @mismatches.present? %>
+  <h2>Mismatches</h2>
+  <%= render 'audit_table', comparisons: @mismatches %>
+<% end %>
+<% if @matches.present? %>
+  <h2>Matches</h2>
+  <%= render 'audit_table', comparisons: @matches %>
+<% end %>
+<% if @errors.present? %>
+  <h2>Errors</h2>
+  <%= render 'errors_table', comparisons: @errors %>
+<% end %>

@@ -8,7 +8,6 @@ RSpec.describe AMS::Export::Results::PBCoreZipResults do
 
     subject { described_class.new(solr_documents: solr_docs) }
 
-
     it 'points to a file containing Zipped PBCore results for all the Asset records' do
       Zip::File.open(subject.filepath) do |zipfile|
         unzipped_pbcore_ids = zipfile.map do |entry|
