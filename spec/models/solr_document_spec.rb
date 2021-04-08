@@ -4,10 +4,9 @@ describe SolrDocument do
   let(:solr_document) { described_class.new }
   let(:asset) { create(:asset, :with_physical_digital_and_essence_track) }
   let(:asset_solr_doc) { SolrDocument.find(asset.id) }
-  let(:digital_instantiation_ids) { asset.digital_instantiations.map(&:id).flatten }
-  let(:physical_instantiation_ids) { asset.physical_instantiations.map(&:id).flatten }
-  let(:essence_track_ids) { asset.digital_instantiations.map(&:id).map{ |id| DigitalInstantiation.find(id).essence_tracks.map(&:id) }.flatten }
-  let(:all_member_ids) { (Array(asset.id) + digital_instantiation_ids + physical_instantiation_ids + essence_track_ids).sort }
+
+  let(:all_member_ids) { asset.all_members.map(&:id) }
+
 
   describe '#title' do
     context 'when other titles are present' do
@@ -47,39 +46,19 @@ describe SolrDocument do
   end
 
   describe '#display_description' do
-    # These descriptions are in the order of preference of the display_description method
-    # which we are using for the convenience of using an index in the tests below.
-    let(:all_description_types) do {
-          raw_footage_description: ['Raw Footage Description'],
-          segment_description: ['Segment Description'],
-          clip_description: ['Clip Description'],
-          promo_description: ['Promo Description'],
-          episode_description: ['Episode Description'],
-          program_description: ['Program Description']
-      }
+    let(:description_type_preferred_order) do
+      %i( raw_footage_description segment_description clip_description
+          promo_description episode_description program_description )
     end
 
-    context 'when all descriptions are available' do
-      before do
-         all_description_types.each { |k,v| allow(solr_document).to receive(k).and_return(v) }
-      end
-      it 'returns the raw_footage_description' do
-        expect(solr_document.display_description).to eq(all_description_types[:raw_footage_description].first)
-      end
-    end
-
-    context 'when different descriptions are available' do
-      def build_description_types(index)
-        all_description_types.each_with_index { | (k,v),i | all_description_types[k] = nil if i <= index }
-      end
-
-      it 'chooses the right description' do
-        (0..(all_description_types.length - 2)).each do |index|
-          descriptions = build_description_types(index)
-          key = descriptions.keys[index + 1]
-          descriptions.each { |k,v| allow(solr_document).to receive(k).and_return(v) }
-          expect(solr_document.display_description).to eq(descriptions[key].first)
-        end
+    it 'returns the most preferred description type' do
+      description_type_preferred_order.each do |desc_type|
+        # Expect #display_desciption to be the same as the next preferred
+        # description.
+        expect(asset_solr_doc.display_description).to eq asset_solr_doc.send(desc_type).first
+        # Now nilify the description type we just compared, and loop to assert
+        # the next preferred description.
+        allow(asset_solr_doc).to receive(desc_type).and_return(nil)
       end
     end
   end
@@ -118,7 +97,7 @@ describe SolrDocument do
 
   describe '#display_dates' do
     context 'when a solr doc has dates' do
-      let(:expected_dates) {
+      let(:expected_display_dates_sorted) {
         {
           "date_tesim" => asset.date.sort,
           "broadcast_date_tesim" => asset.broadcast_date.sort,
@@ -128,7 +107,12 @@ describe SolrDocument do
       }
 
       it 'returns a hash of dates' do
-        expect(asset_solr_doc.display_dates.map{ |k,v| v.sort }).to eq expected_dates.map{ |k,v| v.sort }
+        display_dates_sorted = Hash[
+          asset_solr_doc.display_dates.map do |date_field, dates|
+            [date_field, dates.sort]
+          end
+        ]
+        expect(display_dates_sorted).to eq expected_display_dates_sorted
       end
     end
 
@@ -152,10 +136,9 @@ describe SolrDocument do
     end
   end
 
-  describe ".get_members" do
+  describe "#all_members" do
     it 'returns all the IDs for DigitalInstantiations, PhysicalInstantiations, and EssenceTracks associated with an Asset' do
-      expect(SolrDocument.get_members(asset.id).sort).to eq(all_member_ids)
+      expect(asset_solr_doc.all_members.map(&:id).to_set).to eq(asset.all_members.map(&:id).to_set)
     end
   end
-
 end

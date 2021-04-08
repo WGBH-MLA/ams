@@ -2,48 +2,48 @@ require 'rails_helper'
 require 'pbcore'
 require 'ams/migrations/audit/ams2_asset'
 
-RSpec.describe AMS::Migrations::Audit::AMS2Asset do
-  let(:digital_instantiations) {
-    create_list(:digital_instantiation, rand(1..3)) do |di, i|
-      di.ordered_members = create_list(:essence_track, rand(0..3))
-    end
-  }
+RSpec.describe AMS::Migrations::Audit::AMS2Asset, reset_data: false do
 
-  let(:physical_instantiations) {
-    create_list(:physical_instantiation, rand(1..3)) do |pi, i|
-      pi.ordered_members = create_list(:essence_track, rand(0..3))
-    end
-  }
+  # Use instance variable instead of `let` to avoid unnecessary IO.
+  before :all { @asset = create(:asset, :family) }
 
-  let(:ordered_members) { [ digital_instantiations + physical_instantiations ].flatten }
-  let(:asset) { create(:asset, ordered_members: ordered_members) }
-  let(:solr_document) { SolrDocument.find(asset.id) }
+  let(:solr_document) { SolrDocument.new(@asset.to_solr) }
+  let(:ams2_asset) { described_class.new(solr_document: solr_document) }
+
+  context 'with an invalid solr document' do
+    let(:solr_document) { "not a SolrDocument" }
+    describe '.new' do
+      it 'raises an error' do
+        expect { ams2_asset }.to raise_error, ArgumentError
+      end
+    end
+  end
 
   context 'with a valid AMS 2 SolrDocument' do
-    let(:ams2_asset) { described_class.new(solr_document: solr_document) }
-    let(:essence_track_count) { SolrDocument.get_members(asset.id).select{ |member_id| SolrDocument.find(member_id)["has_model_ssim"].include?("EssenceTrack") }.count }
-
     describe '#solr_document' do
       it 'returns the correct SolrDocument' do
-        expect(ams2_asset.solr_document[:id]).to eq(asset.id)
+        expect(ams2_asset.solr_document).to eq solr_document
       end
     end
 
     describe '#digital_instantiations_count' do
+      let(:expected_count) { @asset.all_members(only: DigitalInstantiation).count }
       it 'returns the number of digital instantiations' do
-        expect(ams2_asset.digital_instantiations_count).to eq(asset.digital_instantiations.count)
+        expect(ams2_asset.digital_instantiations_count).to eq expected_count
       end
     end
 
     describe '#physical_instantiations_count' do
+      let(:expected_count) { @asset.all_members(only: PhysicalInstantiation).count }
       it 'returns the number of physical instantiations' do
-        expect(ams2_asset.physical_instantiations_count).to eq(asset.physical_instantiations.count)
+        expect(ams2_asset.physical_instantiations_count).to eq expected_count
       end
     end
 
     describe '#essence_tracks_count' do
+      let(:expected_count) { @asset.all_members(only: EssenceTrack).count }
       it 'returns the number of essence tracks' do
-        expect(ams2_asset.essence_tracks_count).to eq(essence_track_count)
+        expect(ams2_asset.essence_tracks_count).to eq expected_count
       end
     end
   end

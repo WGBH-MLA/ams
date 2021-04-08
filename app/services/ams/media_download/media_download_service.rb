@@ -86,7 +86,7 @@ module AMS
       def generate_instantiations_on_solr_document
         solr_document['media'] = []
 
-        solr_document.find_child(DigitalInstantiation).each do |instantiation|
+        solr_document.members(only: DigitalInstantiation).each do |instantiation|
           if ( instantiation_have_essence_tracks(instantiation) &&
                instantiation_have_generation_proxy(instantiation) &&
                instantiation_have_holding_organization_aapb(instantiation) )
