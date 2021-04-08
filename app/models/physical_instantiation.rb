@@ -114,11 +114,6 @@ class PhysicalInstantiation < ActiveFedora::Base
     instantiation_admin_data_gid
   end
 
-  def instantiation_admin_data_gid_document_field_name
-    Solrizer.solr_name('instantiation_admin_data_gid', *index_instantiation_admin_data_gid_as)
-  end
-
-
   def instantiation_admin_data
     @instantiation_admin_data_gid ||= InstantiationAdminData.find_by_gid(instantiation_admin_data_gid)
   end

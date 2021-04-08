@@ -101,7 +101,7 @@ module AMS::PbcoreXmlExportExtension
       end
     end
 
-    find_child(Contribution).each do |contribution|
+    members(only: Contribution).each do |contribution|
       xml.pbcoreContributor do |contributor_node|
         contributor_node.contributor { contributor_node.text(contribution.contributor.first) }
 
@@ -109,7 +109,7 @@ module AMS::PbcoreXmlExportExtension
         contributor_node.contributorRole { contributor_node.text(contribution.contributor_role.first) } if contribution.contributor_role
       end
     end
-    # people_with_types = find_child(Contribution).sort_by {|peep| peep.contributor_role }
+    # people_with_types = members(only: Contribution).sort_by {|peep| peep.contributor_role }
 
     # Creators
     # people_with_types['creator'].each do |contributor|
@@ -162,10 +162,10 @@ module AMS::PbcoreXmlExportExtension
   end
 
   def prepare_instantiations(xml)
-    find_child(PhysicalInstantiation).each do |instantiation|
+    members(only: PhysicalInstantiation).each do |instantiation|
       prepare_physical_instantiation(xml, instantiation) # separate method to put child nodes for the physical instantiation
     end
-    find_child(DigitalInstantiation).each do |instantiation|
+    members(only: DigitalInstantiation).each do |instantiation|
       prepare_digital_instantiation(xml, instantiation) # separate method to put child nodes for the physical instantiation
     end
   end
@@ -206,7 +206,7 @@ module AMS::PbcoreXmlExportExtension
       instantiation.alternative_modes.to_a.each { |alternative_mode|  instantiation_node.instantiationAlternativeModes { instantiation_node.text(alternative_mode) }  }
 
       # Prepare Essence Track node
-      instantiation.find_child(EssenceTrack).each do |essence_track|
+      instantiation.members(only: EssenceTrack).each do |essence_track|
         prepare_essence_track(instantiation_node, essence_track)
       end
 
@@ -269,7 +269,7 @@ module AMS::PbcoreXmlExportExtension
       instantiation.alternative_modes.to_a.each { |alternative_mode|  instantiation_node.instantiationAlternativeModes { instantiation_node.text(alternative_mode) }  }
 
       # Prepare Essence Track node
-      instantiation.find_child(EssenceTrack).each do |essence_track|
+      instantiation.members(only: EssenceTrack).each do |essence_track|
         prepare_essence_track(instantiation_node, essence_track)
       end
 
@@ -328,7 +328,6 @@ module AMS::PbcoreXmlExportExtension
   end
 
   def prepare_annotations(xml)
-    annotations = Asset.find(self.id).admin_data.annotations
     return if annotations.empty?
 
     annotations.each do |annotation|
