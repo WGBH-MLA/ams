@@ -1,0 +1,84 @@
+asset_type:
+  values:
+    Album: Album
+    Clip: Clip
+    Compilation: Compilation
+    Element: Raw Footage
+    B-roll: Raw Footage
+    broll: Raw Footage
+    Field Tape: Raw Footage
+    News Conference: Raw Footage
+    NEWS RELEASE: Raw Footage
+    News Tape: Raw Footage
+    Original footage: Raw Footage
+    Original recording: Raw Footage
+    Outtake: Raw Footage
+    Raw Footage: Raw Footage
+    Stock Footage: Raw Footage
+    Stock shot: Raw Footage
+    unedited footage: Raw Footage
+    Episode: Episode
+    Program: Program
+    Porgram: Program
+    Television special: Program
+    Promo: Promo
+    Advertis: Promo
+    Commercial Spots: Promo
+    PSA: Promo
+    Public Announcement: Promo
+    Trailer: Promo
+    Segment: Segment
+    Segrment: Segment
+    Track: Track
+    epi: Episode
+    '': ''
+asset_date:
+  types:
+    broadcast: Broadcast
+    air: Broadcast
+    issue: Broadcast
+    published: Broadcast
+    release: Broadcast
+    created: Created
+    recorded: Created
+    performance: Created
+    revised: Revised
+    copyright: Copyright Date
+    '': Date
+asset_description:
+  types:
+    Raw Footage: Raw Footage
+    Element: Raw Footage
+    Clip: Clip
+    Promo: Promo
+    Episode: Episode
+    Program: Program
+    Description: Description
+    Abstract: Description
+    Log: Log
+    Rundown: Rundown
+    Shot List: Shot List
+    Transcript: Transcript
+    Series: Series
+    '': Description
+title:
+  types:
+    collection: Collection
+    series: Series
+    program: Program
+    number: Episode Number
+    epospde: Episode
+    episode: Episode
+    clip: Clip
+    advertis: Promo
+    trailer: Promo
+    promo: Promo
+    raw: Raw Footage
+    field tape: Raw Footage
+    element: Raw Footage
+    b-roll: Raw Footage
+    b roll: Raw Footage
+    album: Album
+    label: Label
+    segment: Segment
+    '': Title
