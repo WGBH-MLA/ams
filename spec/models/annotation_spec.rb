@@ -33,7 +33,7 @@ RSpec.describe Annotation, type: :model do
         let!(:annotation) { FactoryBot.create(:annotation, admin_data: admin_data) }
 
         it "can access annotations from AdminData" do
-          expect(admin_data.annotations.first).to eq(annotation)
+          expect(admin_data.reload.annotations.first).to eq(annotation)
         end
       end
 

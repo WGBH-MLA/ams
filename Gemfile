@@ -60,6 +60,7 @@ group :development, :test do
   gem 'fcrepo_wrapper'
   gem 'solr_wrapper', '~> 2.1'
   gem 'webmock', '~> 3.7'
+  gem 'rails-controller-testing'
 end
 
 group :development do
@@ -83,7 +84,7 @@ gem 'rsolr', '>= 1.0'
 gem 'jquery-rails'
 gem 'devise'
 gem 'devise-guests', '~> 0.6'
-gem 'simple_form', '3.5.0'
+gem 'simple_form', '5.0.0'
 gem 'aws-sdk-s3'
 gem 'aws-sdk-codedeploy'
 gem 'carrierwave', '~> 1.0'
