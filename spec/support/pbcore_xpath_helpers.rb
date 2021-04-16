@@ -167,6 +167,18 @@ module PBCoreXPathHelper
       noko.xpath('//pbcoreCreator').select{ |creator| creator.xpath('.//creatorRole').text == "Producing Organization" }.map{ |e| e.xpath('.//creator').text }
     end
 
+    # Since we're adding all Identifiers have an unmatched Source to the Asset's local_identifier property
+    # we subtract all the known Identifiers to for checking in spec.
+    def local_identifiers
+      all_vals = values_from_xpath('//pbcoreIdentifier')
+      other_types = values_from_xpath(:pbs_nola_code) +
+                   values_from_xpath(:eidr_id) +
+                   values_from_xpath(:sonyci_id) +
+                   # Need ams_id in array
+                   Array.new(1, ams_id)
+      remove_exactly_once_from_array all_vals, other_types
+    end
+
     # Shortcut method to pull out all annotations that don't match special
     # annotation types.
     # Usage: In your spec, do this..
