@@ -5,7 +5,7 @@ require 'ams/migrations/audit/ams2_asset'
 RSpec.describe AMS::Migrations::Audit::AMS2Asset, reset_data: false do
 
   # Use instance variable instead of `let` to avoid unnecessary IO.
-  before :all { @asset = create(:asset, :family) }
+  before(:all) { @asset = create(:asset, :family) }
 
   let(:solr_document) { SolrDocument.new(@asset.to_solr) }
   let(:ams2_asset) { described_class.new(solr_document: solr_document) }
