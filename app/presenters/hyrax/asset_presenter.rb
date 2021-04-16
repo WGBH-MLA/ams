@@ -114,12 +114,12 @@ module Hyrax
     end
 
     def media_available?
-      solr_document.find_child(DigitalInstantiation).each do |instantiation|
+      solr_document.members(only: DigitalInstantiation).each do |instantiation|
         if  ( instantiation_have_essence_tracks(instantiation) &&
             instantiation_have_generation_proxy(instantiation) &&
             instantiation_have_holding_organization_aapb(instantiation) )
           solr_document['media'] = []
-          instantiation.find_child(EssenceTrack).each do |track|
+          instantiation.members(only: EssenceTrack).each do |track|
             if track.track_type.first == "video"
               solr_document['media'] << {
                 :type => track.track_type.first,

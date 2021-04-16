@@ -5,26 +5,26 @@ module AMS
         attr_reader :solr_document
 
         def initialize(solr_document:)
-          raise 'AMS2Asset must be initialized with a SolrDocument' unless solr_document.class == SolrDocument
+          raise ArgumentError, "AMS2Asset expects a SolrDocument but #{solr_document.class} was given" unless solr_document.is_a? SolrDocument
           @solr_document = solr_document
         end
 
         def digital_instantiations_count
-          @digital_instantiations_count ||= solr_document.present? ? asset_members.select{ |mem| mem["has_model_ssim"].include?("DigitalInstantiation") }.count : nil
+          solr_document.all_members(only: 'DigitalInstantiation').count
         end
 
         def physical_instantiations_count
-          @physical_instantiations_count ||= solr_document.present? ? asset_members.select{ |mem| mem["has_model_ssim"].include?("PhysicalInstantiation") }.count : nil
+          solr_document.all_members(only: 'PhysicalInstantiation').count
         end
 
         def essence_tracks_count
-          @essence_tracks_count ||= solr_document.present? ? asset_members.select{ |mem| mem["has_model_ssim"].include?("EssenceTrack") }.count : nil
+          solr_document.all_members(only: 'EssenceTrack').count
         end
 
         private
 
         def asset_members
-          @asset_members ||= SolrDocument.get_members(solr_document["id"]).map{ |id| SolrDocument.find(id)}
+          @asset_members ||= SolrDocument.get_members(solr_document["id"])
         end
       end
     end

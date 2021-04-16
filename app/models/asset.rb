@@ -3,7 +3,7 @@ class Asset < ActiveFedora::Base
   include ::AMS::CreateMemberMethods
   include ::AMS::IdentifierService
   include ::AMS::CascadeDestroyMembers
-  include ::AMS::AllNestedMembersMethods
+  include ::AMS::AllMembers
 
   self.indexer = AssetIndexer
   before_save :save_admin_data
@@ -56,10 +56,6 @@ class Asset < ActiveFedora::Base
 
   def annotations
     @annotations ||= admin_data.annotations
-  end
-
-  def all_members
-    @all_members ||= all_nested_members
   end
 
   # TODO: Use RDF::Vocab for applicable terms.
@@ -208,6 +204,8 @@ class Asset < ActiveFedora::Base
   def admin_data_gid=(new_admin_data_gid)
     raise "Can't modify admin data of this asset" if persisted? && !admin_data_gid_was.nil? && admin_data_gid_was != new_admin_data_gid
     new_admin_data = AdminData.find_by_gid!(new_admin_data_gid)
+    # TODO: what is the `super` call for? There's no amdin_data_gid= method in
+    # any ancestor afaik, but double check.
     super
     @admin_data=new_admin_data
     admin_data_gid

@@ -80,6 +80,28 @@ FactoryBot.define do
       ] }
     end
 
+    trait :family do
+      ordered_members do
+        [
+          rand(2..4).times.map do
+            create(:digital_instantiation,
+              ordered_members: rand(2..4).times.map do
+                create(:essence_track)
+              end
+            )
+          end,
+          rand(1..2).times.map do
+            create(:physical_instantiation,
+              ordered_members: rand(2..4).times.map do
+                create(:essence_track)
+              end
+            )
+          end,
+          rand(2..4).times.map { create(:contribution) }
+        ].flatten
+      end
+    end
+
     before(:create) do |work, evaluator|
       if evaluator.admin_set
         work.admin_set_id = evaluator.admin_set.id

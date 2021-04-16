@@ -2,7 +2,6 @@
 class SolrDocument
   include Blacklight::Solr::Document
   include Blacklight::Gallery::OpenseadragonSolrDocument
-  include ::AMS::Solr::CreateMemberMethods
 
   # Adds Hyrax behaviors to the SolrDocument.
   include Hyrax::SolrDocumentBehavior
@@ -30,14 +29,14 @@ class SolrDocument
   use_extension(Hydra::ContentNegotiation)
 
   # Determine which type of Fedora record this SolrDocument instance represents.
-  def record_type
+  def has_model
     self['has_model_ssim'].first
   end
 
   # Define boolean predicates for determining record type.
-  def is_asset?; record_type == "Asset"; end
-  def is_physical_instantiation?; record_type == "PhysicalInstantiation"; end
-  def is_digital_instantiation?; record_type == "DigitalInstantiation"; end
+  def is_asset?; has_model == "Asset"; end
+  def is_physical_instantiation?; has_model == "PhysicalInstantiation"; end
+  def is_digital_instantiation?; has_model == "DigitalInstantiation"; end
 
   # Specific ID accessors based on record type.
   def asset_id; id if is_asset?; end
@@ -47,9 +46,18 @@ class SolrDocument
   # Returns an array of SolrDocument instances for members.
   # NOTE: This is not ideal to have the SolrDocument running additional Solr
   #   queries, but it's all we've got currently.
-  def members
-    # TODO: Use just one query to return all docs?
-    Array(member_ids).map { |id| SolrDocument.find(id) }
+  def members(only: [], except: [])
+    return [] if member_ids.empty?
+
+    @members ||= self.class.repository.search("q" => "+id:(#{member_ids.join(' OR ')})")['response']['docs'].map do |doc|
+      SolrDocument.new(doc)
+    end
+
+    # Return only those where #has_model is in :only, if present.
+    # Exclude any whose #has_model is in :exclude.
+    only, except = Array(only).map(&:to_s), Array(except).map(&:to_s)
+    @members.select { |m| only.empty? || only.include?(m.has_model) }.
+             reject { |m| except.include?(m.has_model) }
   end
 
   def member_of
@@ -67,11 +75,11 @@ class SolrDocument
   end
 
   def physical_instantiations
-    members.select { |member| member.is_physical_instantiation? }
+    members only: PhysicalInstantiation
   end
 
   def digital_instantiations
-    members.select { |member| member.is_physical_instantiation? }
+    members only: DigitalInstantiation
   end
 
   def asset_types
@@ -503,10 +511,34 @@ class SolrDocument
     self[Solrizer.solr_name('md5', :symbol)]
   end
 
+  def all_members(only: [], exclude: [])
+    # Fetch members recursively and memoize. Subtract self from the list.
+    @all_members ||= SolrDocument.get_members(self) - [ self ]
+
+    # Filter @all_members with the :only and :except params
+    only, except = Array(only).map(&:to_s), Array(except).map(&:to_s)
+    @all_members.select { |m| only.empty? || only.include?(m.has_model) }.
+                 reject { |m| except.include?(m.has_model) }
+  end
+
+  def admin_data_gid
+    self['admin_data_gid_ssim'].first
+  end
+
+  def admin_data
+    @admin_data ||= AdminData.find_by_gid(admin_data_gid)
+  end
+
+  def annotations
+    @annotations ||= admin_data&.annotations
+  end
+
+  ###
+  # CLASS METHODS
+  ###
+
   # Recursively get all members
-  def self.get_members(id, all_members = [])
-    all_members << id
-    SolrDocument.find(id).member_ids.each { |member_id| get_members(member_id, all_members) }
-    all_members
+  def self.get_members(doc)
+    [ doc ] + doc.members.map { |member| get_members(member) }.flatten
   end
 end
