@@ -32,6 +32,12 @@ FactoryBot.define do
       value { "e8eb953ef72244d8a711035754d36d5c" }
     end
 
+    # Used to check if IDs with random source get mapped to the local_identifier on the Asset
+    trait :random_id do
+      source { (('A'..'Z').to_a + (0..9).to_a).sample(rand(5..10)).join }
+      value { 'some_random_source_id' }
+    end
+
     initialize_with { new(attributes) }
   end
 end

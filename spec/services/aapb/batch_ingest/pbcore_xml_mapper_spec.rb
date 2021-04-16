@@ -18,7 +18,7 @@ RSpec.describe AAPB::BatchIngest::PBCoreXMLMapper, :pbcore_xpath_helper do
       :date, :broadcast_date, :copyright_date, :created_date, :subject]
     end
 
-    let(:attrs_with_xpath_shortcuts) { attr_names - [:title, :description, :date, :spatial_coverage, :temporal_coverage, :id, :holding_organization, :annotation] }
+    let(:attrs_with_xpath_shortcuts) { attr_names - [:title, :description, :date, :spatial_coverage, :temporal_coverage, :id, :local_identifier, :holding_organization, :annotation] }
     let(:attrs) { subject.asset_attributes }
 
     let(:pbcore_annotation_types) { attrs[:annotations].map{ |anno| anno["annotation_type"] } }
@@ -37,11 +37,12 @@ RSpec.describe AAPB::BatchIngest::PBCoreXMLMapper, :pbcore_xpath_helper do
         expect(attrs[attr]).to match_array pbcore_values_from_xpath(pbcore_xml, attr)
       end
 
-      # Check :title, :description, :id separately with specific helpers.
-      expect(attrs[:title]).to        eq pbcore_xpath_helper(pbcore_xml).titles_without_type
-      expect(attrs[:description]).to  eq pbcore_xpath_helper(pbcore_xml).descriptions_without_type
-      expect(attrs[:date]).to         eq pbcore_xpath_helper(pbcore_xml).dates_without_type
-      expect(attrs[:id]).to           eq pbcore_xpath_helper(pbcore_xml).ams_id
+      # Check attrs that have specific helpers.
+      expect(attrs[:title]).to              eq pbcore_xpath_helper(pbcore_xml).titles_without_type
+      expect(attrs[:description]).to        eq pbcore_xpath_helper(pbcore_xml).descriptions_without_type
+      expect(attrs[:date]).to               eq pbcore_xpath_helper(pbcore_xml).dates_without_type
+      expect(attrs[:id]).to                 eq pbcore_xpath_helper(pbcore_xml).ams_id
+      expect(attrs[:local_identifier]).to   eq pbcore_xpath_helper(pbcore_xml).local_identifiers
     end
 
     it 'maps Contribution data from PBCore XML' do
