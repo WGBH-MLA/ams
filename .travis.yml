@@ -38,7 +38,7 @@ deploy:
     secure: "vAmLUYYon/glBfFog8+xyChUMidy+5GciyNSfuNpkF+dWH+r5FYmMpA9hbfcTZhNrM9XSZxjf+heVltkz/nTNwb+U7Q35e1k1KR4NO/juf8+VNk+jwK9oQESoSeEU+Pplkl7sUCCZikqPO07aYtIPzCJy8pt2hUsA9EzxPny6vWPSZiGxghxcCqZIHmuiJJFg39Pnl8P4R8MM3EqGr3qExCEtapO4ca4s+JVr8dvhiJCUac7e0rWHSTTzGh1qTyOk1d4T6tU4edJZXc8BFzsZ4O/GETzGfA8bYiaHfizAQNcwpcQ9cP66k+XQkQ+CYRUlHlNbq6JGItkJTUGkY/MHhs3jIy58iWKVEg1dyPsOsjWs6aL4UA52Uo/uV3TPsB/GHbC52gVonzz7pqNeNPoS46RHO2ekqlerkeE488uuM0fGwamQ3JhfDwKBklZcGjzo/sxFD8IKEAieGikcuO3fYIhijhuCBUuOyGt/bCMfMh3rStKGeDRVfzCFHi+WNQY1FtSqqh6P+PNfrR0Y5j2cwKF/6cUFN0iFMZ+LWeEmduTtRDaG1tCyZ1UKRetG69zpWgVn4tmMrVdDOTyyHoE2BrD8D4qft1+690Lvji+6y5g3vqM9sl1aPZO4t21BxKSwwcNLmS/fZo114YpU9Eu9xA3ly7h36OYaei5gh1Z4jc="
   revision_type: github
   application: ams-production-restored
-  deployment_group: ams-production-restored
+  deployment_group: ams-production-restored-DG
   region: us-east-1
   on:
     branch: main
@@ -49,7 +49,7 @@ deploy:
     secure: "vAmLUYYon/glBfFog8+xyChUMidy+5GciyNSfuNpkF+dWH+r5FYmMpA9hbfcTZhNrM9XSZxjf+heVltkz/nTNwb+U7Q35e1k1KR4NO/juf8+VNk+jwK9oQESoSeEU+Pplkl7sUCCZikqPO07aYtIPzCJy8pt2hUsA9EzxPny6vWPSZiGxghxcCqZIHmuiJJFg39Pnl8P4R8MM3EqGr3qExCEtapO4ca4s+JVr8dvhiJCUac7e0rWHSTTzGh1qTyOk1d4T6tU4edJZXc8BFzsZ4O/GETzGfA8bYiaHfizAQNcwpcQ9cP66k+XQkQ+CYRUlHlNbq6JGItkJTUGkY/MHhs3jIy58iWKVEg1dyPsOsjWs6aL4UA52Uo/uV3TPsB/GHbC52gVonzz7pqNeNPoS46RHO2ekqlerkeE488uuM0fGwamQ3JhfDwKBklZcGjzo/sxFD8IKEAieGikcuO3fYIhijhuCBUuOyGt/bCMfMh3rStKGeDRVfzCFHi+WNQY1FtSqqh6P+PNfrR0Y5j2cwKF/6cUFN0iFMZ+LWeEmduTtRDaG1tCyZ1UKRetG69zpWgVn4tmMrVdDOTyyHoE2BrD8D4qft1+690Lvji+6y5g3vqM9sl1aPZO4t21BxKSwwcNLmS/fZo114YpU9Eu9xA3ly7h36OYaei5gh1Z4jc="
   revision_type: github
   application: ams-demo-restore1
-  deployment_group: ams-demo-restore1
+  deployment_group: ams-demo-restore1-DG
   region: us-east-1
   on:
     branch: develop
