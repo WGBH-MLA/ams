@@ -18,7 +18,19 @@ class DeploymentInfoPageGenerator < Rails::Generators::Base
     def deployment_id; options['deployment_id']; end
 
     def client
-      @client ||= Aws::CodeDeploy::Client.new(region: region)
+      @client ||= Aws::CodeDeploy::Client.new(region: region, access_key_id: access_key_id, secret_access_key: secret_access_key)
+    end
+
+    def access_key_id
+      raise 'Environment variable AWS_CODEDEPLOY_ACCESS_KEY_ID must be set ' \
+            'to access key of IAM user with access to fetch deployment info.' if ENV['AWS_CODEDEPLOY_ACCESS_KEY_ID'].to_s.strip.empty?
+      ENV['AWS_CODEDEPLOY_ACCESS_KEY_ID'].to_s.strip
+    end
+
+    def secret_access_key
+      raise 'Environment variable AWS_CODEDEPLOY_SECRET_ACCESS_KEY must be ' \
+            'set to access key of IAM user with access to fetch deployment info.' if ENV['AWS_CODEDEPLOY_SECRET_ACCESS_KEY'].to_s.strip.empty?
+      ENV['AWS_CODEDEPLOY_SECRET_ACCESS_KEY'].to_s.strip
     end
 
     def deployment_info
