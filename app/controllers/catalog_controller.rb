@@ -1,6 +1,5 @@
 class CatalogController < ApplicationController
   include Hydra::Catalog
-  include Hydra::Controller::ControllerBehavior
   include BlacklightAdvancedSearch::Controller
 
   # This filter applies the hydra access controls
