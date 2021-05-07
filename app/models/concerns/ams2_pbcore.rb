@@ -1,3 +1,5 @@
+require 'concerns/ams2_pbcore_validator'
+
 class AMS2PBcore
   # This class is used to wrap the PBCore::DescriptionDocument from
   # the PBCore gem: https://github.com/WGBH-MLA/pbcore.
