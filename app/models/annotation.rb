@@ -21,7 +21,7 @@ class Annotation < ApplicationRecord
   end
 
   def self.find_annotation_type_id(type_name)
-    registered_annotation_types[type_name.downcase]
+    registered_annotation_types[type_name.to_s.downcase]
   end
 
   def self.ingestable_attributes
