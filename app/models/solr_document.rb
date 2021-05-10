@@ -50,7 +50,7 @@ class SolrDocument
   def members(only: [], except: [])
     return [] if member_ids.empty?
 
-    @members ||= self.class.repository.search("q" => "+id:(#{member_ids.join(' OR ')})")['response']['docs'].map do |doc|
+    @members ||= self.class.repository.search(q: "+id:(#{member_ids.join(' OR ')})", rows: 99999)['response']['docs'].map do |doc|
       SolrDocument.new(doc)
     end
 
@@ -62,7 +62,7 @@ class SolrDocument
   end
 
   def member_of
-    self.class.repository.search("q" => "member_ids_ssim:#{id}")['response']['docs'].map do |doc|
+    self.class.repository.search(q: "member_ids_ssim:#{id}", rows: 99999)['response']['docs'].map do |doc|
       SolrDocument.new(doc)
     end
   end
