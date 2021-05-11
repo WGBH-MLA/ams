@@ -5,9 +5,6 @@ describe SolrDocument do
   let(:asset) { create(:asset, :with_physical_digital_and_essence_track) }
   let(:asset_solr_doc) { SolrDocument.find(asset.id) }
 
-  let(:all_member_ids) { asset.all_members.map(&:id) }
-
-
   describe '#title' do
     context 'when other titles are present' do
       let(:other_titles) do
@@ -141,4 +138,31 @@ describe SolrDocument do
       expect(asset_solr_doc.all_members.map(&:id).to_set).to eq(asset.all_members.map(&:id).to_set)
     end
   end
+
+  describe '#members' do
+    context 'with > 10 members (i.e. the default row limit)' do
+      let(:asset) {
+        create(:asset, ordered_members: [
+            # 11 members across 3 different types
+            create_list(:contribution, 9),
+            create(:digital_instantiation),
+            create(:digital_instantiation)
+        ].flatten)
+      }
+
+      let(:expected_member_ids) {[
+        asset.contributions.map(&:id),
+        asset.digital_instantiations.map(&:id),
+        asset.physical_instantiations.map(&:id)
+      ].flatten
+
+      }
+
+      it 'returns them all' do
+        expect(asset_solr_doc.members.map(&:id).to_set).to eq expected_member_ids.to_set
+      end
+    end
+  end
+
+
 end
