@@ -1,6 +1,7 @@
 require 'rails_helper'
 require 'hyrax/batch_ingest/spec/shared_specs'
 require 'aapb/batch_ingest/pbcore_xml_item_ingester'
+require 'ams/cleaner/pbcore_cleaner'
 
 RSpec.describe AAPB::BatchIngest::PBCoreXMLItemIngester, reset_data: false do
   let(:ingester_class) { described_class }
@@ -85,7 +86,7 @@ RSpec.describe AAPB::BatchIngest::PBCoreXMLItemIngester, reset_data: false do
         expect(@batch.batch_items.count).to eq 9
       end
 
-      context 'given a PBCore Description Document that alread exists' do
+      context 'given a PBCore Description Document that already exists' do
         it 'raises an exception' do
           duplicate_batch_item = create(
             :batch_item,
@@ -94,6 +95,34 @@ RSpec.describe AAPB::BatchIngest::PBCoreXMLItemIngester, reset_data: false do
             source_data: @pbcore.to_xml
           )
           expect { described_class.new(duplicate_batch_item).ingest }.to raise_error AAPB::BatchIngest::RecordExists
+        end
+      end
+    end
+
+    context 'during a PBCore ingest' do
+      describe '.ingest_asset!' do
+        let(:pbcore) { build(:pbcore_description_document, :full_aapb,
+                              contributors: build_list(:pbcore_contributor, 5),
+                              instantiations: [
+                               build_list(:pbcore_instantiation, 5, :digital,
+                                 essence_tracks: build_list(:pbcore_instantiation_essence_track, 2)),
+                               build(:pbcore_instantiation, :physical,
+                                 essence_tracks: build_list(:pbcore_instantiation_essence_track, 2))
+                               ].flatten ) }
+        let(:batch) { create(:batch, submitter_email: create(:user, role_names: ['aapb-admin']).email) }
+        let(:cleaner_instance) { double(AMS::Cleaner::PBCoreCleaner) }
+        let(:batch_item) { create( :batch_item,
+                                    batch: batch,
+                                    source_location: nil,
+                                    source_data: pbcore.to_xml )}
+        before do
+          allow(cleaner_instance).to receive(:pbcore).and_return(pbcore)
+        end
+
+        it 'initializes a PBCoreCleaner and calls clean!' do
+          expect(AMS::Cleaner::PBCoreCleaner).to receive(:new).and_return(cleaner_instance)
+          expect(cleaner_instance).to receive(:clean!).and_return(pbcore)
+          described_class.new(batch_item).ingest_asset!
         end
       end
     end

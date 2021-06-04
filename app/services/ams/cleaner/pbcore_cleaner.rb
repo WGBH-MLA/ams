@@ -1,3 +1,8 @@
+require 'ams/cleaner/pbcore_element_editor'
+require 'ams/cleaner/pipeline'
+require 'ams/cleaner/steps'
+require 'ams/cleaner/vocab_map'
+
 module AMS
   module Cleaner
     class PBCoreCleaner

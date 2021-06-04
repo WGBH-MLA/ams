@@ -2,6 +2,7 @@ require 'aapb/batch_ingest/batch_item_ingester'
 require 'aapb/batch_ingest/pbcore_xml_mapper'
 require 'aapb/batch_ingest/zipped_pbcore_digital_instantiation_mapper'
 require 'aapb/batch_ingest/errors'
+require 'ams/cleaner/pbcore_cleaner'
 
 module AAPB
   module BatchIngest
@@ -72,7 +73,7 @@ module AAPB
         end
 
         def ingest_asset!
-          attrs = AAPB::BatchIngest::PBCoreXMLMapper.new(pbcore_xml).asset_attributes
+          attrs = AAPB::BatchIngest::PBCoreXMLMapper.new(pbcore.to_xml).asset_attributes
 
           validate_record_does_not_exist! attrs[:id]
           attrs[:hyrax_batch_ingest_batch_id] = batch_id
@@ -146,13 +147,17 @@ module AAPB
 
         def pbcore
           @pbcore ||= if batch_item_is_asset?
-            PBCore::DescriptionDocument.parse(pbcore_xml)
+            clean_pbcore_description_document
           elsif batch_item_is_digital_instantiation?
             PBCore::InstantiationDocument.parse(pbcore_xml)
           else
             # TODO: Better error message here?
             raise "Unknown PBCore XML document type"
           end
+        end
+
+        def clean_pbcore_description_document
+          AMS::Cleaner::PBCoreCleaner.new(PBCore::DescriptionDocument.parse(pbcore_xml)).clean!
         end
 
         def pbcore_xml

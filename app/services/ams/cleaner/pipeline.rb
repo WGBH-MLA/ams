@@ -10,8 +10,9 @@ module AMS
 
       def process(pbcore)
         steps.reduce(pbcore) do |pbc, step|
-           step.process(pbc)
+          step.process(pbc)
         end
+        pbcore
       end
 
     end
