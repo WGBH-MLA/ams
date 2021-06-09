@@ -80,82 +80,11 @@ module Hyrax
       false
     end
 
-    def iiif_version
-      if media_available?
-        3
-      else
-        2
-      end
-    end
-
-    # def iiif_viewer?
-    #   true
-    # end
-
-    def file_set_presenters
-      return [AMS::AssetFilePresenter.new(solr_document)]
-    end
-
-    def iiif_viewer
-      :avalon
-    end
-
-    def ranges
-      unless solr_document['media'].nil?
-        [
-          Hyrax::IiifAv::ManifestRange.new(
-            label: { '@none'.to_sym => title.first },
-            items: file_set_presenters.collect(&:range)
-          )
-        ]
-      else
-        return [ ]
-      end
-    end
-
     def media_available?
-      solr_document.members(only: DigitalInstantiation).each do |instantiation|
-        if  ( instantiation_have_essence_tracks(instantiation) &&
-            instantiation_have_generation_proxy(instantiation) &&
-            instantiation_have_holding_organization_aapb(instantiation) )
-          solr_document['media'] = []
-          instantiation.members(only: EssenceTrack).each do |track|
-            if track.track_type.first == "video"
-              solr_document['media'] << {
-                :type => track.track_type.first,
-                :height => track.frame_height.first,
-                :width => track.frame_width.first,
-                :duration => duration_to_sec(track.duration.first) }
-            else
-              solr_document['media'] << {
-                :type => track.track_type.first,
-                :duration => duration_to_sec(track.duration.first) }
-            end
-          end
-          return true
-        end
-      end
-      false
+      sonyci_id.blank? ? false : true
     end
 
     private
-
-      def duration_to_sec(duration)
-        durationDT = DateTime.parse(duration)
-        durationDT.hour*60*60 + durationDT.min*60 + durationDT.sec
-      end
-
-      def instantiation_have_essence_tracks(instantiation)
-        instantiation.fetch(:member_ids_ssim, []).size > 0
-      end
-
-      def instantiation_have_generation_proxy(instantiation)
-        ( instantiation.generations && instantiation.generations.include?("Proxy") )
-      end
-
-      def instantiation_have_holding_organization_aapb(instantiation)
-        (instantiation.holding_organization && instantiation.holding_organization.include?("American Archive of Public Broadcasting"))
-      end
 
       def timestamp_to_display_date(timestamp)
         ApplicationHelper.display_date(timestamp, format: '%m-%e-%y %H:%M %Z', from_format: '%s', time_zone: 'US/Eastern')
