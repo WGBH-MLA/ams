@@ -6,29 +6,29 @@ require 'sony_ci_api'
 module AMS
   module MediaDownload
     class MediaDownloadService
+      class Success < Hash; end
+      class Failure < Hash; end
+
       attr_reader :solr_document
       attr_reader :file_path
       attr_reader :filename
+      attr_reader :errors
 
-      def initialize(solr_document, format = 'zip', filename = nil)
+      def initialize(solr_document:)
         @solr_document = solr_document
-        @format = format
-        @filename = if filename.nil?
-                      "export-#{Time.now.strftime('%m_%d_%Y_%H:%M')}.#{format}"
-                    else
-                      filename
-                    end
+        @filename = "export-#{Time.now.strftime('%m_%d_%Y_%H:%M')}.zip"
         @file_path = Tempfile.new(@filename)
+        @errors = []
       end
 
       def process
-        begin
-          process_download
-          yield
-        ensure
-          @file_path.close
-          @file_path.unlink
-        end
+        process_download == true ? download_success : download_failure
+      end
+
+      def self.cleanup_temp_file(temp_file: nil)
+        raise 'Argument must be a TempFile' unless temp_file.is_a? Tempfile
+        temp_file.close
+        temp_file.unlink
       end
 
       private
@@ -39,24 +39,34 @@ module AMS
       end
 
       def process_download
-        generate_instantiations_on_solr_document
-        sonyci_media_file_paths = []
-
-        ::Zip::File.open(file_path.path, Zip::File::CREATE) do |zip_file|
-          solr_document['media'].each_with_index do | instantiation, index |
-            if solr_document['sonyci_id_ssim'][(index || 0).to_i].present?
-              sonyci_file_location = get_sonyci_file_location(solr_document['sonyci_id_ssim'][(index || 0).to_i])
-              sonyci_file_name = parse_sonyci_file_name(sonyci_file_location)
-              sonyci_file_path = generate_sonyci_file_path(sonyci_file_name)
-              download_media_file(sonyci_file_path, sonyci_file_location)
-              zip_file.add(sonyci_file_name, sonyci_file_path)
-              sonyci_media_file_paths << sonyci_file_path
-            else
-              raise "Instantiation is missing a SonyCi Identifier. Instantiation: #{instantiation}"
+        begin
+          sonyci_media_file_paths = []
+          ::Zip::File.open(file_path.path, Zip::File::CREATE) do |zip_file|
+            solr_document['sonyci_id_ssim'].each_with_index do | id, index |
+              if solr_document['sonyci_id_ssim'][(index || 0).to_i].present?
+                sonyci_file_location = get_sonyci_file_location(solr_document['sonyci_id_ssim'][(index || 0).to_i])
+                sonyci_file_name = parse_sonyci_file_name(sonyci_file_location)
+                sonyci_file_path = generate_sonyci_file_path(sonyci_file_name)
+                download_media_file(sonyci_file_path, sonyci_file_location)
+                zip_file.add(sonyci_file_name, sonyci_file_path)
+                sonyci_media_file_paths << sonyci_file_path
+              end
             end
           end
+          delete_media_files(sonyci_media_file_paths)
+          true
+        rescue => e
+          errors << e
+          false
         end
-        delete_media_files(sonyci_media_file_paths)
+      end
+
+      def download_success
+        AMS::MediaDownload::MediaDownloadService::Success[:filename, filename, :file_path, file_path]
+      end
+
+      def download_failure
+        AMS::MediaDownload::MediaDownloadService::Failure[:errors, errors, :file_path, file_path]
       end
 
       def download_media_file(file_path, file_location)
@@ -76,35 +86,11 @@ module AMS
       end
 
       def parse_sonyci_file_name(location)
-        CGI::parse(location)["response-content-disposition"][0].split('filename=').last.gsub("\"",'')
+        URI(location).path.split('/').last
       end
 
       def generate_sonyci_file_path(file_name)
         File.join(Rails.root, 'tmp', file_name)
-      end
-
-      def generate_instantiations_on_solr_document
-        solr_document['media'] = []
-
-        solr_document.members(only: DigitalInstantiation).each do |instantiation|
-          if ( instantiation_have_essence_tracks(instantiation) &&
-               instantiation_have_generation_proxy(instantiation) &&
-               instantiation_have_holding_organization_aapb(instantiation) )
-              solr_document['media'] << instantiation
-          end
-        end
-      end
-
-      def instantiation_have_essence_tracks(instantiation)
-        instantiation.fetch(:member_ids_ssim, []).size > 0
-      end
-
-      def instantiation_have_generation_proxy(instantiation)
-        ( instantiation.generations && instantiation.generations.include?("Proxy") )
-      end
-
-      def instantiation_have_holding_organization_aapb(instantiation)
-        (instantiation.holding_organization && instantiation.holding_organization.include?("American Archive of Public Broadcasting"))
       end
     end
   end
