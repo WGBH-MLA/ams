@@ -25,7 +25,7 @@ module AAPB
       end
 
       def validate_options
-        @options_structure = AAPB::BatchIngest::CSVConfigParser.validate_config(@options)
+        @options_structure = AAPB::BatchIngest::CSVConfigParser.validate_config(options)
       end
 
       def validate_csv_header
@@ -76,7 +76,6 @@ module AAPB
             else
               model_hash[model][attribute] = value unless value.empty?
             end
-
           else
 
             # initialize array of contributions or instantiations etc
@@ -93,11 +92,9 @@ module AAPB
               last_hash = model_hash[model].last
 
               if multi_value_attr?(attribute, model)
-
                 last_hash[attribute] ||= []
-                last_hash[attribute] << value.first
+                last_hash[attribute] << value.first unless value.empty?
               else
-
                 last_hash[attribute] = value unless value.empty?
               end
             end
