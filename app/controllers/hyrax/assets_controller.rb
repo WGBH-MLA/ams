@@ -18,10 +18,17 @@ module Hyrax
     def download_media
       respond_to do |format|
         format.zip {
-          export_data = AMS::MediaDownload::MediaDownloadService.new(solr_document)
-          export_data.process do
-            export_file = File.read(export_data.file_path)
-            send_data export_file, :type => 'application/zip', :filename => "#{export_data.filename}"
+          export_data = AMS::MediaDownload::MediaDownloadService.new(solr_document: solr_document)
+          result = export_data.process
+          begin
+            if result.is_a? AMS::MediaDownload::MediaDownloadService::Success
+              send_data File.read(result[:file_path]), :type => 'application/zip', :filename => "#{result[:filename]}"
+            else
+              result[:errors].map{ |e| flash[:error] = "Media Download Error: " + e.message + "\n" }
+              redirect_to request.referer
+            end
+          ensure
+            AMS::MediaDownload::MediaDownloadService.cleanup_temp_file(temp_file: result[:file_path])
           end
         }
       end
