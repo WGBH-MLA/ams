@@ -6,7 +6,6 @@ RSpec.describe Asset do
   let(:asset) { build(:asset) }
 
   context 'properties' do
-
     subject { build :asset }
 
     it { is_expected.to have_property(:title).with_predicate(::RDF::Vocab::DC.title) }
@@ -44,16 +43,33 @@ RSpec.describe Asset do
     it { is_expected.to have_property(:producing_organization).with_predicate(::RDF::Vocab::DC11.creator) }
   end
 
-  context "admin_data_gid" do
+  context "with AdminData" do
     let(:admin_data) { FactoryBot.create(:admin_data) }
-    let(:asset) { FactoryBot.build(:asset, with_admin_data:admin_data.gid) }
-    it "has admin_data_gid" do
-      expect(asset).to have_property(:admin_data_gid).with_predicate(/pbcore.org#hasAAPBAdminData/)
-      expect(asset.admin_data_gid).to eq(admin_data.gid)
+    let(:annotation) { FactoryBot.create(:annotation, admin_data_id: admin_data.id)}
+    let(:asset) { FactoryBot.build(:asset, with_admin_data: admin_data.gid) }
+
+    describe ".admin_data_gid" do
+      it 'returns the expected AdminData' do
+        expect(asset).to have_property(:admin_data_gid).with_predicate(/pbcore.org#hasAAPBAdminData/)
+        expect(asset.admin_data_gid).to eq(admin_data.gid)
+      end
+
+      it "returns ActiveRecord::RecordNotFound if cannot find admin_data for the gid" do
+        gid = 'gid://ams/admindata/999'
+        expect { asset.admin_data_gid = gid }.to raise_error(ActiveRecord::RecordNotFound, "Couldn't find AdminData matching GID #{gid}")
+      end
     end
-    it "has throws ActiveRecord::RecordNotFound if cannot find admin_data for the gid" do
-      gid = 'gid://ams/admindata/999'
-      expect { asset.admin_data_gid = gid }.to raise_error(ActiveRecord::RecordNotFound, "Couldn't find AdminData matching GID #{gid}")
+
+    describe ".find_admin_data_attribute" do
+      it 'returns the expected value' do
+        expect(asset.find_admin_data_attribute("sonyci_id")).to eq(admin_data.sonyci_id)
+      end
+    end
+
+    describe '.find_annotation_attribute' do
+      it 'returns the expected value' do
+        expect(asset.find_annotation_attribute(annotation.annotation_type)).to eq([annotation.value])
+      end
     end
   end
 
