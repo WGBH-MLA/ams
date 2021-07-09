@@ -295,6 +295,10 @@ class Asset < ActiveFedora::Base
     canonical_meta_tag ||= find_annotation_attribute("canonical_meta_tag")
   end
 
+  def proxy_start_time
+    proxy_start_time ||= find_annotation_attribute("proxy_start_time")
+  end
+
   def find_annotation_attribute(attribute)
     if admin_data.annotations.select { |a| a.annotation_type == attribute }.present?
       return admin_data.annotations.select { |a| a.annotation_type == attribute }.map(&:value)
