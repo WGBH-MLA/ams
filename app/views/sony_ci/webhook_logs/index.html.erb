@@ -1,0 +1,20 @@
+<p id="notice"><%= notice %></p>
+
+<h1>Sony Ci Webhook Logs</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @sony_ci_webhook_logs.each do |sony_ci_webhook_log| %>
+      <tr>
+        <td><%= link_to 'Show', sony_ci_webhook_log %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+<br>
