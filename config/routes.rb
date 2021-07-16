@@ -1,5 +1,8 @@
 Rails.application.routes.draw do
 
+  namespace :sony_ci do
+    resources :webhook_logs, only: [ :index, :show ]
+  end
   mount Hyrax::BatchIngest::Engine, at: '/'
   require 'sidekiq/web'
   authenticate :user, lambda { |u| u.admin? } do
@@ -61,6 +64,11 @@ Rails.application.routes.draw do
 
   resources 'audits', only: [:new, :create]
   post "/audits/new" => "audits#create"
+
+  namespace :sony_ci do
+    post '/webhooks/save_sony_ci_id', controller: 'webhooks', action: :save_sony_ci_id
+  end
+
 
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
 end
