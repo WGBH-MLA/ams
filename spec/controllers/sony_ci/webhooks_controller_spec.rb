@@ -4,7 +4,7 @@ RSpec.describe SonyCi::WebhooksController do
 
   # non-memoized shortcut to random hex string
   def randhex(len=32)
-    len.times.map { rand(15).to_s(16) }
+    ''.tap { |s| len.times { s << rand(15).to_s(16) } }
   end
 
   describe 'POST save_sony_ci_id' do
