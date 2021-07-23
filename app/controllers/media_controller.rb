@@ -16,12 +16,14 @@ class MediaController < ApplicationController
   private
 
     def download_url
-      @download_url ||= ci.download(solr_document['sonyci_id_ssim'][(params['part'] || 0).to_i])
+      @download_url ||= begin
+        download_response = ci.asset_download(solr_document['sonyci_id_ssim'][(params['part'] || 0).to_i])
+        download_response['location']
+      end
     end
 
     def ci
-      credentials = YAML.load(ERB.new(File.read('config/ci.yml')).result)
-      @ci ||= SonyCiBasic.new(credentials:credentials)
+      @ci ||= SonyCiApi::Client.new('config/ci.yml')
     end
 
     def solr_document

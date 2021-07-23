@@ -66,7 +66,13 @@ Rails.application.routes.draw do
   post "/audits/new" => "audits#create"
 
   namespace :sony_ci do
-    post '/webhooks/save_sony_ci_id', controller: 'webhooks', action: :save_sony_ci_id
+    # Define routes that receive requests from Sony Ci webhooks.
+    post '/webhooks/save_sony_ci_id', controller: 'webhooks',
+                                      action: :save_sony_ci_id
+
+    # Define routes for making customized requests to the Sony Ci API
+    get '/api/find_media', controller: 'api', action: :find_media
+    get '/api/get_filename', controller: 'api', action: :get_filename
   end
 
 

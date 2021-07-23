@@ -26,6 +26,10 @@ module SonyCi
         Asset.find(guid_from_sony_ci_filename).admin_data
       end
 
+      # Returns the assumed GUID from the Sony Ci Filename.
+      # This assumes a naming convention of {GUID}.ext, where the GUID is the
+      # string before the first dot. If this convention is not followed, then
+      # this feature will not work.
       def guid_from_sony_ci_filename
         sony_ci_filename.sub(/\..*/, '') unless sony_ci_filename.empty?
       end

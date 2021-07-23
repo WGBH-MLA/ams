@@ -3,7 +3,7 @@ require 'rails_helper'
 # This is really a test of work done in the AssetActor
 # Actor classes are very hard to test due to attempting to mock the entire environment,
 # so this indirectly and imperfectly tests our saving expections
-RSpec.feature 'Update AdminData', js: true, asset_form_helpers: true, clean: true do
+RSpec.feature 'Update AdminData', asset_form_helpers: true, clean: true do
   context 'Create adminset, create asset' do
     let(:admin_user) { create :admin_user }
     let(:admin_set_id) { AdminSet.find_or_create_default_admin_set_id }
@@ -11,11 +11,23 @@ RSpec.feature 'Update AdminData', js: true, asset_form_helpers: true, clean: tru
     let!(:workflow) { Sipity::Workflow.create!(active: true, name: 'test-workflow', permission_template: permission_template) }
     let!(:admindata) { create(:admin_data, :empty)}
     let!(:asset) { FactoryBot.create(:asset, with_admin_data: admindata.gid) }
+    let(:fake_sonyci_id) { rand(999999) }
+    let(:fake_sonyci_records) {
+      { fake_sonyci_id: { 'id' => fake_sonyci_id, 'name' => 'foo' } }
+    }
     let(:admin_data_string_attributes) {
       {
-        "Sony's Ci ID" => "1a2b3c4d5e"
+        "Sony's Ci ID" => fake_sonyci_id
       }
     }
+
+    before do
+      # It's not apparent, but this is required to avoid errors.
+      # When the Sony Ci ID input is rendered, AdminData#sonyci_records is
+      # called. which calls SonyCiApi::Client#asset to fetch the records.
+      # NOTE: confusingly, the Sony Ci API refers to the records as 'assets'.
+      allow_any_instance_of(SonyCiApi::Client).to receive(:asset).with(fake_sonyci_id.to_s).and_return(fake_sonyci_records)
+    end
 
     scenario 'Update AdminData on Asset' do
       Sipity::WorkflowAction.create!(name: 'submit', workflow: workflow)
