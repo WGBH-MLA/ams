@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20200803200219) do
+ActiveRecord::Schema.define(version: 20210718231531) do
 
   create_table "admin_data", force: :cascade do |t|
     t.text "sonyci_id"
@@ -536,6 +536,19 @@ ActiveRecord::Schema.define(version: 20200803200219) do
     t.boolean "active"
     t.boolean "allows_access_grant"
     t.index ["permission_template_id", "name"], name: "index_sipity_workflows_on_permission_template_and_name", unique: true
+  end
+
+  create_table "sony_ci_webhook_logs", force: :cascade do |t|
+    t.string "url"
+    t.string "action"
+    t.text "request_headers"
+    t.text "request_body"
+    t.text "response_headers"
+    t.text "response_body"
+    t.string "error"
+    t.string "error_message"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "tinymce_assets", force: :cascade do |t|
