@@ -19,8 +19,6 @@ FactoryBot.define do
     end
 
     trait :with_annotation do
-      sonyci_id { [] }
-
       after(:create) do |ad|
         create(:annotation, admin_data_id: ad.id)
       end

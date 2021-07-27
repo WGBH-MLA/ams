@@ -226,6 +226,11 @@ Hyrax.config do |config|
   # mount point.
   #
   # config.whitelisted_ingest_dirs = []
+
+
+  # Increase the number of Asset members that are displayed on the Asset's
+  # #show page.
+  config.show_work_item_rows = 100
 end
 
 Date::DATE_FORMATS[:standard] = "%m/%d/%Y"

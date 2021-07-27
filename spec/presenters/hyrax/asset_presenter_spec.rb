@@ -7,16 +7,22 @@ RSpec.describe Hyrax::AssetPresenter do
   let(:ability) { Ability.new(build(:user)) }
   let(:rows) { 10 }
   let(:page) { 1 }
+  let(:asset) { create(:asset) }
+  let(:digital_instantiation) { create(:digital_instantiation) }
+  let(:physical_instantiation) { create(:physical_instantiation) }
+  let(:instantiation_ids) { [digital_instantiation.id, physical_instantiation.id] }
+  let(:contribution) { create(:contribution) }
+  let(:contribution_ids) { [contribution.id] }
+  let(:admin_data_attr) { attributes_for(:admin_data) }
+
+  let(:presenter) do
+    described_class.new(SolrDocument.new(asset.to_solr), ability, request)
+  end
+
+  subject { presenter }
 
   context "asset_members" do
     describe "list_of_contribution_ids_to_display" do
-      subject { presenter }
-      let(:asset) { create(:asset) }
-      let(:presenter) do
-        described_class.new(SolrDocument.new(asset.to_solr), ability, request)
-      end
-      let(:contribution) { create(:contribution) }
-      let(:contribution_ids) { [contribution.id] }
       before do
         allow(presenter).to receive(:rows_from_params).and_return(rows)
         allow(presenter).to receive(:current_page).and_return(page)
@@ -36,15 +42,6 @@ RSpec.describe Hyrax::AssetPresenter do
     end
 
     describe "list_of_instantiation_ids_to_display" do
-      subject { presenter }
-      let(:asset) { create(:asset) }
-      let(:presenter) do
-        described_class.new(SolrDocument.new(asset.to_solr), ability, request)
-      end
-      let(:digital_instantiation) { create(:digital_instantiation) }
-      let(:physical_instantiation) { create(:physical_instantiation) }
-      let(:instantiation_ids) { [digital_instantiation.id, physical_instantiation.id] }
-
       before do
         allow(presenter).to receive(:rows_from_params).and_return(rows)
         allow(presenter).to receive(:current_page).and_return(page)
@@ -65,15 +62,7 @@ RSpec.describe Hyrax::AssetPresenter do
     end
 
     describe "filter_item_ids_to_display" do
-      subject { presenter }
-      let(:asset) { create(:asset) }
-      let(:presenter) do
-        described_class.new(SolrDocument.new(asset.to_solr), ability, request)
-      end
       let(:query) { "(has_model_ssim:DigitalInstantiation OR has_model_ssim:PhysicalInstantiation) " }
-      let(:digital_instantiation) { create(:digital_instantiation) }
-      let(:physical_instantiation) { create(:physical_instantiation) }
-      let(:instantiation_ids) { [digital_instantiation.id, physical_instantiation.id] }
 
       before do
         allow(presenter).to receive(:rows_from_params).and_return(rows)
@@ -95,13 +84,6 @@ RSpec.describe Hyrax::AssetPresenter do
     end
 
     describe "display_aapb_admin_data?" do
-      subject { presenter }
-      let(:asset) { create(:asset) }
-      let(:presenter) do
-        described_class.new(SolrDocument.new(asset.to_solr), ability, request)
-      end
-      let(:admin_data_attr) { attributes_for(:admin_data) }
-
       it "returns true when any AAPBAdmin Data attribute is not blank" do
         # defaul asset have admin data
         expect(asset.admin_data[:sonyci_id]).to eq admin_data_attr[:sonyci_id]
@@ -112,6 +94,33 @@ RSpec.describe Hyrax::AssetPresenter do
         asset.admin_data[:sonyci_id] = []
         asset.save
         expect(presenter.display_aapb_admin_data?).to eq false
+      end
+    end
+
+    describe '.display_annotations?' do
+      context 'when there are Annotations associated with the AdminData' do
+        let(:asset) { create(:asset, with_admin_data: create(:admin_data, :with_annotation).gid ) }
+        it 'returns true' do
+          expect(presenter.display_annotations?).to eq true
+        end
+      end
+
+      context 'when there are no Annotations associated with the AdminData' do
+        it 'returns false' do
+          expect(presenter.display_annotations?).to eq false
+        end
+      end
+    end
+
+    describe ".media_available?" do
+      it 'returns true when there are SonyCi IDs in the AdminData' do
+        expect(presenter.media_available?).to eq true
+      end
+
+      it 'returns false when there are no SonyCi IDs in the AdminData' do
+        asset.admin_data[:sonyci_id] = []
+        asset.save
+        expect(presenter.media_available?).to eq false
       end
     end
   end
