@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/WGBH-MLA/sony_ci_api_rewrite.git
-  revision: 4db6435e97b1b3abef0cbceae38820d450935c12
+  revision: f98576c7060e11cc50da0f67cf4642d2b4372517
   branch: v0.1
   specs:
     sony_ci_api (0.1.0)
