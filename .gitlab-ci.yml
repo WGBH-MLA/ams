@@ -1,14 +1,18 @@
 stages:
-- build
-- lint
-- test
-- deploy
+  - build
+  - lint
+  - test
+  - deploy
+
+variables:
+  REGISTRY_HOST: registry.gitlab.com
+  REGISTRY_URI: /notch8/ngao
 
 before_script:
-- export TAG=${CI_COMMIT_SHORT_SHA}
-- export BRANCH=${CI_COMMIT_REF_NAME}
-- export REGISTRY_HOST=${CI_REGISTRY}
-- export REGISTRY_URI="/${CI_PROJECT_PATH}"
+  - export TAG=${CI_COMMIT_SHORT_SHA}
+  - export BRANCH=${CI_COMMIT_REF_NAME}
+  - export REGISTRY_HOST=${CI_REGISTRY}
+  - export REGISTRY_URI="/${CI_PROJECT_PATH}"
 
 base:
   stage: build
@@ -47,14 +51,21 @@ test:
   stage: test
   image: $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA
   services:
-            - mysql:5.7
-            - name: solr:latest
+    - name: mysql:5.7
+      - alias: db
+    - name: bitnami/solr:8
+      - alias: solr
       entrypoint: ["docker-entrypoint.sh", "solr-precreate", "test"]
-                - redis:latest
-            - name: botimer/fcrepo:4.5.1
+    - name: redis:5-alpine
+      - alias: redis
+    - name: samvera/fcrepo4:4.7.5
+      - alias: fcrepo
+    - name: bitnami/zookeeper:3
+      alias: zk
+
     
   variables:
-        MYSQL_DATABASE: GBH
+    MYSQL_DATABASE: GBH
     MYSQL_ROOT_PASSWORD: password
     MYSQL_USER: GBH_test
     MYSQL_PASSWORD: password
@@ -64,8 +75,7 @@ test:
     DATABASE_NAME: GBH
     DATABASE_PASSWORD: password
     DATABASE_USER: GBH_test
-      TEST_DB: GBH
-    SITE_URI_BASE: TODO
+    TEST_DB: GBH
   script:
     - cd /home/app/webapp && bundle exec rake db:create db:schema:load spec
   tags:
@@ -73,31 +83,31 @@ test:
   variables:
     GIT_STRATEGY: none
 
-review:
-  stage: review
-  type: deploy
-  environment:
-    name: $CI_COMMIT_REF_SLUG
-    url: http://web.$CI_PROJECT_NAME-$CI_COMMIT_REF_SLUG.staging.$SITE_URI_BASE
-    on_stop: stop_review
-  only:
-    - branches
-  except:
-    - main
-  script:
-    - ./chart/bin/deploy review $CI_COMMIT_REF_SLUG
- tags:
-    - local
+# review:
+#   stage: review
+#   type: deploy
+#   environment:
+#     name: $CI_COMMIT_REF_SLUG
+#     url: http://web.$CI_PROJECT_NAME-$CI_COMMIT_REF_SLUG.staging.$SITE_URI_BASE
+#     on_stop: stop_review
+#   only:
+#     - branches
+#   except:
+#     - main
+#   script:
+#     - ./chart/bin/deploy review $CI_COMMIT_REF_SLUG
+#  tags:
+#     - local
 
-stop_review:
-  stage: review
-  script:
-    - ./chart/bin/remove review $CI_COMMIT_REF_SLUG
+# stop_review:
+#   stage: review
+#   script:
+#     - ./chart/bin/remove review $CI_COMMIT_REF_SLUG
 
-  when: manual
-  environment:
-    name: $CI_PROJECT_NAME-$CI_BUILD_REF_SLUG
-    action: stop
+#   when: manual
+#   environment:
+#     name: $CI_PROJECT_NAME-$CI_BUILD_REF_SLUG
+#     action: stop
 
 staging:
   stage: staging
