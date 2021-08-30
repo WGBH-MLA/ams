@@ -1,5 +1,4 @@
 Rails.application.routes.draw do
-
   mount Hyrax::BatchIngest::Engine, at: '/'
   require 'sidekiq/web'
   authenticate :user, lambda { |u| u.admin? } do
@@ -61,6 +60,21 @@ Rails.application.routes.draw do
 
   resources 'audits', only: [:new, :create]
   post "/audits/new" => "audits#create"
+
+  # Routes under /sony_ci/*
+  namespace :sony_ci do
+    # Routes for the Webhook logs.
+    resources :webhook_logs, only: [ :index, :show ]
+
+    # Define routes that receive requests from Sony Ci webhooks.
+    post '/webhooks/save_sony_ci_id', controller: 'webhooks',
+                                      action: :save_sony_ci_id
+
+    # Define routes for making customized requests to the Sony Ci API
+    get '/api/find_media', controller: 'api', action: :find_media, defaults: { format: :json }
+    get '/api/get_filename', controller: 'api', action: :get_filename, defaults: { format: :json }
+  end
+
 
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
 end
