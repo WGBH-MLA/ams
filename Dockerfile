@@ -12,7 +12,6 @@ RUN apk --no-cache upgrade && \
     libxml2-dev \
     mariadb-dev \
     mediainfo \
-    # --no-cache --repository http://dl-cdn.alpinelinux.org/alpine/edge/main/ nodejs=12.9.0 npm \
     perl \
     cmake \
     $EXTRA_APK_PACKAGES
