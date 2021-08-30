@@ -1,0 +1,20 @@
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: {{ template "app.rails-env.name" . }}-shared
+  labels:
+    app: {{ template "app.name" . }}
+    chart: {{ template "app.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+    component: rails
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: {{ .Values.rails.shared.storage.size }}
+  {{- if .Values.rails.shared.storage.className }}
+  storageClassName: "{{ .Values.rails.shared.storage.className }}"
+  {{- end }}
