@@ -14,16 +14,6 @@ before_script:
   - export REGISTRY_HOST=${CI_REGISTRY}
   - export REGISTRY_URI="/${CI_PROJECT_PATH}"
 
-base:
-  stage: build
-  script:
-    - docker login -u "gitlab-ci-token" -p "$CI_JOB_TOKEN" $CI_REGISTRY
-    - sc build -s base
-    - sc push -s base
-  when: manual
-  tags:
-    - local
-
 build:
   stage: build
   script:
