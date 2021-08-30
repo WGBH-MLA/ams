@@ -1,0 +1,20 @@
+---
+apiVersion: apps/v1
+kind: Ingress
+metadata:
+  name: {{ template "app.web.name" . }}-in-wildcard
+  annotations:
+    # kubernetes.io/ingress.allow-http: "false"
+    # for GKE
+    # kubernetes.io/ingress.global-static-ip-name: rails-k8s-app
+spec:
+  # tls:
+  # - hosts:
+  #   - {{ .Values.ingress.host }}
+  rules:
+  - host: "*.{{ .Values.ingress.host }}"
+    http:
+      paths:
+      - backend:
+          serviceName: {{ template "app.web.name" . }}
+          servicePort: 80

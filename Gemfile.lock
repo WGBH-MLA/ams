@@ -67,6 +67,8 @@ GEM
       arel (~> 8.0)
     activerecord-import (1.0.7)
       activerecord (>= 3.2)
+    activerecord-nulldb-adapter (0.4.0)
+      activerecord (>= 2.0.0)
     activesupport (5.1.7)
       concurrent-ruby (~> 1.0, >= 1.0.2)
       i18n (>= 0.7, < 2)
@@ -562,7 +564,7 @@ GEM
     multi_json (1.15.0)
     multi_xml (0.6.0)
     multipart-post (2.1.1)
-    mysql2 (0.4.10)
+    mysql2 (0.5.3)
     nest (3.2.0)
       redic
     net-http-persistent (3.1.0)
@@ -873,7 +875,6 @@ GEM
       actionpack (>= 4.0)
       activesupport (>= 4.0)
       sprockets (>= 3.0.0)
-    sqlite3 (1.3.13)
     ssrf_filter (1.0.7)
     sxp (1.1.0)
       rdf (~> 3.1)
@@ -930,6 +931,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  activerecord-nulldb-adapter
   aws-sdk-codedeploy
   aws-sdk-s3
   bixby
@@ -955,7 +957,7 @@ DEPENDENCIES
   jquery-rails
   letter_opener
   listen (>= 3.0.5, < 3.2)
-  mysql2 (~> 0.4.10)
+  mysql2 (~> 0.5.0)
   nokogiri
   pbcore (~> 0.3.0)
   pry-byebug
@@ -977,7 +979,6 @@ DEPENDENCIES
   simple_form (= 5.0.0)
   solr_wrapper (~> 2.1)
   sony_ci_api (~> 0.2.1)
-  sqlite3 (= 1.3.13)
   turbolinks (~> 5)
   uglifier (>= 1.3.0)
   web-console (>= 3.3.0)
@@ -986,8 +987,5 @@ DEPENDENCIES
   webpacker
   xray-rails
 
-RUBY VERSION
-   ruby 2.5.3p105
-
 BUNDLED WITH
-   2.0.2
+   2.2.16

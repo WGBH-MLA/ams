@@ -1,0 +1,121 @@
+stages:
+- build
+- lint
+- test
+- deploy
+
+before_script:
+- export TAG=${CI_COMMIT_SHORT_SHA}
+- export BRANCH=${CI_COMMIT_REF_NAME}
+- export REGISTRY_HOST=${CI_REGISTRY}
+- export REGISTRY_URI="/${CI_PROJECT_PATH}"
+
+base:
+  stage: build
+  script:
+    - docker login -u "gitlab-ci-token" -p "$CI_JOB_TOKEN" $CI_REGISTRY
+    - sc build -s base
+    - sc push -s base
+  when: manual
+  tags:
+    - local
+
+build:
+  stage: build
+  script:
+    - docker login -u "gitlab-ci-token" -p "$CI_JOB_TOKEN" $CI_REGISTRY
+    - sc build
+    - sc push
+    - docker tag $CI_REGISTRY_IMAGE:$TAG $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME
+    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME
+  tags:
+    - local
+
+lint:
+  stage: go
+  image: $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA
+  variables:
+    PRONTO_GITLAB_API_ENDPOINT: "https://gitlab.com/api/v4"
+  before_script:
+    - export PRONTO_GITLAB_API_PRIVATE_TOKEN=$GITLAB_API_TOKEN
+  script:
+    - cd /home/app/webapp && bundle exec pronto run -f gitlab
+  tags:
+    - docker
+
+test:
+  stage: test
+  image: $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA
+  services:
+            - mysql:5.7
+            - name: solr:latest
+      entrypoint: ["docker-entrypoint.sh", "solr-precreate", "test"]
+                - redis:latest
+            - name: botimer/fcrepo:4.5.1
+    
+  variables:
+        MYSQL_DATABASE: GBH
+    MYSQL_ROOT_PASSWORD: password
+    MYSQL_USER: GBH_test
+    MYSQL_PASSWORD: password
+    MYSQL_HOST: mysql
+    DATABASE_ADAPTER: mysql2
+    DATABASE_HOST: mysql
+    DATABASE_NAME: GBH
+    DATABASE_PASSWORD: password
+    DATABASE_USER: GBH_test
+      TEST_DB: GBH
+    SITE_URI_BASE: TODO
+  script:
+    - cd /home/app/webapp && bundle exec rake db:create db:schema:load spec
+  tags:
+    - docker
+  variables:
+    GIT_STRATEGY: none
+
+review:
+  stage: review
+  type: deploy
+  environment:
+    name: $CI_COMMIT_REF_SLUG
+    url: http://web.$CI_PROJECT_NAME-$CI_COMMIT_REF_SLUG.staging.$SITE_URI_BASE
+    on_stop: stop_review
+  only:
+    - branches
+  except:
+    - main
+  script:
+    - ./chart/bin/deploy review $CI_COMMIT_REF_SLUG
+ tags:
+    - local
+
+stop_review:
+  stage: review
+  script:
+    - ./chart/bin/remove review $CI_COMMIT_REF_SLUG
+
+  when: manual
+  environment:
+    name: $CI_PROJECT_NAME-$CI_BUILD_REF_SLUG
+    action: stop
+
+staging:
+  stage: staging
+  type: deploy
+  script:
+  - ./chart/bin/deploy staging $CI_COMMIT_REF_SLUG
+  only:
+    - main
+  tags:
+    - local
+
+production:
+  stage: production
+  type: deploy
+  script:
+  - ./chart/bin/deploy production $CI_COMMIT_REF_SLUG
+  when: manual
+  only:
+    - main
+  tags:
+    - local
