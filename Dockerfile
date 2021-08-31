@@ -3,7 +3,7 @@ FROM ghcr.io/samvera/hyrax/hyrax-base:$HYRAX_IMAGE_VERSION as hyku-base
 
 USER root
 
-ARG EXTRA_APK_PACKAGES="openjdk11-jre ffmpeg"
+ARG EXTRA_APK_PACKAGES="openjdk11-jre ffmpeg yarn"
 RUN apk --no-cache upgrade && \
   apk --no-cache add \
     curl \
