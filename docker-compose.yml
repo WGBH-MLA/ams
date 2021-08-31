@@ -4,7 +4,6 @@ version: '3.8'
 x-app: &app
   build:
     context: .
-    dockerfile: Dockerfile
     target: hyku-base
     args:
       - EXTRA_APK_PACKAGES=less vim bash openjdk11-jre ffmpeg rsync
@@ -14,6 +13,7 @@ x-app: &app
   env_file:
     - .env
   # NOTE: all common env variables moved to .env
+  image: registry.gitlab.com/notch8/gbh:${TAG:-latest}
   volumes:
     - uploads:/app/samvera/hyrax-webapp/public/uploads
     - assets:/app/samvera/hyrax-webapp/public/assets
