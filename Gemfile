@@ -33,10 +33,6 @@ gem 'hydra-role-management', '~> 1.0'
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
 
-group :production do
-  gem 'mysql2', '~> 0.5.0'
-end
-
 group :development, :test do
   # Use sqlite3 as the database for Active Record
   # gem 'sqlite3', '1.3.13'
@@ -82,6 +78,7 @@ gem 'simple_form', '5.0.0'
 gem 'aws-sdk-s3'
 gem 'aws-sdk-codedeploy'
 gem 'carrierwave', '~> 1.3'
+gem 'mysql2', '~> 0.5.3'
 gem 'nokogiri'
 gem 'bootstrap-multiselect-rails'
 gem 'hyrax-batch_ingest', git: 'https://github.com/samvera-labs/hyrax-batch_ingest'
@@ -100,3 +97,9 @@ gem 'httparty', '~> 0.18'
 # production environments on demo instances.
 gem 'pry-byebug', platforms: [:mri, :mingw, :x64_mingw]
 gem 'activerecord-nulldb-adapter'
+gem 'pronto'
+gem 'pronto-brakeman', require: false
+gem 'pronto-flay', require: false
+gem 'pronto-rails_best_practices', require: false
+gem 'pronto-rails_schema', require: false
+gem 'pronto-rubocop', require: false
