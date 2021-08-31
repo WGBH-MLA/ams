@@ -33,7 +33,7 @@ lint:
   before_script:
     - export PRONTO_GITLAB_API_PRIVATE_TOKEN=$GITLAB_API_TOKEN
   script:
-    - cd /home/app/webapp && bundle exec pronto run -f gitlab
+    - cd /app/samvera/hyrax-webapp && bundle exec pronto run -f gitlab
   tags:
     - docker
 
@@ -67,7 +67,7 @@ test:
     DATABASE_USER: GBH_test
     TEST_DB: GBH
   script:
-    - cd /home/app/webapp && bundle exec rake db:create db:schema:load spec
+    - cd /app/samvera/hyrax-webapp && bundle exec rake db:create db:schema:load spec
   tags:
     - docker
   variables:
