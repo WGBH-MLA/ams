@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20210718231531) do
+ActiveRecord::Schema.define(version: 20210917032608) do
 
   create_table "admin_data", force: :cascade do |t|
     t.text "sonyci_id"
@@ -549,6 +549,9 @@ ActiveRecord::Schema.define(version: 20210718231531) do
     t.string "error_message"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "guids"
+    t.integer "response_status"
+    t.index ["guids"], name: "index_sony_ci_webhook_logs_on_guids"
   end
 
   create_table "tinymce_assets", force: :cascade do |t|
