@@ -86,14 +86,6 @@ Staging builds and deploys to Notch8 infrastructure are handled by Gitlab CI.
 **Setup your `gitlab` git remote**
 
 You'll only need to do this once. You need to set this remote to push, build and deploy your work.
-- Run `git remote add gitlab 
-## Staging Deploys: N8 Architecture
-
-Staging builds and deploys to Notch8 infrastructure are handled by Gitlab CI.
-
-**Setup your `gitlab` git remote**
-
-You'll only need to do this once. You need to set this remote to push, build and deploy your work.
 - Run `git remote add gitlab git@gitlab.com:notch8/ngao.git`
 - Run `git remote`. You've successfully added the **gitlab** remote if your output lists it. It will look like:
 ```
