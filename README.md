@@ -78,6 +78,23 @@ bin/encrypt-secrets
 This will find and output an encrypted version of secret files with an `.enc` extension.
 
 Release and Deployment are handled by the gitlab ci by default. See ops/deploy-app to deploy from locally, but note all Rancher install pull the currently tagged registry image
+
+## Staging Deploys: N8 Architecture
+
+Staging builds and deploys to Notch8 infrastructure are handled by Gitlab CI.
+
+**Setup your `gitlab` git remote**
+
+You'll only need to do this once. You need to set this remote to push, build and deploy your work.
+
+- Run `git remote add gitlab git@gitlab.com:notch8/GBH.git`
+- Run `git remote`. You've successfully added the **gitlab** remote if your output lists it. It will look like:
+```
+> git remote              # Run git remote
+gitlab                    # New gitlab remote
+origin
+```
+
 # ams
 
 Archival Management System to support the American Archive of Public Broadcasting
