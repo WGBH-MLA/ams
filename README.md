@@ -22,29 +22,18 @@ We recommend committing .env to your repo with good defaults. .env.development, 
 3) Sign in with dory
     ``` bash
     dory up
-    ```
 
-4) Install dependencies
-    ``` bash
-    yarn install
-    ```
-
-5) Start the server
+4) Start the server
     ``` bash
     sc up
     ```
 
-6) Load and seed the database
+5) Load and seed the database
     ``` bash
     sc be rake db:migrate db: seed
     ```
-### Troubleshooting Docker Development Setup
-Confirm or configure settings. Sub your information for the examples.
-``` bash
-git config --global user.name example
-git config --global user.email example@example.com
-docker login registry.gitlab.com
-```
+
+6) The app should be visible at in the browser at `hyku.test`
 
 ### While in the container you can do the following
 - Run rspec
@@ -87,13 +76,6 @@ bin/encrypt-secrets
 ```
 
 This will find and output an encrypted version of secret files with an `.enc` extension.
-
-# Deploy a new release
-
-``` bash
-sc release {staging | production} # creates and pushes the correct tags
-sc deploy {staging | production} # deployes those tags to the server
-```
 
 Release and Deployment are handled by the gitlab ci by default. See ops/deploy-app to deploy from locally, but note all Rancher install pull the currently tagged registry image
 # ams
