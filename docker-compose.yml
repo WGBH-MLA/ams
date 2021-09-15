@@ -62,14 +62,13 @@ services:
       - OOM=script
       - SOLR_ADMIN_USERNAME=admin
       - SOLR_ADMIN_PASSWORD=admin
-      - SOLR_COLLECTION=hydra-development
       - SOLR_CLOUD_BOOTSTRAP=yes
       - SOLR_ENABLE_CLOUD_MODE=yes
       - SOLR_ENABLE_AUTHENTICATION=yes
       - SOLR_PORT_NUMBER=8983
       - SOLR_ZK_HOSTS=zoo
       - VIRTUAL_PORT=8983
-      - VIRTUAL_HOST=solr.hyku.test
+      - VIRTUAL_HOST=solr.ams.test
     depends_on:
       zoo:
         condition: service_healthy
@@ -100,17 +99,33 @@ services:
       - JAVA_OPTS=${JAVA_OPTS} -Dfcrepo.modeshape.configuration="classpath:/config/file-simple/repository.json" -Dfcrepo.object.directory="/data/objects" -Dfcrepo.binary.directory="/data/binaries"
     networks:
       internal:
-  
+
+  initialize_app:
+    <<: *app
+    environment:
+      - CONFDIR=/app/samvera/hyrax-webapp/solr/config
+    entrypoint: ["sh", "-c"]
+    command:
+      - >
+        if [ ! -f "/app/samvera/hyrax-webapp/solr_db_initialized" ]; then
+          solrcloud-upload-configset.sh /app/samvera/hyrax-webapp/solr/config &&
+          solrcloud-assign-configset.sh &&
+          SOLR_COLLECTION_NAME=hydra-test solrcloud-assign-configset.sh &&
+          rails db:create db:migrate db:seed &&
+          touch /app/samvera/hyrax-webapp/solr_db_initialized
+        fi
+    depends_on:
+      - db
+      - solr
+      - fcrepo
 
   web:
     <<: *app
     environment:
       - VIRTUAL_PORT=3000
-      - VIRTUAL_HOST=.hyku.test
+      - VIRTUAL_HOST=.ams.test
     # command: sh -l -c "bundle && bundle exec puma -v -b tcp://0.0.0.0:3000"
     depends_on:
-      # initialize_app:
-      #   condition: service_healthy
       db:
         condition: service_started
       solr:
@@ -127,8 +142,8 @@ services:
       #   condition: service_started
       sidekiq:
         condition: service_started
-      # initialize_app:
-      #   condition: service_completed_successfully
+      initialize_app:
+        condition: service_completed_successfully
 
     expose:
       - 3000
@@ -161,4 +176,3 @@ services:
       test: ["CMD-SHELL", "echo 'ruok' | nc -w 2 -q 2 localhost 2181 | grep imok || exit 1"]
       interval: "10s"
       timeout: "8s"
-
