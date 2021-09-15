@@ -2,7 +2,7 @@
   "name": "AMS",
   "private": true,
   "engines": {
-    "node": "12.22.5"
+    "node": "12.22.6"
   },
   "dependencies": {
     "@rails/webpacker": "3.5",
