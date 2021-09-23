@@ -1,0 +1,283 @@
+# Default values for hyrax.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+image:
+  repository: samveralabs/dassie
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: ""
+
+# use true to skip loading Hyrax engine database seed file
+skipHyraxEngineSeed: false
+# use true to skip running the `db-setup` initContainer
+# this may be desirable for downstream chart users to customize their database setup
+skipDbMigrateSeed: false
+
+# use false to skip the configset management init container
+loadSolrConfigSet: true
+# the host and auth details for an external solr service;
+#   ignored if `solr.enabled` is true
+solrExistingSecret: ""
+externalSolrHost: ""
+externalSolrUser: ""
+externalSolrPassword: ""
+externalSolrCollection: "hyrax"
+
+# additional environment variables, evaluated as a template. e.g.
+#
+#  extraEnvVars:
+#    - name: RAILS_SERVE_STATIC_FILES
+#      value: "1"
+#    - name: GOOGLE_OAUTH_APP_NAME
+#      value: "my_hyrax_app"
+extraEnvVars: []
+
+## Extra init containers
+## Example
+##
+## extraInitContainers:
+##   - name: do-something
+##     image: busybox
+##     command: ['echo', 'Hello, Hyrax.']
+##
+extraInitContainers: []
+
+# Extra envFrom (secrets/configmaps)
+# Example
+#
+# extraEnvFrom:
+#   - configMapRef:
+#       name: existingConfigMap
+#   - secretRef:
+#       name: existingSecret
+#
+extraEnvFrom: []
+
+# Extra container spec configuration
+# Example: (enabling pry debugging for local development)
+# Note: with this enabled, one can `kubectl attach` to a running container with a binding.pry breakpoint
+#
+#extraContainerConfiguration:
+# stdin: true
+# tty: true
+extraContainerConfiguration: []
+
+# an existing volume containing a Hyrax-based application
+# must be a ReadWriteMany volume if worker is enabled
+applicationExistingClaim: ""
+
+brandingVolume:
+  enabled: true
+  # the name of an existing volume claim; must be an ReadWriteMany volume
+  existingClaim: ""
+  size: 2Gi
+  storageClass: ""
+
+derivativesVolume:
+  enabled: true
+  # the name of an existing volume claim; must be an ReadWriteMany volume
+  existingClaim: ""
+  size: 10Gi
+  storageClass: ""
+
+uploadsVolume:
+  enabled: true
+  # the name of an existing volume claim; must be an ReadWriteMany volume
+  existingClaim: ""
+  size: 20Gi
+  storageClass: ""
+
+# additional volumes and volume mounts, evaluated as a template, e.g.
+#
+#  extraVolumeMounts
+#    - name: local-app
+#      mountPath: /app/samvera/hyrax-webapp
+#  extraVolumes:
+#    - name: local-app
+#      hostPath:
+#        path: /src
+#        type: DirectoryOrCreate
+extraVolumeMounts: []
+extraVolumes: []
+
+# configuration for an external/existing fcrepo service;
+#   ignored if `fcrepo.enabled` is true
+externalFcrepoHost: ""
+fcrepoBasePathOverride: ""
+
+# database configuration for an external postgresql;
+#   ignored if `postgresql.enabled` is true
+externalPostgresql: {}
+#  username:
+#  password:
+#  database:
+
+embargoRelease:
+  enabled: true
+  schedule: "0 0 * * *"
+leaseRelease:
+  enabled: true
+  schedule: "0 0 * * *"
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+podAnnotations: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+service:
+  type: ClusterIP
+  port: 80
+
+ingress:
+  enabled: false
+  annotations: {}
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+  hosts:
+    - host: hyrax.local
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls: []
+
+livenessProbe:
+  enabled: true
+  # path: "/healthz"
+  # initialDelaySeconds: 0
+  # periodSeconds: 10
+  # timeoutSeconds: 10
+  # failureThreshold: 3
+  # successThreshold: 1
+
+readinessProbe:
+  enabled: true
+  # path: "/healthz"
+  # initialDelaySeconds: 5
+  # periodSeconds: 10
+  # timeoutSeconds: 5
+  # failureThreshold: 6
+  # successThreshold: 1
+
+resources: {}
+
+worker:
+  enabled: true
+  replicaCount: 3
+  image:
+    repository: samveralabs/dassie-worker
+    pullPolicy: IfNotPresent
+    tag: ""
+  extraInitContainers: []
+  extraVolumeMounts: []
+  extraVolumes: []
+  imagePullSecrets: []
+  podSecurityContext: {}
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  resources: {}
+
+fcrepo:
+  enabled: true
+  externalDatabaseUsername: "hyrax"
+  servicePort: 8080
+  postgresql:
+    enabled: false
+    image:
+      repository: bitnami/postgresql
+      tag: 12.3.0
+
+memcached:
+  enabled: false
+
+minio:
+  enabled: false
+  accessKey:
+    password: hyrax-access-key
+  secretKey:
+    password: hyrax-secret-key
+  persistence:
+    enabled: false
+  # defaultBuckets: bucketOne;bucketTwo
+
+mariadb:
+  enabled: true
+  replication:
+    enabled: false
+  auth:
+    database: gbh-hyrax
+    username: gbh-hyrax
+    password: Ul325eNanC5g4Nzl
+    rootPassword: uRr1bX7vq8PzaD76
+  master:
+    persistence:
+      enabled: true
+      # storageClass: "-"
+      accessMode: ReadWriteOnce
+      size: 8Gi
+
+redis:
+  enabled: true
+  password: mysecret
+
+solr:
+  enabled: true
+  image:
+    repository: bitnami/solr
+    tag: 8.8.1
+  authentication:
+    enabled: true
+    adminUsername: admin
+    adminPassword: admin
+  coreName: hyrax
+  collection: hyrax
+  cloudBootstrap: true
+  cloudEnabled: true
+  persistence:
+    enabled: true
+  zookeeper:
+    enabled: true
+    persistence:
+      enabled: true
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+
+global:
+  postgresql:
+    postgresqlUsername: hyrax
+    postgresqlPassword: hyrax_pass
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}

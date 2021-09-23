@@ -41,15 +41,27 @@ spec:
           imagePullPolicy: IfNotPresent
           # Use sub-path for individual folders
           volumeMounts:
-            - mountPath: /home/app/webapp/public/assets
+            - mountPath: /app/samvera/hyrax-webapp/tmp/imports
+              name: shared
+              subPath: import_path
+            - mountPath: /app/samvera/hyrax-webapp/tmp/exports
+              name: shared
+              subPath: export_path
+            - mountPath: /app/samvera/hyrax-webapp/tmp/derivatives
+              name: shared
+              subPath: derivatives_path
+            - mountPath: /app/samvera/hyrax-webapp/tmp/network_files
+              name: shared
+              subPath: network_files
+            - mountPath: /app/samvera/hyrax-webapp/public/uploads
+              name: shared
+              subPath: uploads
+            - mountPath: /app/samvera/hyrax-webapp/public/assets
               name: shared
               subPath: assets
-            - mountPath: /home/app/webapp/public/packs
+            - mountPath: /app/samvera/hyrax-webapp/public/branding
               name: shared
-              subPath: packs
-            - mountPath: /home/app/webapp/public/system
-              name: shared
-              subPath: system
+              subPath: branding
           readinessProbe:
             tcpSocket:
               port: 80

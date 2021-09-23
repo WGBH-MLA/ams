@@ -12,4 +12,4 @@ then
 fi
 
 raise 'refusing to remove production' if $1 == 'production'
-helm uninstall --namespace $NAMESPACE-$1 $1 . -f $1-values.yaml --set rails.image.tag=$2
+helm uninstall --namespace $NAMESPACE-$1 $1 . #-f $1-values.yaml --set rails.image.tag=$2
