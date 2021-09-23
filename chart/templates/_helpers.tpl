@@ -55,12 +55,6 @@ Shorthand for component names
 {{- include "app.fullname" . -}}-setup
 {{- end -}}
 
-{{- define "app.zookeeper.name" -}}
-{{- include "solr.zookeeper-service-name" . -}}
-{{- end -}}
-{{- define "app.zookeeper-env.name" -}}
-{{- include "app.fullname" . -}}-zookeeper-env
-{{- end -}}
 {{- define "app.solr.name" -}}
 {{- .Release.Name -}}-solr-svc
 {{- end -}}
