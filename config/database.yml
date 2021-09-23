@@ -1,7 +1,7 @@
 # Hi - please dont edit this file directly, instead make changes in your .env file
 
 login: &login
-  adapter: <%= ENV['DB_ADAPTER'] %>
+  adapter: mysql2
   host: <%= ENV['MYSQL_HOST'] %>
   username: <%= ENV['MYSQL_USER'] %>
   password: <%= ENV['MYSQL_PASSWORD'] %>

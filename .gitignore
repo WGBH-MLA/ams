@@ -31,12 +31,15 @@
 
 # Redis dumps
 dump.rdb
+.env
 .env.development
 .env.test
 .env.production
 /public/packs
 /public/packs-test
 /node_modules
+/ops/*-deploy.tmpl.yaml
+/ops/*-deploy.yaml
 yarn-debug.log*
 .yarn-integrity
 fits.log

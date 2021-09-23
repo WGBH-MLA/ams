@@ -4,25 +4,10 @@ kind: ConfigMap
 metadata:
   name: {{ template "app.rails-env.name" . }}
 data:
-
-
-  FEDORA_URL: http://{{ template "app.fcrepo.name" . }}:8080/fcrepo/rest
-
-
-  RAILS_CACHE_STORE_URL: redis://{{ template "app.redis.name" . }}:6379/1 
+  FCREPO_URL: http://{{ template "app.fcrepo.name" . }}:8080/fcrepo/rest
   REDIS_HOST: {{ template "app.redis.name" . }}
-  REDIS_URL: redis://{{ template "app.redis.name" . }}:6379/1
-
-
-  SIDEKIQ_TIMEOUT: {{ .Values.sidekiq.timeout | quote }}
-
   SOLR_URL: http://{{ template "app.solr.name" . }}:8983/solr/
   SETTINGS__SOLR__URL: http://{{ template "app.solr.name" . }}:8983/solr/
-  SETTINGS__ZOOKEEPER__CONNECTION_STR: {{ template "app.zookeeper.name" . }}:2181/configs
-
-
 {{- range $key, $value := .Values.env.configmap }}
-  
-    {{ $key }}: {{ $value | quote }}
-  
+  {{ $key }}: {{ $value | quote }}
 {{- end }}

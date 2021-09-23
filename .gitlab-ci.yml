@@ -2,11 +2,11 @@ stages:
   - build
   - lint
   - test
-  - deploy
+  - staging
 
 variables:
   REGISTRY_HOST: registry.gitlab.com
-  REGISTRY_URI: /notch8/ngao
+  REGISTRY_URI: /notch8/gbh
 
 before_script:
   - export TAG=${CI_COMMIT_SHORT_SHA}
@@ -25,97 +25,96 @@ build:
   tags:
     - local
 
-lint:
-  stage: lint
-  image: $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA
-  variables:
-    PRONTO_GITLAB_API_ENDPOINT: "https://gitlab.com/api/v4"
-  before_script:
-    - export PRONTO_GITLAB_API_PRIVATE_TOKEN=$GITLAB_API_TOKEN
-  script:
-    - cd /app/samvera/hyrax-webapp && bundle exec pronto run -f gitlab
-  tags:
-    - docker
+# lint:
+#   stage: lint
+#   image: $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA
+#   variables:
+#     PRONTO_GITLAB_API_ENDPOINT: "https://gitlab.com/api/v4"
+#   before_script:
+#     - export PRONTO_GITLAB_API_PRIVATE_TOKEN=$GITLAB_API_TOKEN
+#   script:
+#     - cd /app/samvera/hyrax-webapp && bundle exec pronto run -f gitlab
+#   tags:
+#     - docker
 
-test:
-  stage: test
-  image: $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA
-  services:
-    - name: mysql:5.7
-      alias: db
-    - name: bitnami/solr:8
-      alias: solr
-      entrypoint: ["docker-entrypoint.sh", "solr-precreate", "test"]
-    - name: redis:5-alpine
-      alias: redis
-    - name: samvera/fcrepo4:4.7.5
-      alias: fcrepo
-    - name: bitnami/zookeeper:3
-      alias: zk
+# test:
+#   stage: test
+#   image: $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA
+#   services:
+#     - name: mysql:5.7
+#       alias: db
+#     - name: bitnami/solr:8
+#       alias: solr
+#       entrypoint: ["docker-entrypoint.sh", "solr-precreate", "test"]
+#     - name: redis:5-alpine
+#       alias: redis
+#     - name: samvera/fcrepo4:4.7.5
+#       alias: fcrepo
+#     - name: bitnami/zookeeper:3
+#       alias: zk
 
     
+#   variables:
+#     MYSQL_DATABASE: GBH
+#     MYSQL_ROOT_PASSWORD: password
+#     MYSQL_USER: GBH_test
+#     MYSQL_PASSWORD: password
+#     MYSQL_HOST: mysql
+#     DATABASE_ADAPTER: mysql2
+#     DATABASE_HOST: mysql
+#     DATABASE_NAME: GBH
+#     DATABASE_PASSWORD: password
+#     DATABASE_USER: GBH_test
+#     TEST_DB: GBH
+#   script:
+#     - cd /app/samvera/hyrax-webapp && bundle exec rake db:create db:schema:load spec
+#   tags:
+#     - docker
+#   variables:
+#     GIT_STRATEGY: none
+
+gbh.staging:
+  stage: staging
+  extends:
+    - .deploy
+  environment:
+    name: gbh.staging
+    url: http://gbh-staging.$KUBE_INGRESS_BASE_DOMAIN
+    on_stop: gbh.staging.stop
+  only:
+    refs:
+      - n8-staging
   variables:
-    MYSQL_DATABASE: GBH
-    MYSQL_ROOT_PASSWORD: password
-    MYSQL_USER: GBH_test
-    MYSQL_PASSWORD: password
-    MYSQL_HOST: mysql
-    DATABASE_ADAPTER: mysql2
-    DATABASE_HOST: mysql
-    DATABASE_NAME: GBH
-    DATABASE_PASSWORD: password
-    DATABASE_USER: GBH_test
-    TEST_DB: GBH
+    DEPLOY_IMAGE: $CI_REGISTRY_IMAGE
+    DEPLOY_TAG: $CI_COMMIT_SHORT_SHA
+    WORKER_IMAGE: $CI_REGISTRY_IMAGE
+    HELM_EXPERIMENTAL_OCI: 1
+    HELM_RELEASE_NAME: gbh-staging
+    KUBE_NAMESPACE: gbh-staging
+    HELM_EXTRA_ARGS: >
+      --values ops/staging-deploy.yaml
   script:
-    - cd /app/samvera/hyrax-webapp && bundle exec rake db:create db:schema:load spec
+    - export KUBECONFIG=$KUBECONFIG_R2
+    - envsubst < ops/staging-deploy.tmpl.yaml > ops/staging-deploy.yaml
+    - ./bin/helm_deploy gbh-staging gbh-staging
   tags:
-    - docker
-  variables:
-    GIT_STRATEGY: none
+    - local
 
-# review:
-#   stage: review
-#   type: deploy
-#   environment:
-#     name: $CI_COMMIT_REF_SLUG
-#     url: http://web.$CI_PROJECT_NAME-$CI_COMMIT_REF_SLUG.staging.$SITE_URI_BASE
-#     on_stop: stop_review
-#   only:
-#     - branches
-#   except:
-#     - main
-#   script:
-#     - ./chart/bin/deploy review $CI_COMMIT_REF_SLUG
-#  tags:
-#     - local
+gbh.staging.stop:
+  stage: staging
+  extends:
+    - .deploy
+  environment:
+    name: gbh.staging
+    url: http://gbh-staging.$KUBE_INGRESS_BASE_DOMAIN
+    action: stop
+  when: manual
+  allow_failure: true
+  script:
+    - export KUBECONFIG=$KUBECONFIG_GBH
+    - ./bin/helm_delete gbh-staging gbh-staging
+  tags:
+    - local
 
-# stop_review:
-#   stage: review
-#   script:
-#     - ./chart/bin/remove review $CI_COMMIT_REF_SLUG
-
-#   when: manual
-#   environment:
-#     name: $CI_PROJECT_NAME-$CI_BUILD_REF_SLUG
-#     action: stop
-
-# staging:
-#   stage: deploy
-#   type: deploy
-#   script:
-#   - ./chart/bin/deploy staging $CI_COMMIT_REF_SLUG
-#   only:
-#     - main
-#   tags:
-#     - local
-
-# production:
-#   stage: deploy
-#   type: deploy
-#   script:
-#   - ./chart/bin/deploy production $CI_COMMIT_REF_SLUG
-#   when: manual
-#   only:
-#     - main
-#   tags:
-#     - local
+.deploy:
+  image: dtzar/helm-kubectl:3.5.3
