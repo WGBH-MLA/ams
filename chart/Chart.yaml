@@ -1,23 +1,13 @@
 apiVersion: v1
 appVersion: "0.0.1"
 description: A Helm chart for GBH
-name: GBH
+name: gbh-hyrax
 version: 0.0.1
 dependencies:
-
-- name: solr
-  version: 1.5.2
-  repository: https://charts.helm.sh/incubator
-  condition: solr.enabled
-
-
 - name: redis
   version: 11.0.4
   repository: https://charts.bitnami.com/bitnami
   condition: redis.enabled
-
-
-
 - name: mariadb
   version: 7.3.14
   repository: https://charts.helm.sh/stable
