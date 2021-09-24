@@ -77,7 +77,7 @@ extraEnvVars:
   - name: PASSENGER_APP_ENV
     value: production
   - name: RAILS_CACHE_STORE_URL
-    value: redis://:staging@gbh-hyrax-redis-master:6379/gbh
+    value: redis://:staging@gbh-staging-redis-master:6379/gbh
   - name: RAILS_ENV
     value: production
   - name: RAILS_LOG_TO_STDOUT
@@ -88,7 +88,9 @@ extraEnvVars:
     value: "true"
   - name: REDIS_HOST
     value: gbh-staging-redis-master
-  - name: REDIS_URL
+  - name: REDIS_PREFIX
+    value: gbh
+  - name: REDIS_SERVER
     value: redis://:staging@gbh-staging-redis-master:6379/gbh
   - name: SETTINGS__ACTIVE_JOB__QUEUE_ADAPTER
     value: sidekiq
@@ -113,7 +115,7 @@ extraEnvVars:
   - name: SETTINGS__SOLR__CONFIGSET
     value: gbh-hyrax-staging
   - name: SETTINGS__SOLR__URL
-    value: http://admin:ncGXC5Qjpk@solr.staging-solr:8983/solr/
+    value: http://admin:ncGXC5Qjpk@solr.staging-solr.svc.cluster.local:8983/solr/gbh-hyrax-staging
   - name: SETTINGS__ZOOKEEPER__CONNECTION_STR
     value: solr-zookeeper-headless.default:2181/configs
   - name: SOLR_ADMIN_USER
@@ -127,9 +129,7 @@ extraEnvVars:
   - name: SOLR_PORT
     value: "8983"
   - name: SOLR_URL
-    value: http://admin:ncGXC5Qjpk@solr.staging-solr:8983/solr/
-  # - name: SENTRY_DSN
-  #   value: $SENTRY_DSN
+    value: http://admin:ncGXC5Qjpk@solr.staging-solr.svc.cluster.local:8983/solr/gbh-hyrax-staging
 
 worker:
   replicaCount: 1
@@ -192,7 +192,7 @@ worker:
   - name: PASSENGER_APP_ENV
     value: production
   - name: RAILS_CACHE_STORE_URL
-    value: redis://:staging@gbh-hyrax-staging-redis-master:6379/gbh
+    value: redis://:staging@gbh-staging-redis-master:6379/gbh
   - name: RAILS_ENV
     value: production
   - name: RAILS_LOG_TO_STDOUT
@@ -203,8 +203,10 @@ worker:
     value: "true"
   - name: REDIS_HOST
     value: gbh-staging-redis-master
-  - name: REDIS_URL
+  - name: REDIS_SERVER
     value: redis://:staging@gbh-staging-redis-master:6379/gbh
+  - name: REDIS_PREFIX
+    value: gbh
   - name: SETTINGS__ACTIVE_JOB__QUEUE_ADAPTER
     value: sidekiq
   - name: SETTINGS__BULKRAX__ENABLED
@@ -228,7 +230,7 @@ worker:
   - name: SETTINGS__SOLR__CONFIGSET
     value: gbh-hyrax-staging
   - name: SETTINGS__SOLR__URL
-    value: http://admin:ncGXC5Qjpk@solr.staging-solr:8983/solr/
+    value: http://admin:ncGXC5Qjpk@solr.staging-solr.svc.cluster.local:8983/solr/gbh-hyrax-staging
   - name: SETTINGS__ZOOKEEPER__CONNECTION_STR
     value: solr-zookeeper-headless.default:2181/configs
   - name: SOLR_ADMIN_USER
@@ -242,7 +244,7 @@ worker:
   - name: SOLR_PORT
     value: "8983"
   - name: SOLR_URL
-    value: http://admin:ncGXC5Qjpk@solr.staging-solr:8983/solr/
+    value: http://admin:ncGXC5Qjpk@solr.staging-solr.svc.cluster.local:8983/solr/gbh-hyrax-staging
   # - name: SENTRY_DSN
   #   value: $SENTRY_DSN
 
