@@ -6,5 +6,5 @@ test:
 
 production:
   adapter: redis
-  url: redis://localhost:6379/1
-  channel_prefix: AMS_production
+  url: <%= ENV['REDIS_SERVER'] || redis://localhost:6379/1 %>
+  channel_prefix: <%= ENV['REDIS_PREFIX'] || 'AMS_production' %>
