@@ -77,7 +77,7 @@ extraEnvVars:
   - name: PASSENGER_APP_ENV
     value: production
   - name: RAILS_CACHE_STORE_URL
-    value: redis://:staging@gbh-hyrax-redis-master:6379/gbh
+    value: redis://:staging@gbh-staging-redis-master:6379/gbh
   - name: RAILS_ENV
     value: production
   - name: RAILS_LOG_TO_STDOUT
