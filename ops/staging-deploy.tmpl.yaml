@@ -128,8 +128,6 @@ extraEnvVars:
     value: "8983"
   - name: SOLR_URL
     value: http://admin:ncGXC5Qjpk@solr.staging-solr:8983/solr/
-  # - name: SENTRY_DSN
-  #   value: $SENTRY_DSN
 
 worker:
   replicaCount: 1
