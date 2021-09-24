@@ -203,6 +203,8 @@ worker:
     value: gbh-staging-redis-master
   - name: REDIS_SERVER
     value: gbh-staging-redis-master
+  - name: REDIS_PREFIX
+    value: gbh
   - name: SETTINGS__ACTIVE_JOB__QUEUE_ADAPTER
     value: sidekiq
   - name: SETTINGS__BULKRAX__ENABLED
