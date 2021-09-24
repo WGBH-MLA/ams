@@ -88,8 +88,8 @@ extraEnvVars:
     value: "true"
   - name: REDIS_HOST
     value: gbh-staging-redis-master
-  - name: REDIS_URL
-    value: redis://:staging@gbh-staging-redis-master:6379/gbh
+  - name: REDIS_SERVER
+    value: gbh-staging-redis-master
   - name: SETTINGS__ACTIVE_JOB__QUEUE_ADAPTER
     value: sidekiq
   - name: SETTINGS__BULKRAX__ENABLED
@@ -201,8 +201,8 @@ worker:
     value: "true"
   - name: REDIS_HOST
     value: gbh-staging-redis-master
-  - name: REDIS_URL
-    value: redis://:staging@gbh-staging-redis-master:6379/gbh
+  - name: REDIS_SERVER
+    value: gbh-staging-redis-master
   - name: SETTINGS__ACTIVE_JOB__QUEUE_ADAPTER
     value: sidekiq
   - name: SETTINGS__BULKRAX__ENABLED
