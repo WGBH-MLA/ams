@@ -14,7 +14,10 @@ require "sprockets/railtie"
 
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
-Bundler.require(*Rails.groups)
+groups = Rails.groups
+groups += ['bulkrax'] if ENV['SETTINGS__BULKRAX__ENABLED'] == 'true'
+Bundler.require(*groups)
+
 
 Dotenv::Railtie.load
 

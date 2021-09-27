@@ -12,6 +12,7 @@
  *
  *= require_tree ./global
  *= require dataTables/bootstrap/3/jquery.dataTables.bootstrap
+ *= require 'bulkrax/application'
  *= require_self
 
  *= require 'blacklight_advanced_search'

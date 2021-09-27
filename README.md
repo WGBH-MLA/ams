@@ -108,6 +108,15 @@ The Archival Managment System is an application using the [Hyrax gem](https://gi
 
 AMS also adds the ability to export records in several user-friendly CSV reports and PBCore XML files, as well as using [hyrax-batch_ingest gem](https://github.com/samvera-labs/hyrax-batch_ingest) to implement batch ingest of PBCore XML and spreadsheets, and batch metadata updates via spreadsheets.
 
+### Enable Bulkrax:
+
+- Add SETTINGS__BULKRAX__ENABLED=true to [.env](.env) files
+- Add `  require bulkrax/application` to app/assets/javascripts/application.js and app/assets/stylesheets/application.css files.
+
+(in a `docker-compose exec web bash` if you're doing docker otherwise in your terminal)
+```bash
+bundle exec rails db:migrate
+```
 
 ### Dependencies
 
