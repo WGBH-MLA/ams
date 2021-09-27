@@ -5,6 +5,12 @@ git_source(:github) do |repo_name|
   "https://github.com/#{repo_name}.git"
 end
 
+# Bulkrax
+group :bulkrax do
+  gem 'bulkrax', git: 'https://github.com/samvera-labs/bulkrax.git', branch: :main
+  gem 'willow_sword', git: 'https://github.com/notch8/willow_sword.git'
+end
+
 gem 'dotenv-rails'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'

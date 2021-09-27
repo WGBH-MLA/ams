@@ -1,5 +1,8 @@
 Rails.application.routes.draw do
 
+if ENV['SETTINGS__BULKRAX__ENABLED'] == 'true'
+  mount Bulkrax::Engine, at: '/'
+end
   namespace :sony_ci do
     resources :webhook_logs, only: [ :index, :show ]
   end
