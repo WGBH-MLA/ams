@@ -47,3 +47,7 @@ demo*
 
 # This file is generated on deployment
 public/deployment.html
+
+# Ignore vendor files
+/vendor/*
+.dory.yml
