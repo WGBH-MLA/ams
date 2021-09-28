@@ -87,6 +87,10 @@ class SolrDocument
     self[Solrizer.solr_name('asset_types')]
   end
 
+  def bulkrax_identifier
+    self[Solrizer.solr_name('bulkrax_identifier')]
+  end
+
   def genre
     self[Solrizer.solr_name('genre')]
   end
