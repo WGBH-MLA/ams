@@ -2,10 +2,15 @@
 if ENV['SETTINGS__BULKRAX__ENABLED'] == 'true'
   Bulkrax.setup do |config|
     # Add local parsers
-    # config.parsers += [
-    #   { name: 'MODS - My Local MODS parser', class_name: 'Bulkrax::ModsXmlParser', partial: 'mods_fields' },
-    # ]
+    config.parsers = [
+      { name: 'CSV', class_name: 'CsvParser', partial: 'csv_fields' },
+    ]
 
+    config.fill_in_blank_source_identifiers = ->(obj, index) { "#{obj.importerexporter.id}-#{index}"}
+    config.field_mappings['CsvParser'] = {
+      'bulkrax_identifier' => { from: ['bulkrax_identifier'], source_identifier: true }
+    }
+  
     # WorkType to use as the default if none is specified in the import
     # Default is the first returned by Hyrax.config.curation_concerns
     # config.default_work_type = MyWork

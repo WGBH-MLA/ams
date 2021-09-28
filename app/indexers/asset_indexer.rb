@@ -36,6 +36,8 @@ class AssetIndexer < AMS::WorkIndexer
         solr_doc['last_pushed'] = object.admin_data.last_pushed if !object.admin_data.last_pushed.blank?
         solr_doc['last_updated'] = object.admin_data.last_updated if !object.admin_data.last_updated.blank?
         solr_doc['needs_update'] = object.admin_data.needs_update if !object.admin_data.needs_update.blank?
+
+        solr_doc[Solrizer.solr_name('bulkrax_identifier', :facetable)] = object.bulkrax_identifier
       end
     end
   end
