@@ -60,6 +60,9 @@ class Asset < ActiveFedora::Base
 
   # TODO: Use RDF::Vocab for applicable terms.
   # See https://github.com/ruby-rdf/rdf-vocab/tree/develop/lib/rdf/vocab
+  property :bulkrax_identifier, predicate: ::RDF::URI("https://iro.bl.uk/resource#bulkraxIdentifier"), multiple: false do |index|
+    index.as :stored_searchable, :facetable
+  end
 
   property :asset_types, predicate: ::RDF::URI.new("http://www.ebu.ch/metadata/ontologies/ebucore/ebucore#hasType"), multiple: true do |index|
     index.as :stored_searchable, :facetable
