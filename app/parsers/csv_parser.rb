@@ -1,0 +1,94 @@
+# frozen_string_literal: true
+
+class CsvParser < Bulkrax::CsvParser
+  attr_accessor :objects, :record_objects
+  def create_works
+    self.record_objects = []
+    records.each_with_index do |full_row, index|
+      set_objects(full_row, index).each do |record|
+        break if limit_reached?(limit, index)
+
+        seen[record[work_identifier]] = true
+        new_entry = find_or_create_entry(entry_class, record[work_identifier], 'Bulkrax::Importer', record.to_h.compact)
+        if record[:delete].present?
+          Bulkrax::DeleteWorkJob.send(perform_method, new_entry, current_run)
+        else
+          Bulkrax::ImportWorkJob.send(perform_method, new_entry.id, current_run.id)
+        end
+        increment_counters(index)
+      end
+    end
+    importer.record_status
+  rescue StandardError => e
+    status_info(e)
+  end
+
+  def set_objects(full_row, index)
+    self.objects = []
+    current_object = {}
+
+    full_row.to_hash.keys.each do |key|
+      if !key.match(/\./)
+        asset_id = full_row.to_hash['Asset.id'].strip if full_row.to_hash.keys.include?('Asset.id')
+        work = Asset.find(asset_id) if asset_id.present?
+        
+        add_object(current_object.symbolize_keys)
+        key_count = objects.select { |obj| obj['model'] == key }.size + 1
+        current_object = {
+          'model' => key,
+          work_identifier.to_s => Bulkrax.fill_in_blank_source_identifiers.call(self, "#{key}-#{index}-#{key_count}"),
+          'title' => create_title(work)
+        }
+        next
+      end
+      klass, value = key.split('.')
+      raise "class key column is missing on row #{index}: #{full_row}" unless klass == current_object['model']
+      current_object[value] = full_row[key]
+    end
+    add_object(current_object.symbolize_keys)
+  end
+
+  def create_title(work = nil)
+    asset = objects.first
+    return unless asset
+   
+    work.present? ? "#{work.series_title.first}; #{work.episode_title.first}" : "#{asset[:series_title]}; #{asset[:episode_title]}"
+  end
+
+  def add_object(current_object)
+    if current_object.present?
+      if objects.first
+        objects.first[:children] ||= []
+        objects.first[:children] << current_object[work_identifier]
+      end
+      record_objects << current_object
+      objects << current_object
+    end
+  end
+
+  def missing_elements(keys)
+    required_elements.map(&:to_s) - keys.map(&:to_s) - ['title']
+  end
+
+  def setup_parents
+    pts = []
+    record_objects.each do |record|
+      r = if record.respond_to?(:to_h)
+            record.to_h
+          else
+            record
+          end
+      next unless r.is_a?(Hash)
+      children = if r[:children].is_a?(String)
+                   r[:children].split(/\s*[:;|]\s*/)
+                 else
+                   r[:children]
+                 end
+      next if children.blank?
+      pts << {
+        r[source_identifier] => children
+      }
+    end
+    pts.blank? ? pts : pts.inject(:merge)
+  end
+end
