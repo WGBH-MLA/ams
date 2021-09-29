@@ -1,5 +1,5 @@
 module SonyCi
-  class WebhooksController < APIController
+  class WebhooksController < ::APIController
     after_action :create_webhook_log
 
     rescue_from StandardError do |error|
@@ -16,14 +16,23 @@ module SonyCi
     end
 
     def save_sony_ci_id
-      asset_admin_data_from_sony_ci_filename.update!( sonyci_id: [ sony_ci_id ] )
-      render status: 200, json: { message: "success" }
+      asset.admin_data.update!( sonyci_id: [ sony_ci_id ] )
+      # Re-save the Asset to re-index it.
+      # TODO: Is there a faster way to save the Sony Ci ID to the AdminData and
+      # re-index the Asset?
+      asset.save!
+      render status: 200,
+             json: {
+               message: "success",
+               guid: asset.id,
+               sony_ci_id: sony_ci_id
+             }
     end
 
     private
 
-      def asset_admin_data_from_sony_ci_filename
-        Asset.find(guid_from_sony_ci_filename).admin_data
+      def asset
+        @asset ||= Asset.find(guid_from_sony_ci_filename)
       end
 
       # Returns the assumed GUID from the Sony Ci Filename.
@@ -48,9 +57,12 @@ module SonyCi
       def create_webhook_log(error: nil)
         webhook_log.response_headers = response.headers.to_h
         webhook_log.response_body = response_json
+        webhook_log.response_status = response.status
         if error
           webhook_log.error = error.class
           webhook_log.error_message = error.message
+        else
+          webhook_log.guids = [ guid_from_sony_ci_filename ]
         end
         webhook_log.save!
       end
