@@ -41,16 +41,15 @@ RSpec.describe CsvParser do
         importer.parser_fields = { import_file_path: './spec/fixtures/csv/ok.csv' }
       end
 
-      xit 'skips the bad line' do
-        expect(subject).to receive(:increment_counters).once
+      it 'skips the bad line' do
+        expect(subject).to receive(:increment_counters).twice
         subject.create_works
       end
 
       context 'with fill_in_blank_source_identifiers set' do
-        xit 'fills in the source_identifier if fill_in_blank_source_identifiers is set' do
+        it 'fills in the source_identifier if fill_in_blank_source_identifiers is set' do
           expect(subject).to receive(:increment_counters).twice
-          # once for present? and once to execute
-          expect(Bulkrax).to receive(:fill_in_blank_source_identifiers).twice.and_return(->(_parser, _index) { "4649ee79-7d7a-4df0-86d6-d6865e2925ca" })
+          expect(Bulkrax).to receive(:fill_in_blank_source_identifiers).exactly(4).times.and_return(->(_obj, _index) { "4649ee79-7d7a-4df0-86d6-d6865e2925ca"} )
           subject.create_works
           expect(subject.seen).to include("4649ee79-7d7a-4df0-86d6-d6865e2925ca")
         end
@@ -62,7 +61,7 @@ RSpec.describe CsvParser do
         importer.parser_fields = { import_file_path: './spec/fixtures/csv/good.csv' }
       end
 
-      xit 'processes the line' do
+      it 'processes the line' do
         expect(subject).to receive(:increment_counters).twice
         subject.create_works
       end
