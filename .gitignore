@@ -53,3 +53,4 @@ public/deployment.html
 # Ignore vendor files
 /vendor/*
 .dory.yml
+solr_db_initialized
