@@ -15,8 +15,8 @@ class CsvParser < Bulkrax::CsvParser
         else
           Bulkrax::ImportWorkJob.send(perform_method, new_entry.id, current_run.id)
         end
-        increment_counters(index)
       end
+      increment_counters(index)
     end
     importer.record_status
   rescue StandardError => e
