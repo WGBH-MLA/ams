@@ -4,6 +4,8 @@ if ENV['SETTINGS__BULKRAX__ENABLED'] == 'true'
     # Add local parsers
     config.parsers = [
       { name: 'CSV', class_name: 'CsvParser', partial: 'csv_fields' },
+      { name: 'AAPB PBCore XML', class_name: 'PbcoreXmlParser', partial: 'xml_fields_override' }
+
     ]
 
     config.fill_in_blank_source_identifiers = ->(obj, index) { "#{obj.importerexporter.id}-#{index}"}
