@@ -32,7 +32,7 @@ RSpec.describe AMS::MediaDownload::MediaDownloadService do
           result = service.process
           expect(result).to be_a(AMS::MediaDownload::MediaDownloadService::Success)
           expect(result[:filename]).to match(/(export-)\d{2}_\d{2}_\d{4}_\d{2}:\d{2}.zip/)
-          expect(result[:file_path].path).to match(/(export-)\d{2}_\d{2}_\d{4}_\d{2}:\d{2}.zip/)
+          expect(result[:file_path].path).to match(/(export-)\d{2}_\d{2}_\d{4}_\d{4}.zip[\d-]+/)
           expect(result[:file_path]).to be_a(Tempfile)
         end
       end
