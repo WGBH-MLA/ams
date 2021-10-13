@@ -16,7 +16,7 @@ RSpec.describe CsvParser do
 
     context 'with malformed CSV' do
       before do
-        importer.parser_fields = { import_file_path: './spec/fixtures/csv/malformed.csv' }
+        importer.parser_fields = { import_file_path: './spec/fixtures/bulkrax/csv/malformed.csv' }
       end
 
       it 'returns an empty array, and records the error on the importer' do
@@ -27,7 +27,7 @@ RSpec.describe CsvParser do
 
     context 'without an identifier column' do
       before do
-        importer.parser_fields = { import_file_path: './spec/fixtures/csv/bad.csv' }
+        importer.parser_fields = { import_file_path: './spec/fixtures/bulkrax/csv/bad.csv' }
       end
 
       it 'skips all of the lines' do
@@ -38,7 +38,7 @@ RSpec.describe CsvParser do
 
     context 'with a nil value in the identifier column' do
       before do
-        importer.parser_fields = { import_file_path: './spec/fixtures/csv/ok.csv' }
+        importer.parser_fields = { import_file_path: './spec/fixtures/bulkrax/csv/ok.csv' }
       end
 
       it 'skips the bad line' do
@@ -58,7 +58,7 @@ RSpec.describe CsvParser do
 
     context 'with good data' do
       before do
-        importer.parser_fields = { import_file_path: './spec/fixtures/csv/good.csv' }
+        importer.parser_fields = { import_file_path: './spec/fixtures/bulkrax/csv/good.csv' }
       end
 
       it 'processes the line' do
@@ -86,25 +86,25 @@ RSpec.describe CsvParser do
         expect(subject.collections_total).to eq(0)
       end
 
-      context 'when parent id is present' do
+      context 'annotations' do
+        context 'when importing assets with annotations' do
+          it 'creates annotations' do
+            expect(Annotation.count).to eq(0)
+            subject.create_works
+            expect(Annotation.count).to eq(6)
+          end
+        end
 
+        context 'when importing assets without annotations' do
+          it 'does not create annotations' do
+            importer.parser_fields = { import_file_path: './spec/fixtures/bulkrax/csv/ok.csv' }
+            
+            expect(Annotation.count).to eq(0)
+            subject.create_works
+            expect(Annotation.count).to eq(0)
+          end
+        end
       end
     end
-  end
-
-  describe '#create_bulkrax_identifier' do
-
-  end
-
-  describe '#add_object' do
-
-  end
-
-  describe 'missing_elements' do
-
-  end
-
-  describe '#setup_parents' do
-
   end
 end

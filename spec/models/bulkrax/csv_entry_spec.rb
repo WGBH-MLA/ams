@@ -5,7 +5,7 @@ require 'rails_helper'
 
 module Bulkrax
   RSpec.describe CsvEntry, type: :model do
-    let(:path) { './spec/fixtures/csv/good.csv' }
+    let(:path) { './spec/fixtures/bulkrax/csv/good.csv' }
     let(:data) { described_class.read_data(path) }
     let(:parsed_data) {
       {
