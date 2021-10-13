@@ -57,6 +57,7 @@ group :development, :test do
   gem 'solr_wrapper', '~> 2.1'
   gem 'webmock', '~> 3.7'
   gem 'rails-controller-testing'
+  gem 'rspec_junit_formatter'
 end
 
 group :development do
