@@ -15,15 +15,15 @@ before_script:
   - export REGISTRY_URI="/${CI_PROJECT_PATH}"
 
 build:
-  stage: build
-  script:
-    - docker login -u "gitlab-ci-token" -p "$CI_JOB_TOKEN" $CI_REGISTRY
-    - sc build
-    - sc push
-    - docker tag $CI_REGISTRY_IMAGE:$TAG $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME
-    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME
-  tags:
-    - local
+ stage: build
+ script:
+   - docker login -u "gitlab-ci-token" -p "$CI_JOB_TOKEN" $CI_REGISTRY
+   - sc build
+   - sc push
+   - docker tag $CI_REGISTRY_IMAGE:$TAG $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME
+   - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME
+ tags:
+   - local
 
 # lint:
 #   stage: lint
@@ -37,41 +37,83 @@ build:
 #   tags:
 #     - docker
 
-# test:
-#   stage: test
-#   image: $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA
-#   services:
-#     - name: mysql:5.7
-#       alias: db
-#     - name: bitnami/solr:8
-#       alias: solr
-#       entrypoint: ["docker-entrypoint.sh", "solr-precreate", "test"]
-#     - name: redis:5-alpine
-#       alias: redis
-#     - name: samvera/fcrepo4:4.7.5
-#       alias: fcrepo
-#     - name: bitnami/zookeeper:3
-#       alias: zk
+test:
+  stage: test
+  image: $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA
+  services:
+    - name: mysql:5.7
+      alias: db
+    - name: bitnami/zookeeper:3
+      alias: zk
+    - name: bitnami/solr:8
+      alias: solr
+    - name: redis:5-alpine
+      alias: redis
+    - name: samvera/fcrepo4:4.7.5
+      alias: fcrepo
+    - name: selenium/standalone-chrome:3.141
+      alias: chrome
 
-
-#   variables:
-#     MYSQL_DATABASE: GBH
-#     MYSQL_ROOT_PASSWORD: password
-#     MYSQL_USER: GBH_test
-#     MYSQL_PASSWORD: password
-#     MYSQL_HOST: mysql
-#     DATABASE_ADAPTER: mysql2
-#     DATABASE_HOST: mysql
-#     DATABASE_NAME: GBH
-#     DATABASE_PASSWORD: password
-#     DATABASE_USER: GBH_test
-#     TEST_DB: GBH
-#   script:
-#     - cd /app/samvera/hyrax-webapp && bundle exec rake db:create db:schema:load spec
-#   tags:
-#     - docker
-#   variables:
-#     GIT_STRATEGY: none
+  variables:
+    ALLOW_ANONYMOUS_LOGIN: "yes"
+    CONFDIR: "/app/samvera/hyrax-webapp/solr/config"
+    CHROME_HOSTNAME: chrome
+    DB_ADAPTER: mysql2
+    FCREPO_URL: http://fcrepo:8080/rest
+    FF_NETWORK_PER_BUILD: 1
+    MYSQL_DATABASE: gbh_test
+    MYSQL_HOST: db
+    MYSQL_PASSWORD: DumbDatabase123
+    MYSQL_ROOT_PASSWORD: DumbDatabase123
+    MYSQL_USER: gbh
+    REDIS_HOST: redis
+    REDIS_SERVER: redis
+    SETTINGS__BULKRAX__ENABLED: 'true'
+    SOLR_ADMIN_PASSWORD: admin
+    SOLR_ADMIN_USER: admin
+    SOLR_ADMIN_USERNAME: admin
+    SOLR_CLOUD_BOOTSTRAP: "yes"
+    SOLR_COLLECTION_NAME: hydra-test
+    SOLR_CONFIGSET_NAME: hyrax
+    SOLR_ENABLE_AUTHENTICATION: "yes"
+    SOLR_ENABLE_CLOUD_MODE: "yes"
+    SOLR_HOST: solr
+    SOLR_PORT: 8983
+    SOLR_URL: http://admin:admin@solr:8983/solr/hydra-test
+    SOLR_ZK_HOSTS: zk:2181
+    TB_RSPEC_FORMATTER: progress
+    TB_RSPEC_OPTIONS: --format RspecJunitFormatter --out rspec.xml
+    TEST_DB: gbh_test
+    ZOO_HEAP_SIZE: 128
+    ZOO_PORT_NUMBER: 2181
+  before_script:
+    - cd /app/samvera/hyrax-webapp
+    - solrcloud-upload-configset.sh /app/samvera/hyrax-webapp/solr/config
+    - SOLR_COLLECTION_NAME=hydra-test solrcloud-assign-configset.sh
+    - RAILS_ENV=test bundle exec rake db:schema:load db:migrate
+  script:
+    - rm -f /app/samvera/hyrax-webapp/tmp/capybara/*
+    - rm -rf $CI_PROJECT_DIR/capybara
+    - gem install semaphore_test_boosters
+    - cd /app/samvera/hyrax-webapp
+    # debugging tip: un-comment the sleep below in order to use k8's or docker to log into the actual running container
+    # - sleep 30m
+    - rspec_booster --job $CI_NODE_INDEX/$CI_NODE_TOTAL
+    # - rspec --format progress --tag ~speed:slow --format RspecJunitFormatter --out rspec.xml
+  after_script:
+    - test -e /app/samvera/hyrax-webapp/tmp/capybara && cp -r /app/samvera/hyrax-webapp/tmp/capybara $CI_PROJECT_DIR/capybara
+    - test -e /app/samvera/hyrax-webapp/rspec.xml && cp /app/samvera/hyrax-webapp/rspec.xml $CI_PROJECT_DIR/rspec.xml
+  artifacts:
+    when: always
+    paths:
+      - capybara/*.html
+      - rspec.xml
+    reports:
+      junit: rspec.xml
+  tags:
+    - docker
+  allow_failure: false
+  parallel: 3
 
 gbh.staging:
   stage: staging
@@ -109,6 +151,9 @@ gbh.staging.stop:
     url: http://gbh-staging.$KUBE_INGRESS_BASE_DOMAIN
     action: stop
   when: manual
+  only:
+    refs:
+      - n8-staging
   allow_failure: true
   script:
     - export KUBECONFIG=$KUBECONFIG_GBH
