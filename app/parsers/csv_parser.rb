@@ -23,49 +23,6 @@ class CsvParser < Bulkrax::CsvParser
     status_info(e)
   end
 
-  def set_objects(full_row, index)
-    self.objects = []
-    current_object = {}
-
-    full_row.to_hash.keys.each do |key|
-      if !key.match(/\./)
-        asset_id = full_row.to_hash['Asset.id'].strip if full_row.to_hash.keys.include?('Asset.id')
-        work = Asset.find(asset_id) if asset_id.present?
-        
-        add_object(current_object.symbolize_keys)
-        key_count = objects.select { |obj| obj['model'] == key }.size + 1
-        current_object = {
-          'model' => key,
-          work_identifier.to_s => Bulkrax.fill_in_blank_source_identifiers.call(self, "#{key}-#{index}-#{key_count}"),
-          'title' => create_title(work)
-        }
-        next
-      end
-      klass, value = key.split('.')
-      raise "class key column is missing on row #{index}: #{full_row}" unless klass == current_object['model']
-      current_object[value] = full_row[key]
-    end
-    add_object(current_object.symbolize_keys)
-  end
-
-  def create_title(work = nil)
-    asset = objects.first
-    return unless asset
-   
-    work.present? ? "#{work.series_title.first}; #{work.episode_title.first}" : "#{asset[:series_title]}; #{asset[:episode_title]}"
-  end
-
-  def add_object(current_object)
-    if current_object.present?
-      if objects.first
-        objects.first[:children] ||= []
-        objects.first[:children] << current_object[work_identifier]
-      end
-      record_objects << current_object
-      objects << current_object
-    end
-  end
-
   def missing_elements(keys)
     required_elements.map(&:to_s) - keys.map(&:to_s) - ['title']
   end
@@ -91,4 +48,68 @@ class CsvParser < Bulkrax::CsvParser
     end
     pts.blank? ? pts : pts.inject(:merge)
   end
+
+  private 
+
+  def set_objects(full_row, index)
+    self.objects = []
+    current_object = {}
+    full_row = full_row.select {|k, v| !k.nil? }
+    full_row_to_hash = full_row.to_hash
+    asset_id = full_row_to_hash['Asset.id'].strip if full_row_to_hash.keys.include?('Asset.id')
+    work = Asset.find(asset_id) if asset_id.present?
+
+    full_row_to_hash.keys.each do |key|
+      if !key.match(/\./)
+        add_object(current_object.symbolize_keys)
+        key_count = objects.select { |obj| obj['model'] == key }.size + 1
+        admin_data_gid = if key == 'Asset'
+          if work.present? 
+            work.admin_data_gid
+          else
+            AdminData.create.gid
+          end
+        end
+        current_object = {
+          'model' => key,
+          work_identifier.to_s => Bulkrax.fill_in_blank_source_identifiers.call(self, "#{key}-#{index}-#{key_count}"),
+          'title' => create_title(work)
+        }
+        current_object.merge!({'admin_data_gid' => admin_data_gid}) if admin_data_gid
+        next
+      end
+
+      klass, value = key.split('.')
+      annotation_type_values = AnnotationTypesService.new.select_all_options.to_h.transform_keys(&:downcase).values
+      is_annotation = annotation_type_values.include?(value)
+
+      if is_annotation
+        admin_data_id = AdminData.find_by_gid(current_object['admin_data_gid'])&.id
+          Annotation.find_or_create_by(annotation_type: value, value: full_row_to_hash[key], admin_data_id: admin_data_id)
+      else
+        raise "class key column is missing on row #{index}: #{full_row_to_hash}" unless klass == current_object['model']
+        current_object[value] = full_row_to_hash[key]
+      end
+    end
+    
+    add_object(current_object.symbolize_keys)
+  end
+
+  def create_title(work = nil)
+    asset = objects.first
+    return unless asset
+   
+    work.present? ? "#{work.series_title.first}; #{work.episode_title.first}" : "#{asset[:series_title]}; #{asset[:episode_title]}"
+  end
+
+  def add_object(current_object)
+    if current_object.present?
+      if objects.first
+        objects.first[:children] ||= []
+        objects.first[:children] << current_object[work_identifier]
+      end
+      record_objects << current_object
+      objects << current_object
+    end
+  end  
 end
