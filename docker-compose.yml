@@ -119,6 +119,17 @@ services:
       - solr
       - fcrepo
 
+  migrate_app:
+    <<: *app
+    entrypoint: ["sh", "-c"]
+    command:
+      - >
+        rails db:migrate
+    depends_on:
+      - db
+      - solr
+      - fcrepo
+
   web:
     <<: *app
     environment:
@@ -138,11 +149,13 @@ services:
         condition: service_started
       # check_volumes:
       #   condition: service_started
-      # chrome:
-      #   condition: service_started
+      chrome:
+        condition: service_started
       sidekiq:
         condition: service_started
       initialize_app:
+        condition: service_completed_successfully
+      migrate_app:
         condition: service_completed_successfully
 
     expose:
@@ -176,3 +189,16 @@ services:
       test: ["CMD-SHELL", "echo 'ruok' | nc -w 2 -q 2 localhost 2181 | grep imok || exit 1"]
       interval: "10s"
       timeout: "8s"
+
+  chrome:
+    image: selenium/standalone-chrome-debug:3.141.59-20201010
+    logging:
+      driver: none
+    volumes:
+      - /dev/shm:/dev/shm
+    shm_size: 2G
+    networks:
+      internal:
+    ports:
+      - "4444"
+      - "5959:5900"
