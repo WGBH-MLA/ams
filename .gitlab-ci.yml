@@ -20,6 +20,8 @@ build:
    - docker login -u "gitlab-ci-token" -p "$CI_JOB_TOKEN" $CI_REGISTRY
    - sc build
    - sc push
+   - sc build -s sidekiq
+   - sc push -s sidekiq
    - docker tag $CI_REGISTRY_IMAGE:$TAG $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME
    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME
  tags:
@@ -129,7 +131,7 @@ gbh.staging:
   variables:
     DEPLOY_IMAGE: $CI_REGISTRY_IMAGE
     DEPLOY_TAG: $CI_COMMIT_SHORT_SHA
-    WORKER_IMAGE: $CI_REGISTRY_IMAGE
+    WORKER_IMAGE: $CI_REGISTRY_IMAGE/worker
     HELM_EXPERIMENTAL_OCI: 1
     HELM_RELEASE_NAME: gbh-staging
     KUBE_NAMESPACE: gbh-staging
