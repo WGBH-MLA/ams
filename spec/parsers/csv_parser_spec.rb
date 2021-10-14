@@ -30,8 +30,8 @@ RSpec.describe CsvParser do
         importer.parser_fields = { import_file_path: './spec/fixtures/bulkrax/csv/bad.csv' }
       end
 
-      it 'skips all of the lines' do
-        expect(subject.importerexporter).not_to receive(:increment_counters)
+      it 'it creates an identifier and creates the work' do
+        expect(subject.importerexporter).to receive(:increment_counters).once
         subject.create_works
       end
     end
