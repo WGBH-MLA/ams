@@ -27,17 +27,17 @@ build:
  tags:
    - local
 
-# lint:
-#   stage: lint
-#   image: $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA
-#   variables:
-#     PRONTO_GITLAB_API_ENDPOINT: "https://gitlab.com/api/v4"
-#   before_script:
-#     - export PRONTO_GITLAB_API_PRIVATE_TOKEN=$GITLAB_API_TOKEN
-#   script:
-#     - cd /app/samvera/hyrax-webapp && bundle exec pronto run -f gitlab
-#   tags:
-#     - docker
+lint:
+  stage: lint
+  image: $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA
+  variables:
+    PRONTO_GITLAB_API_ENDPOINT: "https://gitlab.com/api/v4"
+    PRONTO_GITLAB_API_PRIVATE_TOKEN: ${GITLAB_API_TOKEN}
+  script:
+    - bundle install
+    - bundle exec pronto run -f gitlab -c origin/n8-staging
+  tags:
+    - docker
 
 test:
   stage: test
@@ -91,8 +91,10 @@ test:
   before_script:
     - cd /app/samvera/hyrax-webapp
     - solrcloud-upload-configset.sh /app/samvera/hyrax-webapp/solr/config
+    - solrcloud-assign-configset.sh
     - SOLR_COLLECTION_NAME=hydra-test solrcloud-assign-configset.sh
-    - RAILS_ENV=test bundle exec rake db:schema:load db:migrate
+    - RAILS_ENV=test bundle exec rake db:schema:load db:migrate db:seed
+
   script:
     - rm -f /app/samvera/hyrax-webapp/tmp/capybara/*
     - rm -rf $CI_PROJECT_DIR/capybara
