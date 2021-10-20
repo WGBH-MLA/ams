@@ -4,25 +4,27 @@ module Hyrax
   module Actors
     class DigitalInstantiationActor < Hyrax::Actors::BaseActor
       def create(env)
-        if file_uploaded?(env)
-          xml_file = uploaded_xml(env)
-        else
-          xml_file = env.attributes.delete(:pbcore_xml)
+        xml_file = file_uploaded?(env) ? uploaded_xml(env) : env.attributes.delete(:pbcore_xml)
+
+        if env.attributes['bulkax_identifier'].present?
+          super
+        else 
+          pbcore_doc = PBCore::InstantiationDocument.parse(xml_file)
+          set_env_attributes_from_pbcore(env, pbcore_doc)
+          save_instantiation_aapb_admin_data(env) && super && parse_pbcore_essense_track(env,pbcore_doc)
         end
-        pbcore_doc = PBCore::InstantiationDocument.parse(xml_file)
-        set_env_attributes_from_pbcore(env, pbcore_doc)
-        save_instantiation_aapb_admin_data(env) && super && parse_pbcore_essense_track(env,pbcore_doc)
       end
 
       def update(env)
-        if file_uploaded?(env)
-          xml_file = uploaded_xml(env)
-        else
-          xml_file = env.attributes.delete(:pbcore_xml)
+        xml_file = file_uploaded?(env) ? uploaded_xml(env) : env.attributes.delete(:pbcore_xml)
+        
+        if env.attributes['bulkax_identifier'].present?
+          super
+        else 
+          pbcore_doc = PBCore::InstantiationDocument.parse(xml_file)
+          env = parse_pbcore_instantiation(env,pbcore_doc)
+          save_instantiation_aapb_admin_data(env) && super && destroy_child_objects(env) && parse_pbcore_essense_track(env,pbcore_doc)
         end
-        pbcore_doc = PBCore::InstantiationDocument.parse(xml_file)
-        env = parse_pbcore_instantiation(env,pbcore_doc)
-        save_instantiation_aapb_admin_data(env) && super && destroy_child_objects(env) && parse_pbcore_essense_track(env,pbcore_doc)
       end
 
       def destroy(env)
