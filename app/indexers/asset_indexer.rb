@@ -17,6 +17,7 @@ class AssetIndexer < AMS::WorkIndexer
       solr_doc['broadcast_date_drsim'] = object.broadcast_date if object.broadcast_date
       solr_doc['created_date_drsim'] = object.created_date if object.created_date
       solr_doc['copyright_date_drsim'] = object.copyright_date if object.copyright_date
+      solr_doc[Solrizer.solr_name('bulkrax_identifier', :facetable)] = object.bulkrax_identifier
 
       if object.admin_data
         # Index the admin_data_gid
@@ -37,7 +38,6 @@ class AssetIndexer < AMS::WorkIndexer
         solr_doc['last_updated'] = object.admin_data.last_updated if !object.admin_data.last_updated.blank?
         solr_doc['needs_update'] = object.admin_data.needs_update if !object.admin_data.needs_update.blank?
 
-        solr_doc[Solrizer.solr_name('bulkrax_identifier', :facetable)] = object.bulkrax_identifier
       end
     end
   end
