@@ -5,20 +5,20 @@ module Hyrax
     class DigitalInstantiationActor < Hyrax::Actors::BaseActor
       def create(env)
         xml_file = file_uploaded?(env) ? uploaded_xml(env) : env.attributes.delete(:pbcore_xml)
+        pbcore_doc = PBCore::InstantiationDocument.parse(xml_file)
+        set_env_attributes_from_pbcore(env, pbcore_doc)
 
-        if env.attributes['bulkax_identifier'].present?
+        if env.attributes['bulkrax_identifier'].present?
           super
         else 
-          pbcore_doc = PBCore::InstantiationDocument.parse(xml_file)
-          set_env_attributes_from_pbcore(env, pbcore_doc)
           save_instantiation_aapb_admin_data(env) && super && parse_pbcore_essense_track(env,pbcore_doc)
         end
       end
 
       def update(env)
         xml_file = file_uploaded?(env) ? uploaded_xml(env) : env.attributes.delete(:pbcore_xml)
-        
-        if env.attributes['bulkax_identifier'].present?
+
+        if env.curation_concern&.bulkrax_identifier
           super
         else 
           pbcore_doc = PBCore::InstantiationDocument.parse(xml_file)
