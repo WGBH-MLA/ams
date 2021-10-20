@@ -9,6 +9,14 @@ FactoryBot.define do
     parsed_metadata { "MyText" }
   end
 
+  factory :bulkrax_xml_entry, class: 'Bulkrax::XmlEntry' do
+    identifier { "MyString" }
+    type { 'XmlEntry' }
+    importerexporter { FactoryBot.build(:bulkrax_importer) }
+    raw_metadata { "MyText" }
+    parsed_metadata { "MyText" }
+  end
+
   factory :bulkrax_csv_entry, class: 'Bulkrax::CsvEntry' do
     identifier { "csv_entry" }
     type { 'CsvEntry' }

@@ -1,6 +1,6 @@
 stages:
   - build
-  - lint
+  - lint #temporarily disabled to get i14 code through for QA. We will correct lint in a separate ticket (i40). 
   - test
   - staging
 
@@ -20,6 +20,8 @@ build:
    - docker login -u "gitlab-ci-token" -p "$CI_JOB_TOKEN" $CI_REGISTRY
    - sc build
    - sc push
+   - sc build -s sidekiq
+   - sc push -s sidekiq
    - docker tag $CI_REGISTRY_IMAGE:$TAG $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME
    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME
  tags:
@@ -30,10 +32,10 @@ build:
 #   image: $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA
 #   variables:
 #     PRONTO_GITLAB_API_ENDPOINT: "https://gitlab.com/api/v4"
-#   before_script:
-#     - export PRONTO_GITLAB_API_PRIVATE_TOKEN=$GITLAB_API_TOKEN
+#     PRONTO_GITLAB_API_PRIVATE_TOKEN: ${GITLAB_API_TOKEN}
 #   script:
-#     - cd /app/samvera/hyrax-webapp && bundle exec pronto run -f gitlab
+#     - bundle install
+#     - bundle exec pronto run -f gitlab -c origin/n8-staging
 #   tags:
 #     - docker
 
@@ -69,6 +71,7 @@ test:
     REDIS_HOST: redis
     REDIS_SERVER: redis
     SETTINGS__BULKRAX__ENABLED: 'true'
+    SIDEKIQ_CONCURRENCY: 5
     SOLR_ADMIN_PASSWORD: admin
     SOLR_ADMIN_USER: admin
     SOLR_ADMIN_USERNAME: admin
@@ -89,8 +92,10 @@ test:
   before_script:
     - cd /app/samvera/hyrax-webapp
     - solrcloud-upload-configset.sh /app/samvera/hyrax-webapp/solr/config
+    - solrcloud-assign-configset.sh
     - SOLR_COLLECTION_NAME=hydra-test solrcloud-assign-configset.sh
-    - RAILS_ENV=test bundle exec rake db:schema:load db:migrate
+    - RAILS_ENV=test bundle exec rake db:schema:load db:migrate db:seed
+
   script:
     - rm -f /app/samvera/hyrax-webapp/tmp/capybara/*
     - rm -rf $CI_PROJECT_DIR/capybara
@@ -129,7 +134,7 @@ gbh.staging:
   variables:
     DEPLOY_IMAGE: $CI_REGISTRY_IMAGE
     DEPLOY_TAG: $CI_COMMIT_SHORT_SHA
-    WORKER_IMAGE: $CI_REGISTRY_IMAGE
+    WORKER_IMAGE: $CI_REGISTRY_IMAGE/worker
     HELM_EXPERIMENTAL_OCI: 1
     HELM_RELEASE_NAME: gbh-staging
     KUBE_NAMESPACE: gbh-staging

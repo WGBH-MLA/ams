@@ -3,14 +3,23 @@ if ENV['SETTINGS__BULKRAX__ENABLED'] == 'true'
   Bulkrax.setup do |config|
     # Add local parsers
     config.parsers = [
-      { name: 'CSV', class_name: 'CsvParser', partial: 'csv_fields' },
-      { name: 'AAPB PBCore XML', class_name: 'PbcoreXmlParser', partial: 'xml_fields_override' }
+      { name: 'AAPB CSV', class_name: 'CsvParser', partial: 'csv_fields' },
+      { name: 'AAPB PBCore XML', class_name: 'PbcoreXmlParser', partial: 'xml_fields_override'},
+      { name: 'AAPB PBCore XML/Manifest', class_name: 'PbcoreManifestParser', partial: 'xml_fields_override'},
 
     ]
 
     config.fill_in_blank_source_identifiers = ->(obj, index) { "#{obj.importerexporter.id}-#{index}"}
     config.field_mappings['CsvParser'] = {
       'bulkrax_identifier' => { from: ['bulkrax_identifier'], source_identifier: true }
+    }
+    config.field_mappings['PbcoreXmlParser'] = {
+      'bulkrax_identifier' => { from: ['pbcoreIdentifier'], source_identifier: true }
+    }
+    config.field_mappings['PbcoreManifestParser'] = {
+      'bulkrax_identifier' => { from: ['instantiationIdentifier'], source_identifier: true },
+      'generations' => { from: ["DigitalInstantiation.generations"] },
+      'holding_organization' => { from: ["DigitalInstantiation.holding_organization"] }
     }
   
     # WorkType to use as the default if none is specified in the import
@@ -50,7 +59,6 @@ if ENV['SETTINGS__BULKRAX__ENABLED'] == 'true'
     #   config.field_mappings = {
     #     "Bulkrax::OaiDcParser" => { **individual field mappings go here*** }
     #   }
-
     # Add to, or change existing mappings as follows
     #   e.g. to exclude date
     #   config.field_mappings["Bulkrax::OaiDcParser"]["date"] = { from: ["date"], excluded: true  }
