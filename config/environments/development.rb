@@ -12,6 +12,8 @@ Rails.application.configure do
     ['yes', 'true', '1'].include? val.to_s.downcase.strip
   end
 
+  config.web_console.whitelisted_ips = ['172.18.0.0/16', '172.27.0.0/16', '0.0.0.0/0']
+
   # Settings specified here will take precedence over those in config/application.rb.
 
   # In the development environment your application's code is reloaded on
