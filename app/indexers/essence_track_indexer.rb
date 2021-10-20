@@ -11,9 +11,9 @@ class EssenceTrackIndexer < AMS::WorkIndexer
 
   self.thumbnail_path_service = AAPB::WorkThumbnailPathService
   # Uncomment this block if you want to add custom indexing behavior:
-  # def generate_solr_document
-  #  super.tap do |solr_doc|
-  #    solr_doc['my_custom_field_ssim'] = object.my_custom_property
-  #  end
-  # end
+  def generate_solr_document
+   super.tap do |solr_doc|
+    solr_doc[Solrizer.solr_name('bulkrax_identifier', :facetable)] = object.bulkrax_identifier
+   end
+  end
 end

@@ -4,7 +4,8 @@ require 'rails_helper'
 
 RSpec.describe EssenceTrack do
   subject { build(:essence_track) }
-
+  
+  it { is_expected.to have_property(:bulkrax_identifier).with_predicate("http://ams2.wgbh-mla.org/resource#bulkraxIdentifier") }
   it { is_expected.to have_property(:track_type) }
   it { is_expected.to have_property(:track_id) }
   it { is_expected.to have_property(:standard) }
