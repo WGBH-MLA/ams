@@ -4,9 +4,9 @@ if ENV['SETTINGS__BULKRAX__ENABLED'] == 'true'
     # Add local parsers
     config.parsers = [
       { name: 'AAPB CSV', class_name: 'CsvParser', partial: 'csv_fields' },
-      { name: 'AAPB PBCore XML', class_name: 'PbcoreXmlParser', partial: 'xml_fields'},
-      { name: 'AAPB PBCore XML/Manifest', class_name: 'PbcoreManifestParser', partial: 'xml_fields'},
-
+      # we are overridding the xml parser to remove the 'multiple' import_type option, as this app currently does not support it
+      { name: 'AAPB PBCore XML', class_name: 'PbcoreXmlParser', partial: 'xml_fields_override'},
+      { name: 'AAPB PBCore XML/Manifest', class_name: 'PbcoreManifestParser', partial: 'xml_fields_override'}
     ]
 
     config.fill_in_blank_source_identifiers = ->(obj, index) { "#{obj.importerexporter.id}-#{index}"}

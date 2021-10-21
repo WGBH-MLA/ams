@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe 'Search by dates', reset_data: false, js: true do
+RSpec.describe 'Search by dates', reset_data: false, js: true, skip: true do
 
   def various_dates
     @various_dates ||= %w(
