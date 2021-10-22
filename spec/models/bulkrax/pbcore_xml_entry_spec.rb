@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 module Bulkrax
-  RSpec.describe XmlEntry, type: :model do
+  RSpec.describe PbcoreXmlEntry, type: :model do
     let(:path) { './spec/fixtures/bulkrax/xml/pbcore_doc.xml' }
     let(:data) { described_class.read_data(path) }
     let(:source_identifier) { 'pbcoreIdentifier' }
