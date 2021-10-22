@@ -18,6 +18,7 @@ Bulkrax::XmlEntry.class_eval do
     collections = []
     children = []
     xpath_for_source_id = ".//*[name()='#{source_id}']"
+
     return {
       source_id => data.xpath(xpath_for_source_id).first.text.gsub('cpb-aacip/', 'cpb-aacip-'),
       delete: data.xpath(".//*[name()='delete']").first&.text,
@@ -38,20 +39,20 @@ Bulkrax::XmlEntry.class_eval do
     self.parsed_metadata = {}
     self.parsed_metadata[work_identifier] = self.raw_metadata[source_identifier] # {"source"=>"0123456"} # originally source_identier
     self.raw_metadata.each do |key, value|
-      # TODO mappings will be broken, also data is currently unparsed
-      # Needs data broken out and add_metadata() calls instead
-      self.parsed_metadata[key] = value
+      index = key[/\d+/].to_i - 1 if key[/\d+/].to_i != 0
+      add_metadata(key_without_numbers(key), value, index)
+      # self.parsed_metadata[key] = value
     end
-    # xml_elements.each do |element_name|
-    #   elements = record.xpath("//*[name()='#{element_name}']")
-    #   binding.pry
-    #   next if elements.blank?
-    #   elements.each do |el|
-    #     el.children.map(&:content).each do |content|
-    #       add_metadata(element_name, content) if content.present?
-    #     end
-    #   end
-    # end
+    xml_elements.each do |element_name|
+      elements = record.xpath("//*[name()='#{element_name}']")
+      next if elements.blank?
+      elements.each do |el|
+        el.children.map(&:content).each do |content|
+          add_metadata(element_name, content) if content.present?
+        end
+      end
+    end
+
     add_visibility
     add_rights_statement
     add_admin_set_id
@@ -59,5 +60,11 @@ Bulkrax::XmlEntry.class_eval do
     self.parsed_metadata['file'] = self.raw_metadata['file']
     add_local
     self.parsed_metadata
+  end
+
+  def xml_elements
+    Bulkrax.field_mappings[self.importerexporter.parser_klass].map do |_k, v|
+      v[:from]
+    end.flatten.compact.uniq
   end
 end

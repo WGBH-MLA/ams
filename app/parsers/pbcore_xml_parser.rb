@@ -8,7 +8,9 @@ class PbcoreXmlParser < Bulkrax::XmlParser
       set_objects(file, index).each do |record|
         break if limit_reached?(limit, index)
         record = set_digital_instantiation_children(record) if record[:model] == 'DigitalInstantiation'
+        record[:data] = file[:data]
         seen[record[work_identifier]] = true
+        # binding.pry
         new_entry = find_or_create_entry(entry_class, record[work_identifier], 'Bulkrax::Importer', record.compact)
         if record[:delete].present?
           Bulkrax::DeleteWorkJob.send(perform_method, new_entry, current_run)
@@ -57,11 +59,10 @@ class PbcoreXmlParser < Bulkrax::XmlParser
     tracks = instantiations.map(&:essence_tracks).flatten # processed in the digitial inst. actor. if we comment this out it will not
     # show up in the bulkrax importer, but the records still get processed in the actor.
     # people/contributor is processed as part of the asset_attributes method
-    new_rows += parse_rows([AAPB::BatchIngest::PBCoreXMLMapper.new(file[:data]).asset_attributes.merge!({ delete: file[:delete] })], 'Asset', index, current_object)
-    new_rows += parse_rows(pbcore_physical_instantiations.map { |inst| AAPB::BatchIngest::PBCoreXMLMapper.new(inst.to_xml).physical_instantiation_attributes }, 'PhysicalInstantiation', index, current_object)
-    new_rows += parse_rows(pbcore_digital_instantiations.map { |inst| AAPB::BatchIngest::PBCoreXMLMapper.new(inst.to_xml).digital_instantiation_attributes.merge!({pbcore_xml: inst.to_xml, skip_file_upload_validation: true}) }, 'DigitalInstantiation', index, current_object)
-    new_rows += parse_rows(tracks.map { |track| AAPB::BatchIngest::PBCoreXMLMapper.new(track.to_xml).essence_track_attributes }, 'EssenceTrack', index, current_object)
-    
+    new_rows += parse_rows(pbcore_physical_instantiations.map { |inst| AAPB::BatchIngest::PBCoreXMLMapper.new(inst.to_xml).physical_instantiation_attributes }, 'PhysicalInstantiation', index)
+    new_rows += parse_rows(pbcore_digital_instantiations.map { |inst| AAPB::BatchIngest::PBCoreXMLMapper.new(inst.to_xml).digital_instantiation_attributes.merge!({pbcore_xml: inst.to_xml, skip_file_upload_validation: true}) }, 'DigitalInstantiation', index)
+    new_rows += parse_rows(tracks.map { |track| AAPB::BatchIngest::PBCoreXMLMapper.new(track.to_xml).essence_track_attributes }, 'EssenceTrack', index)
+
     new_rows
   end
 end

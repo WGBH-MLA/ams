@@ -50,7 +50,7 @@ module Bulkrax
 
     private
 
-    def parse_rows(rows, type, index, current_object)
+    def parse_rows(rows, type, index)
       rows.each do |object|
         set_model(type, index, object)
         add_object(object.symbolize_keys)
