@@ -39,19 +39,18 @@ Bulkrax::XmlEntry.class_eval do
     self.parsed_metadata = {}
     self.parsed_metadata[work_identifier] = self.raw_metadata[source_identifier] # {"source"=>"0123456"} # originally source_identier
     self.raw_metadata.each do |key, value|
-      index = key[/\d+/].to_i - 1 if key[/\d+/].to_i != 0
-      add_metadata(key_without_numbers(key), value, index)
-      # self.parsed_metadata[key] = value
+     index = key[/\d+/].to_i - 1 if key[/\d+/].to_i != 0
+     add_metadata(key_without_numbers(key), value, index)
     end
-    xml_elements.each do |element_name|
-      elements = record.xpath("//*[name()='#{element_name}']")
-      next if elements.blank?
-      elements.each do |el|
-        el.children.map(&:content).each do |content|
-          add_metadata(element_name, content) if content.present?
-        end
-      end
-    end
+    # xml_elements.each do |element_name|
+    #   elements = record.xpath("//*[name()='#{element_name}']")
+    #   next if elements.blank?
+    #   elements.each do |el|
+    #     el.children.map(&:content).each do |content|
+    #       add_metadata(element_name, content) if content.present?
+    #     end
+    #   end
+    # end
 
     add_visibility
     add_rights_statement
