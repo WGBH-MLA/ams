@@ -8,13 +8,12 @@ class PbcoreXmlParser < Bulkrax::XmlParser
       set_objects(file, index).each do |record|
         break if limit_reached?(limit, index)
         record = set_digital_instantiation_children(record) if record[:model] == 'DigitalInstantiation'
-        record[:data] = record.to_xml(
-          encoding: 'UTF-8',
-          save_with:
-            Nokogiri::XML::Node::SaveOptions::NO_DECLARATION | Nokogiri::XML::Node::SaveOptions::NO_EMPTY_TAGS
-        ).delete("\n").delete("\t").squeeze(' ')
+        # record[:data] = record.to_xml(
+        #   encoding: 'UTF-8',
+        #   save_with:
+        #     Nokogiri::XML::Node::SaveOptions::NO_DECLARATION | Nokogiri::XML::Node::SaveOptions::NO_EMPTY_TAGS
+        # ).delete("\n").delete("\t").squeeze(' ')
         seen[record[work_identifier]] = true
-        # binding.pry
         new_entry = find_or_create_entry(entry_class, record[work_identifier], 'Bulkrax::Importer', record.compact)
         if record[:delete].present?
           Bulkrax::DeleteWorkJob.send(perform_method, new_entry, current_run)
