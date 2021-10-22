@@ -9,9 +9,9 @@ FactoryBot.define do
     parsed_metadata { "MyText" }
   end
 
-  factory :bulkrax_xml_entry, class: 'Bulkrax::XmlEntry' do
+  factory :bulkrax_pbcore_xml_entry, class: 'Bulkrax::PbcoreXmlEntry' do
     identifier { "MyString" }
-    type { 'XmlEntry' }
+    type { 'Bulkrax::PbcoreXmlEntry' }
     importerexporter { FactoryBot.build(:bulkrax_importer) }
     raw_metadata { "MyText" }
     parsed_metadata { "MyText" }
