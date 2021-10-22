@@ -1,5 +1,8 @@
 module Bulkrax
   module PbcoreParserBehavior
+    def entry_class
+      Bulkrax::PbcoreXmlEntry
+    end
     # Return all files in the import directory and sub-directories
     def file_paths
       @file_paths ||=
