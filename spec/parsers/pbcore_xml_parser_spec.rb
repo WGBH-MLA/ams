@@ -12,7 +12,7 @@ RSpec.describe PbcoreXmlParser do
       Bulkrax.field_mappings['PbcoreXmlParser'] = {
         'bulkrax_identifier' => { from: ['pbcoreIdentifier'], source_identifier: true }
       }
-      allow(Bulkrax::XmlEntry).to receive_message_chain(:where, :first_or_create!).and_return(entry)
+      allow(Bulkrax::PbcoreXmlEntry).to receive_message_chain(:where, :first_or_create!).and_return(entry)
       allow(entry).to receive(:id)
       allow(Bulkrax::ImportWorkJob).to receive(:perform_later)
     end
