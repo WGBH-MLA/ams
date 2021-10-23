@@ -11,7 +11,6 @@ class PbcoreManifestParser < Bulkrax::XmlParser
           record = set_digital_instantiation_children(record)
           record.merge!(manifest_hash[record[:filename]])
         end
-        record[:data] = file[:data]
         seen[record[work_identifier]] = true
         new_entry = find_or_create_entry(entry_class, record[work_identifier], 'Bulkrax::Importer', record.compact)
         if record[:delete].present?
