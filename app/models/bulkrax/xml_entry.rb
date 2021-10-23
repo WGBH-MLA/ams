@@ -39,7 +39,6 @@ Bulkrax::XmlEntry.class_eval do
     self.parsed_metadata = {}
     self.parsed_metadata[work_identifier] = self.raw_metadata[source_identifier] # {"source"=>"0123456"} # originally source_identier
     self.parsed_metadata['model'] = raw_metadata['model']
-    # self.parsed_metadata[:delete] = true if self.raw_metadata['delete']
     self.parsed_metadata['pbcore_xml'] = self.raw_metadata['pbcore_xml'] if self.raw_metadata['pbcore_xml']
     self.parsed_metadata['skip_file_upload_validation'] = true if self.raw_metadata['skip_file_upload_validation']
     self.raw_metadata.each do |key, value|
