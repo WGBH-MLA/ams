@@ -30,7 +30,7 @@ RSpec.describe PbcoreManifestParser do
           }
         }
       )
-      allow(Bulkrax::XmlEntry).to receive_message_chain(:where, :first_or_create!).and_return(entry)
+      allow(Bulkrax::PbcoreXmlEntry).to receive_message_chain(:where, :first_or_create!).and_return(entry)
       allow(entry).to receive(:id)
       allow(Bulkrax::ImportWorkJob).to receive(:perform_later)
     end
