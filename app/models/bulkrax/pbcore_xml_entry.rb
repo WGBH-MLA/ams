@@ -39,28 +39,19 @@ module Bulkrax
       # raise StandardError, "Missing source identifier (#{source_identifier})" if self.raw_metadata[source_identifier].blank?
       self.parsed_metadata = {}
       self.parsed_metadata[work_identifier] = self.raw_metadata[source_identifier] # {"source"=>"0123456"} # originally source_identier
+      self.parsed_metadata['model'] = raw_metadata['model']
+      self.parsed_metadata['pbcore_xml'] = self.raw_metadata['pbcore_xml'] if self.raw_metadata['pbcore_xml']
+      self.parsed_metadata['skip_file_upload_validation'] = true if self.raw_metadata['skip_file_upload_validation']
       self.raw_metadata.each do |key, value|
-        # TODO mappings will be broken, also data is currently unparsed
-        # Needs data broken out and add_metadata() calls instead
-        self.parsed_metadata[key] = value
+       add_metadata(key_without_numbers(key), value)
       end
-      # xml_elements.each do |element_name|
-      #   elements = record.xpath("//*[name()='#{element_name}']")
-      #   binding.pry
-      #   next if elements.blank?
-      #   elements.each do |el|
-      #     el.children.map(&:content).each do |content|
-      #       add_metadata(element_name, content) if content.present?
-      #     end
-      #   end
-      # end
+      self.parsed_metadata['format'] = self.raw_metadata['format'] if self.raw_metadata['model'] == 'DigitalInstantiation'
       add_visibility
       add_rights_statement
       add_admin_set_id
       add_collections
       self.parsed_metadata['file'] = self.raw_metadata['file']
       add_local
-      # raise StandardError, "title is required" if self.parsed_metadata['title'].blank?
       self.parsed_metadata
     end
   end
