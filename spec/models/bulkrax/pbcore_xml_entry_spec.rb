@@ -89,28 +89,8 @@ module Bulkrax
           expect(xml_entry.status).to eq('Complete')
         end
 
-        # raise StandardError, 'Record not found' if record.nil?
-
-        # self.parsed_metadata = {}
-        # self.parsed_metadata[work_identifier] = self.raw_metadata[source_identifier]
-        # self.parsed_metadata['model'] = raw_metadata['model']
-        # self.parsed_metadata['pbcore_xml'] = self.raw_metadata['pbcore_xml'] if self.raw_metadata['pbcore_xml']
-        # self.parsed_metadata['skip_file_upload_validation'] = true if self.raw_metadata['skip_file_upload_validation']
-        # self.raw_metadata.each do |key, value|
-        #  add_metadata(key_without_numbers(key), value)
-        # end
-        # self.parsed_metadata['format'] = self.raw_metadata['format'] if self.raw_metadata['model'] == 'DigitalInstantiation'
-        # add_visibility
-        # add_rights_statement
-        # add_admin_set_id
-        # add_collections
-        # self.parsed_metadata['file'] = self.raw_metadata['file']
-        # add_local
-        # self.parsed_metadata
-
         it 'builds entry' do
           xml_entry.build
-          # binding.pry
           expect(xml_entry.parsed_metadata).to eq(
             {
               "bulkrax_identifier"=>"cpb-aacip-20-000000hr",
@@ -122,7 +102,7 @@ module Bulkrax
               "children"=>[],
               "visibility"=>"open",
               "rights_statement"=>[nil],
-              # "admin_set_id"=>"pbcore_xml_entry_spec AdminSetId",
+              "admin_set_id"=>"MyString",
               "file"=>nil
             }
           )
