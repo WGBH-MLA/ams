@@ -114,8 +114,8 @@ class PbcoreManifestParser < Bulkrax::XmlParser
       pbcore_xml: file[:data],
       skip_file_upload_validation: true,
       instantiation_admin_data_gid: get_instantiation_admin_data_gid(csv_row, digital_instantiation)
-      })], 'DigitalInstantiation', index, current_object)
-    new_rows += parse_rows(tracks.map { |track| AAPB::BatchIngest::PBCoreXMLMapper.new(track.to_xml).essence_track_attributes }, 'EssenceTrack', index, current_object)
+      })], 'DigitalInstantiation', index)
+    new_rows += parse_rows(tracks.map { |track| AAPB::BatchIngest::PBCoreXMLMapper.new(track.to_xml).essence_track_attributes }, 'EssenceTrack', index)
     
     new_rows
   end
