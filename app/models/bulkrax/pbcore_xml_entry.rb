@@ -36,12 +36,11 @@ module Bulkrax
 
     def build_metadata
       raise StandardError, 'Record not found' if record.nil?
-      # raise StandardError, "Missing source identifier (#{source_identifier})" if self.raw_metadata[source_identifier].blank?
       self.parsed_metadata = {}
-      self.parsed_metadata[work_identifier] = self.raw_metadata[source_identifier] # {"source"=>"0123456"} # originally source_identier
+      self.parsed_metadata[work_identifier] = self.raw_metadata[source_identifier]
       self.parsed_metadata['model'] = raw_metadata['model']
-      self.parsed_metadata['pbcore_xml'] = self.raw_metadata['pbcore_xml'] if self.raw_metadata['pbcore_xml']
-      self.parsed_metadata['skip_file_upload_validation'] = true if self.raw_metadata['skip_file_upload_validation']
+      self.parsed_metadata['pbcore_xml'] = self.raw_metadata['pbcore_xml'] if self.raw_metadata['pbcore_xml'].present?
+      self.parsed_metadata['skip_file_upload_validation'] = self.raw_metadata['skip_file_upload_validation'] if self.raw_metadata['skip_file_upload_validation'] == true
       self.raw_metadata.each do |key, value|
        add_metadata(key_without_numbers(key), value)
       end
