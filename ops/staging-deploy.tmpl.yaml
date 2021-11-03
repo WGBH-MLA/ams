@@ -213,8 +213,8 @@ worker:
     value: "8983"
   - name: SOLR_URL
     value: http://admin:ncGXC5Qjpk@solr.staging-solr.svc.cluster.local:8983/solr/ams-staging
-  # - name: SENTRY_DSN
-  #   value: $SENTRY_DSN
+  - name: SENTRY_DSN
+    value: https://2d5ee447c9514149b4310dc8d6511a06:7c1f70b3e38640f49f3d35567830e6e2@sentry.notch8.com/66
 
 podSecurityContext:
   runAsUser: 1001
