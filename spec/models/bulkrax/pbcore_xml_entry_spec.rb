@@ -93,12 +93,14 @@ module Bulkrax
           xml_entry.build
           expect(xml_entry.parsed_metadata).to eq(
             {
-              "bulkrax_identifier"=>"cpb-aacip-20-000000hr",
-              "model"=>nil,
-              "visibility"=>"open",
-              "rights_statement"=>[nil],
               "admin_set_id"=>"MyString",
-              "file"=>nil
+              "bulkrax_identifier"=>"cpb-aacip-20-000000hr",
+              "collection"=>[],
+              "delete"=>nil,
+              "file"=>nil,
+              "model"=>nil,
+              "rights_statement"=>[nil],
+              "visibility"=>"open"
             }
           )
         end
