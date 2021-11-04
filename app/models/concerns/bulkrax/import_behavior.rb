@@ -7,6 +7,7 @@ Bulkrax::ImportBehavior.class_eval do
     @factory ||= Bulkrax::ObjectFactory.new(attributes: self.parsed_metadata || self.raw_metadata,
                                             source_identifier_value: identifier,
                                             work_identifier: parser.work_identifier,
+                                            collection_field_mapping: parser.collection_field_mapping,
                                             replace_files: replace_files,
                                             user: user,
                                             klass: factory_class,
