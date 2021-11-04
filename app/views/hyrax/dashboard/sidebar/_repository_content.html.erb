@@ -12,9 +12,11 @@
     <span class="fa fa-file" aria-hidden="true"></span> <span class="sidebar-action-text"><%= t('hyrax.admin.sidebar.works') %></span>
   <% end %>
 
-  <% if can? :index, Hyrax::BatchIngest::Batch %>
-    <%= menu.nav_link(hyrax_batch_ingest.batches_path) do %>
-      <span class="fa fa-table" aria-hidden="true"></span> <span class="sidebar-action-text"><%= 'Batches' %></span>
+  <% if ENV['SETTINGS__BULKRAX__ENABLED'] == 'false' %>
+    <% if can? :index, Hyrax::BatchIngest::Batch %>
+      <%= menu.nav_link(hyrax_batch_ingest.batches_path) do %>
+        <span class="fa fa-table" aria-hidden="true"></span> <span class="sidebar-action-text"><%= 'Batches' %></span>
+      <% end %>
     <% end %>
   <% end %>
 
