@@ -38,7 +38,7 @@ Bulkrax::Importer.all.each do |importer|
   Total Objects Imported: #{total_objects_imported}
 
   Start time: #{importer.created_at}
-  End time:   #{importer.entries.last.updated_at}
+  End time:   #{importer.entries.last&.updated_at}
 
   Batch duration in seconds: #{elapsed_time_in_seconds.inspect}
   *****************
