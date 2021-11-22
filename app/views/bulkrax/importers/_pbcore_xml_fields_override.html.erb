@@ -1,5 +1,5 @@
 <%# OVERRIDE from Bulkrax to remove multiple works selection from the dropdown menu %>
-<div class='xml_fields_override'>
+<div class='pbcore_xml_fields_override'>
 
   <%# @todo improve on this implementation.
     As it stands, it's a hostage to namespaces,
@@ -7,10 +7,7 @@
     if namespaces aren't in the xml, we would have to specify dc:title
     but if the namespaces ARE present, we remove them so we would need title
   %>
-  <%= fi.input :record_element,
-    hint: 'Provide the xml element name to use to identify the record, or records, eg. ROW - each record in the attached XML is wrapped in a <ROW> tag.',
-    input_html: { value: importer.parser_fields['record_element'] }
-    %>
+  <%= fi.hidden_field :record_element, value: 'pbcoreDescriptionDocument' %>
 
   <%= fi.input :import_type,
 		collection: [
