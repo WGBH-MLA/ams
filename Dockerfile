@@ -12,6 +12,7 @@ RUN apk --no-cache upgrade && \
     libxml2-dev \
     mariadb-dev \
     mediainfo \
+    openssh \
     perl \
     cmake \
     $EXTRA_APK_PACKAGES
