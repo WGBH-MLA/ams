@@ -36,6 +36,7 @@ module Bulkrax
 
     def build_metadata
       raise StandardError, 'Record not found' if record.nil?
+      check_annotations(self.raw_metadata)
       self.parsed_metadata = {}
       self.parsed_metadata[work_identifier] = self.raw_metadata[source_identifier]
       self.parsed_metadata['model'] = raw_metadata['model']
@@ -52,6 +53,15 @@ module Bulkrax
       self.parsed_metadata['file'] = self.raw_metadata['file']
       add_local
       self.parsed_metadata
+    end
+
+    def check_annotations(raw_metadata)
+      annotations = self.raw_metadata['annotations']
+      if annotations.present?
+        annotations.each do |annotation|
+          raise "annotation_type not registered with the AnnotationTypesService: #{annotation['annotation_type']}." if annotation['annotation_type'].nil? 
+        end
+      end
     end
   end
 end
