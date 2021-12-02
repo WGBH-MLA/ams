@@ -11,7 +11,8 @@ if ENV['SETTINGS__BULKRAX__ENABLED'] == 'true'
 
     config.fill_in_blank_source_identifiers = ->(obj, index) { "#{obj.importerexporter.id}-#{index}"}
     config.field_mappings['CsvParser'] = {
-      'bulkrax_identifier' => { from: ['bulkrax_identifier'], source_identifier: true }
+      'bulkrax_identifier' => { from: ['bulkrax_identifier'], source_identifier: true },
+      'genre' => { from: ['Asset.genre'], split: true } 
     }
     config.field_mappings['PbcoreXmlParser'] = {
       'bulkrax_identifier' => { from: ['pbcoreIdentifier'], source_identifier: true }
