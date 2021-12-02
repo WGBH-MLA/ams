@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20210806065737) do
+ActiveRecord::Schema.define(version: 20211004170708) do
 
   create_table "admin_data", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=latin1" do |t|
     t.text "sonyci_id"
@@ -132,7 +132,7 @@ ActiveRecord::Schema.define(version: 20210806065737) do
   create_table "bulkrax_statuses", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=latin1" do |t|
     t.string "status_message"
     t.string "error_class"
-    t.string "error_message"
+    t.text "error_message"
     t.text "error_backtrace", limit: 16777215
     t.integer "statusable_id"
     t.string "statusable_type"
