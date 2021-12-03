@@ -81,11 +81,14 @@ class CsvParser < Bulkrax::CsvParser
 
       klass, value = key.split('.')
       annotation_type_values = AnnotationTypesService.new.select_all_options.to_h.transform_keys(&:downcase).values
+      admin_data = AdminData.find_by_gid(current_object['admin_data_gid'])
       is_annotation = annotation_type_values.include?(value)
 
       if is_annotation
-        admin_data_id = AdminData.find_by_gid(current_object['admin_data_gid'])&.id
-          Annotation.find_or_create_by(annotation_type: value, value: full_row_to_hash[key], admin_data_id: admin_data_id)
+        admin_data_id = admin_data.id
+        Annotation.find_or_create_by(annotation_type: value, value: full_row_to_hash[key], admin_data_id: admin_data_id)
+      elsif value == 'sonyci_id'
+        admin_data.update(sonyci_id: [full_row_to_hash[key]])
       else
         raise "class key column is missing on row #{index}: #{full_row_to_hash}" unless klass == current_object['model']
         current_object[value] = full_row_to_hash[key]
