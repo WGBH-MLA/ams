@@ -91,7 +91,9 @@ class CsvParser < Bulkrax::CsvParser
       elsif value == 'sonyci_id'
         admin_data.update(sonyci_id: [full_row_to_hash[key]])
       else
-        raise "class key column is missing on row #{index}: #{full_row_to_hash}" unless klass == current_object['model']
+        unless klass == current_object['model']
+          raise "class key column is missing on row #{index}: #{full_row_to_hash}"
+        end
         current_object[value] = full_row_to_hash[key]
       end
     end
