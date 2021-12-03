@@ -1,6 +1,6 @@
 stages:
   - build
-  - lint #temporarily disabled to get i14 code through for QA. We will correct lint in a separate ticket (i40). 
+  - lint
   - test
   - staging
 
@@ -27,17 +27,18 @@ build:
  tags:
    - local
 
-# lint:
-#   stage: lint
-#   image: $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA
-#   variables:
-#     PRONTO_GITLAB_API_ENDPOINT: "https://gitlab.com/api/v4"
-#     PRONTO_GITLAB_API_PRIVATE_TOKEN: ${GITLAB_API_TOKEN}
-#   script:
-#     - bundle install
-#     - bundle exec pronto run -f gitlab -c origin/n8-staging
-#   tags:
-#     - docker
+lint:
+  stage: lint
+  image: $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA
+  variables:
+    PRONTO_GITLAB_API_ENDPOINT: "https://gitlab.com/api/v4"
+    PRONTO_GITLAB_API_PRIVATE_TOKEN: ${GITLAB_API_TOKEN}
+  script:
+    - bundle install
+    - bundle exec pronto run -f gitlab -c origin/n8-staging
+  tags:
+    - docker
+  allow_failure: true
 
 test:
   stage: test
