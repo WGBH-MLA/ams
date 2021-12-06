@@ -38,6 +38,27 @@ module Bulkrax
         "PhysicalInstantiation.duration"=>"00:01:45"
       }
     }
+    let(:invalid_raw_metadata) {
+      {
+        "model"=>"Asset",
+        "bad_header"=>"Saturday_Night_Live_Reference",
+        "bad_header_two"=>"Saturday_Night_Live_Reference",
+        "asset_types"=>"Clip",
+      }
+    }
+    let(:valid_raw_metadata) {
+      {
+        "model"=>"Asset",
+        "local_identifier"=>"Saturday_Night_Live_Reference",
+        "asset_types"=>"Clip",
+        "broadcast_date"=>"1990-04-21",
+        "series_title"=>"Saturday Night Live",
+        "episode_title"=>"Saturday Night Live - Bill Moyers Reference",
+        "episode_description"=>"This segment of Saturday Night Live",
+        "genre"=>"Humor",
+        "children"=>["2-PhysicalInstantiation-0-1"]
+      }
+    }
 
     describe 'class methods' do
       describe '#read_data' do
@@ -71,6 +92,7 @@ module Bulkrax
         before do
           allow_any_instance_of(ObjectFactory).to receive(:run!)
           allow(subject).to receive(:record).and_return('source_identifier' => '2', 'title' => 'some title')
+          allow(subject).to receive(:validate_csv_headers)
         end
 
         it 'succeeds' do
@@ -92,6 +114,42 @@ module Bulkrax
           expect(subject.source_identifier).to eq('bulkrax_identifier')
           expect(subject.work_identifier).to eq('bulkrax_identifier')
         end
+      end
+
+      context 'with invalid csv headers' do
+        it 'fails' do
+          subject.raw_metadata = invalid_raw_metadata
+          subject.build
+
+          expect(subject.status).to eq('Failed')
+          expect { subject.validate_csv_headers }.to raise_error(an_instance_of(RuntimeError))
+        end
+      end
+    end
+
+    describe '#validate_csv_headers' do
+      context 'when csv headers are invalid' do
+        it 'raises an error' do
+          subject.raw_metadata = invalid_raw_metadata
+
+          expect { subject.validate_csv_headers }.to raise_error(an_instance_of(RuntimeError))
+        end
+      end
+
+      context 'when csv headers are valid' do
+        it 'does not raise error' do
+          subject.raw_metadata = valid_raw_metadata
+
+          expect { subject.validate_csv_headers }.not_to raise_error
+        end
+      end
+    end
+
+    describe '#valid_header_keys' do
+      it 'returns a list of valid headers' do
+        subject.raw_metadata = valid_raw_metadata
+
+        expect(subject.valid_header_keys.count).to eq(93)
       end
     end
   end
