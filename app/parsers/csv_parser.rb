@@ -49,7 +49,7 @@ class CsvParser < Bulkrax::CsvParser
     pts.blank? ? pts : pts.inject(:merge)
   end
 
-  private 
+  private
 
   def set_objects(full_row, index)
     self.objects = []
@@ -60,11 +60,12 @@ class CsvParser < Bulkrax::CsvParser
     work = Asset.find(asset_id) if asset_id.present?
 
     full_row_to_hash.keys.each do |key|
+      # if the key is a Class, but not a property (e.g. "Asset", not "Asset.id")
       if !key.match(/\./)
         add_object(current_object.symbolize_keys)
         key_count = objects.select { |obj| obj['model'] == key }.size + 1
         admin_data_gid = if key == 'Asset'
-          if work.present? 
+          if work.present?
             work.admin_data_gid
           else
             AdminData.create.gid
@@ -81,24 +82,29 @@ class CsvParser < Bulkrax::CsvParser
 
       klass, value = key.split('.')
       annotation_type_values = AnnotationTypesService.new.select_all_options.to_h.transform_keys(&:downcase).values
+      admin_data = AdminData.find_by_gid(current_object['admin_data_gid'])
       is_annotation = annotation_type_values.include?(value)
 
       if is_annotation
-        admin_data_id = AdminData.find_by_gid(current_object['admin_data_gid'])&.id
-          Annotation.find_or_create_by(annotation_type: value, value: full_row_to_hash[key], admin_data_id: admin_data_id)
+        admin_data_id = admin_data.id
+        Annotation.find_or_create_by(annotation_type: value, value: full_row_to_hash[key], admin_data_id: admin_data_id)
+      elsif value == 'sonyci_id'
+        admin_data.update(sonyci_id: [full_row_to_hash[key]])
       else
-        raise "class key column is missing on row #{index}: #{full_row_to_hash}" unless klass == current_object['model']
+        unless klass == current_object['model']
+          raise "class key column is missing on row #{index}: #{full_row_to_hash}"
+        end
         current_object[value] = full_row_to_hash[key]
       end
     end
-    
+
     add_object(current_object.symbolize_keys)
   end
 
   def create_title(work = nil)
     asset = objects.first
     return unless asset
-   
+
     work.present? ? "#{work.series_title.first}; #{work.episode_title.first}" : "#{asset[:series_title]}; #{asset[:episode_title]}"
   end
 
@@ -111,5 +117,5 @@ class CsvParser < Bulkrax::CsvParser
       record_objects << current_object
       objects << current_object
     end
-  end  
+  end
 end
