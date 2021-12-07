@@ -36,7 +36,11 @@ How did you trigger this bug? Include links to the page where the error occured,
 
 ## Further information
 
-Edit in any later issues or merge requests that are conencted to this issue, for future reference
+Link to tested importer: 
+
+## Sample Files
+
+Attach files that you used to produce this bug.
 
 ### Implementation suggestions
 
