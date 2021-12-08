@@ -201,7 +201,8 @@ module Bulkrax
                 "visibility"=>"open",
                 "rights_statement"=>[nil],
                 "admin_set_id"=>"MyString",
-                "file"=>nil
+                "file"=>nil,
+                "admin_data_gid"=>"gid://ams/admindata/1"
               }
             )
           end
