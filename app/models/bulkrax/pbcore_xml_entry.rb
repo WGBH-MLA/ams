@@ -36,8 +36,9 @@ module Bulkrax
 
     def build_metadata
       raise StandardError, 'Record not found' if record.nil?
-      check_annotations(self.raw_metadata)
+
       self.parsed_metadata = {}
+      self.parsed_metadata['admin_data_gid'] = build_annotations(self.raw_metadata['annotations']) if self.raw_metadata['annotations'].present?
       self.parsed_metadata[work_identifier] = self.raw_metadata[source_identifier]
       self.parsed_metadata['model'] = raw_metadata['model']
       self.parsed_metadata['pbcore_xml'] = self.raw_metadata['pbcore_xml'] if self.raw_metadata['pbcore_xml'].present?
@@ -55,13 +56,30 @@ module Bulkrax
       self.parsed_metadata
     end
 
-    def check_annotations(raw_metadata)
-      annotations = self.raw_metadata['annotations']
-      if annotations.present?
-        annotations.each do |annotation|
-          raise "annotation_type not registered with the AnnotationTypesService: #{annotation['annotation_type']}." if annotation['annotation_type'].nil? 
-        end
+    def build_annotations(annotations)
+      asset_id = self.raw_metadata['Asset.id'].strip if self.raw_metadata.keys.include?('Asset.id')
+      work = Asset.find(asset_id) if asset_id.present?
+      admin_data_gid = if work.present?
+                         work.admin_data_gid
+                       else
+                         AdminData.create.gid
+                       end
+      
+      annotations.each do |annotation|
+        raise "annotation_type not registered with the AnnotationTypesService: #{annotation['annotation_type']}." if annotation['annotation_type'].nil?
+
+        admin_data = AdminData.find_by_gid(admin_data_gid)
+        Annotation.find_or_create_by(
+          annotation_type: annotation['annotation_type'],
+          source: annotation['source'],
+          value: annotation['value'],
+          annotation: annotation['annotation'],
+          version: annotation['version'],
+          admin_data_id: admin_data.id
+        )
       end
+
+      admin_data_gid
     end
   end
 end
