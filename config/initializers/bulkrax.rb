@@ -9,20 +9,89 @@ if ENV['SETTINGS__BULKRAX__ENABLED'] == 'true'
       { name: 'AAPB PBCore XML/Manifest', class_name: 'PbcoreManifestParser', partial: 'pbcore_manifest_xml_fields_override'}
     ]
 
-    config.fill_in_blank_source_identifiers = ->(obj, index) { "#{obj.importerexporter.id}-#{index}"}
-    config.field_mappings['CsvParser'] = {
-      'bulkrax_identifier' => { from: ['bulkrax_identifier'], source_identifier: true },
-      'genre' => { from: ['Asset.genre'], split: true } 
+    def headers(term = nil)
+      cc = [Asset, PhysicalInstantiation, Contribution]
+      properties = []
+
+      cc.each { |model| properties << "#{model}.#{term}" }
+
+      properties
+    end
+
+    # these properties will split on semi-colon (;) or pipe (|)
+    standard_csv_mappings = {
+      'annotation' => { from: headers('annotation'), split: true },
+      'asset_types' => { from: headers('asset_types'), split: true },
+      'audience_level' => { from: headers('audience_level'), split: true },
+      'audience_rating' => { from: headers('audience_rating'), split: true },
+      'based_near' => { from: headers('based_near'), split: true },
+      'bibliographic_citation' => { from: headers('bibliographic_citation'), split: true },
+      'broadcast_date' => { from: headers('broadcast_date'), split: true },
+      'clip_description' => { from: headers('clip_description'), split: true },
+      'clip_title' => { from: headers('clip_title'), split: true },
+      'contributor' => { from: headers('contributor'), split: true },
+      'copyright_date' => { from: headers('copyright_date'), split: true },
+      'created_date' => { from: headers('created_date'), split: true },
+      'creator' => { from: headers('creator'), split: true },
+      'date' => { from: headers('date'), split: true },
+      'date_created' => { from: headers('date_created'), split: true },
+      'description' => { from: headers('description'), split: true },
+      'dimensions' => { from: headers('dimensions'), split: true },
+      'eidr_id' => { from: headers('eidr_id'), split: true },
+      'episode_description' => { from: headers('episode_description'), split: true },
+      'episode_number' => { from: headers('episode_number'), split: true },
+      'episode_title' => { from: headers('episode_title'), split: true },
+      'file' => { from: headers('file'), split: true },
+      'generations' => { from: headers('generations'), split: true },
+      'genre' => { from: headers('genre'), split: true },
+      'identifier' => { from: headers('identifier'), split: true },
+      'keyword' => { from: headers('keyword'), split: true },
+      'language' => { from: headers('language'), split: true },
+      'license' => { from: headers('license'), split: true },
+      'local_identifier' => { from: headers('local_identifier'), split: true },
+      'local_instantiation_identifier' => { from: headers('local_instantiation_identifier'), split: true },
+      'pbs_nola_code' => { from: headers('pbs_nola_code'), split: true },
+      'producing_organization' => { from: headers('producing_organization'), split: true },
+      'program_description' => { from: headers('program_description'), split: true },
+      'program_title' => { from: headers('program_title'), split: true },
+      'promo_description' => { from: headers('promo_description'), split: true },
+      'promo_title' => { from: headers('promo_title'), split: true },
+      'publisher' => { from: headers('publisher'), split: true },
+      'raw_footage_description' => { from: headers('raw_footage_description'), split: true },
+      'raw_footage_title' => { from: headers('raw_footage_title'), split: true },
+      'related_url' => { from: headers('related_url'), split: true },
+      'resource_type' => { from: headers('resource_type'), split: true },
+      'rights_link' => { from: headers('rights_link'), split: true },
+      'rights_statement' => { from: headers('rights_statement'), split: true },
+      'rights_summary' => { from: headers('rights_summary'), split: true },
+      'segment_description' => { from: headers('segment_description'), split: true },
+      'segment_title' => { from: headers('segment_title'), split: true },
+      'series_description' => { from: headers('series_description'), split: true },
+      'series_title' => { from: headers('series_title'), split: true },
+      'source' => { from: headers('source'), split: true },
+      'spatial_coverage' => { from: headers('spatial_coverage'), split: true },
+      'subject' => { from: headers('subject'), split: true },
+      'temporal_coverage' => { from: headers('temporal_coverage'), split: true },
+      'topics' => { from: headers('topics'), split: true },
+      'track_id' => { from: headers('track_id'), split: true }
     }
+
+
+    config.fill_in_blank_source_identifiers = ->(obj, index) { "#{obj.importerexporter.id}-#{index}"}
+    config.field_mappings['CsvParser'] = standard_csv_mappings.merge({
+      'bulkrax_identifier' => { from: ['bulkrax_identifier'], source_identifier: true },
+    })
+
     config.field_mappings['PbcoreXmlParser'] = {
       'bulkrax_identifier' => { from: ['pbcoreIdentifier'], source_identifier: true }
     }
+
     config.field_mappings['PbcoreManifestParser'] = {
       'bulkrax_identifier' => { from: ['instantiationIdentifier'], source_identifier: true },
       'generations' => { from: ["DigitalInstantiation.generations"] },
       'holding_organization' => { from: ["DigitalInstantiation.holding_organization"] }
     }
-  
+
     # WorkType to use as the default if none is specified in the import
     # Default is the first returned by Hyrax.config.curation_concerns
     # config.default_work_type = MyWork
