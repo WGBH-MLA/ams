@@ -25,7 +25,7 @@ Bulkrax::Importer.all.each do |importer|
   report = CSV.read(file, :headers => true) if File.exists?(file)
 
   if ARGV[0] && ARGV[0].include?('--generate')
-    headers = ["Importer ID", "Importer Type", "Total Objects Imported", "Elasped Time in seconds", "Date"]
+    headers = ["Importer ID", "Importer Type", "Total Objects Imported", "Elapsed Time in seconds", "Date"]
 
     CSV.open(file, 'a+') do |row|
       row << headers unless report.present?
