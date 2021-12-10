@@ -12,24 +12,17 @@ File.delete(file) if File.exist?(file)
 
 Bulkrax::Importer.all.each do |importer|
   total_objects_imported = importer.entries.count
-  elapsed_time_in_seconds = 0
-
-  importer.entries.each do |entry|
-    start_time = importer.created_at
-    end_time = entry.updated_at
-
-    duration_in_seconds = ActiveSupport::Duration.build(end_time - start_time).to_i
-    elapsed_time_in_seconds += duration_in_seconds
-  end
+  start_time = importer.created_at
+  end_time = importer.entries.last.updated_at
+  duration_in_seconds = ActiveSupport::Duration.build(end_time - start_time).to_i
 
   report = CSV.read(file, :headers => true) if File.exists?(file)
-
   if ARGV[0] && ARGV[0].include?('--generate')
-    headers = ["Importer ID", "Importer Type", "Total Objects Imported", "Elapsed Time in seconds", "Date"]
+    headers = ["Importer ID", "Importer Type", "Total Objects Imported", "Duration in seconds", "Date"]
 
     CSV.open(file, 'a+') do |row|
       row << headers unless report.present?
-      row << [importer.id, importer.parser_klass, total_objects_imported, elapsed_time_in_seconds, importer.created_at]
+      row << [importer.id, importer.parser_klass, total_objects_imported, duration_in_seconds, importer.created_at]
     end
   end
 
@@ -42,7 +35,7 @@ Bulkrax::Importer.all.each do |importer|
   Start time: #{importer.created_at}
   End time:   #{importer.entries.last&.updated_at}
 
-  Batch duration in seconds: #{elapsed_time_in_seconds.inspect}
+  Batch duration in seconds: #{duration_in_seconds.inspect}
   *****************
   RESULTS
 end
