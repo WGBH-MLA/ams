@@ -28,6 +28,7 @@ class PbcoreManifestParser < Bulkrax::XmlParser
 
   # In either case there may be multiple metadata files returned by metadata_paths
   def records(_opts = {})
+    invalid_files = []
     @records ||=
       if parser_fields['import_type'] == 'multiple'
         r = []
@@ -39,7 +40,7 @@ class PbcoreManifestParser < Bulkrax::XmlParser
         # Flatten because we may have multiple records per array
         r.compact.flatten
       elsif parser_fields['import_type'] == 'single'
-        metadata_paths.map do |md|
+        records = metadata_paths.map do |md|
           if MIME::Types.type_for(md).include?('text/csv')
             csv_data = Bulkrax::CsvEntry.read_data(md)
             @manifest_hash = {}
@@ -48,10 +49,20 @@ class PbcoreManifestParser < Bulkrax::XmlParser
             end
             next
           else
-            data = entry_class.read_data(md).xpath("//#{record_element}").first # Take only the first record
-            entry_class.data_for_entry(data, source_identifier).merge!({filename: File.basename(md)})
+            begin
+              schema = Nokogiri::XML::Schema(File.read(Rails.root.join('spec', 'fixtures', 'pbcore-2.1.xsd')))
+              data = entry_class.read_data(md).xpath("//#{record_element}").first # Take only the first record
+              schema_errors = schema.validate(md)
+              raise Nokogiri::XML::SyntaxError, schema_errors if schema_errors.present?
+
+              entry_class.data_for_entry(data, source_identifier).merge!({filename: File.basename(md)})
+            rescue Nokogiri::XML::SyntaxError => e
+              invalid_files << { message: e, filepath: md }
+            end
           end
         end.compact # No need to flatten because we take only the first record
+        raise_format_errors(invalid_files) if invalid_files.present?
+        records
       end
   end
 

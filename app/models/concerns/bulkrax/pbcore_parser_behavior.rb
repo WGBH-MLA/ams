@@ -98,5 +98,14 @@ module Bulkrax
       end
       record_objects.find { |r| r[work_identifier] == record[work_identifier]}.merge!({ children: [child_identifer] })
     end
+
+    def raise_format_errors(invalid_files)
+      return unless invalid_files.present?
+
+      error_msg = invalid_files.map do |failure|
+        "#{failure[:message]}, in file: #{failure[:filepath]}"
+      end
+      raise "#{ error_msg.count == 1 ? error_msg.first : error_msg.join(" ****** ")}"
+    end
   end
 end

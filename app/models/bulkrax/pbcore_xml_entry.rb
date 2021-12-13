@@ -12,7 +12,7 @@ module Bulkrax
           encoding: 'utf-8')
       else
         # This doesn't cope with BOM sequences:
-        Nokogiri::XML(open(path)).remove_namespaces!
+        Nokogiri::XML(open(path)) { |config| config.strict }.remove_namespaces!
       end
     end
 
