@@ -2,6 +2,38 @@ class PbcoreXmlParser < Bulkrax::XmlParser
   include Bulkrax::PbcoreParserBehavior
   attr_accessor :objects, :record_objects
 
+  # OVERRIDE BULKRAX 1.0.2 to capture format errors
+  # For multiple, we expect to find metadata for multiple works in the given metadata file(s)
+  # For single, we expect to find metadata for a single work in the given metadata file(s)
+  #  if the file contains more than one record, we take only the first
+  # In either case there may be multiple metadata files returned by metadata_paths
+  def records(_opts = {})
+    invalid_files = []
+    @records ||=
+      if parser_fields['import_type'] == 'multiple'
+        r = []
+        metadata_paths.map do |md|
+          # Retrieve all records
+          elements = entry_class.read_data(md).xpath("//#{record_element}")
+          r += elements.map { |el| entry_class.data_for_entry(el, source_identifier) }
+        end
+        # Flatten because we may have multiple records per array
+        r.compact.flatten
+      elsif parser_fields['import_type'] == 'single'
+        records = metadata_paths.map do |md|
+          begin
+            data = entry_class.read_data(md).xpath("//#{record_element}").first # Take only the first record
+            entry_class.data_for_entry(data, source_identifier)
+          rescue Nokogiri::XML::SyntaxError => e
+            invalid_files << { message: e, filepath: md }
+          end
+        end.compact # No need to flatten because we take only the first record
+        # OVERRIDE BULKRAX 1.0.2 to capture format errors
+        raise_format_errors(invalid_files) if invalid_files.present?
+        records
+      end
+  end
+
   def create_works
     self.record_objects = []
     records.each_with_index do |file, index|
@@ -21,6 +53,12 @@ class PbcoreXmlParser < Bulkrax::XmlParser
     importer.record_status
   rescue StandardError => e
     status_info(e)
+  end
+
+  def total
+    records.size
+  rescue RuntimeError => e
+    nil
   end
 
   def setup_parents
