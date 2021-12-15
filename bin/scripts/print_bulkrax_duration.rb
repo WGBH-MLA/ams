@@ -14,6 +14,9 @@ total_objects_in_all_importers = 0
 total_time_for_all_importers = 0
 
 Bulkrax::Importer.all.each do |importer|
+  # skip the messed up importers on staging
+  next if Rails.env == 'production' && importer.id < 23
+
   total_objects_imported = importer.entries.count
   # skip this importer if it failed
   next unless total_objects_imported > 0
@@ -33,7 +36,7 @@ Bulkrax::Importer.all.each do |importer|
 
     CSV.open(file, 'a+') do |row|
       row << headers unless report.present?
-      row << [importer.id, importer.parser_klass, total_objects_imported, duration_in_seconds, "1 object per #{(duration_in_seconds / total_objects_imported).round(2)} seconds", "#{ENV['SIDEKIQ_CONCURRENCY']}", start_time]
+      row << [importer.id, importer.parser_klass, total_objects_imported, duration_in_seconds, "1 object per #{(duration_in_seconds / total_objects_imported).round(2)} seconds", "#{ENV['SIDEKIQ_CONCURRENCY'] || 10}", start_time]
     end
   end
 end
