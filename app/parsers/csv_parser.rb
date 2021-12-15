@@ -81,24 +81,49 @@ class CsvParser < Bulkrax::CsvParser
       end
 
       klass, value = key.split('.')
-      annotation_type_values = AnnotationTypesService.new.select_all_options.to_h.transform_keys(&:downcase).values
       admin_data = AdminData.find_by_gid(current_object['admin_data_gid'])
-      is_annotation = annotation_type_values.include?(value)
+      annotation_type_values = AnnotationTypesService.new.select_all_options.to_h.transform_keys(&:downcase).values
+      is_valid_annotation_type = annotation_type_values.include?(value)
 
-      if is_annotation
-        admin_data_id = admin_data.id
-        Annotation.find_or_create_by(annotation_type: value, value: full_row_to_hash[key], admin_data_id: admin_data_id)
+      if is_valid_annotation_type
+        set_annotations(admin_data, full_row_to_hash, key, value)
       elsif value == 'sonyci_id'
-        admin_data.update(sonyci_id: [full_row_to_hash[key]])
+        set_sonyci_id(admin_data, full_row_to_hash[key])
       else
-        unless klass == current_object['model']
-          raise "class key column is missing on row #{index}: #{full_row_to_hash}"
-        end
+        raise "class key column is missing on row #{index}: #{full_row_to_hash}" unless klass == current_object['model']
         current_object[value] = full_row_to_hash[key]
       end
     end
 
     add_object(current_object.symbolize_keys)
+  end
+
+  def set_annotations(admin_data, full_row_to_hash, key, value)
+    annotation = Annotation.find_by(annotation_type: value, admin_data: admin_data.id)
+
+    if annotation.present?
+      annotation.update(
+        annotation: full_row_to_hash["Asset.annotation"] || nil,
+        ref: full_row_to_hash["Asset.ref"] || nil,
+        source: full_row_to_hash["Asset.source"] || nil,
+        value: full_row_to_hash[key],
+        version: full_row_to_hash["Asset.version"] || nil
+      )
+    else 
+      Annotation.create(
+        admin_data_id: admin_data.id,
+        annotation: full_row_to_hash["Asset.annotation"] || nil,
+        annotation_type: value,
+        ref: full_row_to_hash["Asset.ref"] || nil,
+        source: full_row_to_hash["Asset.source"] || nil,
+        value: full_row_to_hash[key],
+        version: full_row_to_hash["Asset.version"] || nil
+      )
+    end
+  end
+
+  def set_sonyci_id(admin_data, key)
+    admin_data.update(sonyci_id: [key])
   end
 
   def create_title(work = nil)

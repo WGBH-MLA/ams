@@ -42,7 +42,7 @@ Bulkrax::CsvEntry.class_eval do
   end
 
   def validate_csv_headers
-    csv_headers = raw_metadata.keys - ['model', 'children', 'id']
+    csv_headers = raw_metadata.keys - ['annotation', 'children', 'id', 'model', 'ref', 'source', 'version']
     object_class = raw_metadata['model']
     unknown_headers = []
 
