@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20211004170708) do
+ActiveRecord::Schema.define(version: 20211214155507) do
 
   create_table "admin_data", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=latin1" do |t|
     t.text "sonyci_id"
@@ -20,6 +20,8 @@ ActiveRecord::Schema.define(version: 20211004170708) do
     t.integer "last_pushed"
     t.integer "last_updated"
     t.boolean "needs_update"
+    t.bigint "bulkrax_importer_id"
+    t.index ["bulkrax_importer_id"], name: "index_admin_data_on_bulkrax_importer_id"
     t.index ["hyrax_batch_ingest_batch_id"], name: "index_admin_data_on_hyrax_batch_ingest_batch_id"
   end
 
@@ -743,6 +745,7 @@ ActiveRecord::Schema.define(version: 20211004170708) do
     t.index ["work_id"], name: "index_work_view_stats_on_work_id"
   end
 
+  add_foreign_key "admin_data", "bulkrax_importers"
   add_foreign_key "admin_data", "hyrax_batch_ingest_batches"
   add_foreign_key "annotations", "admin_data", column: "admin_data_id"
   add_foreign_key "bulkrax_exporter_runs", "bulkrax_exporters", column: "exporter_id"

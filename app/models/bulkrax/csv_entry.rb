@@ -31,6 +31,7 @@ Bulkrax::CsvEntry.class_eval do
     self.parsed_metadata = {}
     add_identifier
     add_metadata_for_model
+    self.parsed_metadata['bulkrax_importer_id'] = importer.id if self.raw_metadata['model'] == 'Asset'
     add_visibility
     validate_csv_headers
     add_ingested_metadata
