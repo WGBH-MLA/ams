@@ -19,6 +19,7 @@ module Hyrax
         config.add_facet_field IndexesWorkflow.suppressed_field, helper_method: :suppressed_to_status
         config.add_facet_field solr_name("resource_type", :facetable), limit: 5
         config.add_facet_field solr_name("hyrax_batch_ingest_batch_id", :stored_searchable)
+        config.add_facet_field solr_name("bulkrax_importer_id", :stored_searchable)
       end
     end
 

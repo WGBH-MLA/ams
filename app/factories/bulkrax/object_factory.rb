@@ -5,7 +5,7 @@ require_dependency Bulkrax::Engine.root.join('app', 'factories', 'bulkrax', 'obj
 Bulkrax::ObjectFactory.class_eval do     # rubocop:disable Metrics/ParameterLists
     # rubocop:disable Metrics/ParameterLists
     def initialize(attributes:, source_identifier_value:, work_identifier:, collection_field_mapping:, replace_files: false, user: nil, klass: nil, update_files: false)
-      @attributes = ActiveSupport::HashWithIndifferentAccess.new(attributes).symbolize_keys
+      @attributes = ActiveSupport::HashWithIndifferentAccess.new(attributes)
       @replace_files = replace_files
       @update_files = update_files
       @user = user || User.batch_user
@@ -27,6 +27,6 @@ Bulkrax::ObjectFactory.class_eval do     # rubocop:disable Metrics/ParameterList
 
   # Regardless of what the Parser gives us, these are the properties we are prepared to accept.
   def permitted_attributes
-    klass.properties.keys.map(&:to_sym) + %i[id edit_users edit_groups read_groups visibility work_members_attributes admin_set_id member_of_collections_attributes pbcore_xml skip_file_upload_validation]
+    klass.properties.keys.map(&:to_sym) + %i[id edit_users edit_groups read_groups visibility work_members_attributes admin_set_id member_of_collections_attributes pbcore_xml skip_file_upload_validation bulkrax_importer_id]
   end
 end
