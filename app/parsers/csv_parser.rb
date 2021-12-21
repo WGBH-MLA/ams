@@ -64,16 +64,22 @@ class CsvParser < Bulkrax::CsvParser
       if !key.match(/\./)
         add_object(current_object.symbolize_keys)
         key_count = objects.select { |obj| obj['model'] == key }.size + 1
+        bulkrax_identifier = Bulkrax.fill_in_blank_source_identifiers.call(self, "#{key}-#{index}-#{key_count}")
+        work = Asset.where(bulkrax_identifier: [bulkrax_identifier]).first if work.nil?
         admin_data_gid = if key == 'Asset'
           if work.present?
+            work.admin_data.update!(bulkrax_importer_id: importer.id) if work.admin_data.bulkrax_importer_id.nil?
             work.admin_data_gid
           else
-            AdminData.create.gid
+            AdminData.create(
+              bulkrax_importer_id: importer.id
+            ).gid
           end
         end
+        
         current_object = {
           'model' => key,
-          work_identifier.to_s => Bulkrax.fill_in_blank_source_identifiers.call(self, "#{key}-#{index}-#{key_count}"),
+          work_identifier.to_s => bulkrax_identifier,
           'title' => create_title(work)
         }
         current_object.merge!({'admin_data_gid' => admin_data_gid}) if admin_data_gid
@@ -81,7 +87,7 @@ class CsvParser < Bulkrax::CsvParser
       end
 
       klass, value = key.split('.')
-      admin_data = AdminData.find_by_gid(current_object['admin_data_gid'])
+      admin_data = AdminData.find_by_gid!(current_object['admin_data_gid']) if current_object['admin_data_gid'].present?
       annotation_type_values = AnnotationTypesService.new.select_all_options.to_h.transform_keys(&:downcase).values
       is_valid_annotation_type = annotation_type_values.include?(value)
 
@@ -96,6 +102,12 @@ class CsvParser < Bulkrax::CsvParser
     end
 
     add_object(current_object.symbolize_keys)
+  end
+  
+  def set_admin_data_bulkrax_importer_id(admin_data)
+    return unless admin_data.present?
+
+    admin_data.update(bulkrax_importer_id: importer.id)
   end
 
   def set_annotations(admin_data, full_row_to_hash, key, value)
