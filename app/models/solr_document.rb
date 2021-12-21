@@ -451,6 +451,10 @@ class SolrDocument
     self[Solrizer.solr_name('aapb_preservation_disk')]
   end
 
+  def bulkrax_importer_id 
+    self[Solrizer.solr_name('bulkrax_importer_id')]
+  end
+
   def hyrax_batch_ingest_batch_id
     self[Solrizer.solr_name('hyrax_batch_ingest_batch_id')]
   end

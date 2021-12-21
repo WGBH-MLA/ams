@@ -91,7 +91,7 @@ module Bulkrax
       context 'with required metadata' do
         before do
           allow_any_instance_of(ObjectFactory).to receive(:run!)
-          allow(subject).to receive(:record).and_return('source_identifier' => '2', 'title' => 'some title')
+          allow(subject).to receive(:raw_metadata).and_return(valid_raw_metadata)
           allow(subject).to receive(:validate_csv_headers)
         end
 
@@ -146,10 +146,11 @@ module Bulkrax
     end
 
     describe '#valid_header_keys' do
+      #todo - think of a better way to test this
       it 'returns a list of valid headers' do
         subject.raw_metadata = valid_raw_metadata
 
-        expect(subject.valid_header_keys.count).to eq(93)
+        expect(subject.valid_header_keys.count).to eq(94)
       end
     end
   end
