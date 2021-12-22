@@ -33,38 +33,11 @@ Bulkrax::CsvEntry.class_eval do
     add_metadata_for_model
     self.parsed_metadata['bulkrax_importer_id'] = importer.id if self.raw_metadata['model'] == 'Asset'
     add_visibility
-    validate_csv_headers
     add_ingested_metadata
     add_rights_statement
     add_collections
     add_local
 
     self.parsed_metadata
-  end
-
-  def validate_csv_headers
-    csv_headers = raw_metadata.keys - ['annotation', 'children', 'id', 'model', 'ref', 'source', 'version']
-    object_class = raw_metadata['model']
-    unknown_headers = []
-
-    csv_headers.sort.each do |key|
-      unknown_headers << key.dup.prepend(object_class + '.') if valid_header_keys.exclude?(key)
-    end
-
-    raise("Unknown column(s) `#{unknown_headers.join(', ')}`. Unable to parse CSV.") if unknown_headers.present?
-  end
-
-  def valid_header_keys
-    object_class = raw_metadata['model']
-    extra_attr = if object_class == "Asset"
-                   (AdminData.attribute_names.dup - ['id', 'created_at', 'updated_at'] +
-                    Annotation.ingestable_attributes).uniq
-                 elsif object_class.include?("Instantiation")
-                   (InstantiationAdminData.attribute_names.dup - ['id', 'created_at', 'updated_at'])
-                 end
-    fedora_attr = object_class.constantize.properties.collect { |p| p.first.dup }
-    attr = extra_attr.nil? ? fedora_attr : fedora_attr.concat(extra_attr.deep_dup)
-
-    [[object_class] + attr].flatten
   end
 end
