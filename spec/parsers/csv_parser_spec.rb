@@ -14,6 +14,19 @@ RSpec.describe CsvParser do
       allow(Bulkrax::ImportWorkJob).to receive(:perform_later)
     end
 
+    context 'with invalid csv headers' do
+      before do
+        importer.parser_fields = { import_file_path: './spec/fixtures/bulkrax/csv/invalid-headers.csv' }
+      end
+
+      it 'it creates an identifier and creates the work' do
+        subject.create_works
+        expect(importer.last_error['error_class']).to eq('RuntimeError')
+        expect(importer.last_error['error_message']).to include('Unknown header: Asset.bad_header')
+        expect(importer.last_error['error_message']).to include('Unknown header: Asset.local_identifier2021')
+      end
+    end
+
     context 'with malformed CSV' do
       before do
         importer.parser_fields = { import_file_path: './spec/fixtures/bulkrax/csv/malformed.csv' }
@@ -28,6 +41,7 @@ RSpec.describe CsvParser do
     context 'without an identifier column' do
       before do
         importer.parser_fields = { import_file_path: './spec/fixtures/bulkrax/csv/bad.csv' }
+        allow(subject).to receive(:validate_csv_headers).and_return([])
       end
 
       it 'it creates an identifier and creates the work' do
@@ -36,9 +50,9 @@ RSpec.describe CsvParser do
       end
     end
 
-    context 'with a nil value in the identifier column' do
+    context 'with no identifier column' do
       before do
-        importer.parser_fields = { import_file_path: './spec/fixtures/bulkrax/csv/ok.csv' }
+        importer.parser_fields = { import_file_path: './spec/fixtures/bulkrax/csv/good.csv' }
       end
 
       it 'skips the bad line' do
@@ -49,7 +63,7 @@ RSpec.describe CsvParser do
       context 'with fill_in_blank_source_identifiers set' do
         it 'fills in the source_identifier if fill_in_blank_source_identifiers is set' do
           expect(subject).to receive(:increment_counters).twice
-          expect(Bulkrax).to receive(:fill_in_blank_source_identifiers).exactly(4).times.and_return(->(_obj, _index) { "4649ee79-7d7a-4df0-86d6-d6865e2925ca"} )
+          expect(Bulkrax).to receive(:fill_in_blank_source_identifiers).exactly(6).times.and_return(->(_obj, _index) { "4649ee79-7d7a-4df0-86d6-d6865e2925ca"} )
           subject.create_works
           expect(subject.seen).to include("4649ee79-7d7a-4df0-86d6-d6865e2925ca")
         end
@@ -96,6 +110,10 @@ RSpec.describe CsvParser do
         end
 
         context 'when importing assets without annotations' do
+          before do 
+            allow(subject).to receive(:validate_csv_headers).and_return([])
+          end
+
           it 'does not create annotations' do
             importer.parser_fields = { import_file_path: './spec/fixtures/bulkrax/csv/ok.csv' }
             

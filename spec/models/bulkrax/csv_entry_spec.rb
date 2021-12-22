@@ -92,7 +92,6 @@ module Bulkrax
         before do
           allow_any_instance_of(ObjectFactory).to receive(:run!)
           allow(subject).to receive(:raw_metadata).and_return(valid_raw_metadata)
-          allow(subject).to receive(:validate_csv_headers)
         end
 
         it 'succeeds' do
@@ -114,43 +113,6 @@ module Bulkrax
           expect(subject.source_identifier).to eq('bulkrax_identifier')
           expect(subject.work_identifier).to eq('bulkrax_identifier')
         end
-      end
-
-      context 'with invalid csv headers' do
-        it 'fails' do
-          subject.raw_metadata = invalid_raw_metadata
-          subject.build
-
-          expect(subject.status).to eq('Failed')
-          expect { subject.validate_csv_headers }.to raise_error(an_instance_of(RuntimeError))
-        end
-      end
-    end
-
-    describe '#validate_csv_headers' do
-      context 'when csv headers are invalid' do
-        it 'raises an error' do
-          subject.raw_metadata = invalid_raw_metadata
-
-          expect { subject.validate_csv_headers }.to raise_error(an_instance_of(RuntimeError))
-        end
-      end
-
-      context 'when csv headers are valid' do
-        it 'does not raise error' do
-          subject.raw_metadata = valid_raw_metadata
-
-          expect { subject.validate_csv_headers }.not_to raise_error
-        end
-      end
-    end
-
-    describe '#valid_header_keys' do
-      #todo - think of a better way to test this
-      it 'returns a list of valid headers' do
-        subject.raw_metadata = valid_raw_metadata
-
-        expect(subject.valid_header_keys.count).to eq(94)
       end
     end
   end
