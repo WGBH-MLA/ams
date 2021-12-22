@@ -1,8 +1,23 @@
 # frozen_string_literal: true
+# OVERRIDE Bulkrax 1.0.2
 
 class CsvParser < Bulkrax::CsvParser
   attr_accessor :objects, :record_objects
+  def records(_opts = {})
+    # OVERRIDE Bulkrax 1.0.2
+    file_for_import = only_updates ? parser_fields['partial_import_file_path'] : import_file_path
+    # data for entry does not need source_identifier for csv, because csvs are read sequentially and mapped after raw data is read.
+    csv_data = entry_class.read_data(file_for_import)
+    csv_headers = csv_data.headers
+    invalid_headers = validate_csv_headers(csv_headers, file_for_import)
+    raise_format_errors(invalid_headers) if invalid_headers.present?
+    importer.parser_fields['total'] = csv_data.count
+    importer.save
+    @records ||= csv_data.map { |record_data| entry_class.data_for_entry(record_data, nil) }
+  end
+ 
   def create_works
+    # OVERRIDE Bulkrax 1.0.2
     self.record_objects = []
     records.each_with_index do |full_row, index|
       set_objects(full_row, index).each do |record|
@@ -24,10 +39,12 @@ class CsvParser < Bulkrax::CsvParser
   end
 
   def missing_elements(keys)
+    # OVERRIDE Bulkrax 1.0.2
     required_elements.map(&:to_s) - keys.map(&:to_s) - ['title']
   end
 
   def setup_parents
+    # OVERRIDE Bulkrax 1.0.2
     pts = []
     record_objects.each do |record|
       r = if record.respond_to?(:to_h)
@@ -49,7 +66,73 @@ class CsvParser < Bulkrax::CsvParser
     pts.blank? ? pts : pts.inject(:merge)
   end
 
-  private
+  def collections
+    # retrieve a list of unique collections
+    records.map do |r|
+      collections = []
+      r[collection_field_mapping].split(/\s*[;|]\s*/).each { |title| collections << { title: title } } if r[collection_field_mapping].present?
+      model_field_mappings.each do |model_mapping|
+        collections << r if r[model_mapping.to_sym]&.downcase == 'collection'
+      end
+      collections
+    end.flatten.compact.uniq
+  rescue RuntimeError => e
+    nil
+  end
+
+  def collections_total
+    collections.present? ? collections.size : 0
+  rescue RuntimeError => e
+    nil
+  end
+
+  def works_total
+    works.present? ? works.size : 0
+  rescue RuntimeError => e
+    nil
+  end
+
+  def works
+    records - collections
+  rescue RuntimeError => e
+    nil
+  end
+
+  private 
+  
+  def validate_csv_headers(headers, file_for_import)
+    csv_headers = headers - ['annotation', 'children', 'id', 'model', 'ref', 'source', 'version']
+    unknown_headers = []
+
+    csv_headers.sort.each do |key|
+      unknown_headers << { message: "Unknown header: #{key}", filepath: "#{file_for_import}" } if valid_header_key?(key.strip) == false
+    end
+    unknown_headers
+  end
+
+  def valid_header_key?(key)
+    klass, value = key.split('.')
+    object_class = klass if Hyrax.config.curation_concerns.include?(klass.constantize)
+    extra_attr = if object_class == "Asset"
+                  (AdminData.attribute_names.dup - ['id', 'created_at', 'updated_at'] +
+                    Annotation.ingestable_attributes).uniq
+                elsif object_class.include?("Instantiation")
+                  (InstantiationAdminData.attribute_names.dup - ['id', 'created_at', 'updated_at'])
+                end
+    fedora_attr = object_class.constantize.properties.collect { |p| p.first.dup }
+    attr = extra_attr.nil? ? fedora_attr : fedora_attr.concat(extra_attr.deep_dup)
+    attr.collect { |a| a.prepend(object_class + ".") }
+    [[object_class] + attr].flatten.include?(key)
+  end
+
+  def raise_format_errors(invalid_headers)
+    return unless invalid_headers.present?
+
+    error_msg = invalid_headers.map do |failure|
+      "#{failure[:message]}, in file: #{failure[:filepath]}"
+    end
+    raise "#{ error_msg.count == 1 ? error_msg.first : error_msg.join(" ****** ")}"
+  end
 
   def set_objects(full_row, index)
     self.objects = []
