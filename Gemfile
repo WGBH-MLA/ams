@@ -7,7 +7,8 @@ end
 
 # Bulkrax
 group :bulkrax do
-  gem 'bulkrax', git: 'https://github.com/samvera-labs/bulkrax.git', branch: :main
+  # our custom changes require us to lock in the version of bulkrax
+  gem 'bulkrax', git: 'https://github.com/samvera-labs/bulkrax.git', ref: '23efea3fd9d8d98746b73e570e0dc214ff764271'
   gem 'willow_sword', git: 'https://github.com/notch8/willow_sword.git'
 end
 
