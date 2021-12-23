@@ -5,6 +5,7 @@ zh:
       fields:
         facet:
           based_near_label_sim: 位置
+          bulkrax_importer_id_tesim: Bulkrax 进口商 ID
           creator_sim: 创造者
           file_format_sim: 文件格式
           generic_type_sim: 类型
