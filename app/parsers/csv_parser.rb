@@ -151,7 +151,7 @@ class CsvParser < Bulkrax::CsvParser
         work = Asset.where(bulkrax_identifier: [bulkrax_identifier]).first if work.nil?
         admin_data_gid = if key == 'Asset'
           if work.present?
-            work.admin_data.update!(bulkrax_importer_id: importer.id) if work.admin_data.bulkrax_importer_id.nil?
+            work.admin_data.update!(bulkrax_importer_id: importer.id)
             work.admin_data_gid
           else
             AdminData.create(
@@ -159,7 +159,7 @@ class CsvParser < Bulkrax::CsvParser
             ).gid
           end
         end
-        
+
         current_object = {
           'model' => key,
           work_identifier.to_s => bulkrax_identifier,
@@ -186,7 +186,7 @@ class CsvParser < Bulkrax::CsvParser
 
     add_object(current_object.symbolize_keys)
   end
-  
+
   def set_admin_data_bulkrax_importer_id(admin_data)
     return unless admin_data.present?
 
@@ -204,7 +204,7 @@ class CsvParser < Bulkrax::CsvParser
         value: full_row_to_hash[key],
         version: full_row_to_hash["Asset.version"] || nil
       )
-    else 
+    else
       Annotation.create(
         admin_data_id: admin_data.id,
         annotation: full_row_to_hash["Asset.annotation"] || nil,

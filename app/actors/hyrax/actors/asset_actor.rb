@@ -54,7 +54,9 @@ module Hyrax
         end
 
         def should_empty_admin_data_value?(key, admin_data, env)
-          admin_data.send(key).present? && !env.attributes[key].present?
+          key != :bulkrax_importer_id &&
+          admin_data.send(key).present? &&
+          !env.attributes[key].present?
         end
 
         def delete_removed_annotations(admin_data, env)

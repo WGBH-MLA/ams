@@ -171,6 +171,7 @@ module Bulkrax
             expect(xml_entry.parsed_metadata).to eq(
               {
                 "bulkrax_identifier"=>"1-Asset-0-1",
+                "bulkrax_importer_id"=>1,
                 "model"=>"Asset",
                 "id"=>"cpb-aacip-20-000000hr",
                 "series_title"=>["Houston Symphony"],
