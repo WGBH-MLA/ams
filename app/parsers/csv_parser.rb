@@ -8,18 +8,19 @@ class CsvParser < Bulkrax::CsvParser
     file_for_import = only_updates ? parser_fields['partial_import_file_path'] : import_file_path
     # data for entry does not need source_identifier for csv, because csvs are read sequentially and mapped after raw data is read.
     csv_data = entry_class.read_data(file_for_import)
-    csv_headers = csv_data.headers
+    csv_headers = csv_data.headers.map { |header| key_without_numbers(header) }
     invalid_headers = validate_csv_headers(csv_headers, file_for_import)
     raise_format_errors(invalid_headers) if invalid_headers.present?
     importer.parser_fields['total'] = csv_data.count
     importer.save
     @records ||= csv_data.map { |record_data| entry_class.data_for_entry(record_data, nil) }
   end
- 
+
   def create_works
     # OVERRIDE Bulkrax 1.0.2
     self.record_objects = []
     records.each_with_index do |full_row, index|
+
       set_objects(full_row, index).each do |record|
         break if limit_reached?(limit, index)
 
@@ -98,14 +99,64 @@ class CsvParser < Bulkrax::CsvParser
     nil
   end
 
-  private 
-  
+  def create_new_entries
+    current_work_ids.each_with_index do |wid, index|
+      break if limit_reached?(limit, index)
+      new_entry = find_or_create_entry(entry_class, wid, 'Bulkrax::Exporter')
+      entry = Bulkrax::ExportWorkJob.perform_now(new_entry.id, current_run.id)
+
+      self.headers |= entry.parsed_metadata.keys if entry
+    end
+  end
+
+  # All possible column names
+  def export_headers
+    # OVERRIDE Bulkrax 1.0.2
+    headers = sort_headers(self.headers)
+    headers.delete('file') if headers.include?('file')
+
+    headers.uniq
+  end
+
+  def sort_headers(headers)
+    headers.sort_by! do |item|
+      klass = ''
+      attribute = ''
+      index = ''
+
+      if item.include? '.'
+        klass, remainder = item.split('.')
+        parts = remainder.split('_')
+        index = parts.pop
+        attribute = parts.join('_')
+      elsif item.include? '_'
+        klass, index = item.split('_')
+      end
+
+      order = if klass == 'Asset'
+                1
+              elsif klass == 'PhysicalInstantiation'
+                2
+              elsif klass == 'Contribution'
+                3
+              elsif klass == 'DigitalInstantiation'
+                4
+              elsif klass == 'EssenceTrack'
+                5
+      end
+
+      "#{order}_#{index}_#{attribute}"
+    end
+  end
+
+  private
+
   def validate_csv_headers(headers, file_for_import)
     csv_headers = headers - ['annotation', 'children', 'id', 'model', 'ref', 'source', 'version']
     unknown_headers = []
 
     csv_headers.sort.each do |key|
-      unknown_headers << { message: "Unknown header: #{key}", filepath: "#{file_for_import}" } if valid_header_key?(key.strip) == false
+      unknown_headers << { message: "Unknown header: #{key}", filepath: "#{file_for_import}" } unless valid_header_key?(key.strip)
     end
     unknown_headers
   end
@@ -117,9 +168,9 @@ class CsvParser < Bulkrax::CsvParser
                   (AdminData.attribute_names.dup - ['created_at', 'updated_at'] +
                     Annotation.ingestable_attributes).uniq
                 elsif object_class.include?("Instantiation")
-                  (InstantiationAdminData.attribute_names.dup - ['id', 'created_at', 'updated_at'])
+                  (InstantiationAdminData.attribute_names.dup - ['created_at', 'updated_at'])
                 end
-    fedora_attr = object_class.constantize.properties.collect { |p| p.first.dup }
+    fedora_attr = object_class.constantize.properties.collect { |p| p.first.dup }.push('id'.dup)
     attr = extra_attr.nil? ? fedora_attr : fedora_attr.concat(extra_attr.deep_dup)
     attr.collect { |a| a.prepend(object_class + ".") }
     [[object_class] + attr].flatten.include?(key)
@@ -137,22 +188,23 @@ class CsvParser < Bulkrax::CsvParser
   def set_objects(full_row, index)
     self.objects = []
     current_object = {}
-    full_row = full_row.select {|k, v| !k.nil? }
+    full_row = full_row.select { |k, v| !k.nil? }
     full_row_to_hash = full_row.to_hash
     asset_id = full_row_to_hash['Asset.id'].strip if full_row_to_hash.keys.include?('Asset.id')
-    work = Asset.find(asset_id) if asset_id.present?
+    asset = Asset.find(asset_id) if asset_id.present?
 
     full_row_to_hash.keys.each do |key|
+      standarized_key = key_without_numbers(key)
       # if the key is a Class, but not a property (e.g. "Asset", not "Asset.id")
-      if !key.match(/\./)
+      unless key.match(/\./)
         add_object(current_object.symbolize_keys)
-        key_count = objects.select { |obj| obj['model'] == key }.size + 1
-        bulkrax_identifier = Bulkrax.fill_in_blank_source_identifiers.call(self, "#{key}-#{index}-#{key_count}")
-        work = Asset.where(bulkrax_identifier: [bulkrax_identifier]).first if work.nil?
-        admin_data_gid = if key == 'Asset'
-          if work.present?
-            work.admin_data.update!(bulkrax_importer_id: importer.id)
-            work.admin_data_gid
+        key_count = objects.select { |obj| obj['model'] == standarized_key }.size + 1
+        bulkrax_identifier = full_row_to_hash["#{standarized_key}.bulkrax_identifier_#{key_count}"] || Bulkrax.fill_in_blank_source_identifiers.call(self, "#{standarized_key}-#{index}-#{key_count}")
+        asset = Asset.where(bulkrax_identifier: [bulkrax_identifier]).first if asset.nil?
+        admin_data_gid = if standarized_key == 'Asset'
+          if asset.present?
+            asset.admin_data.update!(bulkrax_importer_id: importer.id)
+            asset.admin_data_gid
           else
             AdminData.create(
               bulkrax_importer_id: importer.id
@@ -161,26 +213,26 @@ class CsvParser < Bulkrax::CsvParser
         end
 
         current_object = {
-          'model' => key,
+          'model' => standarized_key,
           work_identifier.to_s => bulkrax_identifier,
-          'title' => create_title(work)
+          'title' => create_title(asset)
         }
         current_object.merge!({'admin_data_gid' => admin_data_gid}) if admin_data_gid
         next
       end
 
-      klass, value = key.split('.')
+      klass, value = standarized_key.split('.')
       admin_data = AdminData.find_by_gid!(current_object['admin_data_gid']) if current_object['admin_data_gid'].present?
       annotation_type_values = AnnotationTypesService.new.select_all_options.to_h.transform_keys(&:downcase).values
       is_valid_annotation_type = annotation_type_values.include?(value)
 
       if is_valid_annotation_type
-        set_annotations(admin_data, full_row_to_hash, key, value)
+        set_annotations(admin_data, full_row_to_hash, standarized_key, value)
       elsif value == 'sonyci_id'
         set_sonyci_id(admin_data, full_row_to_hash[key])
       else
         raise "class key column is missing on row #{index}: #{full_row_to_hash}" unless klass == current_object['model']
-        current_object[value] = full_row_to_hash[key]
+        current_object[value] ||= full_row_to_hash[key]
       end
     end
 
