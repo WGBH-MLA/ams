@@ -115,6 +115,85 @@ module Bulkrax
         end
       end
     end
+
+    describe 'exporting by Asset worktype' do
+      subject { described_class.new(importerexporter: exporter, identifier: asset.id, parsed_metadata: {}) }
+      let(:exporter) { FactoryBot.create(:bulkrax_exporter_worktype, parser_klass: 'CsvParser', export_source: 'Asset') }
+      let(:asset) { FactoryBot.create(:asset, :with_two_physical_instantiations) }
+      let(:headers) { exporter.parser.export_headers }
+
+      before do
+        subject.build_export_metadata
+      end
+
+      describe 'with class method' do
+        context '#build_export_metadata' do
+          it 'returns parent and children data as a single hash' do
+            expect(subject.parsed_metadata['Asset_1']).to eq('')
+            expect(subject.parsed_metadata['Asset.spatial_coverage_1']).to eq('TEST spatial_coverage')
+            expect(subject.parsed_metadata['PhysicalInstantiation_1']).to eq('')
+            expect(subject.parsed_metadata['PhysicalInstantiation.holding_organization_1']).to eq('American Archive of Public Broadcasting')
+            expect(subject.parsed_metadata['PhysicalInstantiation_2']).to eq('')
+            expect(subject.parsed_metadata['PhysicalInstantiation.annotation_2']).to eq('Minimal annotation')
+          end
+        end
+      end
+
+      describe 'creates the correct headers' do
+        before do
+          exporter.export
+        end
+
+        context 'including' do
+          it 'valid Asset headers' do
+            expect(headers).to include('Asset_1')
+            expect(headers).to include('Asset.annotation_1')
+            expect(headers).to include('Asset.audience_level_1')
+            expect(headers).to include('Asset.broadcast_date_1')
+            expect(headers).to include('Asset.clip_description_1')
+            expect(headers).to include('Asset.date_1')
+            expect(headers).to include('Asset.episode_description_1')
+            expect(headers).to include('Asset.genre_1')
+            expect(headers).to include('Asset.local_identifier_1')
+            expect(headers).to include('Asset.pbs_nola_code_1')
+            expect(headers).to include('Asset.rights_summary_1')
+            expect(headers).to include('Asset.subject_1')
+            expect(headers).to include('Asset.topics_1')
+          end
+
+          it 'valid PhysicalInstantation headers' do
+            expect(headers).to include('PhysicalInstantiation_1')
+            expect(headers).to include('PhysicalInstantiation.annotation_1')
+            expect(headers).to include('PhysicalInstantiation.date_1')
+            expect(headers).to include('PhysicalInstantiation.holding_organization_1')
+            expect(headers).to include('PhysicalInstantiation.local_instantiation_identifier_1')
+            expect(headers).to include('PhysicalInstantiation.location_1')
+            expect(headers).to include('PhysicalInstantiation.media_type_1')
+            expect(headers).to include('PhysicalInstantiation_2')
+            expect(headers).to include('PhysicalInstantiation.annotation_2')
+            expect(headers).to include('PhysicalInstantiation.location_2')
+            expect(headers).to include('PhysicalInstantiation.media_type_2')
+          end
+        end
+
+        context 'not including' do
+          it 'invalid model headers' do
+            expect(headers).not_to include('Asset.holding_organization_1')
+            expect(headers).not_to include('PhysicalInstantiation.admin_data_gid_1')
+          end
+        end
+      end
+
+      describe 'writes the csv file' do
+        before do
+          exporter.write
+        end
+
+        xit 'with the asset and its children in a single row' do
+          # TODO(alishaevn): write this spec
+        end
+      end
+    end
   end
 end
 # rubocop: enable Metrics/BlockLength

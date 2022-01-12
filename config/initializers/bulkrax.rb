@@ -24,7 +24,7 @@ if ENV['SETTINGS__BULKRAX__ENABLED'] == 'true'
     ]
 
     def headers(term = nil)
-      cc = [Asset, PhysicalInstantiation, Contribution]
+      cc = [Asset, Contribution, DigitalInstantiation, EssenceTrack, PhysicalInstantiation]
       properties = []
 
       cc.each { |model| properties << "#{model}.#{term}" }
@@ -32,72 +32,114 @@ if ENV['SETTINGS__BULKRAX__ENABLED'] == 'true'
       properties
     end
 
-    # these properties will split on semi-colon (;) or pipe (|)
-    standard_csv_mappings = {
-      'annotation' => { from: headers('annotation'), split: true },
-      'asset_types' => { from: headers('asset_types'), split: true },
-      'audience_level' => { from: headers('audience_level'), split: true },
-      'audience_rating' => { from: headers('audience_rating'), split: true },
-      'based_near' => { from: headers('based_near'), split: true },
-      'bibliographic_citation' => { from: headers('bibliographic_citation'), split: true },
-      'broadcast_date' => { from: headers('broadcast_date'), split: true },
-      'clip_description' => { from: headers('clip_description'), split: true },
-      'contributor' => { from: headers('contributor'), split: true },
-      'copyright_date' => { from: headers('copyright_date'), split: true },
-      'created_date' => { from: headers('created_date'), split: true },
-      'creator' => { from: headers('creator'), split: true },
-      'date' => { from: headers('date'), split: true },
-      'date_created' => { from: headers('date_created'), split: true },
-      'description' => { from: headers('description'), split: true },
-      'dimensions' => { from: headers('dimensions'), split: true },
-      'eidr_id' => { from: headers('eidr_id'), split: true },
-      'episode_description' => { from: headers('episode_description'), split: true },
-      'episode_number' => { from: headers('episode_number'), split: true },
-      'file' => { from: headers('file'), split: true },
-      'generations' => { from: headers('generations'), split: true },
-      'genre' => { from: headers('genre'), split: true },
-      'identifier' => { from: headers('identifier'), split: true },
-      'keyword' => { from: headers('keyword'), split: true },
-      'language' => { from: headers('language'), split: true },
-      'license' => { from: headers('license'), split: true },
-      'local_identifier' => { from: headers('local_identifier'), split: true },
-      'local_instantiation_identifier' => { from: headers('local_instantiation_identifier'), split: true },
-      'pbs_nola_code' => { from: headers('pbs_nola_code'), split: true },
-      'producing_organization' => { from: headers('producing_organization'), split: true },
-      'program_description' => { from: headers('program_description'), split: true },
-      'promo_description' => { from: headers('promo_description'), split: true },
-      'publisher' => { from: headers('publisher'), split: true },
-      'raw_footage_description' => { from: headers('raw_footage_description'), split: true },
-      'related_url' => { from: headers('related_url'), split: true },
-      'resource_type' => { from: headers('resource_type'), split: true },
-      'rights_link' => { from: headers('rights_link'), split: true },
-      'rights_statement' => { from: headers('rights_statement'), split: true },
-      'rights_summary' => { from: headers('rights_summary'), split: true },
-      'segment_description' => { from: headers('segment_description'), split: true },
-      'series_description' => { from: headers('series_description'), split: true },
-      'source' => { from: headers('source'), split: true },
-      'spatial_coverage' => { from: headers('spatial_coverage'), split: true },
-      'subject' => { from: headers('subject'), split: true },
-      'temporal_coverage' => { from: headers('temporal_coverage'), split: true },
-      'topics' => { from: headers('topics'), split: true },
-      'track_id' => { from: headers('track_id'), split: true }
+    config.fill_in_blank_source_identifiers = ->(obj, index) { "#{obj.importerexporter.id}-#{index}" }
+
+    config.field_mappings['CsvParser'] = {
+      'admin_data_gid' => { from: headers('admin_data_gid') },
+      'affiliation' => { from: 'Contributor.affiliation' },
+      'alternative_modes' => { from: headers('alternative_modes'), split: true, join: true },
+      'annotation' => { from: headers('annotation'), split: true, join: true },
+      'aspect_ratio' => { from: ["EssenceTrack.aspect_ratio"] },
+      'asset_types' => { from: headers('asset_types'), split: true, join: true },
+      'audience_level' => { from: headers('audience_level'), split: true, join: true },
+      'audience_rating' => { from: headers('audience_rating'), split: true, join: true },
+      'based_near' => { from: headers('based_near'), split: true, join: true },
+      'bibliographic_citation' => { from: headers('bibliographic_citation'), split: true, join: true },
+      'bit_depth' => { from: ["EssenceTrack.bit_depth"] },
+      'broadcast_date' => { from: headers('broadcast_date'), split: true, join: true },
+      'bulkrax_identifier' => { from: ['bulkrax_identifier'], source_identifier: true },
+      'channel_configuration' => { from: headers('channel_configuration') },
+      'clip_description' => { from: headers('clip_description'), split: true, join: true },
+      'clip_title' => { from: headers('clip_title') },
+      'colors' => { from: headers('colors') },
+      'contributor' => { from: headers('contributor'), split: true, join: true },
+      'contributor_role' => { from: 'Contributor.contributor_role' },
+      'copyright_date' => { from: headers('copyright_date'), split: true, join: true },
+      'creator' => { from: headers('creator'), split: true, join: true },
+      'data_rate' => { from: headers('data_rate') },
+      'date' => { from: headers('date'), split: true, join: true },
+      'date_created' => { from: headers('date_created'), split: true, join: true },
+      'description' => { from: headers('description'), split: true, join: true },
+      'digital_format' => { from: ["DigitalInstantiation.digital_format"] },
+      'digitization_date' => { from: 'PhysicalInstantiation.digitization_date' },
+      'dimensions' => { from: headers('dimensions'), split: true, join: true },
+      'duration' => { from: headers('duration') },
+      'eidr_id' => { from: headers('eidr_id'), split: true, join: true },
+      'embargo_id' => { from: headers('embargo_id') },
+      'encoding' => { from: ["EssenceTrack.encoding"] },
+      'episode_description' => { from: headers('episode_description'), split: true, join: true },
+      'episode_number' => { from: headers('episode_number'), split: true, join: true },
+      'episode_title' => { from: headers('episode_title') },
+      'file' => { from: headers('file'), split: true, join: true },
+      'file_size' => { from: ["DigitalInstantiation.file_size"] },
+      'format' => { from: 'PhysicalInstantiation.format' },
+      'frame_height' => { from: ["EssenceTrack.frame_height"] },
+      'frame_rate' => { from: ["EssenceTrack.frame_rate"] },
+      'frame_width' => { from: ["EssenceTrack.frame_width"] },
+      'generations' => { from: headers('generations'), split: true, join: true },
+      'genre' => { from: headers('genre'), split: true, join: true },
+      'holding_organization' => { from: headers('holding_organization'), split: true, join: true },
+      'id' => { from: headers('id') },
+      'identifier' => { from: headers('identifier'), split: true, join: true },
+      'instantiation_admin_data_gid' => { from: headers('instantiation_admin_data_gid') },
+      'keyword' => { from: headers('keyword'), split: true, join: true },
+      'language' => { from: headers('language'), split: true, join: true },
+      'lease_id' => { from: headers('lease_id') },
+      'license' => { from: headers('license'), split: true, join: true },
+      'local_identifier' => { from: headers('local_identifier'), split: true, join: true },
+      'local_instantiation_identifier' => { from: headers('local_instantiation_identifier'), split: true, join: true },
+      'location' => { from: headers('location') },
+      'media_type' => { from: headers('media_type') },
+      'pbs_nola_code' => { from: headers('pbs_nola_code'), split: true, join: true },
+      'playback_speed' => { from: ["EssenceTrack.playback_speed"] },
+      'playback_speed_units' => { from: ["EssenceTrack.playback_speed_units"] },
+      'portrayal' => { from: 'Contributor.portrayal' },
+      'producing_organization' => { from: headers('producing_organization'), split: true, join: true },
+      'program_description' => { from: headers('program_description'), split: true, join: true },
+      'program_title' => { from: headers('program_title') },
+      'promo_description' => { from: headers('promo_description'), split: true, join: true },
+      'promo_title' => { from: headers('promo_title') },
+      'publisher' => { from: headers('publisher'), split: true, join: true },
+      'raw_footage_description' => { from: headers('raw_footage_description'), split: true, join: true },
+      'raw_footage_title' => { from: headers('raw_footage_title') },
+      'related_url' => { from: headers('related_url'), split: true, join: true },
+      'rendering_ids' => { from: headers('rendering_ids') },
+      'representative_id' => { from: headers('representative_id') },
+      'resource_type' => { from: headers('resource_type'), split: true, join: true },
+      'rights_link' => { from: headers('rights_link'), split: true, join: true },
+      'rights_statement' => { from: headers('rights_statement'), split: true, join: true },
+      'rights_summary' => { from: headers('rights_summary'), split: true, join: true },
+      'sample_rate' => { from: ["EssenceTrack.sample_rate"] },
+      'segment_description' => { from: headers('segment_description'), split: true, join: true },
+      'segment_title' => { from: headers('segment_title') },
+      'series_description' => { from: headers('series_description'), split: true, join: true },
+      'series_title' => { from: headers('series_title') },
+      'source' => { from: headers('source'), split: true, join: true },
+      'spatial_coverage' => { from: headers('spatial_coverage'), split: true, join: true },
+      'standard' => { from: headers('standard') },
+      'subject' => { from: headers('subject'), split: true, join: true },
+      'temporal_coverage' => { from: headers('temporal_coverage'), split: true, join: true },
+      'thumbnail_id' => { from: headers('thumbnail_id') },
+      'time_start' => { from: headers('time_start') },
+      'title' => { from: headers('title') },
+      'topics' => { from: headers('topics'), split: true, join: true },
+      'track_id' => { from: ["EssenceTrack.track_id"] },
+      'track_type' => { from: ["EssenceTrack.track_type"] },
+      'tracks' => { from: headers('tracks') }
     }
 
-    config.fill_in_blank_source_identifiers = ->(obj, index) { "#{obj.importerexporter.id}-#{index}" }
-    config.field_mappings['CsvParser'] = standard_csv_mappings.merge(
-      {
-        'bulkrax_identifier' => { from: ['bulkrax_identifier'], source_identifier: true }
-      }
-    )
-
     config.field_mappings['PbcoreXmlParser'] = {
-      'bulkrax_identifier' => { from: ['pbcoreIdentifier'], source_identifier: true }
+      'bulkrax_identifier' => { from: ['pbcoreIdentifier'], source_identifier: true },
+      'dimensions' => { from: headers('dimensions'), split: true, join: true },
+      'media_type' => { from: headers('media_type'), split: true, join: true }
     }
 
     config.field_mappings['PbcoreManifestParser'] = {
       'bulkrax_identifier' => { from: ['instantiationIdentifier'], source_identifier: true },
-      'generations' => { from: ["DigitalInstantiation.generations"] },
-      'holding_organization' => { from: ["DigitalInstantiation.holding_organization"] }
+      'dimensions' => { from: headers('dimensions'), split: true, join: true },
+      'generations' => { from: ['DigitalInstantiation.generations'] },
+      'holding_organization' => { from: ['DigitalInstantiation.holding_organization'] },
+      'media_type' => { from: headers('media_type'), split: true, join: true }
     }
 
     # WorkType to use as the default if none is specified in the import

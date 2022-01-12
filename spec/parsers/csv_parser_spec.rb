@@ -110,13 +110,13 @@ RSpec.describe CsvParser do
         end
 
         context 'when importing assets without annotations' do
-          before do 
+          before do
             allow(subject).to receive(:validate_csv_headers).and_return([])
           end
 
           it 'does not create annotations' do
             importer.parser_fields = { import_file_path: './spec/fixtures/bulkrax/csv/ok.csv' }
-            
+
             expect(Annotation.count).to eq(0)
             subject.create_works
             expect(Annotation.count).to eq(0)
