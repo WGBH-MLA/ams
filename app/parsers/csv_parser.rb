@@ -114,7 +114,7 @@ class CsvParser < Bulkrax::CsvParser
     klass, value = key.split('.')
     object_class = klass if Hyrax.config.curation_concerns.include?(klass.constantize)
     extra_attr = if object_class == "Asset"
-                  (AdminData.attribute_names.dup - ['id', 'created_at', 'updated_at'] +
+                  (AdminData.attribute_names.dup - ['created_at', 'updated_at'] +
                     Annotation.ingestable_attributes).uniq
                 elsif object_class.include?("Instantiation")
                   (InstantiationAdminData.attribute_names.dup - ['id', 'created_at', 'updated_at'])
