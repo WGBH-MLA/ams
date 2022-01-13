@@ -131,10 +131,12 @@ module Bulkrax
           it 'returns parent and children data as a single hash' do
             expect(subject.parsed_metadata['Asset_1']).to eq('')
             expect(subject.parsed_metadata['Asset.spatial_coverage_1']).to eq('TEST spatial_coverage')
+            # each group of child models is listed in reverse order
+            # e.g. the last imported physical instantiation, will be listed first on the csv
             expect(subject.parsed_metadata['PhysicalInstantiation_1']).to eq('')
             expect(subject.parsed_metadata['PhysicalInstantiation.holding_organization_1']).to eq('American Archive of Public Broadcasting')
             expect(subject.parsed_metadata['PhysicalInstantiation_2']).to eq('')
-            expect(subject.parsed_metadata['PhysicalInstantiation.annotation_2']).to eq('Minimal annotation')
+            expect(subject.parsed_metadata['PhysicalInstantiation.annotation_2']).to eq('Test annotation')
           end
         end
       end
