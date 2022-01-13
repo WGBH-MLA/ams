@@ -198,7 +198,7 @@ class CsvParser < Bulkrax::CsvParser
       # if the key is a Class, but not a property (e.g. "Asset", not "Asset.id")
       unless key.match(/\./)
         add_object(current_object.symbolize_keys)
-        key_count = objects.select { |obj| obj['model'] == standarized_key }.size + 1
+        key_count = objects.select { |obj| obj[:model] == standarized_key }.size + 1
         bulkrax_identifier = full_row_to_hash["#{standarized_key}.bulkrax_identifier_#{key_count}"] || Bulkrax.fill_in_blank_source_identifiers.call(self, "#{standarized_key}-#{index}-#{key_count}")
         asset = Asset.where(bulkrax_identifier: [bulkrax_identifier]).first if asset.nil?
         admin_data_gid = if standarized_key == 'Asset'
