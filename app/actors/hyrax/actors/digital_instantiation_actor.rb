@@ -9,8 +9,8 @@ module Hyrax
         set_env_attributes_from_pbcore(env, pbcore_doc)
 
         if env.attributes['bulkrax_identifier'].present?
-          super
-        else 
+          save_instantiation_aapb_admin_data(env) && super
+        else
           save_instantiation_aapb_admin_data(env) && super && parse_pbcore_essense_track(env,pbcore_doc)
         end
       end
@@ -19,8 +19,8 @@ module Hyrax
         xml_file = file_uploaded?(env) ? uploaded_xml(env) : env.attributes.delete(:pbcore_xml)
 
         if env.curation_concern&.bulkrax_identifier
-          super
-        else 
+          save_instantiation_aapb_admin_data(env) && super
+        else
           pbcore_doc = PBCore::InstantiationDocument.parse(xml_file)
           env = parse_pbcore_instantiation(env,pbcore_doc)
           save_instantiation_aapb_admin_data(env) && super && destroy_child_objects(env) && parse_pbcore_essense_track(env,pbcore_doc)
@@ -148,11 +148,13 @@ module Hyrax
         end
 
         def find_or_create_instantiation_admin_data(env)
-          instantiation_admin_data = if env.curation_concern.instantiation_admin_data_gid.blank?
-                                       InstantiationAdminData.create
-                                     else
-                                       InstantiationAdminData.find_by_gid!(env.curation_concern.instantiation_admin_data_gid)
-                                     end
+          instantiation_admin_data_gid = env.curation_concern.instantiation_admin_data_gid || env.attributes['instantiation_admin_data_gid']
+          instantiation_admin_data =  if instantiation_admin_data_gid
+                                        InstantiationAdminData.find_by_gid!(instantiation_admin_data_gid)
+                                      else
+                                        InstantiationAdminData.create
+                                      end
+
           instantiation_admin_data
         end
 
