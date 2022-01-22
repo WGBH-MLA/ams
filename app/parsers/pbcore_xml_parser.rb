@@ -39,7 +39,12 @@ class PbcoreXmlParser < Bulkrax::XmlParser
     records.each_with_index do |file, index|
       set_objects(file, index).each do |record|
         break if limit_reached?(limit, index)
-        record = set_digital_instantiation_children(record) if record[:model] == 'DigitalInstantiation'
+
+        # both instantiations can have an essence track child
+        if (record[:model] == 'DigitalInstantiation' || record[:model] == 'PhysicalInstantiation') && record[:children].present?
+          record = set_instantiation_children(record)
+        end
+
         seen[record[work_identifier]] = true
         new_entry = find_or_create_entry(entry_class, record[work_identifier], 'Bulkrax::Importer', record.compact)
         if record[:delete].present?
@@ -62,25 +67,51 @@ class PbcoreXmlParser < Bulkrax::XmlParser
   end
 
   def setup_parents
-    pts = []
+    prnts = []
     record_objects.each do |record|
-      r = if record.respond_to?(:to_h)
-            record.to_h
-          else
-            record
-          end
-      next unless r.is_a?(Hash)
-      children = if r[:children].is_a?(String)
-                    r[:children].split(/\s*[:;|]\s*/)
-                  else
-                    r[:children]
-                  end
+      rec = record.respond_to?(:to_h) ? record.to_h : record
+      next unless rec.is_a?(Hash)
+
+      children = rec[:children].is_a?(String) ? rec[:children].split(/\s*[:;|]\s*/) : rec[:children]
       next if children.blank?
-      pts << {
-        r[work_identifier] => children
-      }
+
+      prnts << { rec[work_identifier] => children }
     end
-    pts.blank? ? pts : pts.inject(:merge)
+
+    prnts.blank? ? prnts : prnts.inject(:merge)
+  end
+
+  # Will be skipped unless the #record is a Hash
+  def create_parent_child_relationships
+    parents.each do |key, value|
+      parent = entry_class.where(
+        identifier: key,
+        importerexporter_id: importerexporter.id,
+        importerexporter_type: 'Bulkrax::Importer'
+      ).first
+
+      # not finding the entries here indicates that the given identifiers are incorrect
+      # in that case we should log that
+      children = value.map do |child|
+        entry_class.where(
+          identifier: child,
+          importerexporter_id: importerexporter.id,
+          importerexporter_type: 'Bulkrax::Importer'
+        ).first
+      end.compact.uniq
+
+      if parent.present? && (children.length != value.length)
+        # Increment the failures for the number we couldn't find
+        # Because all of our entries have been created by now, if we can't find them, the data is wrong
+        Rails.logger.error("Expected #{value.length} children for parent entry #{parent.id}, found #{children.length}")
+        break if children.empty?
+        Rails.logger.warn("Adding #{children.length} children to parent entry #{parent.id} (expected #{value.length})")
+      end
+
+      Bulkrax::ChildRelationshipsJob.perform_later(parent.id, children.map(&:id), current_run.id)
+    end
+  rescue StandardError => e
+    status_info(e)
   end
 
   private
@@ -96,10 +127,41 @@ class PbcoreXmlParser < Bulkrax::XmlParser
     # show up in the bulkrax importer, but the records still get processed in the actor.
     # people/contributor is processed as part of the asset_attributes method
     new_rows += parse_rows([AAPB::BatchIngest::PBCoreXMLMapper.new(file[:data]).asset_attributes.merge!({ delete: file[:delete] })], 'Asset', index)
-    new_rows += parse_rows(pbcore_physical_instantiations.map { |inst| AAPB::BatchIngest::PBCoreXMLMapper.new(inst.to_xml).physical_instantiation_attributes }, 'PhysicalInstantiation', index)
-    new_rows += parse_rows(pbcore_digital_instantiations.map { |inst| AAPB::BatchIngest::PBCoreXMLMapper.new(inst.to_xml).digital_instantiation_attributes.merge!({ pbcore_xml: inst.to_xml, skip_file_upload_validation: true }) }, 'DigitalInstantiation', index)
-    new_rows += parse_rows(tracks.map { |track| AAPB::BatchIngest::PBCoreXMLMapper.new(track.to_xml).essence_track_attributes }, 'EssenceTrack', index)
+
+    pi_rows = pbcore_physical_instantiations.map { |inst| AAPB::BatchIngest::PBCoreXMLMapper.new(inst.to_xml).physical_instantiation_attributes }
+    new_rows += parse_rows(pi_rows, 'PhysicalInstantiation', index)
+
+    di_rows = pbcore_digital_instantiations.map { |inst| AAPB::BatchIngest::PBCoreXMLMapper.new(inst.to_xml).digital_instantiation_attributes.merge!({ pbcore_xml: inst.to_xml, skip_file_upload_validation: true }) }
+    new_rows += parse_rows(di_rows, 'DigitalInstantiation', index)
+
+    et_rows = tracks.map { |track| AAPB::BatchIngest::PBCoreXMLMapper.new(track.to_xml).essence_track_attributes }
+    new_rows += parse_rows(et_rows, 'EssenceTrack', index)
 
     new_rows
+  end
+
+  def add_object(current_object, type, related_identifier)
+    if current_object.present?
+      # each xml file only has one asset, so it will be the first object
+      if objects.first
+        objects.first[:children] ||= []
+        objects.first[:children] << current_object[work_identifier]
+      end
+
+      record_objects << current_object
+      objects << current_object
+    end
+  end
+
+  def set_instantiation_children(record)
+    child_identifer = record[work_identifier].gsub(record[:model], 'EssenceTrack')
+
+    if objects.first[:children].include?(child_identifer)
+      record[:children] ||= []
+      record[:children] << child_identifer
+      objects.first[:children].delete(child_identifer)
+    end
+
+    record_objects.find { |r| r[work_identifier] == record[work_identifier] }.merge!({ children: [child_identifer] })
   end
 end

@@ -49,7 +49,7 @@ RSpec.describe PbcoreManifestParser do
         end
 
         it 'processes the line' do
-          expect(xml_parser).to receive(:increment_counters).once
+          expect(xml_parser).to receive(:increment_counters).exactly(3).times
           xml_parser.create_works
         end
 
