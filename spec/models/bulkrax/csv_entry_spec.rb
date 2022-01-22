@@ -134,9 +134,10 @@ module Bulkrax
             # each group of child models is listed in reverse order
             # e.g. the last imported physical instantiation, will be listed first on the csv
             expect(subject.parsed_metadata['PhysicalInstantiation_1']).to eq('')
+            expect(subject.parsed_metadata['PhysicalInstantiation.annotation_1']).to eq('Test annotation')
             expect(subject.parsed_metadata['PhysicalInstantiation.holding_organization_1']).to eq('American Archive of Public Broadcasting')
             expect(subject.parsed_metadata['PhysicalInstantiation_2']).to eq('')
-            expect(subject.parsed_metadata['PhysicalInstantiation.annotation_2']).to eq('Test annotation')
+            expect(subject.parsed_metadata['PhysicalInstantiation.annotation_2']).to eq('Minimal annotation')
           end
         end
       end
