@@ -126,14 +126,32 @@ class PbcoreXmlParser < Bulkrax::XmlParser
     tracks = instantiations.map(&:essence_tracks).flatten # processed in the digitial inst. actor. if we comment this out it will not
     # show up in the bulkrax importer, but the records still get processed in the actor.
     # people/contributor is processed as part of the asset_attributes method
-    new_rows += parse_rows([AAPB::BatchIngest::PBCoreXMLMapper.new(file[:data]).asset_attributes.merge!({ delete: file[:delete] })], 'Asset', index)
 
-    pi_rows = pbcore_physical_instantiations.map { |inst| AAPB::BatchIngest::PBCoreXMLMapper.new(inst.to_xml).physical_instantiation_attributes }
+    # we are checking to see if these models already exist so that we update them instead of creating duplicates
+    xml_asset = AAPB::BatchIngest::PBCoreXMLMapper.new(file[:data]).asset_attributes.merge!({ delete: file[:delete] })
+    asset = Asset.where(id: xml_asset[:id]).first&.attributes&.symbolize_keys
+    xml_asset = asset.merge!(xml_asset) if asset
+    new_rows += parse_rows([xml_asset], 'Asset', index)
+
+    pi_rows = pbcore_physical_instantiations.map do |inst|
+      xml_pi = AAPB::BatchIngest::PBCoreXMLMapper.new(inst.to_xml).physical_instantiation_attributes
+      physical_instantiation = PhysicalInstantiation.where(local_instantiation_identifier: xml_pi[:local_instantiation_identifier]).first&.attributes&.symbolize_keys
+      xml_pi = physical_instantiation.merge!(xml_pi) if physical_instantiation
+
+      xml_pi
+    end
     new_rows += parse_rows(pi_rows, 'PhysicalInstantiation', index)
 
-    di_rows = pbcore_digital_instantiations.map { |inst| AAPB::BatchIngest::PBCoreXMLMapper.new(inst.to_xml).digital_instantiation_attributes.merge!({ pbcore_xml: inst.to_xml, skip_file_upload_validation: true }) }
+    di_rows = pbcore_digital_instantiations.map do |inst|
+      xml_di = AAPB::BatchIngest::PBCoreXMLMapper.new(inst.to_xml).digital_instantiation_attributes.merge!({ pbcore_xml: inst.to_xml, skip_file_upload_validation: true })
+      digital_instantiation = DigitalInstantiation.where(local_instantiation_identifier: xml_di[:local_instantiation_identifier]).first&.attributes&.symbolize_keys
+      xml_di = digital_instantiation.merge!(xml_di) if digital_instantiation
+
+      xml_di
+    end
     new_rows += parse_rows(di_rows, 'DigitalInstantiation', index)
 
+    # essence tracks don't have a unique identifier, so importing the same one repeatedly will create multiple identical models
     et_rows = tracks.map { |track| AAPB::BatchIngest::PBCoreXMLMapper.new(track.to_xml).essence_track_attributes }
     new_rows += parse_rows(et_rows, 'EssenceTrack', index)
 
