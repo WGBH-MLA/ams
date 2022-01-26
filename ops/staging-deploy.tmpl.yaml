@@ -154,7 +154,7 @@ worker:
   - name: MYSQL_USER
     value: gbh-hyrax
   - name: FCREPO_BASE_PATH
-    value: /gbh
+    value: /gbh-staging-hyrax-2
   - name: FCREPO_HOST
     value: fcrepo.staging-fcrepo.svc.cluster.local:8080
   - name: FCREPO_PATH
