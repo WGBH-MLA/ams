@@ -56,6 +56,7 @@ test:
       alias: fcrepo
     - name: selenium/standalone-chrome:3.141
       alias: chrome
+  allow_failure: true
 
   variables:
     ALLOW_ANONYMOUS_LOGIN: "yes"
