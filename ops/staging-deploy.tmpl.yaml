@@ -201,6 +201,8 @@ worker:
     value: http://admin:ncGXC5Qjpk@solr.staging-solr.svc.cluster.local:8983/solr/ams-staging
   - name: SETTINGS__ZOOKEEPER__CONNECTION_STR
     value: solr-zookeeper-headless.default:2181/configs
+  - name: SIDEKIQ_CONCURRENCY
+    value: "5"
   - name: SOLR_ADMIN_USER
     value: admin
   - name: SOLR_COLLECTION_NAME
