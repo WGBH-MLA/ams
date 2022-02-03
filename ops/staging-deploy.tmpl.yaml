@@ -202,7 +202,7 @@ worker:
   - name: SETTINGS__ZOOKEEPER__CONNECTION_STR
     value: solr-zookeeper-headless.default:2181/configs
   - name: SIDEKIQ_CONCURRENCY
-    value: "5"
+    value: "10"
   - name: SOLR_ADMIN_USER
     value: admin
   - name: SOLR_COLLECTION_NAME
