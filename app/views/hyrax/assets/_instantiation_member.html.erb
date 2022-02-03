@@ -21,6 +21,11 @@
       <% end %>
     <% end %>
   </td>
-  <td class="attribute "><%= Date.strptime(instantiation_member.try(:date_uploaded),'%m/%d/%Y') %></td>
+  <td class="attribute ">
+    <%= instantiation_member.date_uploaded ?
+      Date.strptime(instantiation_member.date_uploaded,'%m/%d/%Y') :
+      Time.parse(instantiation_member.solr_document[:date_uploaded_ssi]).strftime('%m/%d/%Y')
+    %>
+  </td>
   <td class="attribute "><%= instantiation_member.solr_document.try(:holding_organization).try(:first) %></td>
 </tr>
