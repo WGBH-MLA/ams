@@ -41,7 +41,7 @@ class PbcoreXmlParser < Bulkrax::XmlParser
         break if limit_reached?(limit, index)
 
         # both instantiations can have an essence track child
-        if (record[:model] == 'DigitalInstantiation' || record[:model] == 'PhysicalInstantiation') && record[:children].present?
+        if record[:model] == 'DigitalInstantiation' || record[:model] == 'PhysicalInstantiation'
           record = set_instantiation_children(record)
         end
 
@@ -172,14 +172,29 @@ class PbcoreXmlParser < Bulkrax::XmlParser
   end
 
   def set_instantiation_children(record)
-    child_identifer = record[work_identifier].gsub(record[:model], 'EssenceTrack')
+    initial_importer_id = record[work_identifier].first
+    initial_child_identifier = record[work_identifier].gsub(record[:model], 'EssenceTrack')
 
-    if objects.first[:children].include?(child_identifer)
+    current_importer_id = importerexporter.id.to_s
+    current_child_identifier = initial_child_identifier.sub(initial_importer_id, current_importer_id)
+
+    if objects.first[:children].include?(initial_child_identifier)
+      # we are importing this file for the first time
+      # or re-running the importer where this file was first imported
       record[:children] ||= []
-      record[:children] << child_identifer
-      objects.first[:children].delete(child_identifer)
+      record[:children] << initial_child_identifier
+      objects.first[:children].delete(initial_child_identifier)
     end
 
-    record_objects.find { |r| r[work_identifier] == record[work_identifier] }.merge!({ children: [child_identifer] })
+    if objects.first[:children].include?(current_child_identifier)
+      # we are importing the same file we imported in a different importer
+      # essence tracks aren't legitimate children of an asset though so we remove it
+      # and do not create a duplicate relation with the parent DI or PI
+      objects.first[:children].delete(current_child_identifier)
+    end
+
+    record_objects.find { |r| r[work_identifier] == record[work_identifier] }.merge!({ children: [initial_child_identifier] })
+    # return the record so that we retain the parent/child relationships
+    record
   end
 end
