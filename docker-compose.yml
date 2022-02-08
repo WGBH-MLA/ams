@@ -6,7 +6,7 @@ x-app: &app
     context: .
     target: hyku-base
     args:
-      - EXTRA_APK_PACKAGES=less vim bash openjdk11-jre ffmpeg rsync rbspy
+      - EXTRA_APK_PACKAGES=less vim bash openjdk11-jre ffmpeg rsync
       - SETTINGS__BULKRAX__ENABLED=true
   # command: sh -l -c "bundle && bundle exec puma -v -b tcp://0.0.0.0:3000"
   env_file:
@@ -166,7 +166,7 @@ services:
       context: .
       target: hyku-worker
       args:
-        - EXTRA_APK_PACKAGES=less vim bash openjdk11-jre ffmpeg rsync rbspy
+        - EXTRA_APK_PACKAGES=less vim bash openjdk11-jre ffmpeg rsync
         - SETTINGS__BULKRAX__ENABLED=true
     image: registry.gitlab.com/notch8/gbh/worker:${TAG:-latest}
     depends_on:
