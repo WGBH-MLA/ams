@@ -15,6 +15,7 @@ RUN apk --no-cache upgrade && \
     openssh \
     perl \
     cmake \
+    su-exec \
     $EXTRA_APK_PACKAGES
 
 USER app
