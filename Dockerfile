@@ -15,7 +15,6 @@ RUN apk --no-cache upgrade && \
     openssh \
     perl \
     cmake \
-    rbspy \
     $EXTRA_APK_PACKAGES
 
 USER app
