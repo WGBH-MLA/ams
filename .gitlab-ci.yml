@@ -145,7 +145,6 @@ gbh.staging:
     - export KUBECONFIG=$KUBECONFIG_R2
     - envsubst < ops/staging-deploy.tmpl.yaml > ops/staging-deploy.yaml
     - ./bin/helm_deploy gbh-staging gbh-staging
-    - apk --no-cache add rbspy
   tags:
     - local
 
