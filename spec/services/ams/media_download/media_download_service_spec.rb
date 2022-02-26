@@ -5,10 +5,19 @@ RSpec.describe AMS::MediaDownload::MediaDownloadService do
 
   let(:admin_data) { create(:admin_data, :one_sony_ci_id) }
   let(:asset) { create(:asset, with_admin_data: admin_data.gid) }
-  let(:fake_sony_ci_url) { "https://fake_sony_ci_url/cifiles/XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX/cpb-aacip-15-hd7np1wp4c__barcode163700_.h264.mp4?response-content-disposition=attachment%3bfilename%3d%22cpb-aacip-15-hd7np1wp4c__barcode163700_.h264.mp4"}
+  # Pared down response from Sony Ci. For this spec, we just really need the
+  # 'id' and 'location'.
+  let(:fake_sony_ci_api_result) {
+    {
+      'id' => sonyci_id,
+      'location' => "https://fake_sony_ci_url/cifiles/XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX/cpb-aacip-15-hd7np1wp4c__barcode163700_.h264.mp4?response-content-disposition=attachment%3bfilename%3d%22cpb-aacip-15-hd7np1wp4c__barcode163700_.h264.mp4"
+    }
+  }
+  # let(:fake_sony_ci_url) { "https://fake_sony_ci_url/cifiles/XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX/cpb-aacip-15-hd7np1wp4c__barcode163700_.h264.mp4?response-content-disposition=attachment%3bfilename%3d%22cpb-aacip-15-hd7np1wp4c__barcode163700_.h264.mp4"}
   let(:spec_media_file_path) { File.join(Rails.root, 'spec', 'fixtures', 'cpb-aacip-15-hd7np1wp4c__barcode163700_.h264.mp4' ) }
-  let(:fake_sony_ci_api) { instance_double("SonyCiBasic") }
+  let(:fake_sony_ci_api) { instance_double(SonyCiApi::Client) }
   let(:solr_doc) { SolrDocument.new(asset.to_solr) }
+  let(:sonyci_id) { solr_doc['sonyci_id_ssim'].first }
 
   let(:service) do
     described_class.new(solr_document: solr_doc)
@@ -17,7 +26,7 @@ RSpec.describe AMS::MediaDownload::MediaDownloadService do
   before do
     allow(service).to receive(:ci).and_return(fake_sony_ci_api)
     allow(service).to receive(:generate_sonyci_file_path).with('cpb-aacip-15-hd7np1wp4c__barcode163700_.h264.mp4').and_return(spec_media_file_path)
-    allow(service).to receive(:download_media_file).with(spec_media_file_path, fake_sony_ci_url)
+    allow(service).to receive(:download_media_file).with(spec_media_file_path, fake_sony_ci_api_result['location'])
     allow(service).to receive(:delete_media_files)
   end
 
@@ -25,7 +34,7 @@ RSpec.describe AMS::MediaDownload::MediaDownloadService do
     context "with a single Sony Ci ID" do
       context "during a successful download" do
         before do
-          allow(fake_sony_ci_api).to receive(:download).with(/Sony-\d{1}/).and_return(fake_sony_ci_url)
+          allow(fake_sony_ci_api).to receive(:asset_download).with(/Sony-\d{1}/).and_return(fake_sony_ci_api_result)
         end
 
         it "returns the expected Success object" do
@@ -39,7 +48,7 @@ RSpec.describe AMS::MediaDownload::MediaDownloadService do
 
       context "during an unsuccessful download" do
         before do
-          allow(fake_sony_ci_api).to receive(:download).with(/Sony-\d{1}/).and_raise(RuntimeError.new("NO VIDEO!!!"))
+          allow(fake_sony_ci_api).to receive(:asset_download).with(sonyci_id).and_raise(RuntimeError.new("NO VIDEO!!!"))
         end
 
         it "returns the expected Failure object" do
