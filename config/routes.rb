@@ -68,8 +68,18 @@ end
   resources 'audits', only: [:new, :create]
   post "/audits/new" => "audits#create"
 
+  # Routes under /sony_ci/*
   namespace :sony_ci do
-    post '/webhooks/save_sony_ci_id', controller: 'webhooks', action: :save_sony_ci_id
+    # Routes for the Webhook logs.
+    resources :webhook_logs, only: [ :index, :show ]
+
+    # Define routes that receive requests from Sony Ci webhooks.
+    post '/webhooks/save_sony_ci_id', controller: 'webhooks',
+                                      action: :save_sony_ci_id
+
+    # Define routes for making customized requests to the Sony Ci API
+    get '/api/find_media', controller: 'api', action: :find_media, defaults: { format: :json }
+    get '/api/get_filename', controller: 'api', action: :get_filename, defaults: { format: :json }
   end
 
 

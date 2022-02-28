@@ -34,8 +34,7 @@ module AMS
       private
 
       def ci
-        credentials = YAML.load(ERB.new(File.read('config/ci.yml')).result)
-        @ci ||= SonyCiBasic.new(credentials:credentials)
+        @ci ||= SonyCiApi::Client.new('config/ci.yml')
       end
 
       def process_download
@@ -82,7 +81,7 @@ module AMS
       end
 
       def get_sonyci_file_location(sonyci_id)
-        ci.download(sonyci_id)
+        ci.asset_download(sonyci_id)['location']
       end
 
       def parse_sonyci_file_name(location)
