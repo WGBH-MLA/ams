@@ -1,11 +1,13 @@
 Rails.application.routes.draw do
 
-if ENV['SETTINGS__BULKRAX__ENABLED'] == 'true'
-  mount Bulkrax::Engine, at: '/'
-end
+  if ENV['SETTINGS__BULKRAX__ENABLED'] == 'true'
+    mount Bulkrax::Engine, at: '/'
+  end
+
   namespace :sony_ci do
     resources :webhook_logs, only: [ :index, :show ]
   end
+
   mount Hyrax::BatchIngest::Engine, at: '/'
   require 'sidekiq/web'
   authenticate :user, lambda { |u| u.admin? } do
@@ -80,6 +82,10 @@ end
     # Define routes for making customized requests to the Sony Ci API
     get '/api/find_media', controller: 'api', action: :find_media, defaults: { format: :json }
     get '/api/get_filename', controller: 'api', action: :get_filename, defaults: { format: :json }
+  end
+
+  namespace :api do
+    resources :assets, only: [:show], defaults: { format: :json }
   end
 
 
