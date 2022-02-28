@@ -1,8 +1,0 @@
----
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: {{ template "app.fcrepo-env.name" . }}
-data:
-  DATABASE_USER: {{ .Values.env.configmap.MYSQL_USER }}
-  DATABASE_NAME: {{ .Values.env.configmap.FC_DATABASE_NAME }}
