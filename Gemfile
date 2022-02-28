@@ -1,5 +1,7 @@
 source 'https://rubygems.org'
 
+ruby '2.6.5'
+
 git_source(:github) do |repo_name|
   repo_name = "#{repo_name}/#{repo_name}" unless repo_name.include?("/")
   "https://github.com/#{repo_name}.git"
@@ -42,7 +44,7 @@ gem 'hydra-role-management', '~> 1.0'
 
 group :development, :test do
   # Use sqlite3 as the database for Active Record
-  # gem 'sqlite3', '1.3.13'
+  gem 'sqlite3', '1.3.13'
   gem 'capybara-screenshot'
   gem 'rspec', "~> 3.7"
   gem 'rspec-rails', "~> 3.7"
@@ -58,7 +60,6 @@ group :development, :test do
   gem 'solr_wrapper', '~> 2.1'
   gem 'webmock', '~> 3.7'
   gem 'rails-controller-testing'
-  gem 'rspec_junit_formatter'
 end
 
 group :development do
@@ -105,11 +106,3 @@ gem 'httparty', '~> 0.18'
 # Adding pry to all environments, because it's very useful for debugging
 # production environments on demo instances.
 gem 'pry-byebug', platforms: [:mri, :mingw, :x64_mingw]
-gem 'activerecord-nulldb-adapter'
-gem 'pronto'
-gem 'pronto-brakeman', require: false
-gem 'pronto-flay', require: false
-gem 'pronto-rails_best_practices', require: false
-gem 'pronto-rails_schema', require: false
-gem 'pronto-rubocop', require: false
-gem "sentry-raven"
