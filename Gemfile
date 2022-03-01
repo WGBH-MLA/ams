@@ -99,6 +99,8 @@ gem 'sony_ci_api', github: 'WGBH-MLA/sony_ci_api_rewrite', branch: 'v0.1'
 # gem 'hyrax-iiif_av', github: 'samvera-labs/hyrax-iiif_av', branch: 'hyrax_master'
 gem 'webpacker'
 gem 'react-rails'
+# lock the rdf version to avoid the "superclass mismatch for class DateTime" error
+gem 'rdf', '3.2.4'
 gem 'database_cleaner'
 gem 'redlock', '~> 1.0'
 gem 'httparty', '~> 0.18'

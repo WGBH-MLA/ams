@@ -725,7 +725,7 @@ GEM
     rb-fsevent (0.11.1)
     rb-inotify (0.10.1)
       ffi (~> 1.0)
-    rdf (3.2.5)
+    rdf (3.2.4)
       link_header (~> 0.0, >= 0.0.8)
     rdf-aggregate-repo (3.2.0)
       rdf (~> 3.2)
@@ -1043,6 +1043,7 @@ DEPENDENCIES
   puma (~> 3.12)
   rails (~> 5.1.5)
   rails-controller-testing
+  rdf (= 3.2.4)
   react-rails
   redis (~> 4.0)
   redlock (~> 1.0)
