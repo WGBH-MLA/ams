@@ -45,14 +45,10 @@ module AAPB
       def find_annotation_type_id(type)
         type_id = Annotation.find_annotation_type_id(type)
 
-        if ENV['SETTINGS__BULKRAX__ENABLED'] == 'true'
+        if type_id.present?
           type_id
         else
-          if type_id.present?
-            type_id
-          else
-            raise "annotation_type not registered with the AnnotationTypesService: #{type}."
-          end
+          raise "annotation_type not registered with the AnnotationTypesService: #{type}."
         end
       end
 

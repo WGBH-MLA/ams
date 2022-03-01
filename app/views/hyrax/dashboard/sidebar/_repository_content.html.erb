@@ -12,13 +12,16 @@
     <span class="fa fa-file" aria-hidden="true"></span> <span class="sidebar-action-text"><%= t('hyrax.admin.sidebar.works') %></span>
   <% end %>
 
-  <% if ENV['SETTINGS__BULKRAX__ENABLED'] == 'false' %>
-    <% if can? :index, Hyrax::BatchIngest::Batch %>
-      <%= menu.nav_link(hyrax_batch_ingest.batches_path) do %>
-        <span class="fa fa-table" aria-hidden="true"></span> <span class="sidebar-action-text"><%= 'Batches' %></span>
-      <% end %>
-    <% end %>
-  <% end %>
+  <%# using bulkrax instead %>
+    <%# if can? :index, Hyrax::BatchIngest::Batch %>
+      <%# menu.nav_link(hyrax_batch_ingest.batches_path) do %>
+        <%
+=begin%>
+ <span class="fa fa-table" aria-hidden="true"></span> <span class="sidebar-action-text"><% 'Batches' %></span>
+<%
+=end%>
+      <%# end %>
+    <%# end %>
 
   <%= menu.nav_link(bulkrax.importers_path) do %>
     <span class="fa fa-cloud-upload" aria-hidden="true"></span> <span class="sidebar-action-text"><%= t('bulkrax.admin.sidebar.importers') %></span>

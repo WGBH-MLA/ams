@@ -56,8 +56,6 @@ RSpec.describe AAPB::BatchIngest::PBCoreXMLMapper, :pbcore_xpath_helper do
 
     RSpec.shared_examples 'annotation data' do |bulkrax_setting|
       it 'correctly maps annotation data' do
-        ENV['SETTINGS__BULKRAX__ENABLED'] = bulkrax_setting
-
         expect(attrs).to have_key :annotations
         expect(attrs[:annotations].length).to eq (11)
 
