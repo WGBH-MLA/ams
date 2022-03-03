@@ -24,13 +24,12 @@ bin/rails assets:precompile
 # mean the credentials need to be updated. Until it's fixed, comment this out.
 # bin/rails g deployment_info_page --deployment_id $DEPLOYMENT_ID
 sudo systemctl restart httpd
-sleep 2
-SIDEKIQ_RESET=true bundle exec ruby bin/scripts/ensure_sidekiq_running.rb
-sleep 2
-echo "End of install.sh"
 
-# For some reason, code deploy will fail this script with
-# Script at specified location: bin/deploy/install.sh failed to close STDERR
-# so closing it explicitly here.
-STDERR.close
+# Commenting this out temporarily. This will require starting sidekiq manually
+# on the host. This install.sh script is failing to close out STDERR which is
+# failing the CodeDeploy deployments.
+# sleep 2
+# SIDEKIQ_RESET=true bundle exec ruby bin/scripts/ensure_sidekiq_running.rb
+# sleep 2
+echo "End of install.sh"
 exit 0;
