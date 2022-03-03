@@ -38,7 +38,6 @@ dump.rdb
 /public/packs
 /public/packs-test
 /node_modules
-/ops/*-deploy.yaml
 yarn-debug.log*
 .yarn-integrity
 fits.log
