@@ -1,5 +1,5 @@
-ARG HYRAX_IMAGE_VERSION=3.0.1
-FROM ghcr.io/samvera/hyrax/hyrax-base:$HYRAX_IMAGE_VERSION as hyku-base
+ARG HYRAX_IMAGE_VERSION=3.1.0
+FROM ghcr.io/samvera/hyku/hyku-base:$HYRAX_IMAGE_VERSION as hyku-base
 
 USER root
 
@@ -15,7 +15,9 @@ RUN apk --no-cache upgrade && \
     openssh \
     perl \
     cmake \
-    $EXTRA_APK_PACKAGES
+    cargo \
+    $EXTRA_APK_PACKAGES && \
+    cargo install rbspy
 
 USER app
 

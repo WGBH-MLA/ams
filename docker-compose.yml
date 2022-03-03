@@ -135,6 +135,8 @@ services:
       - VIRTUAL_PORT=3000
       - VIRTUAL_HOST=.ams.test
     # command: sh -l -c "bundle && bundle exec puma -v -b tcp://0.0.0.0:3000"
+    cap_add:
+      - SYS_PTRACE
     depends_on:
       db:
         condition: service_started
