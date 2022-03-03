@@ -39,6 +39,10 @@ gem 'redis', '~> 4.0'
 gem 'sidekiq'
 gem 'hydra-role-management', '~> 1.0'
 
+group :production do
+  gem 'mysql2', '~> 0.5.3'
+end
+
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
 
@@ -73,11 +77,11 @@ group :development do
   # gem 'spring'
   # gem 'spring-watcher-listen', '~> 2.0.0'
   gem "letter_opener"
-  gem 'faker'
   gem 'xray-rails'
 end
 
 gem 'hyrax', '2.9.0'
+gem 'faker'
 gem 'blacklight_advanced_search', '~> 6.4.0'
 gem 'rsolr', '>= 1.0'
 gem 'jquery-rails'
@@ -87,7 +91,6 @@ gem 'simple_form', '5.0.0'
 gem 'aws-sdk-s3'
 gem 'aws-sdk-codedeploy'
 gem 'carrierwave', '~> 1.3'
-gem 'mysql2', '~> 0.5.3'
 gem 'nokogiri'
 gem 'bootstrap-multiselect-rails'
 gem 'hyrax-batch_ingest', git: 'https://github.com/samvera-labs/hyrax-batch_ingest'
