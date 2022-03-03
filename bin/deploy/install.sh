@@ -28,4 +28,9 @@ sleep 2
 SIDEKIQ_RESET=true bundle exec ruby bin/scripts/ensure_sidekiq_running.rb
 sleep 2
 echo "End of install.sh"
+
+# For some reason, code deploy will fail this script with
+# Script at specified location: bin/deploy/install.sh failed to close STDERR
+# so closing it explicitly here.
+STDERR.close
 exit 0;
