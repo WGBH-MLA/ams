@@ -20,10 +20,16 @@ fi
 bin/rails db:migrate
 bin/rails assets:precompile
 
-bin/rails g deployment_info_page --deployment_id $DEPLOYMENT_ID
+# TODO: this is broken, AWS SDK throws an invalid signature error, which may
+# mean the credentials need to be updated. Until it's fixed, comment this out.
+# bin/rails g deployment_info_page --deployment_id $DEPLOYMENT_ID
 sudo systemctl restart httpd
-sleep 2
-SIDEKIQ_RESET=true bundle exec ruby bin/scripts/ensure_sidekiq_running.rb
-sleep 2
+
+# Commenting this out temporarily. This will require starting sidekiq manually
+# on the host. This install.sh script is failing to close out STDERR which is
+# failing the CodeDeploy deployments.
+# sleep 2
+# SIDEKIQ_RESET=true bundle exec ruby bin/scripts/ensure_sidekiq_running.rb
+# sleep 2
 echo "End of install.sh"
 exit 0;

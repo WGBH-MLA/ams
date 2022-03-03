@@ -12,4 +12,4 @@ production:
   user: fedoraAdmin
   password: fedoraAdmin
   url: <%= ENV['FCREPO_URL'] %>
-  base_path: <%= ENV['FCREPO_BASE_PATH'] %>
+  base_path: <%= ENV['FCREPO_BASE_PATH'] || '/prod' %>
