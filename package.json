@@ -2,10 +2,11 @@
   "name": "AMS",
   "private": true,
   "engines": {
-    "node": "12.22.10"
+    "node": "16.14.0"
   },
   "dependencies": {
-    "@rails/webpacker": "3.5",
+    "@rails/webpacker": "^5.0",
+    "node-sass": "^7.0.1",
     "babel-preset-react": "^6.24.1",
     "prop-types": "^15.6.2",
     "react": "^16.5.2",
