@@ -37,6 +37,8 @@ jobs:
         run: google-chrome-stable --headless --disable-gpu --no-sandbox --remote-debugging-port=9222 http://localhost &
 
       - name: Prepare Test Environment
+        with:
+          node-version: '12.22.10'
         run: |
           cp config/travis/solr_wrapper_test.yml config/solr_wrapper_test.yml
           cp config/travis/fcrepo_wrapper_test.yml config/fcrepo_wrapper_test.yml
