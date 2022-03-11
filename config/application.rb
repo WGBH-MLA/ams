@@ -38,5 +38,12 @@ module AMS
 
     # Don't generate system test files.
     config.generators.system_tests = nil
+
+    config.to_prepare do
+      # Allows us to use decorator files
+      Dir.glob(File.join(File.dirname(__FILE__), "../app/**/*_decorator*.rb")).sort.each do |c|
+        Rails.configuration.cache_classes ? require(c) : load(c)
+      end
+    end
   end
 end
