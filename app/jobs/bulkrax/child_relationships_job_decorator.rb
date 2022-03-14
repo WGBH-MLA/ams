@@ -3,9 +3,7 @@
 # OVERRIDE bulkrax v.1.0.0
 
 module Bulkrax
-  class ChildRelationshipsJobDecorator
-    queue_as :import
-
+  module ChildRelationshipsJobDecorator
     def perform(*args)
       @args = args
 
