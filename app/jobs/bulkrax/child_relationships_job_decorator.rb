@@ -50,6 +50,12 @@ module Bulkrax
         hash[work.id] = { class_name: work.class.to_s, entry.parser.source_identifier => child_entry.identifier }
       end
     end
+
+    private
+
+    def reschedule(entry_id, child_entry_ids, importer_run_id, attempts)
+      ChildRelationshipsJob.set(wait: 10.minutes).perform_later(entry_id, child_entry_ids, importer_run_id, attempts)
+    end
   end
 end
 
