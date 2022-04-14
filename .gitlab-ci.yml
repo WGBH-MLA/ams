@@ -147,7 +147,7 @@ gbh.staging:
     - local
 
 gbh.staging.stop:
-  stage: staging
+  stage: go
   extends:
     - .deploy
   environment:
