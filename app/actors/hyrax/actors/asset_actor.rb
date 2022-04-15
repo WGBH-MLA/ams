@@ -12,6 +12,9 @@ module Hyrax
         add_title_types(env)
         add_description_types(env)
         add_date_types(env)
+
+        # queue indexing if we are importing
+        env.curation_concern.reindex_extent = "queue#{env.importing.id}" if env.importing
         save_aapb_admin_data(env) && super && create_or_update_contributions(env, contributions)
       end
 
@@ -20,6 +23,8 @@ module Hyrax
         add_title_types(env)
         add_description_types(env)
         add_date_types(env)
+        # queue indexing if we are importing
+        env.curation_concern.reindex_extent = "queue#{env.importing.id}" if env.importing
         save_aapb_admin_data(env) && super && create_or_update_contributions(env, contributions)
       end
 

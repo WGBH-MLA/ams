@@ -12,6 +12,7 @@ require_dependency Bulkrax::Engine.root.join('app', 'jobs', 'bulkrax', 'importer
       import(importer, only_updates_since_last_import)
       update_current_run_counters(importer)
       schedule(importer) if importer.schedulable?
+      Bulkrax::IndexAfterJob.set(wait: 1.minute).perform_later(importer)
     rescue RuntimeError => e
       # Quits job when xml format is invalid
       Rails.logger.error "#{e.class}: #{e.message}\n\nBacktrace:\n#{e.backtrace.join("\n")}"

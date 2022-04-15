@@ -4,10 +4,15 @@ module Hyrax
   module Actors
     class PhysicalInstantiationActor < Hyrax::Actors::BaseActor
       def create(env)
+        # queue indexing if we are importing
+        env.curation_concern.reindex_extent = "queue#{env.importing.id}" if env.importing
+
         save_instantiation_aapb_admin_data(env) && super
       end
 
       def update(env)
+        # queue indexing if we are importing
+        env.curation_concern.reindex_extent = "queue#{env.importing.id}" if env.importing
         save_instantiation_aapb_admin_data(env) && super
       end
 
