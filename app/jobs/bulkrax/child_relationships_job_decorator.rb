@@ -57,7 +57,6 @@ module Bulkrax
 
     def work_parent_work_child(member_ids)
       # build work_members_attributes
-      binding.pry
       attrs = { id: entry&.factory&.find&.id,
                 work_members_attributes: member_ids.each.with_index.each_with_object({}) do |(member, index), ids|
                   ids[index] = { id: member }
