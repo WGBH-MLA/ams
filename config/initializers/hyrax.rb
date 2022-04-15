@@ -231,6 +231,9 @@ Hyrax.config do |config|
   # Increase the number of Asset members that are displayed on the Asset's
   # #show page.
   config.show_work_item_rows = 100
+
+  config.nested_relationship_reindexer = ->(id:, extent:) { QueuedNestingIndexer.reindex_relationships(id: id, extent: extent) }
+
 end
 
 Date::DATE_FORMATS[:standard] = "%m/%d/%Y"

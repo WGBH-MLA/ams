@@ -6,7 +6,7 @@ login: &login
   username: <%= ENV['MYSQL_USER'] %>
   password: <%= ENV['MYSQL_PASSWORD'] %>
   database: <%= ENV['MYSQL_DATABASE'] %>
-  pool: 5
+  pool: <%= ENV.fetch('SIDEKIQ_CONCURRENCY', '25').to_i + 5 %>
   timeout: 5000
 
 
