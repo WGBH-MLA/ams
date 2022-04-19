@@ -87,6 +87,8 @@ module Bulkrax
     def build_annotations(annotations, admin_data_gid)
       annotations.each do |annotation|
         if annotation['annotation_type'].nil?
+          #TODO skip blank annotations for now
+          next
           raise "annotation_type not registered with the AnnotationTypesService: #{annotation['annotation_type']}."
         end
 
