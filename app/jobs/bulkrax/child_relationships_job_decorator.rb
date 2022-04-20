@@ -53,6 +53,29 @@ module Bulkrax
 
     private
 
+<<<<<<< HEAD
+=======
+    def work_parent_work_child(member_ids)
+      # build work_members_attributes
+      binding.pry
+      attrs = { id: entry&.factory&.find&.id,
+                work_members_attributes: member_ids.each.with_index.each_with_object({}) do |(member, index), ids|
+                  ids[index] = { id: member }
+                end }
+      Bulkrax::ObjectFactory.new(attributes: attrs,
+                                 source_identifier_value: entry.identifier,
+                                 work_identifier: entry.parser.work_identifier,
+                                 collection_field_mapping: entry.parser.collection_field_mapping,
+                                 replace_files: false,
+                                 user: user,
+                                 klass: entry.factory_class).run
+      ImporterRun.find(importer_run_id).increment!(:processed_children)
+    rescue StandardError => e
+      entry.status_info(e)
+      ImporterRun.find(importer_run_id).increment!(:failed_children)
+    end
+
+>>>>>>> d520c44 (stop the child relationships job from running endlessly)
     def reschedule(entry_id, child_entry_ids, importer_run_id, attempts)
       ChildRelationshipsJob.set(wait: 10.minutes).perform_later(entry_id, child_entry_ids, importer_run_id, attempts)
     end
