@@ -1,8 +1,17 @@
+# Hi - please dont edit this file directly, instead make changes in your .env file
 test:
   adapter: sqlite3
   database: db/test.sqlite3
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 50 } %>
   timeout: 5000
+
+login: &login
+  adapter: mysql2
+  host: <%= ENV['MYSQL_HOST'] %>
+  username: <%= ENV['MYSQL_USER'] %>
+  password: <%= ENV['MYSQL_PASSWORD'] %>
+  database: <%= ENV['MYSQL_DATABASE'] %>
+  pool: <%= ENV.fetch('SIDEKIQ_CONCURRENCY', '25').to_i + 5 %>
 
 development:
   adapter: mysql2

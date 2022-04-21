@@ -54,3 +54,4 @@ public/deployment.html
 .dory.yml
 solr_db_initialized
 docker-compose.override.yml
+*~undo-tree~

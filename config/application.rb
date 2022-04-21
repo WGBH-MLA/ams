@@ -40,8 +40,13 @@ module AMS
     config.generators.system_tests = nil
 
     config.to_prepare do
-      # Allows us to use decorator files
+      # Allows us to use decorator files, which change methods or behavior on upstream classes
+      # with minimal overrides or fuss. Pattern adapted from Spree and Refinery projects
       Dir.glob(File.join(File.dirname(__FILE__), "../app/**/*_decorator*.rb")).sort.each do |c|
+        Rails.configuration.cache_classes ? require(c) : load(c)
+      end
+
+      Dir.glob(File.join(File.dirname(__FILE__), "../lib/**/*_decorator*.rb")).sort.each do |c|
         Rails.configuration.cache_classes ? require(c) : load(c)
       end
     end
