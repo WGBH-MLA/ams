@@ -1,7 +1,7 @@
 module AAPB
   class AssetThumbnailPathService < Hyrax::WorkThumbnailPathService
     class << self
-      S3_THUMBNAIL_BASE = 'http://americanarchive.org.s3.amazonaws.com/thumbnail'.freeze
+      S3_THUMBNAIL_BASE = 'https://s3.amazonaws.com/americanarchive.org/thumbnail'.freeze
       class_attribute :object_type, :sonyci_id, :id, :aapb_digital_instantiation, :digital_instantiations
 
       def call(object)
@@ -17,7 +17,7 @@ module AAPB
       def default_image
         if !sonyci_id.empty? && !aapb_digital_instantiation.nil?
           if aapb_digital_instantiation.media_type.first == "Moving Image"
-            ActionController::Base.helpers.image_path("#{S3_THUMBNAIL_BASE}/#{id}.jpg")
+            ActionController::Base.helpers.image_path("#{S3_THUMBNAIL_BASE}/#{id.gsub(/cpb-aacip./, "cpb-aacip-")}.jpg")
           elsif aapb_digital_instantiation.media_type.first == "Sound"
             ActionController::Base.helpers.image_path("/thumbs/AUDIO.png")
           else
