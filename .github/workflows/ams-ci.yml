@@ -30,8 +30,9 @@ jobs:
           java-version: '11'
 
       - name: Install Node
-        shell: bash -l -eo pipefail {0}
-        run: nvm install 12.9.0
+        uses: actions/setup-node@v3
+        with:
+          node-version: 12.9.0
 
       - name: Install Chrome Browser
         run: google-chrome-stable --headless --disable-gpu --no-sandbox --remote-debugging-port=9222 http://localhost &
