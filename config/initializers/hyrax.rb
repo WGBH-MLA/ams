@@ -191,7 +191,16 @@ Hyrax.config do |config|
   # config.lock_time_to_live = 60_000
 
   ## Do not alter unless you understand how ActiveFedora handles URI/ID translation
-  # config.translate_id_to_uri = ActiveFedora::Noid.config.translate_id_to_uri
+  config.translate_id_to_uri = lambda do |id|
+    url = "#{ActiveFedora.fedora.host}#{ActiveFedora.fedora.base_path}/#{::Noid::Rails.treeify(id)}"
+    begin
+      ActiveFedora::Fedora.instance.connection.head(url)
+    rescue Ldp::NotFound
+      url = "#{ActiveFedora.fedora.host}#{ActiveFedora.fedora.base_path}/#{::Noid::Rails.treeify(id, false)}"
+    end
+    url
+  end
+
   # config.translate_uri_to_id = ActiveFedora::Noid.config.translate_uri_to_id
 
   ## Fedora import/export tool
