@@ -1,6 +1,7 @@
 name: "Deploy Staging"
 on:
   workflow_dispatch:
+  push:
 
 env:
   REGISTRY: ghcr.io
@@ -24,10 +25,13 @@ jobs:
         run: >-
           echo "TAG=${GITHUB_SHA::8}" >> $GITHUB_ENV;
           echo "DEPLOY_TAG=${GITHUB_SHA::8}" >> $GITHUB_ENV;
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.debug_enabled }}
       - name: Checkout code
         uses: actions/checkout@v3
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.debug_enabled }}
       - name: Do deploy
         run: >-
           echo $KUBECONFIG_FILE | base64 --decode > $KUBECONFIG
           DOLLAR=$ envsubst < ops/staging-deploy.tmpl.yaml > ops/staging-deploy.yaml;
           ./bin/helm_deploy gbh-staging gbh-staging
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.debug_enabled }}
