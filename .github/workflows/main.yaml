@@ -52,12 +52,12 @@ jobs:
             SETTINGS__BULKRAX__ENABLED=true
             EXTRA_APK_PACKAGES=less vim bash openjdk11-jre ffmpeg rsync yarn
           cache-from: |
-            ${{ env.REGISTRY }}/${{ secrets.GITHUB_REPOSITORY }}:latest
-            ${{ env.REGISTRY }}/${{ secrets.GITHUB_REPOSITORY }}:${TAG}
+            ${{ env.REGISTRY }}/${{ github.repository }}:latest
+            ${{ env.REGISTRY }}/${{ github.repository }}:${TAG}
           push: true
           tags: |
-            ${{ env.REGISTRY }}/${{ secrets.GITHUB_REPOSITORY }}:latest
-            ${{ env.REGISTRY }}/${{ secrets.GITHUB_REPOSITORY }}:${{ env.TAG }}
+            ${{ env.REGISTRY }}/${{ github.repository }}:latest
+            ${{ env.REGISTRY }}/${{ github.repository }}:${{ env.TAG }}
       - name: Build and push worker
         uses: docker/build-push-action@v3
         with:
@@ -68,12 +68,12 @@ jobs:
             SETTINGS__BULKRAX__ENABLED=true
             EXTRA_APK_PACKAGES=less vim bash openjdk11-jre ffmpeg rsync yarn
           cache-from: |
-            ${{ env.REGISTRY }}/${{ secrets.GITHUB_REPOSITORY }}:latest
-            ${{ env.REGISTRY }}/${{ secrets.GITHUB_REPOSITORY }}:${TAG}
+            ${{ env.REGISTRY }}/${{ github.repository }}:latest
+            ${{ env.REGISTRY }}/${{ github.repository }}:${TAG}
           push: true
           tags: |
-            ${{ env.REGISTRY }}/${{ secrets.GITHUB_REPOSITORY }}/worker:${{ env.TAG }}
-            ${{ env.REGISTRY }}/${{ secrets.GITHUB_REPOSITORY }}:latest
+            ${{ env.REGISTRY }}/${{ github.repository }}/worker:${{ env.TAG }}
+            ${{ env.REGISTRY }}/${{ github.repository }}:latest
 
   lint:
     needs: build
