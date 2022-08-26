@@ -16,9 +16,9 @@ RUN apk --no-cache upgrade && \
     perl \
     cmake \
     $EXTRA_APK_PACKAGES && \
-  curl https://sh.rustup.rs -sSf | sh -s -- -y && \
-  source "$HOME/.cargo/env" && \
-  cargo install rbspy && \
+  # curl https://sh.rustup.rs -sSf | sh -s -- -y && \
+  # source "$HOME/.cargo/env" && \
+  # cargo install rbspy && \
   echo "******** Packages Installed *********"
 
 USER app
