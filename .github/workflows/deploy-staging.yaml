@@ -31,6 +31,6 @@ jobs:
         uses: actions/checkout@v3
       - name: Do deploy
         run: >-
-          echo $KUBECONFIG_FILE | base64 -d > $KUBECONFIG
+          echo $KUBECONFIG_FILE | base64 -d > $KUBECONFIG;
           DOLLAR=$ envsubst < ops/staging-deploy.tmpl.yaml > ops/staging-deploy.yaml;
           ./bin/helm_deploy gbh-staging gbh-staging
