@@ -37,4 +37,5 @@ jobs:
         run: >-
           echo $KUBECONFIG_FILE | base64 -d > $KUBECONFIG;
           DOLLAR=$ envsubst < ops/staging-deploy.tmpl.yaml > ops/staging-deploy.yaml;
+          cat ops/staging-deploy.yaml;
           ./bin/helm_deploy gbh-staging gbh-staging
