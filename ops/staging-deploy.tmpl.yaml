@@ -150,12 +150,11 @@ mariadb:
   enabled: true
   replication:
     enabled: false
-  db:
-    name: gbh-hyrax
-    user: gbh-hyrax
+  auth:
+    database: gbh-hyrax
+    username: gbh-hyrax
     password: $MYSQL_PASSWORD
-  rootUser:
-    password: $MYSQL_ROOT_PASSWORD
+    rootPassword: $MYSQL_ROOT_PASSWORD
   master:
     persistence:
       enabled: true
