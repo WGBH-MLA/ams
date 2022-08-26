@@ -41,7 +41,9 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Pull from cache to speed up build
-        run: TAG=latest docker-compose pull web || true
+        run: >-
+          touch .env.development;
+          TAG=latest docker-compose pull web || true
       - name: Build and push
         uses: docker/build-push-action@v3
         with:
