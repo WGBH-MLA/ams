@@ -150,7 +150,7 @@ services:
       #   condition: service_started
       chrome:
         condition: service_started
-      sidekiq:
+      worker:
         condition: service_started
       initialize_app:
         condition: service_started
@@ -160,7 +160,7 @@ services:
     expose:
       - 3000
 
-  sidekiq:
+  worker:
     <<: *app
     build:
       context: .

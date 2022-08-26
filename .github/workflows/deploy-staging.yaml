@@ -21,13 +21,16 @@ jobs:
       KUBECONFIG: ./kubeconfig.yml
     steps:
       - name: Set env
+        # run: >-
+        #   echo "TAG=${GITHUB_SHA::8}" >> $GITHUB_ENV;
+        #   echo "DEPLOY_TAG=${GITHUB_SHA::8}" >> $GITHUB_ENV;
         run: >-
-          echo "TAG=${GITHUB_SHA::8}" >> $GITHUB_ENV;
-          echo "DEPLOY_TAG=${GITHUB_SHA::8}" >> $GITHUB_ENV;
+          echo "TAG=latest" >> $GITHUB_ENV;
+          echo "DEPLOY_TAG=latest" >> $GITHUB_ENV;
       - name: Checkout code
         uses: actions/checkout@v3
       - name: Do deploy
         run: >-
-          echo $KUBECONFIG_FILE | base64 --decode > $KUBECONFIG
+          echo $KUBECONFIG_FILE | base64 -d > $KUBECONFIG
           DOLLAR=$ envsubst < ops/staging-deploy.tmpl.yaml > ops/staging-deploy.yaml;
           ./bin/helm_deploy gbh-staging gbh-staging
