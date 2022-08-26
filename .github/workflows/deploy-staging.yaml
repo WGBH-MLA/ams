@@ -19,6 +19,10 @@ jobs:
         --values ops/staging-deploy.yaml
       KUBECONFIG_FILE: ${{ secrets.KUBECONFIG_FILE_STAGING }}
       KUBECONFIG: ./kubeconfig.yml
+      SOLR_PASSWORD: ${{ secrets.SOLR_PASSWORD }}
+      SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
+      MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
+      MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
     steps:
       - name: Set env
         # run: >-
