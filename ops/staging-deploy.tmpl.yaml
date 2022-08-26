@@ -141,7 +141,7 @@ leaseRelease:
   enabled: false
 
 imagePullSecrets:
-  - name: gitlab
+  - name: github
 
 fcrepo:
   enabled: false
