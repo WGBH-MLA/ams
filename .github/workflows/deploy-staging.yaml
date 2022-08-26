@@ -10,8 +10,8 @@ jobs:
     runs-on: 'ubuntu-latest'
     container: dtzar/helm-kubectl:3.9.4
     env:
-      DEPLOY_IMAGE: ghcr.io/${{ secrets.GITHUB_REPOSITORY }}
-      WORKER_IMAGE: ghcr.io/${{ secrets.GITHUB_REPOSITORY }}/worker
+      DEPLOY_IMAGE: ghcr.io/${{ github.repository }}
+      WORKER_IMAGE: ghcr.io/${{ github.repository }}/worker
       HELM_EXPERIMENTAL_OCI: 1
       HELM_RELEASE_NAME: gbh-staging
       KUBE_NAMESPACE: gbh-staging
