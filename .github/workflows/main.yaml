@@ -92,6 +92,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Pull from cache to speed up build
         run: >-
+          touch .env.development;
           docker-compose pull web;
           docker-compose pull worker
       - name: Run Rubocop
@@ -135,6 +136,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Pull from cache to speed up build
         run: >-
+          touch .env.development;
           docker-compose pull web;
           docker-compose pull worker
       - name: Start containers
