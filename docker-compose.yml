@@ -1,18 +1,17 @@
 version: '3.8'
 
-
 x-app: &app
   build:
     context: .
     target: hyku-base
     args:
-      - EXTRA_APK_PACKAGES=less vim bash openjdk11-jre ffmpeg rsync
+      - EXTRA_APK_PACKAGES=less vim bash openjdk11-jre ffmpeg rsync yarn
       - SETTINGS__BULKRAX__ENABLED=true
   # command: sh -l -c "bundle && bundle exec puma -v -b tcp://0.0.0.0:3000"
   env_file:
     - .env
   # NOTE: all common env variables moved to .env
-  image: registry.gitlab.com/notch8/gbh:${TAG:-latest}
+  image: ghcr.io/notch8/ams:${TAG:-latest}
   volumes:
     - uploads:/app/samvera/hyrax-webapp/public/uploads
     - assets:/app/samvera/hyrax-webapp/public/assets
@@ -20,7 +19,6 @@ x-app: &app
     - .:/app/samvera/hyrax-webapp
   networks:
     internal:
-
 
 volumes:
   fcrepo:
@@ -168,9 +166,9 @@ services:
       context: .
       target: hyku-worker
       args:
-        - EXTRA_APK_PACKAGES=less vim bash openjdk11-jre ffmpeg rsync
+        - EXTRA_APK_PACKAGES=less vim bash openjdk11-jre ffmpeg rsync yarn
         - SETTINGS__BULKRAX__ENABLED=true
-    image: registry.gitlab.com/notch8/gbh/worker:${TAG:-latest}
+    image: ghcr.io/notch8/ams/worker:${TAG:-latest}
     depends_on:
       - fcrepo
       - db

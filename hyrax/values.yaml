@@ -231,8 +231,8 @@ mariadb:
   auth:
     database: gbh-hyrax
     username: gbh-hyrax
-    password: Ul325eNanC5g4Nzl
-    rootPassword: uRr1bX7vq8PzaD76
+    password: testtesttest
+    rootPassword: testtesttest
   master:
     persistence:
       enabled: true
