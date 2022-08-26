@@ -196,11 +196,17 @@ Hyrax.config do |config|
     begin
       ActiveFedora::Fedora.instance.connection.head(url)
     rescue Ldp::NotFound
-      url = "#{ActiveFedora.fedora.host}#{ActiveFedora.fedora.base_path}/#{::Noid::Rails.treeify(id, false)}"
+      begin
+        old_url = "#{ActiveFedora.fedora.host}#{ActiveFedora.fedora.base_path}/#{::Noid::Rails.treeify(id, false)}"
+        ActiveFedora::Fedora.instance.connection.head(old_url)
+      rescue Ldp::NotFound
+        # Do nothing
+      else
+        url = old_url
+      end
     end
     url
   end
-
   # config.translate_uri_to_id = ActiveFedora::Noid.config.translate_uri_to_id
 
   ## Fedora import/export tool

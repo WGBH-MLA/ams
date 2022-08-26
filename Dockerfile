@@ -3,7 +3,7 @@ FROM ghcr.io/samvera/hyku/hyku-base:$HYRAX_IMAGE_VERSION as hyku-base
 
 USER root
 
-ARG EXTRA_APK_PACKAGES="openjdk11-jre ffmpeg pkg-config yarn rbspy"
+ARG EXTRA_APK_PACKAGES="openjdk11-jre ffmpeg pkg-config yarn"
 RUN apk --no-cache upgrade && \
   apk --no-cache add \
     curl \
@@ -15,9 +15,11 @@ RUN apk --no-cache upgrade && \
     openssh \
     perl \
     cmake \
-    cargo \
     $EXTRA_APK_PACKAGES && \
-    cargo install rbspy
+  curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh && \
+  source "$HOME/.cargo/env" && \
+  cargo install rbspy && \
+  echo "******** Packages Installed *********"
 
 USER app
 
