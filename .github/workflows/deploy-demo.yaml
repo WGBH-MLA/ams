@@ -1,4 +1,4 @@
-name: "Deploy Staging"
+name: "Deploy Demo"
 on:
   workflow_dispatch: {}
 
@@ -13,15 +13,14 @@ jobs:
       DEPLOY_IMAGE: ghcr.io/${{ github.repository }}
       WORKER_IMAGE: ghcr.io/${{ github.repository }}/worker
       HELM_EXPERIMENTAL_OCI: 1
-      HELM_RELEASE_NAME: gbh-staging
-      KUBE_NAMESPACE: gbh-staging
+      HELM_RELEASE_NAME: gbh-demo
+      KUBE_NAMESPACE: gbh-demo
       HELM_EXTRA_ARGS: >
-        --values ops/staging-deploy.yaml
-      KUBECONFIG_FILE: ${{ secrets.KUBECONFIG_FILE_STAGING }}
+        --values ops/demo-deploy.yaml
+      KUBECONFIG_FILE: ${{ secrets.KUBECONFIG_FILE_DEMO }}
       KUBECONFIG: ./kubeconfig.yml
-      SOLR_PASSWORD: ${{ secrets.SOLR_PASSWORD }}
-      SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
-      MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
+      SOLR_PASSWORD: ${{ secrets.SOLR_PASSWORD_DEMO }}
+      MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD_DEMO }}
       MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
     steps:
       - name: Set env
@@ -33,6 +32,6 @@ jobs:
       - name: Do deploy
         run: >-
           echo $KUBECONFIG_FILE | base64 -d > $KUBECONFIG;
-          DOLLAR=$ envsubst < ops/staging-deploy.tmpl.yaml > ops/staging-deploy.yaml;
-          cat ops/staging-deploy.yaml;
-          ./bin/helm_deploy gbh-staging gbh-staging
+          DOLLAR=$ envsubst < ops/demo-deploy.tmpl.yaml > ops/demo-deploy.yaml;
+          cat ops/demo-deploy.yaml;
+          ./bin/helm_deploy gbh-demo gbh-demo
