@@ -13,22 +13,23 @@ x-app: &app
   # NOTE: all common env variables moved to .env
   image: ghcr.io/notch8/ams:${TAG:-latest}
   volumes:
-    - uploads:/app/samvera/hyrax-webapp/public/uploads
-    - assets:/app/samvera/hyrax-webapp/public/assets
-    - cache:/app/samvera/hyrax-webapp/tmp/cache
+    - uploads:/app/samvera/hyrax-webapp/public/uploads:cached
+    - assets:/app/samvera/hyrax-webapp/public/assets:cached
+    - cache:/app/samvera/hyrax-webapp/tmp/cache:cached
     - .:/app/samvera/hyrax-webapp
   networks:
     internal:
 
 volumes:
-  fcrepo:
-  solr:
-  mysql:
-  redis:
-  zk:
-  uploads:
   assets:
   cache:
+  fcrepo:
+  mysql:
+  redis:
+  solr:
+  uploads:
+  zk:
+  zoo:
 
 networks:
   internal:
@@ -53,29 +54,56 @@ services:
       internal:
     command: ['mysqld', '--character-set-server=utf8', '--collation-server=utf8_unicode_ci']
 
+  zoo:
+    image: zookeeper:3.6.2
+    ports:
+      - 2181:2181
+      - 7001:7000
+    environment:
+      - ZOO_MY_ID=1
+      - ZOO_SERVERS=server.1=zoo:2888:3888;2181
+      - ZOO_4LW_COMMANDS_WHITELIST=mntr,srvr,ruok,conf
+    volumes:
+      - zoo:/data
+      - zk:/datalog
+    networks:
+      internal:
+    healthcheck:
+      test: ["CMD-SHELL", "echo 'ruok' | nc -w 2 -q 2 localhost 2181 | grep imok || exit 1"]
+      interval: "10s"
+      timeout: "8s"
 
   solr:
-    image: bitnami/solr:8
+    image: hyku/solr:8
+    build:
+      context: solr
+      dockerfile: Dockerfile
+    env_file:
+      - .env
     environment:
       - OOM=script
-      - SOLR_ADMIN_USERNAME=admin
-      - SOLR_ADMIN_PASSWORD=admin
-      - SOLR_CLOUD_BOOTSTRAP=yes
-      - SOLR_ENABLE_CLOUD_MODE=yes
-      - SOLR_ENABLE_AUTHENTICATION=yes
-      - SOLR_PORT_NUMBER=8983
-      - SOLR_ZK_HOSTS=zoo
       - VIRTUAL_PORT=8983
       - VIRTUAL_HOST=solr.ams.test
-    depends_on:
-      zoo:
-        condition: service_healthy
+    user: root
+    command: bash -c "
+      chown -R 8983:8983 /var/solr
+      && ./bin/solr zk cp file:/var/solr/data/security.json zk:/security.json
+      && runuser -u solr -- solr-foreground"
     expose:
       - 8983
     volumes:
-      - solr:/bitnami
+      - solr:/var/solr
     networks:
       internal:
+    healthcheck:
+      test: curl -sf http://$$SOLR_ADMIN_USER:$$SOLR_ADMIN_PASSWORD@localhost:8983/solr/admin/cores?action=STATUS || exit 1
+      start_period: 10s
+      interval: 20s
+      timeout: 5s
+      retries: 3
+    depends_on:
+      zoo:
+        condition: service_healthy
 
   redis:
     image: redis:5
@@ -91,12 +119,28 @@ services:
       - fcrepo:/data:cached
     env_file:
       - .env
+    environment:
+      - VIRTUAL_PORT=8983
+      - VIRTUAL_HOST=fcrepo.ams.test
     expose:
       - 8080
     environment:
       - JAVA_OPTS=${JAVA_OPTS} -Dfcrepo.modeshape.configuration="classpath:/config/file-simple/repository.json" -Dfcrepo.object.directory="/data/objects" -Dfcrepo.binary.directory="/data/binaries"
     networks:
       internal:
+
+
+  # Do not recurse through all of tmp. derivitives will make booting
+  # very slow and eventually just time out as data grows
+  check_volumes:
+    <<: *app
+    user: root
+    entrypoint: ["sh", "-x", "-c"]
+    command:
+      - >
+        chown -R app:app /app/samvera/hyrax-webapp/public/uploads &&
+        chown -R app:app /app/samvera/hyrax-webapp/public/assets &&
+        chown -R app:app /app/samvera/hyrax-webapp/tmp/cache
 
   initialize_app:
     <<: *app
@@ -105,28 +149,19 @@ services:
     entrypoint: ["sh", "-c"]
     command:
       - >
-        if [ ! -f "/app/samvera/hyrax-webapp/solr_db_initialized" ]; then
-          solrcloud-upload-configset.sh /app/samvera/hyrax-webapp/solr/config &&
-          solrcloud-assign-configset.sh &&
-          SOLR_COLLECTION_NAME=hydra-test solrcloud-assign-configset.sh &&
-          rails db:create db:migrate db:seed &&
-          touch /app/samvera/hyrax-webapp/solr_db_initialized
-        fi
+        solrcloud-upload-configset.sh /app/samvera/hyrax-webapp/solr/config &&
+        solrcloud-assign-configset.sh &&
+        SOLR_COLLECTION_NAME=hydra-test solrcloud-assign-configset.sh &&
+        rails db:create db:migrate db:seed
     depends_on:
-      - db
-      - solr
-      - fcrepo
-
-  migrate_app:
-    <<: *app
-    entrypoint: ["sh", "-c"]
-    command:
-      - >
-        rails db:migrate
-    depends_on:
-      - db
-      - solr
-      - fcrepo
+      db:
+        condition: service_started
+      solr:
+        condition: service_healthy
+      fcrepo:
+        condition: service_started
+      redis:
+        condition: service_started
 
   web:
     <<: *app
@@ -147,16 +182,14 @@ services:
         condition: service_started
       zoo:
         condition: service_started
-      # check_volumes:
-      #   condition: service_started
+      check_volumes:
+        condition: service_started
       chrome:
         condition: service_started
       worker:
         condition: service_started
       initialize_app:
-        condition: service_started
-      migrate_app:
-        condition: service_started
+        condition: service_completed_successfully
 
     expose:
       - 3000
@@ -171,40 +204,32 @@ services:
         - SETTINGS__BULKRAX__ENABLED=true
     image: ghcr.io/notch8/ams/worker:${TAG:-latest}
     depends_on:
-      - fcrepo
-      - db
-      - solr
-      - redis
-
-  zoo:
-    image: bitnami/zookeeper:3.6
-    environment:
-      - ALLOW_ANONYMOUS_LOGIN=yes
-      - ZOO_4LW_COMMANDS_WHITELIST=mntr, srvr, ruok
-      - ZOO_SERVER_ID=1
-      - ZOO_SERVERS=zoo:2888:3888
-    expose:
-      - 2181
-      - 2888
-      - 3888
-    volumes:
-      - zk:/bitnami/zookeeper
-    networks:
-      internal:
-    healthcheck:
-      test: ["CMD-SHELL", "echo 'ruok' | nc -w 2 -q 2 localhost 2181 | grep imok || exit 1"]
-      interval: "10s"
-      timeout: "8s"
+      check_volumes:
+        condition: service_completed_successfully
+      db:
+        condition: service_started
+      solr:
+        condition: service_started
+      fcrepo:
+        condition: service_started
+      redis:
+        condition: service_started
+      zoo:
+        condition: service_started
+      initialize_app:
+        condition: service_completed_successfully
 
   chrome:
-    image: selenium/standalone-chrome-debug:3.141.59-20201010
+    # password is 'secret'
+    image: seleniarm/standalone-chromium:latest
     logging:
       driver: none
     volumes:
       - /dev/shm:/dev/shm
-    shm_size: 2G
+    shm_size: 3G
     networks:
       internal:
-    ports:
-      - "4444"
-      - "5959:5900"
+    environment:
+      - JAVA_OPTS=-Dwebdriver.chrome.whitelistedIps=
+      - VIRTUAL_PORT=7900
+      - VIRTUAL_HOST=chrome.hyku.test

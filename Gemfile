@@ -11,6 +11,7 @@ group :bulkrax do
   gem 'bulkrax', git: 'https://github.com/samvera-labs/bulkrax.git', ref: '23efea3fd9d8d98746b73e570e0dc214ff764271'
   gem 'willow_sword', git: 'https://github.com/notch8/willow_sword.git'
 end
+gem 'sony_ci_api', github: 'WGBH-MLA/sony_ci_api_rewrite', branch: 'v0.1'
 
 gem 'dotenv-rails'
 
@@ -93,7 +94,6 @@ gem 'hyrax-batch_ingest', git: 'https://github.com/samvera-labs/hyrax-batch_inge
 gem 'pbcore', '~> 0.3.0'
 gem 'curb'
 # gem 'sony_ci_api', '~> 0.2.1'
-gem 'sony_ci_api', github: 'WGBH-MLA/sony_ci_api_rewrite', branch: 'v0.1'
 # gem 'hyrax-iiif_av', '>= 0.2.0'
 # gem 'hyrax-iiif_av', github: 'samvera-labs/hyrax-iiif_av', branch: 'hyrax_master'
 gem 'webpacker'
@@ -106,10 +106,3 @@ gem 'httparty', '~> 0.18'
 # production environments on demo instances.
 gem 'pry-byebug', platforms: [:mri, :mingw, :x64_mingw]
 gem 'activerecord-nulldb-adapter'
-gem 'pronto'
-gem 'pronto-brakeman', require: false
-gem 'pronto-flay', require: false
-gem 'pronto-rails_best_practices', require: false
-gem 'pronto-rails_schema', require: false
-gem 'pronto-rubocop', require: false
-gem "sentry-raven"
