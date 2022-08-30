@@ -1,5 +1,5 @@
 module SonyCi
-  class WebhooksController < APIController
+  class WebhooksController < ::APIController
     after_action :create_webhook_log
 
     rescue_from StandardError do |error|
@@ -57,9 +57,12 @@ module SonyCi
       def create_webhook_log(error: nil)
         webhook_log.response_headers = response.headers.to_h
         webhook_log.response_body = response_json
+        webhook_log.response_status = response.status
         if error
           webhook_log.error = error.class
           webhook_log.error_message = error.message
+        else
+          webhook_log.guids = [ guid_from_sony_ci_filename ]
         end
         webhook_log.save!
       end

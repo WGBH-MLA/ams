@@ -80,6 +80,10 @@ Rails.application.routes.draw do
     get '/api/get_filename', controller: 'api', action: :get_filename, defaults: { format: :json }
   end
 
+  namespace :api do
+    resources :assets, only: [:show], defaults: { format: :json }
+  end
+
 
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
 end

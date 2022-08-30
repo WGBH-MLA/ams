@@ -1,3 +1,51 @@
+<style>
+  .sony_ci_webhook_log dd {
+    margin-bottom: 10px;
+  }
+</style>
+
 <p id="notice"><%= notice %></p>
 
-<%= link_to 'Back', sony_ci_webhook_logs_path %>
+<dl class="sony_ci_webhook_log">
+  <dt>Action</dt>
+  <dd><%= @presenter.action %></dd>
+
+  <dt>Status</dt>
+  <dd><%= @presenter.status %></dd>
+
+  <dt>Date</dt>
+  <dd><%= @presenter.created_at %></dd>
+
+  <% if @presenter.error %>
+    <dt>Error</dt>
+    <dd><%= @presenter.error || "None" %></dd>
+
+    <dt>Error Message</dt>
+    <dd><%= @presenter.error_message || "None" %></dd>
+  <% end %>
+
+  <dt>URL</dt>
+  <dd><%= @presenter.url || "Unavailable" %></dd>
+
+  <dt>Request Headers</dt>
+  <dd>
+    <pre><%= @presenter.request_headers || "None" %></pre>
+  </dd>
+
+  <dt>Request Body</dt>
+  <dd>
+    <pre><%= @presenter.request_body || "None" %></pre>
+  </dd>
+
+  <dt>Response Headers</dt>
+  <dd>
+    <pre><%= @presenter.response_headers || "None" %></pre>
+  </dd>
+
+  <dt>Response Body</dt>
+  <dd>
+    <pre><%= @presenter.response_body || "None" %></pre>
+  </dd>
+</dl>
+
+<%= link_to 'View All', sony_ci_webhook_logs_path %>
