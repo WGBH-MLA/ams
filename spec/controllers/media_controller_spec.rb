@@ -6,19 +6,23 @@ RSpec.describe MediaController, type: :controller do
     let(:id) { '1234' }
     let(:sony_ci_id) { '4567' }
     let(:fake_sony_ci_url) { "https://fakesonyci.com/download/#{sony_ci_id}"}
-    let(:fake_sony_ci_api) { instance_double("SonyCiBasic") }
+    let(:fake_sony_ci_api) { instance_double(SonyCiApi::Client) }
+    let(:fake_sony_ci_response) {
+      { 'id' => sony_ci_id, 'location' => fake_sony_ci_url }
+    }
     let(:fake_solr_document) { { 'sonyci_id_ssim' => [sony_ci_id] } }
 
     before do
-      allow(fake_sony_ci_api).to receive(:download).with(sony_ci_id).and_return(fake_sony_ci_url)
+      allow(fake_sony_ci_api).to receive(:asset_download).with(sony_ci_id).and_return(fake_sony_ci_response)
       allow(controller).to receive(:ci).and_return(fake_sony_ci_api)
-      allow(controller).to receive(:solr_document).and_return(fake_solr_document)
+      allow(SolrDocument).to receive(:find).with(id).and_return(fake_solr_document)
       allow(controller).to receive(:can?).with(:show, fake_solr_document).and_return(true)
     end
 
     context 'when no Solr document is found for the given :id' do
-      # Pretend like the controller failed to find the Solr document.
-      before { allow(controller).to receive(:solr_document).and_return(nil) }
+      before do
+        allow(SolrDocument).to receive(:find).with(id).and_raise(Blacklight::Exceptions::RecordNotFound)
+      end
       it 'a 404 HTTP status is returned' do
         get :show, params: { id: id }
         expect(response).to have_http_status 404
@@ -29,8 +33,21 @@ RSpec.describe MediaController, type: :controller do
       context 'and when user has permission to view the file' do
         it 'the SonyCiApi is used to fetch the media url' do
           get :show, params: { id: id }
-          expect(fake_sony_ci_api).to have_received(:download).with(sony_ci_id)
+          expect(fake_sony_ci_api).to have_received(:asset_download).with(sony_ci_id)
           expect(response).to redirect_to fake_sony_ci_url
+        end
+
+        context 'but the Sony Ci Api responds with any SonyCiApi::HttpError' do
+          let(:http_status) { rand(400..599) }
+          before do
+            allow(fake_sony_ci_api).to receive(:asset_download).and_raise(SonyCiApi::HttpError)
+            allow_any_instance_of(SonyCiApi::HttpError).to receive(:http_status).and_return(http_status)
+          end
+          it 'returns no response and status from SonyCiApi::HttpError#http_status' do
+            get :show, params: { id: id }
+            expect(response).to have_http_status http_status
+            expect(response.body).to be_empty
+          end
         end
       end
 
@@ -40,6 +57,7 @@ RSpec.describe MediaController, type: :controller do
         it 'a 403 HTTP status is returned' do
           get :show, params: { id: id }
           expect(response).to have_http_status 403
+          expect(response.body).to be_empty
         end
       end
     end

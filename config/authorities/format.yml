@@ -138,7 +138,7 @@ terms:
   - id: 22mm film
     term: 22mm film
   - id: 28mm film
-  - term: 28mm film
+    term: 28mm film
   - id: 35mm film
     term: 35mm film
   - id: 70mm film
@@ -181,8 +181,8 @@ terms:
       Betamax: Super
   - id: Blu-ray disc
     term: Blu-ray disc
-  - id: Cartivision
-    term: Cartivision
+  - id: Cartrivision
+    term: Cartrivision
   - id: CD
     term: CD
   - id: D1

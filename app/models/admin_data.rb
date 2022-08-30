@@ -58,4 +58,23 @@ class AdminData < ApplicationRecord
     @asset_error = error
     nil
   end
+
+  # Returns a hash of Sony Ci records fetched from the Sony Ci API, keyed
+  # by the Sony Ci ID.
+  def sonyci_records
+    # NOTE: sonyci_id (although singular) is actually a serialized array.
+    # We do hit the API per sonyci_id here, but over 99% of the time, there will
+    # be only one, and when there's more, there are not a whole bunch.
+    @sonyci_records ||= {}.tap do |hash|
+      sonyci_id.each { |id| hash[id] = sony_ci_api.asset(id) }
+    end
+  rescue => e
+    Rails.logger.error "Could not retrieve records from Sony Ci API.\n " \
+                       "#{e.class}: #{e.message}"
+    nil
+  end
+
+  def sony_ci_api
+    @sony_ci_api ||= SonyCiApi::Client.new('config/ci.yml')
+  end
 end
