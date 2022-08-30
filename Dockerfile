@@ -1,21 +1,29 @@
 ARG HYRAX_IMAGE_VERSION=3.1.0
-FROM ghcr.io/samvera/hyku/hyku-base:$HYRAX_IMAGE_VERSION as hyku-base
+FROM ghcr.io/samvera/hyku/hyku-base:$HYRAX_IMAGE_VERSION as ams-base
 
 USER root
 
-ARG EXTRA_APK_PACKAGES="openjdk11-jre ffmpeg pkg-config yarn"
 RUN apk --no-cache upgrade && \
   apk --no-cache add \
+    bash \
+    cmake \
     curl \
     curl-dev \
+    exiftool \
+    ffmpeg \
+    less \
     libcurl \
     libxml2-dev \
     mariadb-dev \
     mediainfo \
+    nodejs \
+    openjdk11-jre \
     openssh \
     perl \
-    cmake \
-    $EXTRA_APK_PACKAGES && \
+    pkgconfig \
+    rsync \
+    vim \
+    yarn && \
   # curl https://sh.rustup.rs -sSf | sh -s -- -y && \
   # source "$HOME/.cargo/env" && \
   # cargo install rbspy && \
@@ -37,8 +45,10 @@ RUN bundle install --jobs "$(nproc)"
 COPY --chown=1001:101 $APP_PATH /app/samvera/hyrax-webapp
 
 ARG SETTINGS__BULKRAX__ENABLED="false"
-RUN bash -l -c "RAILS_ENV=production SECRET_KEY_BASE=fake-key-for-asset-building-only DB_ADAPTER=nulldb bundle exec rake assets:precompile"
+RUN sh -l -c " \
+  yarn install && \
+  RAILS_ENV=production SECRET_KEY_BASE=fake-key-for-asset-building-only DB_ADAPTER=nulldb bundle exec rake assets:precompile"
 
-FROM hyku-base as hyku-worker
+FROM ams-base as ams-worker
 ENV MALLOC_ARENA_MAX=2
 CMD bundle exec sidekiq

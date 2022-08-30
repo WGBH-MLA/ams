@@ -3,9 +3,8 @@ version: '3.8'
 x-app: &app
   build:
     context: .
-    target: hyku-base
+    target: ams-base
     args:
-      - EXTRA_APK_PACKAGES=less vim bash openjdk11-jre ffmpeg rsync yarn
       - SETTINGS__BULKRAX__ENABLED=true
   # command: sh -l -c "bundle && bundle exec puma -v -b tcp://0.0.0.0:3000"
   env_file:
@@ -74,7 +73,7 @@ services:
       timeout: "8s"
 
   solr:
-    image: hyku/solr:8
+    image: ams/solr:8
     build:
       context: solr
       dockerfile: Dockerfile
@@ -198,9 +197,8 @@ services:
     <<: *app
     build:
       context: .
-      target: hyku-worker
+      target: ams-worker
       args:
-        - EXTRA_APK_PACKAGES=less vim bash openjdk11-jre ffmpeg rsync yarn
         - SETTINGS__BULKRAX__ENABLED=true
     image: ghcr.io/notch8/ams/worker:${TAG:-latest}
     depends_on:
@@ -232,4 +230,4 @@ services:
     environment:
       - JAVA_OPTS=-Dwebdriver.chrome.whitelistedIps=
       - VIRTUAL_PORT=7900
-      - VIRTUAL_HOST=chrome.hyku.test
+      - VIRTUAL_HOST=chrome.ams.test
