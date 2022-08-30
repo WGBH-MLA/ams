@@ -1,4 +1,14 @@
 GIT
+  remote: https://github.com/WGBH-MLA/sony_ci_api_rewrite.git
+  revision: 9f18529e7126ff18df3d4cbc0532ecdab77e9938
+  branch: v0.1
+  specs:
+    sony_ci_api (0.1.0)
+      activesupport
+      faraday (~> 0.12)
+      faraday_middleware
+
+GIT
   remote: https://github.com/notch8/willow_sword.git
   revision: 0a669d78617c6003e4aa1a46a10447be92be27d5
   specs:
@@ -179,7 +189,6 @@ GEM
     bootstrap_form (4.4.0)
       actionpack (>= 5.0)
       activemodel (>= 5.0)
-    brakeman (5.1.1)
     breadcrumbs_on_rails (3.0.1)
     browse-everything (1.1.2)
       addressable (~> 2.5)
@@ -213,8 +222,6 @@ GEM
       ssrf_filter (~> 1.0)
     childprocess (3.0.0)
     clipboard-rails (1.7.1)
-    code_analyzer (0.5.2)
-      sexp_processor
     coderay (1.1.3)
     coffee-rails (4.2.2)
       coffee-script (>= 2.2.0)
@@ -322,7 +329,6 @@ GEM
     equivalent-xml (0.6.0)
       nokogiri (>= 1.4.3)
     erubi (1.10.0)
-    erubis (2.7.0)
     ethon (0.14.0)
       ffi (>= 1.15.0)
     execjs (2.8.1)
@@ -342,11 +348,6 @@ GEM
     fcrepo_wrapper (0.9.0)
       ruby-progressbar
     ffi (1.15.4)
-    flay (2.12.1)
-      erubis (~> 2.7.0)
-      path_expander (~> 1.0)
-      ruby_parser (~> 3.0)
-      sexp_processor (~> 4.0)
     flipflop (2.6.0)
       activesupport (>= 4.0)
     flot-rails (0.0.7)
@@ -354,9 +355,6 @@ GEM
     font-awesome-rails (4.7.0.7)
       railties (>= 3.2, < 7)
     gems (1.2.0)
-    gitlab (4.17.0)
-      httparty (~> 0.18)
-      terminal-table (~> 1.5, >= 1.5.1)
     globalid (0.5.2)
       activesupport (>= 5.0)
     google-api-client (0.53.0)
@@ -657,9 +655,6 @@ GEM
       multi_json (~> 1.3)
       multi_xml (~> 0.5)
       rack (>= 1.2, < 3)
-    octokit (4.21.0)
-      faraday (>= 0.9)
-      sawyer (~> 0.8.0, >= 0.5.3)
     openseadragon (0.6.0)
       rails (> 3.2.0)
     orm_adapter (0.5.0)
@@ -668,7 +663,6 @@ GEM
     parser (3.0.2.0)
       ast (~> 2.4.1)
     parslet (2.0.0)
-    path_expander (1.1.0)
     pbcore (0.3.2)
       factory_bot (~> 4.11)
       faker (~> 1.9)
@@ -676,27 +670,6 @@ GEM
       sax-machine (~> 1.3)
     posix-spawn (0.3.15)
     power_converter (0.1.2)
-    pronto (0.10.0)
-      gitlab (~> 4.0, >= 4.0.0)
-      httparty (>= 0.13.7)
-      octokit (~> 4.7, >= 4.7.0)
-      rainbow (>= 2.2, < 4.0)
-      rugged (~> 0.24, >= 0.23.0)
-      thor (~> 0.20.0)
-    pronto-brakeman (0.10.0)
-      brakeman (>= 3.2.0)
-      pronto (~> 0.10.0)
-    pronto-flay (0.10.0)
-      flay (~> 2.8)
-      pronto (~> 0.10.0)
-    pronto-rails_best_practices (0.10.0)
-      pronto (~> 0.10.0)
-      rails_best_practices (~> 1.16, >= 1.15.0)
-    pronto-rails_schema (0.10.0)
-      pronto (~> 0.10.0)
-    pronto-rubocop (0.10.0)
-      pronto (~> 0.10.0)
-      rubocop (~> 0.50, >= 0.49.1)
     pry (0.13.1)
       coderay (~> 1.1)
       method_source (~> 1.0)
@@ -742,14 +715,6 @@ GEM
       loofah (~> 2.3)
     rails_autolink (1.1.6)
       rails (> 3.1)
-    rails_best_practices (1.21.0)
-      activesupport
-      code_analyzer (>= 0.5.2)
-      erubis
-      i18n
-      json
-      require_all (~> 3.0)
-      ruby-progressbar
     railties (5.1.7)
       actionpack (= 5.1.7)
       activesupport (= 5.1.7)
@@ -838,7 +803,6 @@ GEM
       uber (< 0.2.0)
     request_store (1.5.0)
       rack (>= 1.4)
-    require_all (3.0.0)
     responders (3.0.1)
       actionpack (>= 5.0)
       railties (>= 5.0)
@@ -907,10 +871,7 @@ GEM
     ruby-progressbar (1.11.0)
     ruby2_keywords (0.0.5)
     ruby_dep (1.5.0)
-    ruby_parser (3.17.0)
-      sexp_processor (~> 4.15, >= 4.15.1)
     rubyzip (1.3.0)
-    rugged (0.99.0)
     samvera-nesting_indexer (2.0.0)
       dry-equalizer
     sass (3.7.4)
@@ -926,18 +887,12 @@ GEM
       tilt (>= 1.1, < 3)
     sassc (2.4.0)
       ffi (~> 1.9)
-    sawyer (0.8.2)
-      addressable (>= 2.3.5)
-      faraday (> 0.8, < 2.0)
     sax-machine (1.3.2)
     scanf (1.0.0)
     select2-rails (3.5.11)
     selenium-webdriver (3.142.7)
       childprocess (>= 0.5, < 4.0)
       rubyzip (>= 1.2.2)
-    sentry-raven (2.13.0)
-      faraday (>= 0.7.6, < 1.0)
-    sexp_processor (4.15.3)
     shex (0.6.3)
       ebnf (~> 2.1, >= 2.2)
       htmlentities (~> 4.3)
@@ -971,7 +926,6 @@ GEM
       activesupport
       nokogiri
       xml-simple
-    sony_ci_api (0.2.1)
     sparql (3.1.8)
       builder (~> 3.2)
       ebnf (~> 2.1)
@@ -999,8 +953,6 @@ GEM
     sxp (1.1.0)
       rdf (~> 3.1)
     temple (0.8.2)
-    terminal-table (1.8.0)
-      unicode-display_width (~> 1.1, >= 1.1.1)
     thor (0.20.3)
     thread_safe (0.3.6)
     tilt (2.0.10)
@@ -1088,12 +1040,6 @@ DEPENDENCIES
   mysql2 (~> 0.5.3)
   nokogiri
   pbcore (~> 0.3.0)
-  pronto
-  pronto-brakeman
-  pronto-flay
-  pronto-rails_best_practices
-  pronto-rails_schema
-  pronto-rubocop
   pry-byebug
   puma (~> 3.12)
   rails (~> 5.1.5)
@@ -1109,12 +1055,11 @@ DEPENDENCIES
   rspec_junit_formatter
   sass-rails (~> 5.0)
   selenium-webdriver
-  sentry-raven
   shoulda-matchers
   sidekiq
   simple_form (= 5.0.0)
   solr_wrapper (~> 2.1)
-  sony_ci_api (~> 0.2.1)
+  sony_ci_api!
   turbolinks (~> 5)
   uglifier (>= 1.3.0)
   web-console (>= 3.3.0)
@@ -1125,4 +1070,4 @@ DEPENDENCIES
   xray-rails
 
 BUNDLED WITH
-   2.2.16
+   2.3.7
