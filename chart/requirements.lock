@@ -1,9 +1,0 @@
-dependencies:
-- name: redis
-  repository: https://charts.bitnami.com/bitnami
-  version: 11.0.4
-- name: mariadb
-  repository: https://charts.helm.sh/stable
-  version: 7.3.14
-digest: sha256:da3c2900de83d670d2030ded969342b271367fbf3c5cc320d8ef0905e094b475
-generated: "2021-09-07T14:45:51.266988-07:00"

@@ -31,7 +31,6 @@
 
 # Redis dumps
 dump.rdb
-.env
 .env.development
 .env.test
 .env.production
