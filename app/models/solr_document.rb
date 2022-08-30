@@ -520,6 +520,10 @@ class SolrDocument
     self[Solrizer.solr_name('md5', :symbol)]
   end
 
+  def proxy_start_time
+    self[Solrizer.solr_name('proxy_start_time','ssim')]
+  end
+
   def all_members(only: [], exclude: [])
     # Fetch members recursively and memoize. Subtract self from the list.
     @all_members ||= SolrDocument.get_members(self) - [ self ]

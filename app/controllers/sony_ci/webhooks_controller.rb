@@ -16,16 +16,29 @@ module SonyCi
     end
 
     def save_sony_ci_id
-      asset_admin_data_from_sony_ci_filename.update!( sonyci_id: [ sony_ci_id ] )
-      render status: 200, json: { message: "success" }
+      asset.admin_data.update!( sonyci_id: [ sony_ci_id ] )
+      # Re-save the Asset to re-index it.
+      # TODO: Is there a faster way to save the Sony Ci ID to the AdminData and
+      # re-index the Asset?
+      asset.save!
+      render status: 200,
+             json: {
+               message: "success",
+               guid: asset.id,
+               sony_ci_id: sony_ci_id
+             }
     end
 
     private
 
-      def asset_admin_data_from_sony_ci_filename
-        Asset.find(guid_from_sony_ci_filename).admin_data
+      def asset
+        @asset ||= Asset.find(guid_from_sony_ci_filename)
       end
 
+      # Returns the assumed GUID from the Sony Ci Filename.
+      # This assumes a naming convention of {GUID}.ext, where the GUID is the
+      # string before the first dot. If this convention is not followed, then
+      # this feature will not work.
       def guid_from_sony_ci_filename
         sony_ci_filename.sub(/\..*/, '') unless sony_ci_filename.empty?
       end
