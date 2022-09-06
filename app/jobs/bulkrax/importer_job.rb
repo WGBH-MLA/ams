@@ -1,5 +1,5 @@
 # frozen_string_literal: true
-# OVERRIDE Bulkrax 1.0.2 to rescue errors
+# OVERRIDE Bulkrax 1.0.2 to rescue errors and to add queued indexing
 
 require_dependency Bulkrax::Engine.root.join('app', 'jobs', 'bulkrax', 'importer_job').to_s
 
@@ -12,6 +12,7 @@ require_dependency Bulkrax::Engine.root.join('app', 'jobs', 'bulkrax', 'importer
       import(importer, only_updates_since_last_import)
       update_current_run_counters(importer)
       schedule(importer) if importer.schedulable?
+      # OVERRIDE Bulkrax 1.0.2 to add queued indexing
       Bulkrax::IndexAfterJob.set(wait: 1.minute).perform_later(importer)
     rescue RuntimeError => e
       # Quits job when xml format is invalid

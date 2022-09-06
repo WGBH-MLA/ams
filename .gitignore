@@ -51,7 +51,9 @@ public/deployment.html
 
 # Ignore vendor files
 /vendor/*
-.dory.yml
-solr_db_initialized
+
+# Docker compose based dev
 docker-compose.override.yml
+
+# Ignore spacemacs files
 *~undo-tree~

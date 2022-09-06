@@ -8,16 +8,28 @@ require_dependency Hyrax::BatchIngest::Engine.root.join('app', 'controllers', 'h
 Hyrax::BatchIngest::BatchesController.class_eval do
   def new
     # OVERRIDE HYRAX-Batch_Ingest revision: dc9d38039728eab581ab7b1cb55cf9ff33984b13
-    redirect_to '/importers/new'
+    if ENV['SETTINGS__BULKRAX__ENABLED'] == 'false'
+      super
+    else
+      redirect_to '/importers/new'
+    end
   end
 
   def create
     # OVERRIDE HYRAX-Batch_Ingest revision: dc9d38039728eab581ab7b1cb55cf9ff33984b13
-    redirect_to '/importers/new'
+    if ENV['SETTINGS__BULKRAX__ENABLED'] == 'false'
+      super
+    else
+      redirect_to '/importers/new'
+    end
   end
 
   def index
     # OVERRIDE HYRAX-Batch_Ingest revision: dc9d38039728eab581ab7b1cb55cf9ff33984b13
-    redirect_to '/importers'
+    if ENV['SETTINGS__BULKRAX__ENABLED'] == 'false'
+      super
+    else
+      redirect_to '/importers'
+    end
   end
 end

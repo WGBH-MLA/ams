@@ -13,8 +13,8 @@ jobs:
       DEPLOY_IMAGE: ghcr.io/${{ github.repository }}
       WORKER_IMAGE: ghcr.io/${{ github.repository }}/worker
       HELM_EXPERIMENTAL_OCI: 1
-      HELM_RELEASE_NAME: gbh-demo
-      KUBE_NAMESPACE: gbh-demo
+      HELM_RELEASE_NAME: ams-demo
+      KUBE_NAMESPACE: ams-demo
       HELM_EXTRA_ARGS: >
         --values ops/demo-deploy.yaml
       KUBECONFIG_FILE: ${{ secrets.KUBECONFIG_FILE_DEMO }}
@@ -34,4 +34,4 @@ jobs:
           echo $KUBECONFIG_FILE | base64 -d > $KUBECONFIG;
           DOLLAR=$ envsubst < ops/demo-deploy.tmpl.yaml > ops/demo-deploy.yaml;
           cat ops/demo-deploy.yaml;
-          ./bin/helm_deploy gbh-demo gbh-demo
+          ./bin/helm_deploy ams-demo ams-demo

@@ -1,9 +1,7 @@
-config = YAML.load(ERB.new(IO.read(Rails.root + 'config' + 'redis.yml')).result)[Rails.env].with_indifferent_access
-sentinels = config[:sentinel] && config[:sentinel][:host].present? ? { sentinels: [config[:sentinel]] } : {}
-redis_config = config.except(:sentinel).merge(thread_safe: true).merge(sentinels)
 require 'redis'
+config = YAML.safe_load(ERB.new(IO.read(Rails.root.join('config', 'redis.yml'))).result)[Rails.env].with_indifferent_access
 Redis.current = begin
-                  Redis.new(redis_config)
+                  Redis.new(config.merge(thread_safe: true))
                 rescue
                   nil
                 end
