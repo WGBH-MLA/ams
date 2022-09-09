@@ -1,0 +1,34 @@
+name: "Retag on merge"
+on:
+  push:
+    branches:
+      - main
+env:
+  REGISTRY: ghcr.io
+
+jobs:
+  retag:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set env
+        run: echo "TAG=${GITHUB_SHA::8}" >> $GITHUB_ENV
+      - name: Retag web to latest
+        uses: koraykoska/retag-docker-image@0.2.4
+        with:
+          registry: ${{ env.REGISTRY }}
+          name: ${{ github.repository }}
+          old_tag: ${{ env.TAG }}
+          new_tag: latest
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Retag worker to latest
+        uses: koraykoska/retag-docker-image@0.2.4
+        with:
+          registry: ${{ env.REGISTRY }}
+          name: ${{ github.repository }}/worker
+          old_tag: ${{ env.TAG }}
+          new_tag: latest
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}

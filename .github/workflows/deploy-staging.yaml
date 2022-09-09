@@ -1,0 +1,38 @@
+name: "Deploy Staging"
+on:
+  workflow_dispatch: {}
+
+env:
+  REGISTRY: ghcr.io
+
+jobs:
+  deployment:
+    runs-on: 'ubuntu-latest'
+    container: dtzar/helm-kubectl:3.9.4
+    env:
+      DEPLOY_IMAGE: ghcr.io/${{ github.repository }}
+      WORKER_IMAGE: ghcr.io/${{ github.repository }}/worker
+      HELM_EXPERIMENTAL_OCI: 1
+      HELM_RELEASE_NAME: gbh-staging
+      KUBE_NAMESPACE: gbh-staging
+      HELM_EXTRA_ARGS: >
+        --values ops/staging-deploy.yaml
+      KUBECONFIG_FILE: ${{ secrets.KUBECONFIG_FILE_STAGING }}
+      KUBECONFIG: ./kubeconfig.yml
+      SOLR_PASSWORD: ${{ secrets.SOLR_PASSWORD }}
+      SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
+      MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
+      MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
+    steps:
+      - name: Set env
+        run: >-
+          echo "TAG=${GITHUB_SHA::8}" >> $GITHUB_ENV;
+          echo "DEPLOY_TAG=${GITHUB_SHA::8}" >> $GITHUB_ENV;
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Do deploy
+        run: >-
+          echo $KUBECONFIG_FILE | base64 -d > $KUBECONFIG;
+          DOLLAR=$ envsubst < ops/staging-deploy.tmpl.yaml > ops/staging-deploy.yaml;
+          cat ops/staging-deploy.yaml;
+          ./bin/helm_deploy gbh-staging gbh-staging

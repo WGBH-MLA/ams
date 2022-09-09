@@ -17,6 +17,7 @@ class AssetIndexer < AMS::WorkIndexer
       solr_doc['broadcast_date_drsim'] = object.broadcast_date if object.broadcast_date
       solr_doc['created_date_drsim'] = object.created_date if object.created_date
       solr_doc['copyright_date_drsim'] = object.copyright_date if object.copyright_date
+      solr_doc[Solrizer.solr_name('bulkrax_identifier', :facetable)] = object.bulkrax_identifier
 
       if object.admin_data
         # Index the admin_data_gid
@@ -32,10 +33,12 @@ class AssetIndexer < AMS::WorkIndexer
 
         #Indexing for search by batch_id
         solr_doc['hyrax_batch_ingest_batch_id_tesim'] = object.admin_data.hyrax_batch_ingest_batch_id if !object.admin_data.hyrax_batch_ingest_batch_id.blank?
+        solr_doc['bulkrax_importer_id_tesim'] = object.admin_data.bulkrax_importer_id if !object.admin_data.bulkrax_importer_id.blank?
 
         solr_doc['last_pushed'] = object.admin_data.last_pushed if !object.admin_data.last_pushed.blank?
         solr_doc['last_updated'] = object.admin_data.last_updated if !object.admin_data.last_updated.blank?
         solr_doc['needs_update'] = object.admin_data.needs_update if !object.admin_data.needs_update.blank?
+
       end
     end
   end

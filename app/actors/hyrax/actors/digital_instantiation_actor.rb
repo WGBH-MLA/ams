@@ -4,25 +4,33 @@ module Hyrax
   module Actors
     class DigitalInstantiationActor < Hyrax::Actors::BaseActor
       def create(env)
-        if file_uploaded?(env)
-          xml_file = uploaded_xml(env)
-        else
-          xml_file = env.attributes.delete(:pbcore_xml)
-        end
+        xml_file = file_uploaded?(env) ? uploaded_xml(env) : env.attributes.delete(:pbcore_xml)
         pbcore_doc = PBCore::InstantiationDocument.parse(xml_file)
         set_env_attributes_from_pbcore(env, pbcore_doc)
-        save_instantiation_aapb_admin_data(env) && super && parse_pbcore_essense_track(env,pbcore_doc)
+
+        # queue indexing if we are importing
+        env.curation_concern.reindex_extent = "queue#{env.importing.id}" if env.importing
+
+        if env.attributes['bulkrax_identifier'].present?
+          save_instantiation_aapb_admin_data(env) && super
+        else
+          save_instantiation_aapb_admin_data(env) && super && parse_pbcore_essense_track(env,pbcore_doc)
+        end
       end
 
       def update(env)
-        if file_uploaded?(env)
-          xml_file = uploaded_xml(env)
+        xml_file = file_uploaded?(env) ? uploaded_xml(env) : env.attributes.delete(:pbcore_xml)
+
+        # queue indexing if we are importing
+        env.curation_concern.reindex_extent = "queue#{env.importing.id}" if env.importing
+
+        if env.curation_concern&.bulkrax_identifier
+          save_instantiation_aapb_admin_data(env) && super
         else
-          xml_file = env.attributes.delete(:pbcore_xml)
+          pbcore_doc = PBCore::InstantiationDocument.parse(xml_file)
+          env = parse_pbcore_instantiation(env,pbcore_doc)
+          save_instantiation_aapb_admin_data(env) && super && destroy_child_objects(env) && parse_pbcore_essense_track(env,pbcore_doc)
         end
-        pbcore_doc = PBCore::InstantiationDocument.parse(xml_file)
-        env = parse_pbcore_instantiation(env,pbcore_doc)
-        save_instantiation_aapb_admin_data(env) && super && destroy_child_objects(env) && parse_pbcore_essense_track(env,pbcore_doc)
       end
 
       def destroy(env)
@@ -146,11 +154,13 @@ module Hyrax
         end
 
         def find_or_create_instantiation_admin_data(env)
-          instantiation_admin_data = if env.curation_concern.instantiation_admin_data_gid.blank?
-                                       InstantiationAdminData.create
-                                     else
-                                       InstantiationAdminData.find_by_gid!(env.curation_concern.instantiation_admin_data_gid)
-                                     end
+          instantiation_admin_data_gid = env.curation_concern.instantiation_admin_data_gid || env.attributes['instantiation_admin_data_gid']
+          instantiation_admin_data =  if instantiation_admin_data_gid
+                                        InstantiationAdminData.find_by_gid!(instantiation_admin_data_gid)
+                                      else
+                                        InstantiationAdminData.create
+                                      end
+
           instantiation_admin_data
         end
 

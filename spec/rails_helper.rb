@@ -39,6 +39,46 @@ if [false, 'false', '0', 0].include? ENV['AUTO_SCREENSHOTS'].to_s.downcase
   Capybara::Screenshot.autosave_on_failure = false
 end
 
+ENV['WEB_HOST'] ||= `hostname -s`.strip
+if ENV['CHROME_HOSTNAME'].present?
+  Capybara.default_max_wait_time = 8
+
+  capabilities = Selenium::WebDriver::Remote::Capabilities.chrome(
+    chromeOptions: {
+      args: %w[disable-gpu no-sandbox whitelisted-ips window-size=1400,1400]
+    }
+  )
+
+  Capybara.register_driver :chrome do |app|
+    d = Capybara::Selenium::Driver.new(app,
+                                       browser: :remote,
+                                       desired_capabilities: capabilities,
+                                       url: "http://#{ENV['CHROME_HOSTNAME']}:4444/wd/hub")
+    # Fix for capybara vs remote files. Selenium handles this for us
+    d.browser.file_detector = lambda do |args|
+      str = args.first.to_s
+      str if File.exist?(str)
+    end
+    d
+  end
+  Capybara.server_host = '0.0.0.0'
+  Capybara.server_port = 3001
+  Capybara.app_host = "http://#{ENV['WEB_HOST']}:#{Capybara.server_port}"
+else
+  # Set the capybara JS driver to whatever was passed in to JS_DRIVER,
+  # defaulting to :selenium_chrome_headless
+  Capybara.javascript_driver = ENV.fetch('JS_DRIVER', 'selenium_chrome_headless').to_sym
+
+  Capybara.register_driver :chrome do |app|
+    Capybara::Selenium::Driver.new(
+      app,
+      browser: :chrome,
+    )
+  end
+end
+
+Capybara.javascript_driver = :chrome
+
 RSpec.configure do |config|
   config.fixture_path = "#{::Rails.root}/spec/fixtures"
   config.use_transactional_fixtures = false
@@ -67,15 +107,6 @@ RSpec.configure do |config|
   config.before :suite do
     # Reset data before the suite is run.
     AMS.reset_data!
-
-    # Set the capybara JS driver to whatever was passed in to JS_DRIVER,
-    # defaulting to :selenium_chrome_headless
-    Capybara.javascript_driver = ENV.fetch('JS_DRIVER', 'selenium_chrome_headless').to_sym
-
-    Capybara.register_driver :chrome do |app|
-      Capybara::Selenium::Driver.new(app, browser: :chrome)
-    end
-
   end
 
   # Reset data conditionally for each exampld; defaults to true.

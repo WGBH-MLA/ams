@@ -1,11 +1,17 @@
 source 'https://rubygems.org'
 
-ruby '2.5.3'
-
 git_source(:github) do |repo_name|
   repo_name = "#{repo_name}/#{repo_name}" unless repo_name.include?("/")
   "https://github.com/#{repo_name}.git"
 end
+
+# Bulkrax
+group :bulkrax do
+  # our custom changes require us to lock in the version of bulkrax
+  gem 'bulkrax', git: 'https://github.com/samvera-labs/bulkrax.git', ref: '23efea3fd9d8d98746b73e570e0dc214ff764271'
+  gem 'willow_sword', git: 'https://github.com/notch8/willow_sword.git'
+end
+gem 'sony_ci_api', github: 'WGBH-MLA/sony_ci_api_rewrite', branch: 'v0.1'
 
 gem 'dotenv-rails'
 
@@ -35,13 +41,9 @@ gem 'hydra-role-management', '~> 1.0'
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
 
-group :production do
-  gem 'mysql2', '~> 0.4.10'
-end
-
 group :development, :test do
   # Use sqlite3 as the database for Active Record
-  gem 'sqlite3', '1.3.13'
+  # gem 'sqlite3', '1.3.13'
   gem 'capybara-screenshot'
   gem 'rspec', "~> 3.7"
   gem 'rspec-rails', "~> 3.7"
@@ -57,6 +59,7 @@ group :development, :test do
   gem 'solr_wrapper', '~> 2.1'
   gem 'webmock', '~> 3.7'
   gem 'rails-controller-testing'
+  gem 'rspec_junit_formatter'
 end
 
 group :development do
@@ -84,18 +87,17 @@ gem 'simple_form', '5.0.0'
 gem 'aws-sdk-s3'
 gem 'aws-sdk-codedeploy'
 gem 'carrierwave', '~> 1.3'
+gem 'mysql2', '~> 0.5.3'
 gem 'nokogiri'
 gem 'bootstrap-multiselect-rails'
 gem 'hyrax-batch_ingest', git: 'https://github.com/samvera-labs/hyrax-batch_ingest'
 gem 'pbcore', '~> 0.3.0'
 gem 'curb'
 # gem 'sony_ci_api', '~> 0.2.1'
-gem 'sony_ci_api', github: 'WGBH-MLA/sony_ci_api_rewrite', branch: 'v0.1'
 # gem 'hyrax-iiif_av', '>= 0.2.0'
 # gem 'hyrax-iiif_av', github: 'samvera-labs/hyrax-iiif_av', branch: 'hyrax_master'
 gem 'webpacker'
 gem 'react-rails'
-gem 'faker'
 gem 'database_cleaner'
 gem 'redlock', '~> 1.0'
 gem 'httparty', '~> 0.18'
@@ -103,3 +105,4 @@ gem 'httparty', '~> 0.18'
 # Adding pry to all environments, because it's very useful for debugging
 # production environments on demo instances.
 gem 'pry-byebug', platforms: [:mri, :mingw, :x64_mingw]
+gem 'activerecord-nulldb-adapter'

@@ -8,6 +8,7 @@ RSpec.describe Asset do
   context 'properties' do
     subject { build :asset }
 
+    it { is_expected.to have_property(:bulkrax_identifier).with_predicate("http://ams2.wgbh-mla.org/resource#bulkraxIdentifier") }
     it { is_expected.to have_property(:title).with_predicate(::RDF::Vocab::DC.title) }
     it { is_expected.to have_property(:asset_types).with_predicate(::RDF::Vocab::EBUCore.hasType) }
     it { is_expected.to have_property(:genre).with_predicate(::RDF::Vocab::EBUCore.hasGenre) }

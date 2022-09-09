@@ -24,6 +24,7 @@
 //= require blacklight/blacklight
 //= require video
 
+//= require bulkrax/application
 //= require_tree ./global
 //= require hyrax
 //= require bootstrap-multiselect

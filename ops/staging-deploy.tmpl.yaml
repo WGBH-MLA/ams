@@ -1,0 +1,178 @@
+replicaCount: 2
+
+livenessProbe:
+  enabled: false
+readinessProbe:
+  enabled: false
+
+brandingVolume:
+  storageClass: nfs
+derivativesVolume:
+  storageClass: nfs
+uploadsVolume:
+  storageClass: nfs
+
+extraVolumeMounts: &volMounts
+  - name: uploads
+    mountPath: /app/samvera/hyrax-webapp/tmp/imports
+    subPath: imports
+  - name: uploads
+    mountPath: /app/samvera/hyrax-webapp/tmp/exports
+    subPath: exports
+  - name: uploads
+    mountPath: /app/samvera/hyrax-webapp/public/system
+    subPath: public-system
+  - name: uploads
+    mountPath: /app/samvera/hyrax-webapp/public/uploads
+    subPath: public-uploads
+  - name: uploads
+    mountPath: /app/samvera/hyrax-webapp/tmp/network_files
+    subPath: network-files
+
+ingress:
+  enabled: true
+  hosts:
+    - host: gbh-hyrax-staging.notch8.cloud
+      paths:
+        - path: /
+    - host: "*.gbh-hyrax-staging.notch8.cloud"
+      paths:
+        - path: /
+
+extraEnvVars: &envVars
+  - name: CONFDIR
+    value: "/app/samvera/hyrax-webapp/solr/config"
+  - name: INITIAL_ADMIN_EMAIL
+    value: support@notch8.com
+  - name: INITIAL_ADMIN_PASSWORD
+    value: testing123
+  - name: DB_ADAPTER
+    value: mysql2
+  - name: MYSQL_HOST
+    value: gbh-staging-mariadb
+  - name: MYSQL_DATABASE
+    value: gbh-hyrax
+  - name: MYSQL_USER
+    value: gbh-hyrax
+  - name: FCREPO_BASE_PATH
+    value: /gbh-staging-hyrax-2
+  - name: FCREPO_HOST
+    value: fcrepo.staging-fcrepo.svc.cluster.local:8080
+  - name: FCREPO_PATH
+    value: /rest
+  - name: FCREPO_URL
+    value: http://fcrepo.staging-fcrepo.svc.cluster.local:8080/rest
+  - name: IN_DOCKER
+    value: "true"
+  - name: LD_LIBRARY_PATH
+    value: /app/fits/tools/mediainfo/linux
+  - name: PASSENGER_APP_ENV
+    value: production
+  - name: RAILS_CACHE_STORE_URL
+    value: redis://:staging@gbh-staging-redis-master:6379/gbh
+  - name: RAILS_ENV
+    value: production
+  - name: RAILS_LOG_TO_STDOUT
+    value: "true"
+  - name: RAILS_MAX_THREADS
+    value: "5"
+  - name: RAILS_SERVE_STATIC_FILES
+    value: "true"
+  - name: REDIS_HOST
+    value: gbh-staging-redis-master
+  - name: REDIS_PREFIX
+    value: gbh
+  - name: REDIS_SERVER
+    value: redis://:staging@gbh-staging-redis-master:6379
+  - name: SETTINGS__ACTIVE_JOB__QUEUE_ADAPTER
+    value: sidekiq
+  - name: SETTINGS__BULKRAX__ENABLED
+    value: "true"
+  - name: SETTINGS__CONTACT_EMAIL
+    value: support@notch8.com
+  - name: SETTINGS__DEVISE__INVITATION_FROM_EMAIL
+    value: support@notch8.com
+  - name: SETTINGS__FITS_PATH
+    value: /app/fits/fits.sh
+  - name: SETTINGS__SOLR__COLLECTION_OPTIONS__COLLECTION__CONFIG_NAME
+    value: ams-staging
+  - name: SETTINGS__SOLR__CONFIGSET
+    value: ams-staging
+  - name: SETTINGS__SOLR__URL
+    value: http://admin:$SOLR_PASSWORD@solr.staging-solr.svc.cluster.local:8983/solr/ams-staging
+  - name: SETTINGS__ZOOKEEPER__CONNECTION_STR
+    value: solr-zookeeper-headless.default:2181/configs
+  - name: SOLR_ADMIN_USER
+    value: admin
+  - name: SOLR_COLLECTION_NAME
+    value: ams-staging
+  - name: SOLR_CONFIGSET_NAME
+    value: ams-staging
+  - name: SOLR_HOST
+    value: solr.staging-solr
+  - name: SOLR_PORT
+    value: "8983"
+  - name: SOLR_URL
+    value: http://admin:$SOLR_PASSWORD@solr.staging-solr.svc.cluster.local:8983/solr/ams-staging
+  - name: SIDEKIQ_CONCURRENCY
+    value: "10"
+  - name: SENTRY_DSN
+    value: $SENTRY_DSN
+
+worker:
+  replicaCount: 1
+  podSecurityContext:
+    runAsUser: 1001
+    runAsGroup: 101
+    fsGroup: 101
+    fsGroupChangePolicy: "OnRootMismatch"
+  extraVolumeMounts: *volMounts
+  extraEnvVars: *envVars
+
+podSecurityContext:
+  runAsUser: 1001
+  runAsGroup: 101
+  fsGroup: 101
+  fsGroupChangePolicy: "OnRootMismatch"
+
+embargoRelease:
+  enabled: false
+leaseRelease:
+  enabled: false
+
+imagePullSecrets:
+  - name: github
+
+fcrepo:
+  enabled: false
+
+mariadb:
+  enabled: true
+  replication:
+    enabled: false
+  auth:
+    database: gbh-hyrax
+    username: gbh-hyrax
+    password: $MYSQL_PASSWORD
+    rootPassword: $MYSQL_ROOT_PASSWORD
+  master:
+    persistence:
+      enabled: true
+      # storageClass: "-"
+      accessMode: ReadWriteOnce
+      size: 8Gi
+
+redis:
+  cluster:
+    enabled: false
+  password: staging
+solr:
+  enabled: false
+
+externalFcrepoHost: fcrepo.staging-fcrepo.svc.cluster.local
+
+solrExistingSecret: solr-admin-password
+externalSolrHost: solr.staging-solr.svc.cluster.local
+externalSolrUser: admin
+externalSolrCollection: "gbh-hyrax-staging"
+externalSolrPassword: $SOLR_PASSWORD

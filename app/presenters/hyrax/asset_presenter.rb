@@ -11,7 +11,7 @@ module Hyrax
              :promo_description, :clip_description, :copyright_date,
              :level_of_user_access, :outside_url, :special_collections, :transcript_status, :organization,
              :sonyci_id, :licensing_info, :producing_organization, :series_title, :series_description,
-             :playlist_group, :playlist_order, :hyrax_batch_ingest_batch_id, :last_pushed, :last_update, :needs_update, :special_collection_category, :canonical_meta_tag, :cataloging_status,
+             :playlist_group, :playlist_order, :hyrax_batch_ingest_batch_id, :bulkrax_importer_id, :last_pushed, :last_update, :needs_update, :special_collection_category, :canonical_meta_tag, :cataloging_status,
              to: :solr_document
 
     def batch
@@ -29,6 +29,23 @@ module Hyrax
 
     def batch_ingest_date
       @batch_ingest_date ||= Date.parse(batch.created_at.to_s)
+    end
+
+    def bulkrax_import
+      raise 'No Bulkrax Import ID associated with this Asset' unless bulkrax_importer_id.present?
+      @bulkrax_import ||= Bulkrax::Importer.find(bulkrax_importer_id.first)
+    end
+
+    def bulkrax_import_url
+      @bulkrax_import_url ||= "/importers/#{bulkrax_import.id}"
+    end
+
+    def bulkrax_import_label
+      @bulkrax_import_ingest_label ||= bulkrax_import.parser_klass
+    end
+
+    def bulkrax_import_date
+      @bulkrax_import_ingest_date ||= Date.parse(bulkrax_import.updated_at.to_s)
     end
 
     def annotations
@@ -68,6 +85,7 @@ module Hyrax
 
     def display_aapb_admin_data?
       ! ( sonyci_id.blank? &&
+          bulkrax_importer_id.blank? &&
           hyrax_batch_ingest_batch_id.blank? &&
           last_updated.blank? &&
           last_pushed.blank? &&

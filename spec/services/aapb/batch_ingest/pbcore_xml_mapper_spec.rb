@@ -54,17 +54,31 @@ RSpec.describe AAPB::BatchIngest::PBCoreXMLMapper, :pbcore_xpath_helper do
       expect(attrs[:sonyci_id]).not_to be_nil
     end
 
-    it 'correctly maps annotation data' do
-      expect(attrs).to have_key :annotations
-      expect(attrs[:annotations].length).to eq (11)
+    RSpec.shared_examples 'annotation data' do |bulkrax_setting|
+      it 'correctly maps annotation data' do
+        ENV['SETTINGS__BULKRAX__ENABLED'] = bulkrax_setting
 
-      # Every Annotation in the attrs should have a value from the PBCore
-      attrs[:annotations].each do |anno|
-        expect(pbcore_values_from_xpath(pbcore_xml, anno["annotation_type"].to_sym)).to include(anno["value"])
+        expect(attrs).to have_key :annotations
+        expect(attrs[:annotations].length).to eq (11)
+
+        # Every Annotation in the attrs should have a value from the PBCore
+        attrs[:annotations].each do |anno|
+          expect(pbcore_values_from_xpath(pbcore_xml, anno["annotation_type"].to_sym)).to include(anno["value"])
+        end
+        # Every Annotation in the attrs should have a type registered with the AnnotationTypesService
+        pbcore_annotation_types.each do |type|
+          expect(AnnotationTypesService.new.select_all_options.to_h.values).to include(type)
+        end
       end
-      # Every Annotation in the attrs should have a type registered with the AnnotationTypesService
-      pbcore_annotation_types.each do |type|
-        expect(AnnotationTypesService.new.select_all_options.to_h.values).to include(type)
+    end
+
+    context 'annotation data' do
+      context 'when bulkrax is enabled' do
+        it_behaves_like 'annotation data', 'true'
+      end
+
+      context 'when bulkrax is not enabled' do
+        it_behaves_like 'annotation data', 'false'
       end
     end
 

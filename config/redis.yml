@@ -1,10 +1,11 @@
 development:
-  host: localhost
+  host: <%= ENV['REDIS_HOST'] || 'localhost' %>
   port: 6379
 test:
-  host: localhost
+  host: <%= ENV['REDIS_HOST'] || 'localhost' %>
   port: 6379
 production:
-  host: <%= ENV['REDIS_SERVER'] %>
+  host: <%= ENV['REDIS_HOST'] %>
+  password: <%= ENV['REDIS_PASSWORD'] %>
   port: 6379
   network_timeout: 5

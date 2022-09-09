@@ -1,4 +1,9 @@
 Rails.application.routes.draw do
+
+  if ENV['SETTINGS__BULKRAX__ENABLED'] == 'true'
+    mount Bulkrax::Engine, at: '/'
+  end
+
   mount Hyrax::BatchIngest::Engine, at: '/'
   require 'sidekiq/web'
   authenticate :user, lambda { |u| u.admin? } do

@@ -24,6 +24,10 @@ class PhysicalInstantiation < ActiveFedora::Base
     end
   end
 
+  property :bulkrax_identifier, predicate: ::RDF::URI("http://ams2.wgbh-mla.org/resource#bulkraxIdentifier"), multiple: false do |index|
+    index.as :stored_searchable, :facetable
+  end
+  
   property :date, predicate: ::RDF::URI.new("http://purl.org/dc/terms/date"), multiple: true, index_to_parent: true do |index|
     index.as :stored_searchable, :facetable
   end

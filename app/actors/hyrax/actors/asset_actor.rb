@@ -13,6 +13,8 @@ module Hyrax
         add_description_types(env)
         add_date_types(env)
 
+        # queue indexing if we are importing
+        env.curation_concern.reindex_extent = "queue#{env.importing.id}" if env.importing
         save_aapb_admin_data(env) && super && create_or_update_contributions(env, contributions)
       end
 
@@ -21,6 +23,8 @@ module Hyrax
         add_title_types(env)
         add_description_types(env)
         add_date_types(env)
+        # queue indexing if we are importing
+        env.curation_concern.reindex_extent = "queue#{env.importing.id}" if env.importing
         save_aapb_admin_data(env) && super && create_or_update_contributions(env, contributions)
       end
 
@@ -55,7 +59,9 @@ module Hyrax
         end
 
         def should_empty_admin_data_value?(key, admin_data, env)
-          admin_data.send(key).present? && !env.attributes[key].present?
+          key != :bulkrax_importer_id &&
+          admin_data.send(key).present? &&
+          !env.attributes[key].present?
         end
 
         def delete_removed_annotations(admin_data, env)
@@ -111,7 +117,12 @@ module Hyrax
         end
 
         def find_or_create_admin_data(env)
-          admin_data = ::AdminData.create unless env.curation_concern.admin_data_gid.present?
+          admin_data = if env.attributes['bulkrax_identifier'].present?
+                         AdminData.find_by_gid(env.attributes['admin_data_gid'])
+                       else
+                         ::AdminData.create unless env.curation_concern.admin_data_gid.present?
+                       end
+
           if admin_data
             Rails.logger.debug "Create AdminData at #{admin_data.gid}"
             return admin_data

@@ -191,7 +191,22 @@ Hyrax.config do |config|
   # config.lock_time_to_live = 60_000
 
   ## Do not alter unless you understand how ActiveFedora handles URI/ID translation
-  # config.translate_id_to_uri = ActiveFedora::Noid.config.translate_id_to_uri
+  config.translate_id_to_uri = lambda do |id|
+    url = "#{ActiveFedora.fedora.host}#{ActiveFedora.fedora.base_path}/#{::Noid::Rails.treeify(id)}"
+    begin
+      ActiveFedora::Fedora.instance.connection.head(url)
+    rescue Ldp::NotFound
+      begin
+        old_url = "#{ActiveFedora.fedora.host}#{ActiveFedora.fedora.base_path}/#{::Noid::Rails.treeify(id, false)}"
+        ActiveFedora::Fedora.instance.connection.head(old_url)
+      rescue Ldp::NotFound
+        # Do nothing
+      else
+        url = old_url
+      end
+    end
+    url
+  end
   # config.translate_uri_to_id = ActiveFedora::Noid.config.translate_uri_to_id
 
   ## Fedora import/export tool
@@ -231,6 +246,9 @@ Hyrax.config do |config|
   # Increase the number of Asset members that are displayed on the Asset's
   # #show page.
   config.show_work_item_rows = 100
+
+  config.nested_relationship_reindexer = ->(id:, extent:) { QueuedNestingIndexer.reindex_relationships(id: id, extent: extent) }
+
 end
 
 Date::DATE_FORMATS[:standard] = "%m/%d/%Y"
@@ -238,3 +256,10 @@ Date::DATE_FORMATS[:standard] = "%m/%d/%Y"
 Qa::Authorities::Local.register_subauthority('subjects', 'Qa::Authorities::Local::TableBasedAuthority')
 Qa::Authorities::Local.register_subauthority('languages', 'Qa::Authorities::Local::TableBasedAuthority')
 Qa::Authorities::Local.register_subauthority('genres', 'Qa::Authorities::Local::TableBasedAuthority')
+
+# set bulkrax default work type to first curation_concern if it isn't already set
+if ENV['SETTINGS__BULKRAX__ENABLED'] == 'true'
+  if Bulkrax.default_work_type.blank?
+    Bulkrax.default_work_type = 'Asset'
+  end
+end
