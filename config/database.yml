@@ -17,9 +17,5 @@ test:
   <<: *login
   database: <%= ENV['TEST_DB'] %>
 
-staging:
-  <<: *login
-
-
 production:
   <<: *login
