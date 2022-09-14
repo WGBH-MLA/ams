@@ -134,6 +134,11 @@ jobs:
           touch .env.development;
           docker-compose pull web;
           docker-compose pull worker
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.debug_enabled }}
+        with:
+          limit-access-to-actor: true
       - name: Start containers
         run: docker-compose up -d web
       - name: Setup solr
@@ -146,11 +151,6 @@ jobs:
         run: >-
           docker-compose exec -T web bash -c
           "RAILS_ENV=test bundle exec rake db:schema:load db:migrate db:seed"
-      - name: Setup tmate session
-        uses: mxschmitt/action-tmate@v3
-        if: ${{ github.event_name == 'workflow_dispatch' && inputs.debug_enabled }}
-        with:
-          limit-access-to-actor: true
       - name: Run Specs
         env:
           # Specifies how many jobs you would like to run in parallel,
