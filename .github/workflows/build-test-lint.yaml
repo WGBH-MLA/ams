@@ -21,6 +21,10 @@ jobs:
     steps:
       - name: Set env
         run: echo "TAG=${GITHUB_SHA::8}" >> $GITHUB_ENV
+      - name: Downcase repo
+        run: echo "REPO_LOWER=${REPO,,}" >> $GITHUB_ENV
+        env:
+          REPO: '${{ github.repository }}'
       - name: Checkout code
         uses: actions/checkout@v3
       - name: Set up QEMU
@@ -47,10 +51,10 @@ jobs:
             SETTINGS__BULKRAX__ENABLED=true
             EXTRA_APK_PACKAGES=less vim bash openjdk11-jre ffmpeg rsync yarn
           cache-from: |
-            ${{ env.REGISTRY }}/${{ github.repository }}:${TAG}
+            ${{ env.REGISTRY }}/${{ env.REPO_LOWER }}:${TAG}
           push: true
           tags: |
-            ${{ env.REGISTRY }}/${{ github.repository }}:${{ env.TAG }}
+            ${{ env.REGISTRY }}/${{ env.REPO_LOWER }}:${{ env.TAG }}
       - name: Build and push worker
         uses: docker/build-push-action@v3
         with:
@@ -61,10 +65,10 @@ jobs:
             SETTINGS__BULKRAX__ENABLED=true
             EXTRA_APK_PACKAGES=less vim bash openjdk11-jre ffmpeg rsync yarn
           cache-from: |
-            ${{ env.REGISTRY }}/${{ github.repository }}:${TAG}
+            ${{ env.REGISTRY }}/${{ env.REPO_LOWER }}:${TAG}
           push: true
           tags: |
-            ${{ env.REGISTRY }}/${{ github.repository }}/worker:${{ env.TAG }}
+            ${{ env.REGISTRY }}/${{ env.REPO_LOWER }}/worker:${{ env.TAG }}
 
   lint:
     needs: build

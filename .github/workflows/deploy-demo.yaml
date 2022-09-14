@@ -10,8 +10,6 @@ jobs:
     runs-on: 'ubuntu-latest'
     container: dtzar/helm-kubectl:3.9.4
     env:
-      DEPLOY_IMAGE: ghcr.io/${{ github.repository }}
-      WORKER_IMAGE: ghcr.io/${{ github.repository }}/worker
       HELM_EXPERIMENTAL_OCI: 1
       HELM_RELEASE_NAME: ams-demo
       KUBE_NAMESPACE: ams-demo
@@ -21,17 +19,22 @@ jobs:
       KUBECONFIG: ./kubeconfig.yml
       SOLR_PASSWORD: ${{ secrets.SOLR_PASSWORD_DEMO }}
       MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD_DEMO }}
-      MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
     steps:
       - name: Set env
         run: >-
           echo "TAG=${GITHUB_SHA::8}" >> $GITHUB_ENV;
           echo "DEPLOY_TAG=${GITHUB_SHA::8}" >> $GITHUB_ENV;
+      - name: Downcase repo
+        run: echo "REPO_LOWER=${REPO,,}" >> $GITHUB_ENV
+        env:
+          REPO: '${{ github.repository }}'
       - name: Checkout code
         uses: actions/checkout@v3
       - name: Do deploy
         run: >-
           echo $KUBECONFIG_FILE | base64 -d > $KUBECONFIG;
+          export DEPLOY_IMAGE=ghcr.io/${REPO_LOWER};
+          export WORKER_IMAGE=ghcr.io/${REPO_LOWER}/worker;
           DOLLAR=$ envsubst < ops/demo-deploy.tmpl.yaml > ops/demo-deploy.yaml;
           cat ops/demo-deploy.yaml;
           ./bin/helm_deploy ams-demo ams-demo
