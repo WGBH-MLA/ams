@@ -10,7 +10,7 @@ x-app: &app
   env_file:
     - .env
   # NOTE: all common env variables moved to .env
-  image: ghcr.io/notch8/ams:${TAG:-latest}
+  image: ghcr.io/wgbh-mla/ams:${TAG:-latest}
   volumes:
     - uploads:/app/samvera/hyrax-webapp/public/uploads:cached
     - assets:/app/samvera/hyrax-webapp/public/assets:cached
@@ -200,7 +200,7 @@ services:
       target: ams-worker
       args:
         - SETTINGS__BULKRAX__ENABLED=true
-    image: ghcr.io/notch8/ams/worker:${TAG:-latest}
+    image: ghcr.io/wgbh-mla/ams/worker:${TAG:-latest}
     depends_on:
       check_volumes:
         condition: service_completed_successfully
