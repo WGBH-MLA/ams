@@ -46,7 +46,7 @@ jobs:
         with:
           context: .
           platforms: linux/amd64,linux/arm64
-          target: hyku-base
+          target: ams-base
           build-args: |
             SETTINGS__BULKRAX__ENABLED=true
             EXTRA_APK_PACKAGES=less vim bash openjdk11-jre ffmpeg rsync yarn
@@ -60,7 +60,7 @@ jobs:
         with:
           context: .
           platforms: linux/amd64,linux/arm64
-          target: hyku-worker
+          target: ams-worker
           build-args: |
             SETTINGS__BULKRAX__ENABLED=true
             EXTRA_APK_PACKAGES=less vim bash openjdk11-jre ffmpeg rsync yarn
