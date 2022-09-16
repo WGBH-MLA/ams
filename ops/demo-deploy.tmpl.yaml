@@ -1,0 +1,138 @@
+replicaCount: 2
+
+livenessProbe:
+  enabled: false
+readinessProbe:
+  enabled: false
+
+brandingVolume:
+  storageClass: efs
+derivativesVolume:
+  storageClass: efs
+uploadsVolume:
+  storageClass: efs
+
+extraVolumeMounts: &volMounts
+  - name: uploads
+    mountPath: /app/samvera/hyrax-webapp/tmp/imports
+    subPath: imports
+  - name: uploads
+    mountPath: /app/samvera/hyrax-webapp/tmp/exports
+    subPath: exports
+  - name: uploads
+    mountPath: /app/samvera/hyrax-webapp/public/system
+    subPath: public-system
+  - name: uploads
+    mountPath: /app/samvera/hyrax-webapp/public/uploads
+    subPath: public-uploads
+  - name: uploads
+    mountPath: /app/samvera/hyrax-webapp/tmp/network_files
+    subPath: network-files
+
+ingress:
+  enabled: true
+  hosts:
+    - host: ams2-demo.wgbh-mla.org
+      paths:
+        - path: /
+
+extraEnvVars: &envVars
+  - name: CONFDIR
+    value: "/app/samvera/hyrax-webapp/solr/config"
+  - name: DB_ADAPTER
+    value: mysql2
+  - name: MYSQL_HOST
+    value: ams-demo-rails-db.cmrjt7rckp5r.us-east-1.rds.amazonaws.com
+  - name: MYSQL_DATABASE
+    value: hyrax
+  - name: MYSQL_USER
+    value: hyrax
+  - name: FCREPO_BASE_PATH
+    value: /prod
+  - name: FCREPO_HOST
+    value: 54.237.209.17:8080
+  - name: FCREPO_PATH
+    value: /fcrepo-webapp-4.7.5/rest
+  - name: FCREPO_URL
+    value: http://54.237.209.17:8080/fcrepo-webapp-4.7.5/rest
+  - name: IN_DOCKER
+    value: "true"
+  - name: LD_LIBRARY_PATH
+    value: /app/fits/tools/mediainfo/linux
+  - name: RAILS_CACHE_STORE_URL
+    value: redis://:demo@ams-demo-redis-master:6379/ams-demo
+  - name: RAILS_ENV
+    value: production
+  - name: RAILS_LOG_TO_STDOUT
+    value: "true"
+  - name: RAILS_MAX_THREADS
+    value: "5"
+  - name: RAILS_SERVE_STATIC_FILES
+    value: "true"
+  - name: REDIS_HOST
+    value: ams-demo-redis-master
+  - name: REDIS_PREFIX
+    value: ams-demo
+  - name: REDIS_SERVER
+    value: redis://:demo@ams-demo-redis-master:6379
+  - name: SETTINGS__BULKRAX__ENABLED
+    value: "true"
+  - name: SOLR_HOST
+    value: 54.237.209.17
+  - name: SOLR_PORT
+    value: "8983"
+  - name: SOLR_URL
+    value: http://54.237.209.17:8983/solr/ams
+  - name: SIDEKIQ_CONCURRENCY
+    value: "10"
+
+worker:
+  replicaCount: 1
+  podSecurityContext:
+    runAsUser: 1001
+    runAsGroup: 101
+    fsGroup: 101
+    fsGroupChangePolicy: "OnRootMismatch"
+  extraVolumeMounts: *volMounts
+  extraEnvVars: *envVars
+
+podSecurityContext:
+  runAsUser: 1001
+  runAsGroup: 101
+  fsGroup: 101
+  fsGroupChangePolicy: "OnRootMismatch"
+
+embargoRelease:
+  enabled: false
+leaseRelease:
+  enabled: false
+
+fcrepo:
+  enabled: false
+
+mariadb:
+  enabled: false
+  auth:
+    database: ams-demo-rails-db.cmrjt7rckp5r.us-east-1.rds.amazonaws.com
+    username: hyrax
+    password: $MYSQL_PASSWORD
+  master:
+    persistence:
+      enabled: true
+      # storageClass: "-"
+      accessMode: ReadWriteOnce
+      size: 8Gi
+
+redis:
+  cluster:
+    enabled: false
+  password: demo
+solr:
+  enabled: false
+
+externalFcrepoHost: 54.237.209.17
+
+externalSolrHost: 54.237.209.17
+externalSolrUser: admin
+externalSolrCollection: "ams"
+loadSolrConfigSet: false

@@ -44,7 +44,7 @@ fits.log
 .DS_Store
 
 # Drew's demo stuff. Remove this ignore if necessary.
-demo*
+/demo*
 
 # This file is generated on deployment
 public/deployment.html
