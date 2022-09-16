@@ -2,8 +2,8 @@ name: "Ruby on Rails CI"
 on:
   pull_request:
     branches:
+      - develop
       - main
-      - fix_fedora_urls
   workflow_dispatch:
     inputs:
       debug_enabled:
@@ -21,6 +21,10 @@ jobs:
     steps:
       - name: Set env
         run: echo "TAG=${GITHUB_SHA::8}" >> $GITHUB_ENV
+      - name: Downcase repo
+        run: echo "REPO_LOWER=${REPO,,}" >> $GITHUB_ENV
+        env:
+          REPO: '${{ github.repository }}'
       - name: Checkout code
         uses: actions/checkout@v3
       - name: Set up QEMU
@@ -42,29 +46,29 @@ jobs:
         with:
           context: .
           platforms: linux/amd64,linux/arm64
-          target: hyku-base
+          target: ams-base
           build-args: |
             SETTINGS__BULKRAX__ENABLED=true
             EXTRA_APK_PACKAGES=less vim bash openjdk11-jre ffmpeg rsync yarn
           cache-from: |
-            ${{ env.REGISTRY }}/${{ github.repository }}:${TAG}
+            ${{ env.REGISTRY }}/${{ env.REPO_LOWER }}:${TAG}
           push: true
           tags: |
-            ${{ env.REGISTRY }}/${{ github.repository }}:${{ env.TAG }}
+            ${{ env.REGISTRY }}/${{ env.REPO_LOWER }}:${{ env.TAG }}
       - name: Build and push worker
         uses: docker/build-push-action@v3
         with:
           context: .
           platforms: linux/amd64,linux/arm64
-          target: hyku-worker
+          target: ams-worker
           build-args: |
             SETTINGS__BULKRAX__ENABLED=true
             EXTRA_APK_PACKAGES=less vim bash openjdk11-jre ffmpeg rsync yarn
           cache-from: |
-            ${{ env.REGISTRY }}/${{ github.repository }}:${TAG}
+            ${{ env.REGISTRY }}/${{ env.REPO_LOWER }}:${TAG}
           push: true
           tags: |
-            ${{ env.REGISTRY }}/${{ github.repository }}/worker:${{ env.TAG }}
+            ${{ env.REGISTRY }}/${{ env.REPO_LOWER }}/worker:${{ env.TAG }}
 
   lint:
     needs: build
@@ -130,6 +134,11 @@ jobs:
           touch .env.development;
           docker-compose pull web;
           docker-compose pull worker
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.debug_enabled }}
+        with:
+          limit-access-to-actor: true
       - name: Start containers
         run: docker-compose up -d web
       - name: Setup solr
@@ -142,11 +151,6 @@ jobs:
         run: >-
           docker-compose exec -T web bash -c
           "RAILS_ENV=test bundle exec rake db:schema:load db:migrate db:seed"
-      - name: Setup tmate session
-        uses: mxschmitt/action-tmate@v3
-        if: ${{ github.event_name == 'workflow_dispatch' && inputs.debug_enabled }}
-        with:
-          limit-access-to-actor: true
       - name: Run Specs
         env:
           # Specifies how many jobs you would like to run in parallel,
