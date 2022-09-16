@@ -27,7 +27,7 @@ jobs:
           echo "TAG=${GITHUB_SHA::8}" >> $GITHUB_ENV;
           echo "DEPLOY_TAG=${GITHUB_SHA::8}" >> $GITHUB_ENV;
       - name: Downcase repo
-        run: echo "REPO_LOWER=${REPO,,}" >> $GITHUB_ENV
+        run: echo "REPO_LOWER=`echo ${REPO} | tr '[:upper:]' '[:lower:]'`" >> $GITHUB_ENV
         env:
           REPO: '${{ github.repository }}'
       - name: Checkout code
