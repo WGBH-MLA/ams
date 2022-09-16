@@ -10,11 +10,11 @@ jobs:
     runs-on: 'ubuntu-latest'
     container: dtzar/helm-kubectl:3.9.4
     env:
+      REPO: '${{ github.repository }}'
       HELM_EXPERIMENTAL_OCI: 1
       HELM_RELEASE_NAME: ams-demo
       KUBE_NAMESPACE: ams-demo
-      HELM_EXTRA_ARGS: >
-        --values ops/demo-deploy.yaml
+      HELM_EXTRA_ARGS: "--values ops/demo-deploy.yaml"
       KUBECONFIG_FILE: ${{ secrets.KUBECONFIG_FILE_DEMO }}
       KUBECONFIG: ./kubeconfig.yml
       SOLR_PASSWORD: ${{ secrets.SOLR_PASSWORD_DEMO }}
@@ -26,8 +26,6 @@ jobs:
           echo "DEPLOY_TAG=${GITHUB_SHA::8}" >> $GITHUB_ENV;
       - name: Downcase repo
         run: echo "REPO_LOWER=${REPO,,}" >> $GITHUB_ENV
-        env:
-          REPO: '${{ github.repository }}'
       - name: Checkout code
         uses: actions/checkout@v3
       - name: Do deploy
