@@ -112,16 +112,14 @@ fcrepo:
 
 mariadb:
   enabled: false
+
+externalMariadb:
+  db:
+    host: ams-demo-rails-db.cmrjt7rckp5r.us-east-1.rds.amazonaws.com
   auth:
-    database: ams-demo-rails-db.cmrjt7rckp5r.us-east-1.rds.amazonaws.com
     username: hyrax
     password: $MYSQL_PASSWORD
-  master:
-    persistence:
-      enabled: true
-      # storageClass: "-"
-      accessMode: ReadWriteOnce
-      size: 8Gi
+    database: hyrax
 
 redis:
   cluster:
