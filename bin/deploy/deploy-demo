@@ -1,15 +1,15 @@
 #!/bin/bash
 
-HELM_EXPERIMENTAL_OCI=1
-HELM_RELEASE_NAME=ams-demo
-KUBE_NAMESPACE=ams-demo
-HELM_EXTRA_ARGS="--values ops/demo-deploy.yaml"
-KUBECONFIG=./demo_kubeconfig.yml
-SOLR_PASSWORD=""
-MYSQL_PASSWORD=${MYSQL_PASSWORD_DEMO}
-TAG=bc9ea9a6
-DEPLOY_TAG=bc9ea9a6
-REPO_LOWER=wgbh-mla/ams
+export HELM_EXPERIMENTAL_OCI=1
+export HELM_RELEASE_NAME=ams-demo
+export KUBE_NAMESPACE=ams-demo
+export HELM_EXTRA_ARGS="--values ops/demo-deploy.yaml"
+export KUBECONFIG=./demo_kubeconfig.yml
+export SOLR_PASSWORD="-"
+export MYSQL_PASSWORD=${MYSQL_PASSWORD_DEMO}
+export TAG=$1
+export DEPLOY_TAG=$1
+export REPO_LOWER=wgbh-mla/ams
 
 export DEPLOY_IMAGE=ghcr.io/${REPO_LOWER}
 export WORKER_IMAGE=ghcr.io/${REPO_LOWER}/worker
