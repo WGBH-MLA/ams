@@ -1,0 +1,17 @@
+#!/bin/bash
+
+export HELM_EXPERIMENTAL_OCI=1
+export HELM_RELEASE_NAME=ams-prod
+export KUBE_NAMESPACE=ams-prod
+export HELM_EXTRA_ARGS="--values ops/production-deploy.yaml"
+export KUBECONFIG=./digital-eks-dev.kubeconfig.yml
+export SOLR_PASSWORD="-"
+export MYSQL_PASSWORD=${MYSQL_PASSWORD_PROD}
+export TAG=$1
+export DEPLOY_TAG=$1
+export REPO_LOWER=wgbh-mla/ams
+
+export DEPLOY_IMAGE=ghcr.io/${REPO_LOWER}
+export WORKER_IMAGE=ghcr.io/${REPO_LOWER}/worker
+DOLLAR=$ envsubst < ops/production-deploy.tmpl.yaml > ops/production-deploy.yaml
+./bin/helm_deploy ams-prod ams-prod
