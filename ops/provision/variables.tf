@@ -46,3 +46,13 @@ variable "site24x7_key" {
 variable "site24x7_group" {
   type = string
 }
+
+variable "kubeconfig" {
+  type = string
+  default = "./kube_config.yaml"
+}
+
+variable "efs_name" {
+  type = string
+  default = "fs-0dd9f8ff037001c5d"
+}

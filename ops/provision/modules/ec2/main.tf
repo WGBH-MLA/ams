@@ -27,15 +27,19 @@ resource "aws_instance" "fcrepo" {
   for_each = {
     prod = "prod"
     demo = "demo"
+    alpha = "alpha"
+    bravo = "bravo"
+    charlie = "charlie"
+    delta = "delta"
   }
 
-  ami                         = data.aws_ami.amazon-linux-2.id
+  ami                         = "ami-02538f8925e3aa27a" # data.aws_ami.amazon-linux-2.id
   associate_public_ip_address = true
   instance_type               = var.fcrepo_instance
   key_name                    = var.key_name
   subnet_id                   = var.vpc.public_subnets[0]
   vpc_security_group_ids      = [var.sg_pub_id]
-  iam_instance_profile        = "${aws_iam_instance_profile.instance_profile.name}"
+  iam_instance_profile        = aws_iam_instance_profile.instance_profile.name
 
   tags = {
     "Name" = "${var.namespace}-fcrepo-${each.value}"

@@ -20,12 +20,12 @@ EOF
 
 resource "aws_iam_instance_profile" "instance_profile" {
   name = "${var.namespace}_profile"
-  role = "${aws_iam_role.instance_role.name}"
+  role = aws_iam_role.instance_role.name
 }
 
 resource "aws_iam_role_policy" "instance_policy" {
   name = "${var.namespace}_policy"
-  role = "${aws_iam_role.instance_role.id}"
+  role = aws_iam_role.instance_role.id
 
   policy = <<EOF
 {
