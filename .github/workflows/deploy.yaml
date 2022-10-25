@@ -1,0 +1,27 @@
+name: "Deploy"
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Deploy to Environment'
+        require: true
+        default: 'staging'
+        type: choice
+        options:
+          - staging
+          - demo
+          - prod
+          - alpha
+          - bravo
+          - charlie
+          - delta
+      debug_enabled:
+        type: boolean
+        description: 'Run the build with tmate debugging enabled (https://github.com/marketplace/actions/debugging-with-tmate)'
+        required: false
+        default: false
+
+jobs:
+  call-workflow:
+    uses: scientist-softserv/deploy-action/.github/workflows/deploy.yaml@main
+    secrets: inherit
