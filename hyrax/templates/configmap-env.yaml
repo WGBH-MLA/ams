@@ -9,7 +9,7 @@ metadata:
     app.kubernetes.io/managed-by: {{ .Release.Service }}
 data:
   DB_HOST: {{ template "hyrax.mariadb.host" . }}
-  DB_PORT: "3306"
+  DB_PORT: "5432"
   DB_USERNAME: {{ template "hyrax.mariadb.database" . }}
   {{- if .Values.memcached.enabled }}
   MEMCACHED_HOST: {{ template "hyrax.memcached.fullname" . }}
@@ -38,5 +38,5 @@ data:
   SOLR_COLLECTION_NAME: {{ template "hyrax.solr.collectionName" . }}
   SOLR_CONFIGSET_NAME: {{ template "hyrax.fullname" . }}
   SOLR_HOST: {{ template "hyrax.solr.host" . }}
-  SOLR_PORT: "8983"
+  SOLR_PORT: {{ (include "hyrax.solr.port" .) | quote }}
   SOLR_URL: {{ template "hyrax.solr.url" . }}

@@ -135,4 +135,5 @@ externalFcrepoHost: 10.0.4.93
 externalSolrHost: 10.0.4.93
 externalSolrUser: admin
 externalSolrCollection: "ams"
+externalSolrPassword: "-"
 loadSolrConfigSet: false
