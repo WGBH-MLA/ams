@@ -238,7 +238,7 @@ minio:
   # defaultBuckets: bucketOne;bucketTwo
 
 postgresql:
-  enabled: true
+  enabled: false
   image:
     repository: bitnami/postgresql
     tag: 12.3.0
