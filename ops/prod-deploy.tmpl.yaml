@@ -77,7 +77,7 @@ extraEnvVars: &envVars
   - name: REDIS_SERVER
     value: redis://:prod@ams-prod-redis-master:6379
   - name: SETTINGS__BULKRAX__ENABLED
-    value: "true"
+    value: "false"
   - name: SOLR_HOST
     value: 10.0.4.93
   - name: SOLR_PORT
