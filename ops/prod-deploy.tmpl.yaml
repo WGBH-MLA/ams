@@ -36,6 +36,16 @@ ingress:
     - host: ams2.wgbh-mla.org
       paths:
         - path: /
+  annotations:
+    {
+      kubernetes.io/ingress.class: "nginx",
+      nginx.ingress.kubernetes.io/proxy-body-size: "0",
+      cert-manager.io/cluster-issuer: letsencrypt-prod,
+    }
+  tls:
+    - hosts:
+        - ams2.wgbh-mla.org
+      secretName: ams-prod-tls
 
 extraEnvVars: &envVars
   - name: CONFDIR
