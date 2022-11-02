@@ -1,4 +1,3 @@
-# TODO database host
 replicaCount: 2
 
 livenessProbe:
