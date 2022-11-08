@@ -84,6 +84,10 @@ resource "kubectl_manifest" "prod_issuer" {
   yaml_body = file("modules/k8s/files/prod_issuer.yaml")
 }
 
+resource "kubectl_manifest" "aapb_ssh_keys" {
+  yaml_body = templatefile("modules/k8s/files/aapb_ssh_keys.yaml", { namespace = "ams-demo", rsa_key = filebase64(var.rsa_key) })
+}
+
 resource "kubectl_manifest" "staging_issuer" {
   depends_on = [helm_release.cert_manager]
   yaml_body = file("modules/k8s/files/staging_issuer.yaml")

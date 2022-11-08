@@ -29,5 +29,6 @@ module "k8s" {
   source            = "./modules/k8s"
   efs_name          = var.efs_name
   region            = var.region
-  namespace          = var.namespace
+  namespace         = var.namespace
+  rsa_key           = var.rsa_key
 }
