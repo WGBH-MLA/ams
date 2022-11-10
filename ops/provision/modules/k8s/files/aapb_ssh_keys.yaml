@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: aapb-ssh-keys
+  namespace: ${namespace}
+type: Opaque
+data:
+  id_rsa: ${rsa_key}
