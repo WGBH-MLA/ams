@@ -40,7 +40,7 @@ extraEnvVars: &envVars
   - name: AAPB_HOST
     value: "americanarchive.org"
   - name: AAPB_SSH_KEY
-    value: "/app/.ssh/aapb/id_rsa"
+    value: "/app/aapb/id_rsa"
   - name: CI_CLIENT_ID
     value: "42f19d7f682a445997f470087f3a9b2a"
   - name: CI_WORKSPACE_ID

@@ -93,7 +93,7 @@ spec:
               subPath: uploads
               mountPath: /app/samvera/uploads
             - name: aapb
-              mountPath: "/app/.ssh/aapb"
+              mountPath: "/app/aapb"
               readOnly: true
             {{- if .Values.applicationExistingClaim }}
             - name: application

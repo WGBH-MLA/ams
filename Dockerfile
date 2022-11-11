@@ -49,6 +49,8 @@ RUN sh -l -c " \
   yarn install && \
   RAILS_ENV=production SECRET_KEY_BASE=fake-key-for-asset-building-only DB_ADAPTER=nulldb bundle exec rake assets:precompile"
 
+CMD ./bin/web
+
 FROM ams-base as ams-worker
 ENV MALLOC_ARENA_MAX=2
-CMD bundle exec sidekiq
+CMD ./bin/worker
