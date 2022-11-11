@@ -16,3 +16,15 @@ variable "efs_name" {
   type = string
   default = "fs-0dd9f8ff037001c5d"
 }
+
+variable "rsa_key" {
+  type = string
+}
+
+variable "mysql_password" {
+  type = string
+}
+
+variable "smtp_password" {
+  type = string
+}

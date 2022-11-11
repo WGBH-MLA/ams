@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: aapb-ssh-keys
+  namespace: default
+  annotations:
+    replicator.v1.mittwald.de/replicate-to: "*"
+type: Opaque
+data:
+  id_rsa: ${rsa_key}
