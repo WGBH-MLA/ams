@@ -748,6 +748,7 @@ ActiveRecord::Schema.define(version: 20211214001152) do
     t.index ["work_id"], name: "index_work_view_stats_on_work_id"
   end
 
+  add_foreign_key "admin_data", "bulkrax_importers"
   add_foreign_key "admin_data", "hyrax_batch_ingest_batches"
   add_foreign_key "annotations", "admin_data", column: "admin_data_id"
   add_foreign_key "bulkrax_exporter_runs", "bulkrax_exporters", column: "exporter_id"
