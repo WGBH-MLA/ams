@@ -31,4 +31,6 @@ module "k8s" {
   region            = var.region
   namespace         = var.namespace
   rsa_key           = var.rsa_key
+  mysql_password    = var.mysql_password
+  smtp_password     = var.smtp_password
 }

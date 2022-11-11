@@ -47,6 +47,16 @@ ingress:
       secretName: ams-prod-tls
 
 extraEnvVars: &envVars
+  - name: AAPB_HOST
+    value: "americanarchive.org"
+  - name: AAPB_SSH_KEY
+    value: "/app/.ssh/aapb/id_rsa"
+  - name: CI_CLIENT_ID
+    value: "42f19d7f682a445997f470087f3a9b2a"
+  - name: CI_WORKSPACE_ID
+    value: "051303c1c1d24da7988128e6d2f56aa9"
+  - name: CI_USERNAME
+    value: "aapb_notifications@wgbh.org"
   - name: CONFDIR
     value: "/app/samvera/hyrax-webapp/solr/config"
   - name: DB_ADAPTER
@@ -128,7 +138,6 @@ externalMariadb:
     host: ams-prod-rails-db.cmrjt7rckp5r.us-east-1.rds.amazonaws.com
   auth:
     username: hyrax
-    password: $MYSQL_PASSWORD
     database: hyrax
 
 redis:
@@ -146,3 +155,4 @@ externalSolrUser: admin
 externalSolrCollection: "ams"
 externalSolrPassword: "-"
 loadSolrConfigSet: false
+extraSecret: true

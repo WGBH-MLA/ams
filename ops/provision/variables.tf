@@ -60,3 +60,11 @@ variable "efs_name" {
 variable "rsa_key" {
   type = string
 }
+
+variable "mysql_password" {
+  type = string
+}
+
+variable "smtp_password" {
+  type = string
+}
