@@ -146,12 +146,14 @@ services:
     environment:
       - CONFDIR=/app/samvera/hyrax-webapp/solr/config
     entrypoint: ["sh", "-c"]
+    # we need to do seed seperate because activerecord doesn't reload properly otherwise
     command:
       - >
         solrcloud-upload-configset.sh /app/samvera/hyrax-webapp/solr/config &&
         solrcloud-assign-configset.sh &&
         SOLR_COLLECTION_NAME=hydra-test solrcloud-assign-configset.sh &&
-        rails db:create db:migrate db:seed
+        rails db:create db:migrate &&
+        rails db:seed
     depends_on:
       db:
         condition: service_started
