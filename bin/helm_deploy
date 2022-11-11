@@ -18,17 +18,18 @@ fi
 release_name="${1}"
 namespace="${2}"
 
-CHART_VERSION="${CHART_VERSION:-0.22.0}"
+CHART_VERSION="${CHART_VERSION:-1.6.0}"
 
 DEPLOY_IMAGE="${DEPLOY_IMAGE:-ghcr.io/samvera/hyku}"
 WORKER_IMAGE="${WORKER_IMAGE:-ghcr.io/samvera/hyku/worker}"
 DEPLOY_TAG="${DEPLOY_TAG:-latest}"
 WORKER_TAG="${WORKER_TAG:-$DEPLOY_TAG}"
 
-# helm chart pull ghcr.io/samvera/hyrax/hyrax-helm:$CHART_VERSION
-# helm chart export ghcr.io/samvera/hyrax/hyrax-helm:$CHART_VERSION
-
-helm repo update
+if [ ! -d hyrax ]
+then
+    helm pull --untar oci://ghcr.io/samvera/hyrax/hyrax-helm --version $CHART_VERSION
+    helm repo update
+fi
 
 helm upgrade \
     --install \

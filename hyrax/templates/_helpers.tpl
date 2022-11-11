@@ -52,6 +52,14 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
 {{/*
+Worker Selector labels
+*/}}
+{{- define "hyrax.workerSelectorLabels" -}}
+app.kubernetes.io/name: {{ include "hyrax.name" . }}-worker
+app.kubernetes.io/instance: {{ .Release.Name }}
+{{- end }}
+
+{{/*
 Create the name of the service account to use
 */}}
 {{- define "hyrax.serviceAccountName" -}}
@@ -163,8 +171,12 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 {{- end }}
 {{- end -}}
 
+{{- define "hyrax.solr.port" -}}
+{{- .Values.externalSolrPort | default "8983" }}
+{{- end -}}
+
 {{- define "hyrax.solr.url" -}}
-{{- printf "http://%s:%s@%s:%s/solr/%s" (include "hyrax.solr.username" .) (include "hyrax.solr.password" .) (include "hyrax.solr.host" .) "8983" (include "hyrax.solr.collectionName" .)  -}}
+{{- printf "http://%s:%s@%s:%s/solr/%s" (include "hyrax.solr.username" .) (include "hyrax.solr.password" .) (include "hyrax.solr.host" .) (include "hyrax.solr.port" .) (include "hyrax.solr.collectionName" .)  -}}
 {{- end -}}
 
 {{- define "hyrax.zk.fullname" -}}
@@ -177,6 +189,10 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 
 {{- define "hyrax.redis.url" -}}
 {{- printf "redis://:%s@%s:%s" .Values.redis.password (include "hyrax.redis.host" .) "6379/0" -}}
+{{- end -}}
+
+{{- define "hyrax.nginx.host" -}}
+{{- printf "%s-%s" .Release.Name "nginx" | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
 
 {{- define "hyrax.sharedPvcAccessModes" -}}
