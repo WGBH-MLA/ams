@@ -21,6 +21,9 @@ spec:
         {{- include "hyrax.selectorLabels" . | nindent 8 }}
     spec:
       initContainers:
+        {{- if .Values.solrPreSetupInitContainer }}
+        {{- toYaml .Values.solrPreSetupInitContainer | nindent 8 }}
+        {{- end }}
         {{- if .Values.loadSolrConfigSet }}
         - name: load-solr-config
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
@@ -30,6 +33,10 @@ spec:
                 name: {{ include "hyrax.fullname" . }}-env
             - secretRef:
                 name: {{ include "hyrax.fullname" . }}
+            {{- if .Values.extraSecret }}
+            - secretRef:
+                name: app-secrets
+            {{- end }}
             {{- if .Values.solrExistingSecret }}
             - secretRef:
                 name: {{ .Values.solrExistingSecret }}
@@ -43,6 +50,9 @@ spec:
               solrcloud-upload-configset.sh /app/samvera/hyrax-webapp/solr/conf &&
               solrcloud-assign-configset.sh
         {{- end }}
+        {{- if .Values.dbPreSetupInitContainer }}
+        {{- toYaml .Values.dbPreSetupInitContainer | nindent 8 }}
+        {{- end }}
         {{- if not .Values.skipDbMigrateSeed }}
         - name: db-setup
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
@@ -52,6 +62,10 @@ spec:
                 name: {{ include "hyrax.fullname" . }}-env
             - secretRef:
                 name: {{ template "hyrax.fullname" . }}
+            {{- if .Values.extraSecret }}
+            - secretRef:
+                name: app-secrets
+            {{- end }}
             {{- if .Values.solrExistingSecret }}
             - secretRef:
                 name: {{ .Values.solrExistingSecret }}
@@ -87,6 +101,10 @@ spec:
                 name: {{ include "hyrax.fullname" . }}-env
             - secretRef:
                 name: {{ template "hyrax.fullname" . }}
+            {{- if .Values.extraSecret }}
+            - secretRef:
+                name: app-secrets
+            {{- end }}
             {{- if .Values.solrExistingSecret }}
             - secretRef:
                 name: {{ .Values.solrExistingSecret }}
@@ -135,6 +153,9 @@ spec:
             - name: uploads
               subPath: uploads
               mountPath: /app/samvera/uploads
+            - name: aapb
+              mountPath: "/app/aapb"
+              readOnly: true
             {{- if .Values.applicationExistingClaim }}
             - name: application
               mountPath: /app/samvera/hyrax-webapp
@@ -148,6 +169,11 @@ spec:
           {{- toYaml . | nindent 10 }}
           {{- end }}
       volumes:
+        - name: "aapb"
+          secret:
+            secretName: aapb-ssh-keys
+            optional: true
+            defaultMode: 0660
         - name: "branding"
           {{- if and .Values.brandingVolume.enabled .Values.brandingVolume.existingClaim }}
           persistentVolumeClaim:

@@ -24,3 +24,13 @@ module "ec2" {
   site24x7_key       = var.site24x7_key
   site24x7_group     = var.site24x7_group
 }
+
+module "k8s" {
+  source            = "./modules/k8s"
+  efs_name          = var.efs_name
+  region            = var.region
+  namespace         = var.namespace
+  rsa_key           = var.rsa_key
+  mysql_password    = var.mysql_password
+  smtp_password     = var.smtp_password
+}

@@ -21,7 +21,6 @@ jobs:
       - name: Retag web to latest
         uses: koraykoska/retag-docker-image@0.2.4
         with:
-          registry: ${{ env.REGISTRY }}
           name: ${{ env.REPO_LOWER }}
           old_tag: ${{ env.TAG }}
           new_tag: latest
@@ -31,7 +30,6 @@ jobs:
       - name: Retag worker to latest
         uses: koraykoska/retag-docker-image@0.2.4
         with:
-          registry: ${{ env.REGISTRY }}
           name: ${{ env.REPO_LOWER }}/worker
           old_tag: ${{ env.TAG }}
           new_tag: latest

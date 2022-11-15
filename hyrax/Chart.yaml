@@ -1,30 +1,35 @@
 apiVersion: v2
-appVersion: 3.0.2
-dependencies:
-- condition: fcrepo.enabled
-  name: fcrepo
-  repository: oci://ghcr.io/samvera
-  version: 0.8.0
-- condition: memcached.enabled
-  name: memcached
-  repository: https://charts.bitnami.com/bitnami
-  version: 4.2.21
-- condition: minio.enabled
-  name: minio
-  repository: https://charts.bitnami.com/bitnami
-  version: 6.7.2
-- name: mariadb
-  version: 9.5.1
-  repository: https://charts.bitnami.com/bitnami
-- condition: redis.enabled
-  name: redis
-  repository: https://charts.bitnami.com/bitnami
-  version: 10.7.16
-- condition: solr.enabled
-  name: solr
-  repository: https://charts.bitnami.com/bitnami
-  version: 1.0.1
-description: An open-source, Samvera-powered digital repository system
 name: hyrax
+description: An open-source, Samvera-powered digital repository system
 type: application
-version: 0.22.0
+version: 1.6.0
+appVersion: 3.3.0
+dependencies:
+  - name: fcrepo
+    version: 0.8.0
+    repository: oci://ghcr.io/samvera
+    condition: fcrepo.enabled
+  - name: memcached
+    version: 4.2.21
+    repository: https://raw.githubusercontent.com/bitnami/charts/archive-full-index/bitnami
+    condition: memcached.enabled
+  - name: minio
+    version: 6.7.2
+    repository: https://raw.githubusercontent.com/bitnami/charts/archive-full-index/bitnami
+    condition: minio.enabled
+  - name: mariadb
+    repository: https://raw.githubusercontent.com/bitnami/charts/archive-full-index/bitnami
+    version: 9.5.1
+    condition: mariadb.enabled
+  - name: redis
+    version: 10.7.16
+    repository: https://raw.githubusercontent.com/bitnami/charts/archive-full-index/bitnami
+    condition: redis.enabled
+  - name: solr
+    version: 1.0.1
+    repository: https://raw.githubusercontent.com/bitnami/charts/archive-full-index/bitnami
+    condition: solr.enabled
+  - name: nginx
+    version: 9.8.0
+    repository: https://raw.githubusercontent.com/bitnami/charts/archive-full-index/bitnami
+    condition: nginx.enabled

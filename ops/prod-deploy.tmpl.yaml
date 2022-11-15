@@ -1,4 +1,3 @@
-# TODO database host
 replicaCount: 2
 
 livenessProbe:
@@ -7,11 +6,11 @@ readinessProbe:
   enabled: false
 
 brandingVolume:
-  storageClass: efs
+  storageClass: efs-sc
 derivativesVolume:
-  storageClass: efs
+  storageClass: efs-sc
 uploadsVolume:
-  storageClass: efs
+  storageClass: efs-sc
 
 extraVolumeMounts: &volMounts
   - name: uploads
@@ -36,8 +35,28 @@ ingress:
     - host: ams2.wgbh-mla.org
       paths:
         - path: /
+  annotations:
+    {
+      kubernetes.io/ingress.class: "nginx",
+      nginx.ingress.kubernetes.io/proxy-body-size: "0",
+      cert-manager.io/cluster-issuer: letsencrypt-prod,
+    }
+  tls:
+    - hosts:
+        - ams2.wgbh-mla.org
+      secretName: ams-prod-tls
 
 extraEnvVars: &envVars
+  - name: AAPB_HOST
+    value: "americanarchive.org"
+  - name: AAPB_SSH_KEY
+    value: "/app/aapb/id_rsa"
+  - name: CI_CLIENT_ID
+    value: "42f19d7f682a445997f470087f3a9b2a"
+  - name: CI_WORKSPACE_ID
+    value: "051303c1c1d24da7988128e6d2f56aa9"
+  - name: CI_USERNAME
+    value: "aapb_notifications@wgbh.org"
   - name: CONFDIR
     value: "/app/samvera/hyrax-webapp/solr/config"
   - name: DB_ADAPTER
@@ -51,11 +70,11 @@ extraEnvVars: &envVars
   - name: FCREPO_BASE_PATH
     value: /prod
   - name: FCREPO_HOST
-    value: 52.90.209.247:8080
+    value: 10.0.4.93:8080
   - name: FCREPO_PATH
     value: /fcrepo-webapp-4.7.5/rest
   - name: FCREPO_URL
-    value: http://52.90.209.247:8080/fcrepo-webapp-4.7.5/rest
+    value: http://10.0.4.93:8080/fcrepo-webapp-4.7.5/rest
   - name: IN_DOCKER
     value: "true"
   - name: LD_LIBRARY_PATH
@@ -77,15 +96,15 @@ extraEnvVars: &envVars
   - name: REDIS_SERVER
     value: redis://:prod@ams-prod-redis-master:6379
   - name: SETTINGS__BULKRAX__ENABLED
-    value: "true"
+    value: "false"
   - name: SOLR_HOST
-    value: 52.90.209.247
+    value: 10.0.4.93
   - name: SOLR_PORT
     value: "8983"
   - name: SOLR_URL
-    value: http://52.90.209.247:8983/solr/ams
+    value: http://10.0.4.93:8983/solr/ams
   - name: SIDEKIQ_CONCURRENCY
-    value: "10"
+    value: "1"
 
 worker:
   replicaCount: 1
@@ -113,27 +132,27 @@ fcrepo:
 
 mariadb:
   enabled: false
+
+externalMariadb:
+  db:
+    host: ams-prod-rails-db.cmrjt7rckp5r.us-east-1.rds.amazonaws.com
   auth:
-    database: ams-prod-rails-db.cmrjt7rckp5r.us-east-1.rds.amazonaws.com
     username: hyrax
-    password: $MYSQL_PASSWORD
-  master:
-    persistence:
-      enabled: true
-      # storageClass: "-"
-      accessMode: ReadWriteOnce
-      size: 8Gi
+    database: hyrax
 
 redis:
   cluster:
     enabled: false
   password: prod
+
 solr:
   enabled: false
 
-externalFcrepoHost: 52.90.209.247
+externalFcrepoHost: 10.0.4.93
 
-externalSolrHost: 52.90.209.247
+externalSolrHost: 10.0.4.93
 externalSolrUser: admin
 externalSolrCollection: "ams"
+externalSolrPassword: "-"
 loadSolrConfigSet: false
+extraSecret: true

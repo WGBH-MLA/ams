@@ -1,0 +1,13 @@
+#!/usr/local/bin/ruby
+
+if ENV['DB_URL'] && !ENV['DB_URL'].empty?
+  ENV['DB_URL'] = ENV['DB_URL'].gsub('pool=5', 'pool=30')
+else
+  puts 'DB_URL not set, no pool change needed'
+end
+
+if ENV[AAPB_HOST]
+  %x{mkdir ~/.ssh && ssh-keyscan $AAPB_HOST >> ~/.ssh/known_hosts}
+end
+
+exec "echo $DB_URL && bundle exec sidekiq"

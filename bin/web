@@ -1,0 +1,19 @@
+#!/bin/sh
+set -e
+
+if [[ -d /app/samvera/hyrax-webapp/public/assets-new/ ]]
+then
+  rsync -rP public/assets-new/* public/assets
+fi
+
+if [[ -d /app/samvera/hyrax-webapp/public/uv-new/ ]]
+then
+  rsync -rP public/uv-new/* public/uv
+fi
+
+if [[ -n $AAPB_HOST ]]
+then
+    mkdir ~/.ssh && ssh-keyscan $AAPB_HOST >> ~/.ssh/known_hosts
+fi
+
+exec bundle exec puma -v -b tcp://0.0.0.0:3000
