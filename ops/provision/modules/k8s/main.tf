@@ -104,6 +104,9 @@ resource "kubectl_manifest" "aapb_ssh_keys" {
 resource "kubectl_manifest" "app_secrets" {
   yaml_body = templatefile("modules/k8s/files/app_secrets.yaml", {
     mysql_password = base64encode(var.mysql_password),
-    smtp_password = base64encode(var.smtp_password)
+    smtp_password = base64encode(var.smtp_password),
+    aws_secret_key = base64encode(var.aws_secret_key),
+    ci_client_secret = base64encode(var.ci_client_secret),
+    ci_password = base64encode(var.ci_password)
   })
 }

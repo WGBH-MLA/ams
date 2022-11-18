@@ -6,7 +6,7 @@ else
   puts 'DB_URL not set, no pool change needed'
 end
 
-if ENV[AAPB_HOST]
+if ENV['AAPB_HOST']
   %x{mkdir ~/.ssh && ssh-keyscan $AAPB_HOST >> ~/.ssh/known_hosts}
 end
 

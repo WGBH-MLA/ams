@@ -28,3 +28,15 @@ variable "mysql_password" {
 variable "smtp_password" {
   type = string
 }
+
+variable "aws_secret_key" {
+  type = string
+}
+
+variable "ci_client_secret" {
+  type = string
+}
+
+variable "ci_password" {
+  type = string
+}
