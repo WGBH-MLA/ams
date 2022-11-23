@@ -22,6 +22,7 @@ RUN apk --no-cache upgrade && \
     perl \
     pkgconfig \
     rsync \
+    screen \
     vim \
     yarn && \
   # curl https://sh.rustup.rs -sSf | sh -s -- -y && \
