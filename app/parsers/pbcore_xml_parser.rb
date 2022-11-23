@@ -34,6 +34,20 @@ class PbcoreXmlParser < Bulkrax::XmlParser
       end
   end
 
+  # If the import_file_path is an xml file, return that
+  # Otherwise return all xml files in the given folder
+  # modified to strip extra path check
+  def metadata_paths
+    @metadata_paths ||=
+      if file? && MIME::Types.type_for(import_file_path).include?('application/xml')
+        [import_file_path]
+      else
+        file_paths.select do |f|
+          MIME::Types.type_for(f).include?('application/xml')
+        end
+      end
+  end
+
   def create_works
     self.record_objects = []
     records.each_with_index do |file, index|
