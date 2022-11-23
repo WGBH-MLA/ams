@@ -48,7 +48,7 @@ module AAPB
         # TODO: Move to a ZippedReader module?
         def extraction_path
           # TODO: fetch extraction path from Batch ingest config, if present.
-          @extraction_path ||= Rails.root.join("tmp", "ZipReaderExtractionPath", "#{Time.now.to_i}#{rand(1000)}")
+          @extraction_path ||= Rails.root.join("tmp", "imports", "batch_ingest", "#{Time.now.to_i}#{rand(1000)}")
         ensure
           FileUtils.mkdir_p @extraction_path unless Dir.exists? @extraction_path
         end
