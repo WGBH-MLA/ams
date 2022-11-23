@@ -9,7 +9,6 @@ class EssenceTrack < ActiveFedora::Base
   self.valid_child_concerns = []
 
   validates :track_type, presence: true
-  validates :track_id, presence: true
 
   validates_each :duration, :time_start, allow_blank: true do |record, attr, value|
     if value !~ AMS::TimeCodeService.regex
