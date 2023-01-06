@@ -10,4 +10,9 @@ if ENV['AAPB_HOST']
   %x{mkdir ~/.ssh && ssh-keyscan $AAPB_HOST >> ~/.ssh/known_hosts}
 end
 
-exec "echo $DB_URL && bundle exec sidekiq"
+queues = if !ARGV.empty?
+           ' -q ' + ARGV.join(' -q ')
+         else
+           ''
+         end
+exec "echo $DB_URL && bundle exec sidekiq #{queues}"
