@@ -51,7 +51,10 @@ spec:
       containers:
         - name: {{ .Chart.Name }}-import-worker
           command:
-            - ./bin/worker import export
+            - ./bin/worker
+          args:
+            - import
+            - export
           securityContext:
             {{- toYaml .Values.worker.securityContext | nindent 12 }}
           image: "{{ .Values.worker.image.repository }}:{{ .Values.worker.image.tag | default .Chart.AppVersion }}"
