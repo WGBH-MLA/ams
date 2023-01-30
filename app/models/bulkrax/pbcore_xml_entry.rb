@@ -74,7 +74,7 @@ module Bulkrax
       xml_asset_id = self.raw_metadata['id']
       work = Asset.where(id: manifest_asset_id || xml_asset_id).first if manifest_asset_id || xml_asset_id
 
-      admin_data_gid =  if work.present?
+      admin_data_gid =  if work.present? && work.admin_data.present?
                           work.admin_data.update!(bulkrax_importer_id: bulkrax_importer_id)
                           work.admin_data_gid
                         else
