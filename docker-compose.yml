@@ -35,7 +35,7 @@ networks:
 
 services:
   db:
-    image: mysql:5.7
+    image: mariadb
     environment:
       - MYSQL_DATABASE=${MYSQL_DATABASE}
       - MYSQL_USER=${MYSQL_DATABASE}
@@ -51,7 +51,7 @@ services:
       - 'mysql:/var/lib/mysql'
     networks:
       internal:
-    command: ['mysqld', '--character-set-server=utf8', '--collation-server=utf8_unicode_ci']
+    command: ['mysqld', '--character-set-server=utf8', '--collation-server=utf8_unicode_ci', '--max-allowed-packet=1073741824']
 
   zoo:
     image: zookeeper:3.6.2
@@ -118,16 +118,19 @@ services:
       - fcrepo:/data:cached
     env_file:
       - .env
-    environment:
-      - VIRTUAL_PORT=8983
-      - VIRTUAL_HOST=fcrepo.ams.test
     expose:
       - 8080
     environment:
-      - JAVA_OPTS=${JAVA_OPTS} -Dfcrepo.modeshape.configuration="classpath:/config/file-simple/repository.json" -Dfcrepo.object.directory="/data/objects" -Dfcrepo.binary.directory="/data/binaries"
+      - VIRTUAL_PORT=8983
+      - VIRTUAL_HOST=fcrepo.ams.test
+      - JAVA_OPTIONS=-Dfcrepo.object.directory="/data/objects" -Dfcrepo.binary.directory="/data/binaries" -Dfcrepo.mysql.host=db -Dfcrepo.mysql.username=root -Dfcrepo.mysql.password=DatabaseFTW
+      - MODESHAPE_CONFIG=classpath:/config/jdbc-mysql/repository.json
+      - DATABASE_PASSWORD=${DATABASE_PASSWORD}
     networks:
       internal:
-
+    depends_on:
+      db:
+        condition: service_started
 
   # Do not recurse through all of tmp. derivitives will make booting
   # very slow and eventually just time out as data grows
