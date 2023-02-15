@@ -27,10 +27,6 @@ resource "aws_instance" "fcrepo" {
   for_each = {
     prod = "prod"
     demo = "demo"
-    alpha = "alpha"
-    bravo = "bravo"
-    charlie = "charlie"
-    delta = "delta"
   }
 
   ami                         = "ami-02538f8925e3aa27a" # data.aws_ami.amazon-linux-2.id
