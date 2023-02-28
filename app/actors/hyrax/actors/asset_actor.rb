@@ -117,18 +117,13 @@ module Hyrax
         end
 
         def find_or_create_admin_data(env)
-          admin_data = if env.attributes['bulkrax_identifier'].present?
-                         AdminData.find_by_gid(env.attributes['admin_data_gid'])
-                       else
-                         ::AdminData.create unless env.curation_concern.admin_data_gid.present?
-                       end
+          return env.curation_concern.admin_data if env.curation_concern.admin_data.present?
 
-          if admin_data
-            Rails.logger.debug "Create AdminData at #{admin_data.gid}"
-            return admin_data
-          else
-            return env.curation_concern.admin_data
-          end
+          admin_data = AdminData.find_by_gid(env.attributes['admin_data_gid']) if env.attributes['bulkrax_identifier'].present?
+          admin_data ||= ::AdminData.create
+
+          Rails.logger.debug "Create AdminData at #{admin_data.gid}"
+          return admin_data
         end
 
         def destroy_admin_data(env)
