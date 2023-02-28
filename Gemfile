@@ -77,7 +77,7 @@ group :development do
   gem 'xray-rails'
 end
 
-gem 'hyrax', '2.9.0'
+gem 'hyrax', '~> 2.9.0'
 gem 'blacklight_advanced_search', '~> 6.4.0'
 gem 'rsolr', '>= 1.0'
 gem 'jquery-rails'
