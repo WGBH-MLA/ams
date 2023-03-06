@@ -192,6 +192,8 @@ Hyrax.config do |config|
 
   ## Do not alter unless you understand how ActiveFedora handles URI/ID translation
   config.translate_id_to_uri = lambda do |id|
+    return "#{ActiveFedora.fedora.host}#{ActiveFedora.fedora.base_path}/#{::Noid::Rails.treeify(id)}" unless id.match(/^cpb-aacip/)
+    id, tail = id.split('/')
     url = "#{ActiveFedora.fedora.host}#{ActiveFedora.fedora.base_path}/#{::Noid::Rails.treeify(id)}"
     begin
       ActiveFedora::Fedora.instance.connection.head(url)
@@ -205,6 +207,7 @@ Hyrax.config do |config|
         url = old_url
       end
     end
+    url += "/#{tail}" if tail.present?
     url
   end
   # config.translate_uri_to_id = ActiveFedora::Noid.config.translate_uri_to_id
