@@ -1,6 +1,16 @@
-ARG HYRAX_IMAGE_VERSION=3.1.0
-FROM ghcr.io/samvera/hyku/hyku-base:$HYRAX_IMAGE_VERSION as ams-base
+ARG HYRAX_IMAGE_VERSION=v4.0.0.beta2
+ARG RUBY_VERSION=2.7.6
+FROM ruby:$RUBY_VERSION-alpine3.15 as builder
 
+RUN apk add build-base
+RUN wget -O - https://github.com/jemalloc/jemalloc/releases/download/5.2.1/jemalloc-5.2.1.tar.bz2 | tar -xj && \
+    cd jemalloc-5.2.1 && \
+    ./configure && \
+    make && \
+    make install
+
+
+FROM ghcr.io/samvera/hyrax/hyrax-base:$HYRAX_IMAGE_VERSION as ams-base
 USER root
 
 RUN apk --no-cache upgrade && \
@@ -13,11 +23,12 @@ RUN apk --no-cache upgrade && \
     ffmpeg \
     less \
     libcurl \
+    libreoffice \
     libxml2-dev \
     mariadb-dev \
     mediainfo \
     nodejs \
-    openjdk11-jre \
+    openjdk17-jre \
     openssh \
     perl \
     pkgconfig \
@@ -31,10 +42,12 @@ RUN apk --no-cache upgrade && \
   echo "******** Packages Installed *********"
 
 USER app
+COPY --from=builder /usr/local/lib/libjemalloc.so.2 /usr/local/lib/
+ENV LD_PRELOAD=/usr/local/lib/libjemalloc.so.2
 
 RUN mkdir -p /app/fits && \
     cd /app/fits && \
-    wget https://github.com/harvard-lts/fits/releases/download/1.5.0/fits-1.5.0.zip -O fits.zip && \
+    wget https://github.com/harvard-lts/fits/releases/download/1.5.5/fits-1.5.5.zip -O fits.zip && \
     unzip fits.zip && \
     rm fits.zip && \
     chmod a+x /app/fits/fits.sh
@@ -53,5 +66,4 @@ RUN sh -l -c " \
 CMD ./bin/web
 
 FROM ams-base as ams-worker
-ENV MALLOC_ARENA_MAX=2
 CMD ./bin/worker
