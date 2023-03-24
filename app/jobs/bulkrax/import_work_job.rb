@@ -1,5 +1,5 @@
 # frozen_string_literal: true
-
+# OVERRIDE: Bulkrax 1.0.1 to retry Ldp::NotFound and to limit retries to 3
 module Bulkrax
   class ImportWorkJob < ApplicationJob
     queue_as :import
@@ -10,13 +10,13 @@ module Bulkrax
       importer_run = ImporterRun.find(run_id)
       entry.build
       if entry.status == "Complete"
-        importer_run.increment!(:processed_records)
-        importer_run.increment!(:processed_works)
+        ImporterRun.find(run_id).increment!(:processed_records)
+        ImporterRun.find(run_id).decrement!(:enqueued_records) unless ImporterRun.find(run_id).enqueued_records <= 0 # rubocop:disable Style/IdenticalConditionalBranches
       else
         # do not retry here because whatever parse error kept you from creating a work will likely
         # keep preventing you from doing so.
-        importer_run.increment!(:failed_records)
-        importer_run.increment!(:failed_works)
+        ImporterRun.find(run_id).increment!(:failed_records)
+        ImporterRun.find(run_id).decrement!(:enqueued_records) unless ImporterRun.find(run_id).enqueued_records <= 0 # rubocop:disable Style/IdenticalConditionalBranches
       end
       # Regardless of completion or not, we want to decrement the enqueued records.
       importer_run.decrement!(:enqueued_records) unless importer_run.enqueued_records <= 0
