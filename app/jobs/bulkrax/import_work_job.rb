@@ -30,7 +30,7 @@ module Bulkrax
       # the Sidekiq retry ecosystem.
       # rubocop:disable Style/IfUnlessModifier
       if time_to_live <= 1
-        raise "Exhauted reschedule limit for #{self.class} entry_id: #{entry_id}, run_id: #{run_id}.  Attemping retries"
+        raise "Exhausted reschedule limit for #{self.class} entry_id: #{entry_id}, run_id: #{run_id}.  Attemping retries"
       end
       # rubocop:enable Style/IfUnlessModifier
       reschedule(entry_id, run_id, time_to_live)
