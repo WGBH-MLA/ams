@@ -203,9 +203,14 @@ Hyrax.config do |config|
         ActiveFedora::Fedora.instance.connection.head(old_url)
       rescue Ldp::NotFound
         # Do nothing
+      rescue Ldp::Gone
+        # old id tombstone
+        url = old_url
       else
         url = old_url
       end
+    rescue Ldp::Gone
+      # Do nothing, object was deleted
     end
     url += "/#{tail}" if tail.present?
     url
