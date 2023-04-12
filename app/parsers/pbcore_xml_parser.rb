@@ -149,7 +149,10 @@ class PbcoreXmlParser < Bulkrax::XmlParser
 
     pi_rows = pbcore_physical_instantiations.map do |inst|
       xml_pi = AAPB::BatchIngest::PBCoreXMLMapper.new(inst.to_xml).physical_instantiation_attributes
-      physical_instantiation = PhysicalInstantiation.where(local_instantiation_identifier: xml_pi[:local_instantiation_identifier]).first&.attributes&.symbolize_keys
+      # Find members of the asset that have the same class and local identifier. If no asset, then no physical instantiation can exist
+      physical_instantiation = asset.members.detect do |member|
+          member.local_instantiation_identifier == xml_pi[:local_instantiation_identifier] && member.class == PhysicalInstantiation
+        end if asset && xml_pi[:local_instantiation_identifier].present?
       xml_pi = physical_instantiation.merge!(xml_pi) if physical_instantiation
 
       xml_pi
@@ -158,7 +161,10 @@ class PbcoreXmlParser < Bulkrax::XmlParser
 
     di_rows = pbcore_digital_instantiations.map do |inst|
       xml_di = AAPB::BatchIngest::PBCoreXMLMapper.new(inst.to_xml).digital_instantiation_attributes.merge!({ pbcore_xml: inst.to_xml, skip_file_upload_validation: true })
-      digital_instantiation = DigitalInstantiation.where(local_instantiation_identifier: xml_di[:local_instantiation_identifier]).first&.attributes&.symbolize_keys
+      # Find members of the asset that have the same class and local identifier. If no asset, then no digital instantiation can exist
+      digital_instantiation = asset.members.detect do |member|
+        member.local_instantiation_identifier == xml_pi[:local_instantiation_identifier] && member.class == DigitalInstantiation
+      end if asset && xml_pi[:local_instantiation_identifier].present?
       xml_di = digital_instantiation.merge!(xml_di) if digital_instantiation
 
       xml_di
