@@ -46,7 +46,7 @@ class DigitalInstantiation < ActiveFedora::Base
   property :bulkrax_identifier, predicate: ::RDF::URI("http://ams2.wgbh-mla.org/resource#bulkraxIdentifier"), multiple: false do |index|
     index.as :stored_searchable, :facetable
   end
-  
+
   property :date, predicate: ::RDF::URI.new("http://purl.org/dc/terms/date"), multiple: true, index_to_parent: true do |index|
     index.as :stored_searchable, :facetable
   end
@@ -159,7 +159,4 @@ class DigitalInstantiation < ActiveFedora::Base
     find_or_create_instantiation_admin_data
     self.instantiation_admin_data.save
   end
-
-  # This must be included at the end, because it finalizes the metadata if you have any further properties define above in current model
-  include ::Hyrax::BasicMetadata
 end
