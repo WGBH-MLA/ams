@@ -152,7 +152,7 @@ class PbcoreXmlParser < Bulkrax::XmlParser
       # Find members of the asset that have the same class and local identifier. If no asset, then no physical instantiation can exist
       physical_instantiation = asset.members.detect do |member|
           member.local_instantiation_identifier == xml_pi[:local_instantiation_identifier] && member.class == PhysicalInstantiation
-        end if asset && xml_pi[:local_instantiation_identifier].present?
+      end if asset && xml_pi[:local_instantiation_identifier].present?
       xml_pi = physical_instantiation.merge!(xml_pi) if physical_instantiation
 
       xml_pi
