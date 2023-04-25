@@ -161,7 +161,7 @@ class PbcoreXmlParser < Bulkrax::XmlParser
         xml_track = AAPB::BatchIngest::PBCoreXMLMapper.new(track.to_xml).essence_track_attributes.merge({ pbcore_xml: track.to_xml })
         essence_track = instantiation.members[j] if instantiation&.members&.[](j)&.class == EssenceTrack
         xml_track = essence_track.attributes.symbolize_keys.merge(xml_track) if essence_track
-        parse_rows([xml_track], 'EssenceTrack', index, asset, j)
+        parse_rows([xml_track], 'EssenceTrack', index, asset, j+1)
         xml_record[:children] << xml_track[work_identifier]
         xml_tracks << xml_track
       end
