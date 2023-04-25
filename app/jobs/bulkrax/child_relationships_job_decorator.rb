@@ -32,7 +32,7 @@ module Bulkrax
         parent_record.ordered_members << child_record
         seen_count += 1
       end
-
+      parent_record.save!
       raise ChildWorksError if seen_count < child_entries.count
     end
 
