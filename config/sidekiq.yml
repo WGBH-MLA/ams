@@ -13,5 +13,5 @@
   - [mailers, 10]
   - [exports, 10]
   - [push_to_aapb, 1]
-  # - [import, 1]
+  - [import, 1]
   # - [export, 10]
