@@ -140,17 +140,17 @@ class PbcoreXmlParser < Bulkrax::XmlParser
     # we are checking to see if these models already exist so that we update them instead of creating duplicates
     xml_asset = AAPB::BatchIngest::PBCoreXMLMapper.new(file[:data]).asset_attributes.merge!({ delete: file[:delete], pbcore_xml: file[:data] })
     xml_asset[:children] = []
-    index = xml_asset[:id]
+    asset_id = xml_asset[:id]
     asset = Asset.where(id: xml_asset[:id])&.first
     asset_attributes = asset&.attributes&.symbolize_keys
     xml_asset = asset_attributes.merge(xml_asset) if asset_attributes
-    parse_rows([xml_asset], 'Asset', index)
+    parse_rows([xml_asset], 'Asset', asset_id)
     add_object(xml_asset)
-    instantiation_rows(instantiations, xml_asset, asset, index)
+    instantiation_rows(instantiations, xml_asset, asset, asset_id)
     objects
   end
 
-  def instantiation_rows(instantiations, xml_asset, asset, index)
+  def instantiation_rows(instantiations, xml_asset, asset, asset_id)
     xml_records = []
     instantiations.each.with_index do |inst, i|
       instantiation_class =  'PhysicalInstantiation' if inst.physical
@@ -167,11 +167,11 @@ class PbcoreXmlParser < Bulkrax::XmlParser
         xml_track = AAPB::BatchIngest::PBCoreXMLMapper.new(track.to_xml).essence_track_attributes.merge({ pbcore_xml: track.to_xml })
         essence_track = instantiation.members[j] if instantiation&.members&.[](j)&.class == EssenceTrack
         xml_track = essence_track.attributes.symbolize_keys.merge(xml_track) if essence_track
-        parse_rows([xml_track], 'EssenceTrack', index, asset, j+1)
+        parse_rows([xml_track], 'EssenceTrack', asset_id, asset, j+1)
         xml_record[:children] << xml_track[work_identifier]
         xml_tracks << xml_track
       end
-      parse_rows([xml_record], instantiation_class, index, asset)
+      parse_rows([xml_record], instantiation_class, asset_id, asset)
       add_object(xml_record)
       xml_tracks.each { |xml_track| add_object(xml_track) }
       xml_records << xml_record
@@ -181,9 +181,9 @@ class PbcoreXmlParser < Bulkrax::XmlParser
     end
   end
 
-  def parse_rows(rows, type, index, parent_asset = nil, counter = nil)
+  def parse_rows(rows, type, asset_id, parent_asset = nil, counter = nil)
     rows.map do |current_object|
-      set_model(type, index, current_object, parent_asset, counter)
+      set_model(type, asset_id, current_object, parent_asset, counter)
     end
   end
 
