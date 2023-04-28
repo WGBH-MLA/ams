@@ -191,12 +191,12 @@ Hyrax.config do |config|
   # config.lock_time_to_live = 60_000
 
   ## Do not alter unless you understand how ActiveFedora handles URI/ID translation
+  # begin Original Version - restore this once all old id records are moved
   # config.translate_id_to_uri = lambda do |id|
   #   uri = "#{ActiveFedora.fedora.host}#{ActiveFedora.fedora.base_path}/#{::Noid::Rails.treeify(id)}"
-  #   Rails.logger.error("============ #{uri} ============")
   #   return uri
   # end
-
+  # end Original Version
   config.translate_id_to_uri = lambda do |id|
     return "#{ActiveFedora.fedora.host}#{ActiveFedora.fedora.base_path}/#{::Noid::Rails.treeify(id)}" unless id.match(/^cpb-aacip/)
     split_id = id.split('/')

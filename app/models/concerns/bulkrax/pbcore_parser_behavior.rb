@@ -29,7 +29,7 @@ module Bulkrax
 
     def set_model(type, index, current_object, parent_asset, counter = nil)
       key_count = counter || objects.select { |obj| obj[:model] == type }.size + 1
-      bulkrax_identifier = current_object[:bulkrax_identifier] || Bulkrax.fill_in_blank_source_identifiers.call(current_object, type, index, key_count)
+      bulkrax_identifier = current_object[:bulkrax_identifier] || Bulkrax.fill_in_blank_source_identifiers.call(type, index, key_count)
 
       if current_object && current_object[:model].blank?
         current_object.merge!({

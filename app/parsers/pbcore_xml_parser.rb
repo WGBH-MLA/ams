@@ -69,6 +69,9 @@ class PbcoreXmlParser < Bulkrax::XmlParser
     status_info(e)
   end
 
+  ##
+  # This method is usefuly for updating existing entries with out reimporting the works themselves
+  # used in scripts and on the console
   def recreate_entries
     self.record_objects = []
     records.each_with_index do |file, index|
@@ -85,7 +88,10 @@ class PbcoreXmlParser < Bulkrax::XmlParser
     status_info(e)
   end
 
-  def reload_works
+  ##
+  # This method sets up the records and objects without changing entries or works. Useful for debugging
+  # and correcting imports that are having data issues
+  def reload_objects
     self.record_objects = []
     records.each_with_index do |file, index|
       set_objects(file, index).each do |record|
