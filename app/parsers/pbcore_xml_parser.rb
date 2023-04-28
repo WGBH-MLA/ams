@@ -70,7 +70,7 @@ class PbcoreXmlParser < Bulkrax::XmlParser
   end
 
   ##
-  # This method is usefuly for updating existing entries with out reimporting the works themselves
+  # This method is useful for updating existing entries with out reimporting the works themselves
   # used in scripts and on the console
   def recreate_entries
     self.record_objects = []
