@@ -152,6 +152,7 @@ jobs:
           docker-compose exec -T web bash -c
           "RAILS_ENV=test bundle exec rake db:schema:load db:migrate db:seed"
       - name: Run Specs
+        id: run-specs
         env:
           # Specifies how many jobs you would like to run in parallel,
           # used for partitioning
@@ -163,6 +164,8 @@ jobs:
           docker-compose exec -T web bash -c
           "gem install semaphore_test_boosters &&
           rspec_booster --job $CI_NODE_INDEX/$CI_NODE_TOTAL"
+      - name: Fail job if spec failure
+        run: if [[ ${{ steps.run-specs.outcome }} == "failure" ]]; then exit 1; else exit 0; fi
       - name: Publish Test Report
         uses: mikepenz/action-junit-report@v3
         if: always() # always run even if the previous step fails
