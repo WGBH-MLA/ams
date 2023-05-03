@@ -147,7 +147,7 @@ class PbcoreManifestParser < Bulkrax::XmlParser
       asset_bulkrax_identifier =  if asset.bulkrax_identifier
                                     asset.bulkrax_identifier
                                   else
-                                    Bulkrax.fill_in_blank_source_identifiers.call(self, "Asset-#{index}-1")
+                                    Bulkrax.fill_in_blank_source_identifiers.call("Asset", asset_id, 1)
                                   end
       asset.update(bulkrax_identifier: asset_bulkrax_identifier) if asset.bulkrax_identifier.nil?
       add_object(asset.attributes.symbolize_keys, 'Asset', nil) if index == 0 || prev_asset_id != asset_id

@@ -20,8 +20,9 @@ module AAPB
           field_name = Solrizer.solr_name(field, :symbol)
 
           # Use parent SolrDocument to get value
-          solr_document = ::SolrDocument.find(work_class.find(id).member_of.first.id)
+          solr_document = ::SolrDocument.find(work_class.find(id).member_of.first.id) if work_class&.find(id)&.member_of&.present?
 
+          return unless solr_document
           # Get values from sol_doc, should always be an Array since Assets can always have mutiple Instantiations
           values = solr_document[field_name] || Array.new
           return Hyrax::Renderers::IndexedToParentRenderer.new(field, values, options).render

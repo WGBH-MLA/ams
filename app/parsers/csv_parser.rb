@@ -21,7 +21,7 @@ class CsvParser < Bulkrax::CsvParser
     self.record_objects = []
     records.each_with_index do |full_row, index|
 
-      set_objects(full_row, index).each do |record|
+      set_objects(full_row, full_row[:id]).each do |record|
         break if limit_reached?(limit, index)
 
         seen[record[work_identifier]] = true
@@ -199,7 +199,7 @@ class CsvParser < Bulkrax::CsvParser
       unless key.match(/\./)
         add_object(current_object.symbolize_keys)
         key_count = objects.select { |obj| obj[:model] == standarized_key }.count + 1
-        bulkrax_identifier = full_row_to_hash["#{standarized_key}.bulkrax_identifier_#{key_count}"] || Bulkrax.fill_in_blank_source_identifiers.call(self, "#{standarized_key}-#{index}-#{key_count}")
+        bulkrax_identifier = full_row_to_hash["#{standarized_key}.bulkrax_identifier_#{key_count}"] || Bulkrax.fill_in_blank_source_identifiers.call(standarized_key, asset_id, key_count)
         asset = Asset.where(bulkrax_identifier: [bulkrax_identifier]).first if asset.nil?
         admin_data_gid = if standarized_key == 'Asset'
           if asset.present?
