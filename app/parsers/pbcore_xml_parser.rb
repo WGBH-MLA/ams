@@ -54,11 +54,6 @@ class PbcoreXmlParser < Bulkrax::XmlParser
       set_objects(file, index).each do |record|
         break if limit_reached?(limit, index)
 
-        # both instantiations can have an essence track child
-        if record[:model] == 'DigitalInstantiation' || record[:model] == 'PhysicalInstantiation'
-          record = set_instantiation_children(record)
-        end
-
         seen[record[work_identifier]] = true
         new_entry = find_or_create_entry(entry_class, record[work_identifier], 'Bulkrax::Importer', record.compact)
         if record[:delete].present?
@@ -74,6 +69,41 @@ class PbcoreXmlParser < Bulkrax::XmlParser
     status_info(e)
   end
 
+  ##
+  # This method is useful for updating existing entries with out reimporting the works themselves
+  # used in scripts and on the console
+  def recreate_entries
+    self.record_objects = []
+    records.each_with_index do |file, index|
+      set_objects(file, index).each do |record|
+        break if limit_reached?(limit, index)
+
+        seen[record[work_identifier]] = true
+        new_entry = find_or_create_entry(entry_class, record[work_identifier], 'Bulkrax::Importer', record.compact)
+      end
+      increment_counters(index)
+    end
+    importer.record_status
+  rescue StandardError => e
+    status_info(e)
+  end
+
+  ##
+  # This method sets up the records and objects without changing entries or works. Useful for debugging
+  # and correcting imports that are having data issues
+  def reload_objects
+    self.record_objects = []
+    records.each_with_index do |file, index|
+      set_objects(file, index).each do |record|
+        break if limit_reached?(limit, index)
+        seen[record[work_identifier]] = true
+      end
+      increment_counters(index)
+    end
+  rescue StandardError => e
+    status_info(e)
+  end
+
   def total
     records.size
   rescue RuntimeError => e
@@ -81,48 +111,20 @@ class PbcoreXmlParser < Bulkrax::XmlParser
   end
 
   def setup_parents
-    prnts = []
-    record_objects.each do |record|
-      rec = record.respond_to?(:to_h) ? record.to_h : record
-      next unless rec.is_a?(Hash)
-
-      children = rec[:children].is_a?(String) ? rec[:children].split(/\s*[:;|]\s*/) : rec[:children]
-      next if children.blank?
-
-      prnts << { rec[work_identifier] => children }
-    end
-
-    prnts.blank? ? prnts : prnts.inject(:merge)
+    parents = []
+    importer.entries.where('raw_metadata REGEXP ?', '.*children\":\[.+\].*')
   end
 
   # Will be skipped unless the #record is a Hash
   def create_parent_child_relationships
-    parents.each do |key, value|
-      parent = entry_class.where(
-        identifier: key,
-        importerexporter_id: importerexporter.id,
-        importerexporter_type: 'Bulkrax::Importer'
-      ).first
-
+    parents.each do |parent|
       # not finding the entries here indicates that the given identifiers are incorrect
       # in that case we should log that
-      children = value.map do |child|
-        entry_class.where(
-          identifier: child,
-          importerexporter_id: importerexporter.id,
-          importerexporter_type: 'Bulkrax::Importer'
-        ).first
-      end.compact.uniq
-
-      if parent.present? && (children.length != value.length)
-        # Increment the failures for the number we couldn't find
-        # Because all of our entries have been created by now, if we can't find them, the data is wrong
-        Rails.logger.error("Expected #{value.length} children for parent entry #{parent.id}, found #{children.length}")
-        break if children.empty?
-        Rails.logger.warn("Adding #{children.length} children to parent entry #{parent.id} (expected #{value.length})")
+      children = parent.raw_metadata.with_indifferent_access[:children].map do |child_id|
+        importer.entries.find_by(identifier: child_id)
       end
 
-      Bulkrax::ChildRelationshipsJob.perform_later(parent.id, children.map(&:id), current_run.id)
+      Bulkrax::ChildRelationshipsJob.perform_later(parent.id, children.map(&:id), current_run.id) if parent.present? && children.present?
     end
   rescue StandardError => e
     status_info(e)
@@ -133,59 +135,60 @@ class PbcoreXmlParser < Bulkrax::XmlParser
   def set_objects(file, index)
     self.objects = []
     current_object = {}
-    new_rows = []
     instantiations = PBCore::DescriptionDocument.parse(file[:data]).instantiations
-    pbcore_physical_instantiations = instantiations.select { |inst| inst.physical }
-    pbcore_digital_instantiations = instantiations.select { |inst| inst.digital }
-    tracks = instantiations.map(&:essence_tracks).flatten # processed in the digitial inst. actor. if we comment this out it will not
-    # show up in the bulkrax importer, but the records still get processed in the actor.
-    # people/contributor is processed as part of the asset_attributes method
 
     # we are checking to see if these models already exist so that we update them instead of creating duplicates
-    xml_asset = AAPB::BatchIngest::PBCoreXMLMapper.new(file[:data]).asset_attributes.merge!({ delete: file[:delete] })
-    asset = Asset.where(id: xml_asset[:id]).first&.attributes&.symbolize_keys
-    xml_asset = asset.merge!(xml_asset) if asset
-    new_rows += parse_rows([xml_asset], 'Asset', index)
-
-    pi_rows = pbcore_physical_instantiations.map do |inst|
-      xml_pi = AAPB::BatchIngest::PBCoreXMLMapper.new(inst.to_xml).physical_instantiation_attributes
-      # Find members of the asset that have the same class and local identifier. If no asset, then no physical instantiation can exist
-      physical_instantiation = asset.members.detect do |member|
-          member.local_instantiation_identifier == xml_pi[:local_instantiation_identifier] && member.class == PhysicalInstantiation
-        end if asset && xml_pi[:local_instantiation_identifier].present?
-      xml_pi = physical_instantiation.merge!(xml_pi) if physical_instantiation
-
-      xml_pi
-    end
-    new_rows += parse_rows(pi_rows, 'PhysicalInstantiation', index)
-
-    di_rows = pbcore_digital_instantiations.map do |inst|
-      xml_di = AAPB::BatchIngest::PBCoreXMLMapper.new(inst.to_xml).digital_instantiation_attributes.merge!({ pbcore_xml: inst.to_xml, skip_file_upload_validation: true })
-      # Find members of the asset that have the same class and local identifier. If no asset, then no digital instantiation can exist
-      digital_instantiation = asset.members.detect do |member|
-        member.local_instantiation_identifier == xml_pi[:local_instantiation_identifier] && member.class == DigitalInstantiation
-      end if asset && xml_pi[:local_instantiation_identifier].present?
-      xml_di = digital_instantiation.merge!(xml_di) if digital_instantiation
-
-      xml_di
-    end
-    new_rows += parse_rows(di_rows, 'DigitalInstantiation', index)
-
-    # essence tracks don't have a unique identifier, so importing the same one repeatedly will create multiple identical models
-    et_rows = tracks.map { |track| AAPB::BatchIngest::PBCoreXMLMapper.new(track.to_xml).essence_track_attributes }
-    new_rows += parse_rows(et_rows, 'EssenceTrack', index)
-
-    new_rows
+    xml_asset = AAPB::BatchIngest::PBCoreXMLMapper.new(file[:data]).asset_attributes.merge!({ delete: file[:delete], pbcore_xml: file[:data] })
+    xml_asset[:children] = []
+    asset_id = xml_asset[:id]
+    asset = Asset.where(id: xml_asset[:id])&.first
+    asset_attributes = asset&.attributes&.symbolize_keys
+    xml_asset = asset_attributes.merge(xml_asset) if asset_attributes
+    parse_rows([xml_asset], 'Asset', asset_id)
+    add_object(xml_asset)
+    instantiation_rows(instantiations, xml_asset, asset, asset_id)
+    objects
   end
 
-  def add_object(current_object, type, related_identifier)
-    if current_object.present?
-      # each xml file only has one asset, so it will be the first object
-      if objects.first
-        objects.first[:children] ||= []
-        objects.first[:children] << current_object[work_identifier]
+  def instantiation_rows(instantiations, xml_asset, asset, asset_id)
+    xml_records = []
+    instantiations.each.with_index do |inst, i|
+      instantiation_class =  'PhysicalInstantiation' if inst.physical
+      instantiation_class ||= 'DigitalInstantiation' if inst.digital
+      next unless instantiation_class
+      xml_record = AAPB::BatchIngest::PBCoreXMLMapper.new(inst.to_xml).send("#{instantiation_class.to_s.underscore}_attributes").merge!({ pbcore_xml: inst.to_xml, skip_file_upload_validation: true })
+      # Find members of the asset that have the same class and local identifier. If no asset, then no digital instantiation can exist
+      instantiation = asset.members[i] if asset && asset.members[i]&.class == instantiation_class.constantize
+      xml_record = instantiation.attributes.symbolize_keys.merge(xml_record) if instantiation
+      xml_record[:children] = []
+      # we accumulate the tracks here so that they are added to the bulkrax entries list in the order they appear in the pbcore xml
+      xml_tracks = []
+      inst.essence_tracks.each.with_index do |track, j|
+        xml_track = AAPB::BatchIngest::PBCoreXMLMapper.new(track.to_xml).essence_track_attributes.merge({ pbcore_xml: track.to_xml })
+        essence_track = instantiation.members[j] if instantiation&.members&.[](j)&.class == EssenceTrack
+        xml_track = essence_track.attributes.symbolize_keys.merge(xml_track) if essence_track
+        parse_rows([xml_track], 'EssenceTrack', asset_id, asset, j+1)
+        xml_record[:children] << xml_track[work_identifier]
+        xml_tracks << xml_track
       end
+      parse_rows([xml_record], instantiation_class, asset_id, asset)
+      add_object(xml_record)
+      xml_tracks.each { |xml_track| add_object(xml_track) }
+      xml_records << xml_record
+    end
+    xml_records.each do |row|
+      xml_asset[:children] << row[work_identifier]
+    end
+  end
 
+  def parse_rows(rows, type, asset_id, parent_asset = nil, counter = nil)
+    rows.map do |current_object|
+      set_model(type, asset_id, current_object, parent_asset, counter)
+    end
+  end
+
+  def add_object(current_object)
+    if current_object.present?
       record_objects << current_object
       objects << current_object
     end

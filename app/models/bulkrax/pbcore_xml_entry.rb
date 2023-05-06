@@ -39,11 +39,10 @@ module Bulkrax
       self.parsed_metadata = {}
       self.parsed_metadata[work_identifier] = self.raw_metadata[source_identifier]
       self.parsed_metadata['model'] = self.raw_metadata['model']
-      self.parsed_metadata['pbcore_xml'] = self.raw_metadata['pbcore_xml'] if self.raw_metadata['pbcore_xml'].present?
-      self.parsed_metadata['format'] = self.raw_metadata['format'] if self.raw_metadata['model'] == 'DigitalInstantiation'
-
-      if self.raw_metadata['skip_file_upload_validation'] == true
-        self.parsed_metadata['skip_file_upload_validation'] = self.raw_metadata['skip_file_upload_validation']
+      if self.raw_metadata['model'] == 'DigitalInstantiation'
+        self.parsed_metadata['pbcore_xml'] = self.raw_metadata['pbcore_xml'] if self.raw_metadata['pbcore_xml'].present?
+        self.parsed_metadata['format'] = self.raw_metadata['format']
+        self.parsed_metadata['skip_file_upload_validation'] = self.raw_metadata['skip_file_upload_validation'] if self.raw_metadata['skip_file_upload_validation'] == true
       end
 
       self.raw_metadata.each do |key, value|

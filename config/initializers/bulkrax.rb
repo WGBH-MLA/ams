@@ -32,7 +32,7 @@ if ENV['SETTINGS__BULKRAX__ENABLED'] == 'true'
       properties
     end
 
-    config.fill_in_blank_source_identifiers = ->(obj, index) { "#{obj.importerexporter.id}-#{index}" }
+    config.fill_in_blank_source_identifiers = ->(type, index, key_count) { "#{type}-#{index}-#{key_count}" }
 
     config.field_mappings['CsvParser'] = {
       'admin_data_gid' => { from: headers('admin_data_gid') },
