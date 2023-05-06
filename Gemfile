@@ -100,7 +100,7 @@ gem 'webpacker'
 gem 'react-rails'
 gem 'database_cleaner'
 gem 'redlock', '~> 1.0'
-gem 'httparty', '~> 0.18'
+gem 'httparty', '~> 0.21'
 
 # Adding pry to all environments, because it's very useful for debugging
 # production environments on demo instances.
