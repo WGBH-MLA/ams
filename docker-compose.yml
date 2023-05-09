@@ -206,6 +206,7 @@ services:
       args:
         - SETTINGS__BULKRAX__ENABLED=true
     image: ghcr.io/wgbh-mla/ams/worker:${TAG:-latest}
+    command: bash -l c "./bin/worker default ingest mailers exports push_to_aapb import export"
     depends_on:
       check_volumes:
         condition: service_completed_successfully
