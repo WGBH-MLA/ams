@@ -117,7 +117,9 @@ module Hyrax
         end
 
         def find_or_create_admin_data(env)
-          return env.curation_concern.admin_data if env.curation_concern.admin_data.present?
+          # Don't use present? here. It is broken for some ActiveRecord objects. Maybe due to overriding getter
+          # See: https://stackoverflow.com/questions/35410668/what-determines-the-return-value-of-present
+          return env.curation_concern.admin_data if env.curation_concern.admin_data.is_a?(AdminData)
 
           admin_data = AdminData.find_by_gid(env.attributes['admin_data_gid']) if env.attributes['bulkrax_identifier'].present?
           admin_data ||= ::AdminData.create
