@@ -63,7 +63,7 @@ RSpec.describe CsvParser do
       context 'with fill_in_blank_source_identifiers set' do
         it 'fills in the source_identifier if fill_in_blank_source_identifiers is set' do
           expect(subject).to receive(:increment_counters).twice
-          expect(Bulkrax).to receive(:fill_in_blank_source_identifiers).exactly(6).times.and_return(->(_obj, _index) { "4649ee79-7d7a-4df0-86d6-d6865e2925ca"} )
+          expect(Bulkrax).to receive(:fill_in_blank_source_identifiers).exactly(6).times.and_return(->(_obj, _asset_id, _index) { "4649ee79-7d7a-4df0-86d6-d6865e2925ca"} )
           subject.create_works
           expect(subject.seen).to include("4649ee79-7d7a-4df0-86d6-d6865e2925ca")
         end
