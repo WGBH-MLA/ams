@@ -146,7 +146,7 @@ describe SolrDocument do
             # 11 members across 3 different types
             create_list(:contribution, 9),
             create(:digital_instantiation),
-            create(:digital_instantiation)
+            create(:physical_instantiation)
         ].flatten)
       }
 
@@ -163,6 +163,4 @@ describe SolrDocument do
       end
     end
   end
-
-
 end
