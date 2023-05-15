@@ -39,7 +39,7 @@ ingress:
     {
       kubernetes.io/ingress.class: "nginx",
       nginx.ingress.kubernetes.io/proxy-body-size: "0",
-      cert-manager.io/cluster-issuer: letsencrypt-prod
+      cert-manager.io/cluster-issuer: letsencrypt-prod,
     }
   tls:
     - hosts:
@@ -51,7 +51,7 @@ extraEnvVars: &envVars
   - name: AAPB_SSH_KEY
     value: "/app/aapb/id_rsa"
   - name: CI_CLIENT_ID
-    value: "42f19d7f682a445997f470087f3a9b2a"
+    value: "044dbd5644f640fb856a6131fd37e5cb"
   - name: CI_WORKSPACE_ID
     value: "051303c1c1d24da7988128e6d2f56aa9"
   - name: CI_USERNAME
