@@ -52,7 +52,7 @@ extraEnvVars: &envVars
   - name: AAPB_SSH_KEY
     value: "/app/aapb/id_rsa"
   - name: CI_CLIENT_ID
-    value: "42f19d7f682a445997f470087f3a9b2a"
+    value: "044dbd5644f640fb856a6131fd37e5cb"
   - name: CI_WORKSPACE_ID
     value: "051303c1c1d24da7988128e6d2f56aa9"
   - name: CI_USERNAME
