@@ -57,4 +57,38 @@ namespace :ams do
       logger.error("#{e.class} | #{e.message} | #{id} | Continuing...")
     end
   end
+
+  desc 'Migrate a set of Fedora records out of "hard-coded" location using a file of IDs'
+  task :migrate_old_guids_split, [:filename] => :environment do |_cmd, args|
+    require 'ruby-progressbar'
+
+    file_path = Rails.root.join('tmp', 'imports', 'tmp', args.filename)
+    ids = File.read(file_path).split("\n")
+    total = ids.size
+    progressbar = ProgressBar.create(total: total, format: '%a %e %P% Processed: %c from %C')
+    logger = ActiveSupport::Logger.new("tmp/imports/tmp/#{args.filename}.log")
+
+    begin
+      ids.each do |id|
+        logger.info("Starting #{id}")
+        new_uri = "#{ActiveFedora.fedora.host}#{ActiveFedora.fedora.base_path}/#{::Noid::Rails.treeify(id)}"
+        new_location_ping = %x{curl -I #{new_uri} 2> /dev/null}
+
+        if new_location_ping.match?('200 OK')
+          logger.debug("#{id} already exists at #{new_uri}, skipping...")
+          progressbar.increment
+          next
+        end
+
+        old_uri = "#{ActiveFedora.fedora.host}#{ActiveFedora.fedora.base_path}/#{::Noid::Rails.treeify(id, false)}"
+        new_uri_path = new_uri.sub(/\w+-\w+-\w+$/, '')
+        %x{curl -X PUT "#{new_uri_path}" > /dev/null 2>&1}
+        %x{curl -X MOVE -H "Destination: #{new_uri}" "#{old_uri}" > /dev/null 2>&1}
+
+        progressbar.increment
+      end
+    rescue => e
+      logger.error("#{e.class} | #{e.message} | #{id} | Continuing...")
+    end
+  end
 end
