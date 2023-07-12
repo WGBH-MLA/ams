@@ -204,6 +204,17 @@ class Asset < ActiveFedora::Base
     index.as :stored_searchable
   end
 
+  # TODO: rename?
+  property :intended_children_count, predicate: ::RDF::URI("http://ams2.wgbh-mla.org/resource#intendedChildrenCount"), multiple: false do |index|
+    index.type :integer
+    index.as :stored_sortable
+  end
+
+  property :aapb_pushable, predicate: ::RDF::URI("http://ams2.wgbh-mla.org/resource#aapbPushable"), multiple: false do |index|
+    index.type :boolean
+    index.as :stored_searchable
+  end
+
   def admin_data_gid=(new_admin_data_gid)
     raise "Can't modify admin data of this asset" if persisted? && !admin_data_gid_was.nil? && admin_data_gid_was != new_admin_data_gid
     new_admin_data = AdminData.find_by_gid!(new_admin_data_gid)
