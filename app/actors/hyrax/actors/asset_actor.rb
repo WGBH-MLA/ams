@@ -13,6 +13,11 @@ module Hyrax
         add_description_types(env)
         add_date_types(env)
 
+        # TODO: extract
+        if env.curation_concern.all_members.size == env.curation_concern.intended_children_count.to_i
+          env.curation_concern.aapb_pushable = true
+        end
+
         # queue indexing if we are importing
         env.curation_concern.reindex_extent = "queue#{env.importing.id}" if env.importing
         save_aapb_admin_data(env) && super && create_or_update_contributions(env, contributions)
@@ -23,6 +28,12 @@ module Hyrax
         add_title_types(env)
         add_description_types(env)
         add_date_types(env)
+
+        # TODO: extract
+        if env.curation_concern.all_members.size == env.curation_concern.intended_children_count.to_i
+          env.curation_concern.aapb_pushable = true
+        end
+
         # queue indexing if we are importing
         env.curation_concern.reindex_extent = "queue#{env.importing.id}" if env.importing
         save_aapb_admin_data(env) && super && create_or_update_contributions(env, contributions)
