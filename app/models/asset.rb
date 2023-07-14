@@ -204,7 +204,9 @@ class Asset < ActiveFedora::Base
     index.as :stored_searchable
   end
 
-  # TODO: rename?
+  # This property is intended to be an Integer, but ActiveFedora stores everything as Strings. We don't declare indexing
+  # rules in a block here because indexing for this property is handled manually.
+  # @see AssetIndexer#generate_solr_document
   property :intended_children_count, predicate: ::RDF::URI("http://ams2.wgbh-mla.org/resource#intendedChildrenCount"), multiple: false
 
   property :aapb_pushable, predicate: ::RDF::URI("http://ams2.wgbh-mla.org/terms/aapbPushable"), multiple: false do |index|

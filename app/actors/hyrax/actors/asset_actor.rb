@@ -24,7 +24,7 @@ module Hyrax
         add_title_types(env)
         add_description_types(env)
         add_date_types(env)
-        set_aapb_pushable(env)
+        env.curation_concern.aapb_pushable = has_all_children?(env.curation_concern)
 
         # queue indexing if we are importing
         env.curation_concern.reindex_extent = "queue#{env.importing.id}" if env.importing
