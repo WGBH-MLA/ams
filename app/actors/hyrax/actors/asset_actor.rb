@@ -12,11 +12,7 @@ module Hyrax
         add_title_types(env)
         add_description_types(env)
         add_date_types(env)
-
-        # TODO: extract
-        if env.curation_concern.all_members.size == env.curation_concern.intended_children_count.to_i
-          env.curation_concern.aapb_pushable = true
-        end
+        set_aapb_pushable(env)
 
         # queue indexing if we are importing
         env.curation_concern.reindex_extent = "queue#{env.importing.id}" if env.importing
@@ -28,11 +24,7 @@ module Hyrax
         add_title_types(env)
         add_description_types(env)
         add_date_types(env)
-
-        # TODO: extract
-        if env.curation_concern.all_members.size == env.curation_concern.intended_children_count.to_i
-          env.curation_concern.aapb_pushable = true
-        end
+        set_aapb_pushable(env)
 
         # queue indexing if we are importing
         env.curation_concern.reindex_extent = "queue#{env.importing.id}" if env.importing
@@ -230,6 +222,12 @@ module Hyrax
 
         def get_typed_value(type, typed_values)
           typed_values.map { |v| v[:value] if v[:type] == type } .compact
+        end
+
+        def set_aapb_pushable(env)
+          if env.curation_concern.all_members.size == env.curation_concern.intended_children_count.to_i
+            env.curation_concern.aapb_pushable = true
+          end
         end
     end
   end
