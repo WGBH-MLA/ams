@@ -30,9 +30,7 @@ class Push < ApplicationRecord
 
     # TODO: rename method when :aapb_pushable is used for generic validation
     def validate_missing_children
-      # FIXME: switch for cleaner version when :aapb_pushable is indexed as a boolean
-      missing_children_ids = export_search.solr_documents.reject { |doc| doc['aapb_pushable_tesim'] == ['true'] }.map(&:id)
-      # missing_children_ids = export_search.solr_documents.reject(&:aapb_pushable).map(&:id)
+      missing_children_ids = export_search.solr_documents.reject(&:aapb_pushable).map(&:id)
       return if missing_children_ids.blank?
 
       # TODO: reword error message when :aapb_pushable is used for generic validation
