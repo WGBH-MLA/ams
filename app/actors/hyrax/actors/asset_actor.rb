@@ -225,6 +225,8 @@ module Hyrax
         end
 
         def set_aapb_pushable(env)
+          # FIXME: Remove #to_i when :intended_children_count is indexed as an integer.
+          #        @see app/models/asset.rb
           if env.curation_concern.all_members.size == env.curation_concern.intended_children_count.to_i
             env.curation_concern.aapb_pushable = true
           end

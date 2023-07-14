@@ -18,6 +18,7 @@ class SolrDocument
   SolrDocument.use_extension(AMS::PbcoreXmlExportExtension)
 
   # TODO: Swap these lines when :aapb_pushable is indexed as a boolean
+  #       and :intended_children_count is indexed as an integer.
   #       @see app/models/asset.rb
   # attribute :intended_children_count, Solr::String, 'intended_children_count_isi'
   # attribute :aapb_pushable, Solr::String, 'aapb_pushable_bsi'
