@@ -205,11 +205,13 @@ class Asset < ActiveFedora::Base
   end
 
   # TODO: rename?
+  # FIXME: figure out how to index as Integer (currently <String>)
   property :intended_children_count, predicate: ::RDF::URI("http://ams2.wgbh-mla.org/resource#intendedChildrenCount"), multiple: false do |index|
     index.type :integer
     index.as :stored_sortable
   end
 
+  # FIXME: figure out how to index as Boolean (currently <Array[String]>)
   property :aapb_pushable, predicate: ::RDF::URI("http://ams2.wgbh-mla.org/resource#aapbPushable"), multiple: false do |index|
     index.type :boolean
     index.as :stored_searchable
