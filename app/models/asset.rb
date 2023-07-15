@@ -5,6 +5,12 @@ class Asset < ActiveFedora::Base
   include ::AMS::CascadeDestroyMembers
   include ::AMS::AllMembers
 
+  # @see Push#add_status_error
+  VALIDATION_STATUSES = {
+    valid: 'valid',
+    missing_children: 'missing child record(s)'
+  }.freeze
+
   self.indexer = AssetIndexer
   before_save :save_admin_data
   # Change this to restrict which works can be added as a child.
@@ -209,8 +215,7 @@ class Asset < ActiveFedora::Base
   # @see AssetIndexer#generate_solr_document
   property :intended_children_count, predicate: ::RDF::URI("http://ams2.wgbh-mla.org/resource#intendedChildrenCount"), multiple: false
 
-  property :aapb_pushable, predicate: ::RDF::URI("http://ams2.wgbh-mla.org/terms/aapbPushable"), multiple: false do |index|
-    index.type :boolean
+  property :validation_status_for_aapb, predicate: ::RDF::URI("http://ams2.wgbh-mla.org/resource#validationStatusForAapb"), multiple: true do |index|
     index.as :stored_searchable
   end
 

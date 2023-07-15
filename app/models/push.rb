@@ -6,7 +6,7 @@ class Push < ApplicationRecord
     errors.add(:user, "is required") unless user.is_a? User
     missing_ids = ids_not_found
     errors.add(:pushed_id_csv, "The following IDs are not found in the repository: #{missing_ids.join(', ')}") unless missing_ids.empty?
-    validate_missing_children
+    validate_status
   end
 
   # NOTE: do not memoize
@@ -28,13 +28,18 @@ class Push < ApplicationRecord
       push_ids - found_ids
     end
 
-    # TODO: rename method when :aapb_pushable is used for generic validation
-    def validate_missing_children
-      missing_children_ids = export_search.solr_documents.reject(&:aapb_pushable).map(&:id)
-      return if missing_children_ids.blank?
+    def validate_status
+      invalid_docs = export_search.solr_documents.reject do |doc|
+        doc.validation_status_for_aapb == [Asset::VALIDATION_STATUSES[:valid]]
+      end
+      return if invalid_docs.blank?
 
-      # TODO: reword error message when :aapb_pushable is used for generic validation
-      errors.add(:pushed_id_csv, "The following IDs are missing child records: #{missing_children_ids.join(', ')}")
+      add_status_error(invalid_docs, Asset::VALIDATION_STATUSES[:missing_children])
+    end
+
+    def add_status_error(invalid_docs, status)
+      ids_matching_status = invalid_docs.select { |doc| doc.validation_status_for_aapb.include?(status) }.map(&:id)
+      errors.add(:pushed_id_csv, "The following IDs are #{status}: #{ids_matching_status.join(', ')}")
     end
 
     # NOTE: do not memoize

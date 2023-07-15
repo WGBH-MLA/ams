@@ -18,7 +18,7 @@ class SolrDocument
   SolrDocument.use_extension(AMS::PbcoreXmlExportExtension)
 
   attribute :intended_children_count, Solr::String, 'intended_children_count_isi'
-  attribute :aapb_pushable, Solr::String, 'aapb_pushable_bsi'
+  attribute :validation_status_for_aapb, Solr::Array, 'validation_status_for_aapb_tesim'
 
   # DublinCore uses the semantic field mappings below to assemble an OAI-compliant Dublin Core document
   # Semantic mappings of solr stored fields. Fields may be multi or
