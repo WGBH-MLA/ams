@@ -39,6 +39,10 @@ class Push < ApplicationRecord
 
     def add_status_error(invalid_docs, status)
       ids_matching_status = invalid_docs.select { |doc| doc.validation_status_for_aapb.include?(status) }.map(&:id)
+      # Prevents adding errors to docs that don't have a value
+      # in :validation_status_for_aapb, including all non-Assets.
+      return if ids_matching_status.blank?
+
       errors.add(:pushed_id_csv, "The following IDs are #{status}: #{ids_matching_status.join(', ')}")
     end
 
