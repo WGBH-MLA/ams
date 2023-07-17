@@ -12,6 +12,7 @@ module Hyrax
         add_title_types(env)
         add_description_types(env)
         add_date_types(env)
+        set_validation_status(env)
 
         # queue indexing if we are importing
         env.curation_concern.reindex_extent = "queue#{env.importing.id}" if env.importing
@@ -23,6 +24,8 @@ module Hyrax
         add_title_types(env)
         add_description_types(env)
         add_date_types(env)
+        set_validation_status(env)
+
         # queue indexing if we are importing
         env.curation_concern.reindex_extent = "queue#{env.importing.id}" if env.importing
         save_aapb_admin_data(env) && super && create_or_update_contributions(env, contributions)
@@ -219,6 +222,17 @@ module Hyrax
 
         def get_typed_value(type, typed_values)
           typed_values.map { |v| v[:value] if v[:type] == type } .compact
+        end
+
+        def set_validation_status(env)
+          intended_children_count = env.curation_concern.intended_children_count.to_i
+          current_children_count = env.curation_concern.all_members.size
+
+          if current_children_count != intended_children_count
+            env.curation_concern.validation_status_for_aapb = [Asset::VALIDATION_STATUSES[:missing_children]]
+          else
+            env.curation_concern.validation_status_for_aapb = [Asset::VALIDATION_STATUSES[:valid]]
+          end
         end
     end
   end

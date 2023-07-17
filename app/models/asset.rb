@@ -5,6 +5,12 @@ class Asset < ActiveFedora::Base
   include ::AMS::CascadeDestroyMembers
   include ::AMS::AllMembers
 
+  # @see Push#add_status_error
+  VALIDATION_STATUSES = {
+    valid: 'valid',
+    missing_children: 'missing child record(s)'
+  }.freeze
+
   self.indexer = AssetIndexer
   before_save :save_admin_data
   # Change this to restrict which works can be added as a child.
@@ -201,6 +207,15 @@ class Asset < ActiveFedora::Base
   end
 
   property :series_description, predicate: ::RDF::URI.new('http://pbcore.org#hasSeriesDescription'), multiple: :true do |index|
+    index.as :stored_searchable
+  end
+
+  # This property is intended to be an Integer, but ActiveFedora stores everything as Strings. We don't declare indexing
+  # rules in a block here because indexing for this property is handled manually.
+  # @see AssetIndexer#generate_solr_document
+  property :intended_children_count, predicate: ::RDF::URI("http://ams2.wgbh-mla.org/resource#intendedChildrenCount"), multiple: false
+
+  property :validation_status_for_aapb, predicate: ::RDF::URI("http://ams2.wgbh-mla.org/resource#validationStatusForAapb"), multiple: true do |index|
     index.as :stored_searchable
   end
 

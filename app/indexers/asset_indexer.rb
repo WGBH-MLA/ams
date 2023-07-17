@@ -18,6 +18,7 @@ class AssetIndexer < AMS::WorkIndexer
       solr_doc['created_date_drsim'] = object.created_date if object.created_date
       solr_doc['copyright_date_drsim'] = object.copyright_date if object.copyright_date
       solr_doc[Solrizer.solr_name('bulkrax_identifier', :facetable)] = object.bulkrax_identifier
+      solr_doc['intended_children_count_isi'] = object.intended_children_count.to_i
 
       if object.admin_data
         # Index the admin_data_gid

@@ -17,6 +17,9 @@ class SolrDocument
   SolrDocument.use_extension(AMS::CsvExportExtension)
   SolrDocument.use_extension(AMS::PbcoreXmlExportExtension)
 
+  attribute :intended_children_count, Solr::String, 'intended_children_count_isi'
+  attribute :validation_status_for_aapb, Solr::Array, 'validation_status_for_aapb_tesim'
+
   # DublinCore uses the semantic field mappings below to assemble an OAI-compliant Dublin Core document
   # Semantic mappings of solr stored fields. Fields may be multi or
   # single valued. See Blacklight::Document::SemanticFields#field_semantics
@@ -451,7 +454,7 @@ class SolrDocument
     self[Solrizer.solr_name('aapb_preservation_disk')]
   end
 
-  def bulkrax_importer_id 
+  def bulkrax_importer_id
     self[Solrizer.solr_name('bulkrax_importer_id')]
   end
 
