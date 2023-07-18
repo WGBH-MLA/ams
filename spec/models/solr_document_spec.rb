@@ -163,4 +163,22 @@ describe SolrDocument do
       end
     end
   end
+
+  describe '#intended_children_count' do
+    let(:asset) { create(:asset, :with_physical_digital_and_essence_track, intended_children_count: '3') }
+
+    it 'indexes as an Integer' do
+      expect(asset_solr_doc.intended_children_count).to eq(asset.intended_children_count.to_i)
+    end
+  end
+
+  describe '#validation_status_for_aapb' do
+    let(:asset) { create(:asset, :with_physical_digital_and_essence_track, validation_status_for_aapb: ['test']) }
+
+    it 'indexes the value as an Array' do
+      # Use #to_a since asset.validation_status_for_aapb is an ActiveTriples::Relation, which causes the
+      # test to fail when compared directly with asset_solr_doc.validation_status_for_aapb
+      expect(asset_solr_doc.validation_status_for_aapb).to eq(asset.validation_status_for_aapb.to_a)
+    end
+  end
 end

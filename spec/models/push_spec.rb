@@ -6,6 +6,7 @@ RSpec.describe Push do
     let(:asset_ids) { assets.map(&:id) }
     let(:invalid_ids) { [ 'cpb-aacip-11111111111', 'blerg'] }
     let(:pushed_ids) { [] } # overwrite in contexts below
+    let(:error_messages) { subject.errors[:pushed_id_csv].join("\n") }
 
     subject { build(:push, pushed_id_csv: pushed_ids.join(',')) }
 
@@ -18,7 +19,6 @@ RSpec.describe Push do
 
     context 'when some IDs do not exist in the repository' do
       let(:pushed_ids) { asset_ids + invalid_ids }
-      let(:error_messages) { subject.errors[:pushed_id_csv].join("\n") }
 
       before { subject.validate }
 
@@ -34,6 +34,22 @@ RSpec.describe Push do
         asset_ids.each do |asset_id|
           expect(error_messages).not_to include asset_id
         end
+      end
+    end
+
+    context 'when the IDs exists, but some are missing children' do
+      let(:asset_missing_children_1) { create(:asset, validation_status_for_aapb: [Asset::VALIDATION_STATUSES[:missing_children]]) }
+      let(:asset_missing_children_2) { create(:asset, validation_status_for_aapb: [Asset::VALIDATION_STATUSES[:missing_children]]) }
+      let(:pushed_ids) { [asset_missing_children_1.id, asset_missing_children_2.id] + asset_ids }
+
+      it { is_expected.to be_invalid }
+
+      it 'lists only the Asset IDs missing children in the error message' do
+        subject.valid?
+
+        expect(error_messages).to include('The following IDs are missing child record(s):')
+        expect(error_messages).to include(asset_missing_children_1.id, asset_missing_children_2.id)
+        expect(error_messages).not_to include(*asset_ids)
       end
     end
   end
