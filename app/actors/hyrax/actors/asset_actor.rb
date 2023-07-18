@@ -228,7 +228,7 @@ module Hyrax
           intended_children_count = env.curation_concern.intended_children_count.to_i
           current_children_count = env.curation_concern.all_members.size
 
-          if current_children_count != intended_children_count
+          if current_children_count < intended_children_count
             env.curation_concern.validation_status_for_aapb = [Asset::VALIDATION_STATUSES[:missing_children]]
           else
             env.curation_concern.validation_status_for_aapb = [Asset::VALIDATION_STATUSES[:valid]]

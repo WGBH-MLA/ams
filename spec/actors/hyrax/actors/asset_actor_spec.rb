@@ -41,6 +41,30 @@ RSpec.describe Hyrax::Actors::AssetActor do
         expect(asset.validation_status_for_aapb).to eq(['missing child record(s)'])
       end
     end
+
+    context 'when the asset has more children than intended' do
+      let(:intended_children_count) { 0 }
+
+      it 'sets the status to "valid"' do
+        expect(asset.validation_status_for_aapb).to be_empty
+
+        middleware.public_send(method, env)
+
+        expect(asset.validation_status_for_aapb).to eq(['valid'])
+      end
+    end
+
+    context "when the asset's intended number of children is not set" do
+      let(:intended_children_count) { nil }
+
+      it 'sets the status to "valid"' do
+        expect(asset.validation_status_for_aapb).to be_empty
+
+        middleware.public_send(method, env)
+
+        expect(asset.validation_status_for_aapb).to eq(['valid'])
+      end
+    end
   end
 
   describe '#create' do
