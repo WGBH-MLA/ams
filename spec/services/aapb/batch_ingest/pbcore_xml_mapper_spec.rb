@@ -99,6 +99,22 @@ RSpec.describe AAPB::BatchIngest::PBCoreXMLMapper, :pbcore_xpath_helper do
         expect(attrs[:date]).to eq ['2001', '2002-02', '2003-03-03']
       end
     end
+
+    describe 'counting the intended number of child records' do
+      let(:essence_track) { build(:pbcore_instantiation_essence_track) }
+      let(:instantiations) do
+        [
+          build(:pbcore_instantiation, :digital, essence_tracks: [essence_track, essence_track]),
+          build(:pbcore_instantiation, :physical, essence_tracks: [essence_track])
+        ]
+      end
+      let(:pbcore_xml) { build(:pbcore_description_document, instantiations: instantiations).to_xml }
+
+      it 'sets :intended_children_count to the sum of all instantiations and essence tracks' do
+        # 1 digital + 1 physical + 3 essence tracks
+        expect(attrs[:intended_children_count]).to eq(5)
+      end
+    end
   end
 
   describe '#physical_instantiation_attributes' do
