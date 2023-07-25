@@ -101,18 +101,10 @@ RSpec.describe AAPB::BatchIngest::PBCoreXMLMapper, :pbcore_xpath_helper do
     end
 
     describe 'counting the intended number of child records' do
-      let(:essence_track) { build(:pbcore_instantiation_essence_track) }
-      let(:instantiations) do
-        [
-          build(:pbcore_instantiation, :digital, essence_tracks: [essence_track, essence_track]),
-          build(:pbcore_instantiation, :physical, essence_tracks: [essence_track])
-        ]
-      end
-      let(:pbcore_xml) { build(:pbcore_description_document, instantiations: instantiations).to_xml }
+      let(:pbcore_xml) { File.read('./spec/fixtures/bulkrax/xml/pbcore_doc.xml') }
 
-      it 'sets :intended_children_count to the sum of all instantiations and essence tracks' do
-        # 1 digital + 1 physical + 3 essence tracks
-        expect(attrs[:intended_children_count]).to eq(5)
+      it 'sets :intended_children_count to the sum of all child records in the XML' do
+        expect(attrs[:intended_children_count]).to eq(9)
       end
     end
   end

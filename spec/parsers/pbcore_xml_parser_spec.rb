@@ -8,6 +8,7 @@ RSpec.describe PbcoreXmlParser do
     let(:importer) { FactoryBot.create(:bulkrax_importer_pbcore_xml) }
 
     before do
+      Bulkrax.fill_in_blank_source_identifiers = ->(type, index, key_count) { "#{type}-#{index}-#{key_count}" }
       Bulkrax.field_mappings['PbcoreXmlParser'] = {
         'bulkrax_identifier' => { from: ['pbcoreIdentifier'], source_identifier: true }
       }
@@ -41,7 +42,7 @@ RSpec.describe PbcoreXmlParser do
           xml_parser.create_works
 
           entry = importer.entries.find_by(identifier: 'Asset-cpb-aacip-20-000000hr-1')
-          expect(entry.raw_metadata['intended_children_count']).to eq(5)
+          expect(entry.raw_metadata['intended_children_count']).to eq(9)
         end
       end
     end
