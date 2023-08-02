@@ -104,7 +104,7 @@ RSpec.describe AAPB::BatchIngest::PBCoreXMLMapper, :pbcore_xpath_helper do
       let(:pbcore_xml) { File.read('./spec/fixtures/bulkrax/xml/pbcore_doc.xml') }
 
       it 'sets :intended_children_count to the sum of all child records in the XML' do
-        expect(attrs[:intended_children_count]).to eq(9)
+        expect(attrs[:intended_children_count]).to eq(5)
       end
     end
   end

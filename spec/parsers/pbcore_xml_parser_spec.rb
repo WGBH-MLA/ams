@@ -42,7 +42,7 @@ RSpec.describe PbcoreXmlParser do
           xml_parser.create_works
 
           entry = importer.entries.find_by(identifier: 'Asset-cpb-aacip-20-000000hr-1')
-          expect(entry.raw_metadata['intended_children_count']).to eq(9)
+          expect(entry.raw_metadata['intended_children_count']).to eq(5)
         end
       end
     end

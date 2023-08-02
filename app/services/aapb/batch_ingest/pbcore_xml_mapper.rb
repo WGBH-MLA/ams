@@ -126,7 +126,7 @@ module AAPB
           attrs[:contributors]                = people_attributes(all_people)
           attrs[:producing_organization]      = creator_orgs.map {|co| co.creator.value}
 
-          intended_children_count = all_people.size
+          intended_children_count = 0
           intended_children_count += pbcore.instantiations.size
           intended_children_count += pbcore.instantiations.map(&:essence_tracks).flatten.size
           attrs[:intended_children_count]     = intended_children_count

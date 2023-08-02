@@ -225,8 +225,15 @@ module Hyrax
         end
 
         def set_validation_status(env)
+          # Filter out Contributions from child count since they don't get included in the :intended_children_count
+          # at time of import.
+          # @see AAPB::BatchIngest::PBCoreXMLMapper#asset_attributes
+          #
+          # This is ultimately because there is a possibility that the creation of all of an Asset's
+          # Contributions could be skipped, which would significantly throw off the count for comparison.
+          # @see #create_or_update_contributions
+          current_children_count = env.curation_concern.all_members.reject { |child| child.is_a?(Contribution) }.size
           intended_children_count = env.curation_concern.intended_children_count.to_i
-          current_children_count = env.curation_concern.all_members.size
 
           if current_children_count < intended_children_count
             env.curation_concern.validation_status_for_aapb = [Asset::VALIDATION_STATUSES[:missing_children]]
