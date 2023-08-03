@@ -152,7 +152,6 @@ class PbcoreXmlParser < Bulkrax::XmlParser
 
   def instantiation_rows(instantiations, xml_asset, asset, asset_id)
     xml_records = []
-    children_count = 0
     instantiations.each.with_index do |inst, i|
       instantiation_class =  'PhysicalInstantiation' if inst.physical
       instantiation_class ||= 'DigitalInstantiation' if inst.digital
@@ -171,7 +170,6 @@ class PbcoreXmlParser < Bulkrax::XmlParser
         parse_rows([xml_track], 'EssenceTrack', asset_id, asset, j+1)
         xml_record[:children] << xml_track[work_identifier]
         xml_tracks << xml_track
-        children_count += 1
       end
       parse_rows([xml_record], instantiation_class, asset_id, asset)
       add_object(xml_record)
@@ -180,9 +178,7 @@ class PbcoreXmlParser < Bulkrax::XmlParser
     end
     xml_records.each do |row|
       xml_asset[:children] << row[work_identifier]
-      children_count += 1
     end
-    xml_asset[:intended_children_count] = children_count
   end
 
   def parse_rows(rows, type, asset_id, parent_asset = nil, counter = nil)

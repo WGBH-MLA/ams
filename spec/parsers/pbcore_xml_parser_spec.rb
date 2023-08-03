@@ -8,6 +8,7 @@ RSpec.describe PbcoreXmlParser do
     let(:importer) { FactoryBot.create(:bulkrax_importer_pbcore_xml) }
 
     before do
+      Bulkrax.fill_in_blank_source_identifiers = ->(type, index, key_count) { "#{type}-#{index}-#{key_count}" }
       Bulkrax.field_mappings['PbcoreXmlParser'] = {
         'bulkrax_identifier' => { from: ['pbcoreIdentifier'], source_identifier: true }
       }

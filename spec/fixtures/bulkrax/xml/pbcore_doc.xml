@@ -9,6 +9,26 @@
   <pbcoreDescription descriptionType="Series Description">Houston Symphony is a series of live recordings of the Houston Symphony orchestral performances.</pbcoreDescription>
   <pbcoreGenre source="AAPB Topical Genre">Music</pbcoreGenre>
   <pbcoreGenre source="AAPB Format Genre">Performance for a Live Audience</pbcoreGenre>
+  <pbcoreCreator>
+    <creator>Magistrelli, Mark</creator>
+    <creatorRole>Writer</creatorRole>
+  </pbcoreCreator>
+  <pbcoreCreator>
+    <creator>King, Dr. James C.</creator>
+    <creatorRole>Executive Producer</creatorRole>
+  </pbcoreCreator>
+  <pbcoreCreator>
+    <creator>Cincinnati Public Radio</creator>
+    <creatorRole>Producing Organization</creatorRole>
+  </pbcoreCreator>
+  <pbcoreContributor>
+    <contributor>Clooney, Nick, 1934-</contributor>
+    <contributorRole>Host</contributorRole>
+  </pbcoreContributor>
+  <pbcorePublisher>
+    <publisher>Prairie Public Broadcasting, Inc.</publisher>
+    <publisherRole>Publisher</publisherRole>
+  </pbcorePublisher>
   <pbcoreInstantiation>
     <instantiationIdentifier source="Librarian">4344</instantiationIdentifier>
     <instantiationPhysical>DAT</instantiationPhysical>

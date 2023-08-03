@@ -31,7 +31,7 @@ RSpec.describe Hyrax::Actors::AssetActor do
     end
 
     context 'when the asset is missing children' do
-      let(:intended_children_count) { 5 }
+      let(:intended_children_count) { 10 }
 
       it 'sets the status to "missing child record(s)"' do
         expect(asset.validation_status_for_aapb).to be_empty
