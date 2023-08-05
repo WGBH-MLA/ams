@@ -16,7 +16,7 @@ module AMS
     end
 
     def fresh_run
-      write_all_asset_ids_to_file
+      write_asset_ids_to_file
 
       run(ids_file: ALL_IDS_PATH)
     end
@@ -35,12 +35,11 @@ module AMS
       progressbar = ProgressBar.create(total: ids.size, format: '%a %e %P% Processed: %c from %C')
 
       begin
-        processed_file = File.open(PROCESSED_IDS_PATH, 'a+')
+        processed_file = File.open(PROCESSED_IDS_PATH, 'a')
         ids.each do |id|
           logger.info("Starting ID: #{id}")
           backfill_validation_status(id)
-          # FIXME: not writing properly
-          processed_file.write(id)
+          processed_file.puts(id)
           progressbar.increment
         end
       rescue => e
@@ -63,14 +62,14 @@ module AMS
       #   - Set controlled value to :validation_status_for_aapb
     end
 
-    def write_all_asset_ids_to_file
-      resp = ActiveFedora::SolrService.get('has_model_ssim:Asset', fl: [:id], rows: 2_147_483_647)
+    def write_asset_ids_to_file
+      query = 'has_model_ssim:Asset -intended_children_count_isi:[* TO *]'
+      max_rows = 2_147_483_647
+      resp = ActiveFedora::SolrService.get(query, fl: [:id], rows: max_rows)
       raise StandardError, 'No Assets found in Solr' if resp.dig('response', 'docs').blank?
 
       @ids = resp.dig('response', 'docs').map { |doc| doc['id'] }
-      File.open(ALL_IDS_PATH, 'w') do |file|
-        file.puts(@ids.join("\n"))
-      end
+      write_ids_to(ALL_IDS_PATH)
     end
 
     def setup_remaining_ids_file
@@ -79,8 +78,16 @@ module AMS
       remaining_ids = all_ids.subtract(processed_ids)
       @ids = remaining_ids.to_a
 
-      File.open(REMAINING_IDS_PATH, 'w') do |file|
-        file.puts(@ids.join("\n"))
+      write_ids_to(REMAINING_IDS_PATH)
+    end
+
+    def write_ids_to(path)
+      FileUtils.rm(path) if File.exist?(path)
+
+      File.open(path, 'a') do |file|
+        ids.each do |id|
+          file.puts(id)
+        end
       end
     end
 
