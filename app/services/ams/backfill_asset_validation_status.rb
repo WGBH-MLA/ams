@@ -60,6 +60,9 @@ module AMS
       # - Figure out current validation status
       #   - @see AssetActor#set_validation_status
       #   - Set controlled value to :validation_status_for_aapb
+      # TODO: handle when source data can't be found (possible?)
+      # Possible way to get data from Asset ingested by a BatchIngester:
+      # File.read(@batch_item.source_location)
     end
 
     def write_asset_ids_to_file
