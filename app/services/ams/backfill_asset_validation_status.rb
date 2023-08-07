@@ -53,6 +53,16 @@ module AMS
 
     def backfill_validation_status(id)
       asset = Asset.find(id)
+
+      source = if asset.admin_data.bulkrax_importer_id.present?
+                 importer = Bulkrax::Importer.find(asset.admin_data.bulkrax_importer_id)
+                 importer.entries.where("JSON_EXTRACT(raw_metadata, '$.local_identifier') = '#{asset.local_identifier.first}'").last
+               else
+                 Hyrax::BatchIngest::BatchItem.find_by(repo_object_id: asset.id)
+               end
+
+      raise StandardError, "Unable to find source data for Asset #{asset.id}" if source.blank?
+
       # TODO:
       # - Figure out intended child record count from original data source
       #   - Can probably be found on a record's corresponding Bulkrax::Entry or BatchItem
