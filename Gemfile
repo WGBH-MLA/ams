@@ -20,7 +20,7 @@ gem 'dotenv-rails'
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '~> 5.1.5'
 # Use Puma as the app server
-gem 'puma', '~> 4.3'
+gem 'puma', '~> 6.3'
 # Use SCSS for stylesheets
 gem 'sass-rails', '~> 5.0'
 # Use Uglifier as compressor for JavaScript assets
@@ -101,7 +101,7 @@ gem 'curb'
 gem 'webpacker'
 gem 'react-rails'
 gem 'database_cleaner'
-gem 'redlock', '~> 1.0'
+gem 'redlock', '~> 2.0'
 gem 'httparty', '~> 0.21'
 
 # Adding pry to all environments, because it's very useful for debugging
