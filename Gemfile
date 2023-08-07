@@ -5,6 +5,8 @@ git_source(:github) do |repo_name|
   "https://github.com/#{repo_name}.git"
 end
 
+plugin 'bootboot', '~> 0.2.1'
+
 # Bulkrax
 group :bulkrax do
   # our custom changes require us to lock in the version of bulkrax
@@ -106,3 +108,11 @@ gem 'httparty', '~> 0.21'
 # production environments on demo instances.
 gem 'pry-byebug', platforms: [:mri, :mingw, :x64_mingw]
 gem 'activerecord-nulldb-adapter'
+Plugin.send(:load_plugin, 'bootboot') if Plugin.installed?('bootboot')
+
+if ENV['DEPENDENCIES_NEXT']
+  enable_dual_booting if Plugin.installed?('bootboot')
+
+  # Add any gem you want here, they will be loaded only when running
+  # bundler command prefixed with `DEPENDENCIES_NEXT=1`.
+end
