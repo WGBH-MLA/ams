@@ -35,7 +35,7 @@ networks:
 
 services:
   db:
-    image: mariadb
+    image: mariadb:10.11.2
     environment:
       - MYSQL_DATABASE=${MYSQL_DATABASE}
       - MYSQL_USER=${MYSQL_DATABASE}
