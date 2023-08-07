@@ -50,8 +50,8 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           context: .
-          # platforms: linux/amd64,linux/arm64
-          platforms: linux/amd64
+          platforms: linux/amd64,linux/arm64
+          # platforms: linux/amd64
           target: ams-base
           build-args: |
             SETTINGS__BULKRAX__ENABLED=true
@@ -65,8 +65,8 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           context: .
-          platforms: linux/amd64
-          # platforms: linux/amd64,linux/arm64
+          # platforms: linux/amd64
+          platforms: linux/amd64,linux/arm64
           target: ams-worker
           build-args: |
             SETTINGS__BULKRAX__ENABLED=true
