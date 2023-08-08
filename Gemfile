@@ -7,22 +7,38 @@ end
 
 plugin 'bootboot', '~> 0.2.1'
 
+if ENV['DEPENDENCIES_NEXT'] && !ENV['DEPENDENCIES_NEXT'].empty?
+  gem 'rails', '6.0'
+  gem 'hyrax-batch_ingest', git: 'https://github.com/samvera-labs/hyrax-batch_ingest', branch: 'dependency-upgrades'
+  gem 'hyrax', '~> 4.0'
+  # Use SCSS for stylesheets
+  gem 'sass-rails', '~> 6.0'
+  gem 'sony_ci_api', github: 'WGBH-MLA/sony_ci_api_rewrite', branch: 'main'
+  gem 'hydra-role-management', '1.1.0'
+  gem 'blacklight', '~> 7.29'
+  gem 'blacklight_advanced_search', '7.0'
+else
+  # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
+  gem 'rails', '~> 5.1.5'
+  gem 'hyrax-batch_ingest', git: 'https://github.com/samvera-labs/hyrax-batch_ingest'
+  gem 'hyrax', '~> 2.9.0'
+  # Use SCSS for stylesheets
+  gem 'sass-rails', '~> 5.0'
+  gem 'sony_ci_api', github: 'WGBH-MLA/sony_ci_api_rewrite', branch: 'v0.1'
+  gem 'hydra-role-management', '~> 1.0'
+  gem 'blacklight_advanced_search', '~> 6.4.0'
+end
+
 # Bulkrax
 group :bulkrax do
   # our custom changes require us to lock in the version of bulkrax
   gem 'bulkrax', git: 'https://github.com/samvera-labs/bulkrax.git', ref: '23efea3fd9d8d98746b73e570e0dc214ff764271'
   gem 'willow_sword', git: 'https://github.com/notch8/willow_sword.git'
 end
-gem 'sony_ci_api', github: 'WGBH-MLA/sony_ci_api_rewrite', branch: 'v0.1'
 
 gem 'dotenv-rails'
-
-# Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '~> 5.1.5'
 # Use Puma as the app server
 gem 'puma', '~> 4.3'
-# Use SCSS for stylesheets
-gem 'sass-rails', '~> 5.0'
 # Use Uglifier as compressor for JavaScript assets
 gem 'uglifier', '>= 1.3.0'
 # See https://github.com/rails/execjs#readme for more supported runtimes
@@ -38,7 +54,6 @@ gem 'jbuilder', '~> 2.5'
 # Use Redis adapter to run Action Cable in production
 gem 'redis', '~> 4.0'
 gem 'sidekiq'
-gem 'hydra-role-management', '~> 1.0'
 
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
@@ -79,8 +94,6 @@ group :development do
   gem 'xray-rails'
 end
 
-gem 'hyrax', '~> 2.9.0'
-gem 'blacklight_advanced_search', '~> 6.4.0'
 gem 'rsolr', '>= 1.0'
 gem 'jquery-rails'
 gem 'devise'
@@ -92,7 +105,6 @@ gem 'carrierwave', '~> 1.3'
 gem 'mysql2', '~> 0.5.3'
 gem 'nokogiri'
 gem 'bootstrap-multiselect-rails'
-gem 'hyrax-batch_ingest', git: 'https://github.com/samvera-labs/hyrax-batch_ingest'
 gem 'pbcore', '~> 0.3.0'
 gem 'curb'
 # gem 'sony_ci_api', '~> 0.2.1'

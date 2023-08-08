@@ -264,8 +264,12 @@ Hyrax.config do |config|
   # #show page.
   config.show_work_item_rows = 100
 
-  config.nested_relationship_reindexer = ->(id:, extent:) { QueuedNestingIndexer.reindex_relationships(id: id, extent: extent) }
-
+  if App.rails_5_1?
+    # production Rails code
+    config.nested_relationship_reindexer = ->(id:, extent:) { QueuedNestingIndexer.reindex_relationships(id: id, extent: extent) }
+  else
+    # future Rails code
+  end
 end
 
 Date::DATE_FORMATS[:standard] = "%m/%d/%Y"

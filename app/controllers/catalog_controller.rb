@@ -5,7 +5,7 @@ class CatalogController < ApplicationController
   # This filter applies the hydra access controls
   before_action :enforce_show_permissions, only: :show
 
-  add_results_collection_tool :export_search_results
+  add_results_collection_tool :export_search_results if App.rails_5_1?
 
   configure_blacklight do |config|
     # default advanced config values

@@ -54,3 +54,10 @@ module AMS
     end
   end
 end
+
+module App
+  # Returns true if the current Rails version is 6.0.x
+  def self.rails_5_1?
+    Rails.version.start_with? '5.1'
+  end
+end
