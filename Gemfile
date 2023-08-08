@@ -7,6 +7,15 @@ end
 
 plugin 'bootboot', '~> 0.2.1'
 
+if ENV['DEPENDENCIES_NEXT'] && !ENV['DEPENDENCIES_NEXT'].empty?
+  gem 'rails', '~> 5.2.0'
+  gem 'hyrax-batch_ingest', git: 'https://github.com/samvera-labs/hyrax-batch_ingest', branch: 'dependency-upgrades'
+else
+  # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
+  gem 'rails', '~> 5.1.5'
+  gem 'hyrax-batch_ingest', git: 'https://github.com/samvera-labs/hyrax-batch_ingest'
+end
+
 # Bulkrax
 group :bulkrax do
   # our custom changes require us to lock in the version of bulkrax
@@ -16,9 +25,6 @@ end
 gem 'sony_ci_api', github: 'WGBH-MLA/sony_ci_api_rewrite', branch: 'v0.1'
 
 gem 'dotenv-rails'
-
-# Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '~> 5.1.5'
 # Use Puma as the app server
 gem 'puma', '~> 4.3'
 # Use SCSS for stylesheets
@@ -92,7 +98,6 @@ gem 'carrierwave', '~> 1.3'
 gem 'mysql2', '~> 0.5.3'
 gem 'nokogiri'
 gem 'bootstrap-multiselect-rails'
-gem 'hyrax-batch_ingest', git: 'https://github.com/samvera-labs/hyrax-batch_ingest'
 gem 'pbcore', '~> 0.3.0'
 gem 'curb'
 # gem 'sony_ci_api', '~> 0.2.1'
