@@ -57,7 +57,7 @@ jobs:
         with:
           fetch-depth: 0
           submodules: true
-          token: ${{ inputs.token }}
+          token: ${{ secrets.CHECKOUT_TOKEN || secrets.GITHUB_TOKEN }}
           clean: false
       - name: Setup tmate session
         uses: mxschmitt/action-tmate@v3
