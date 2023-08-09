@@ -18,10 +18,14 @@
 
 
 //= require rails-ujs
+//= require popper
+//= require twitter/typeahead
+//= require bootstrap
 //= require jquery-ui
 //= require jquery.dataTables
 //= require dataTables.bootstrap4
 //= require blacklight/blacklight
+//= require blacklight_gallery
 //= require video
 
 //= require bulkrax/application
