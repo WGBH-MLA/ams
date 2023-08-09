@@ -6,9 +6,9 @@ RSpec.describe "Pushes features", type: :controller, js: true do
 
   # let it bang
   let!(:user) { create :admin_user }
-  let!(:asset) { create(:asset, user: user, program_title: ['foo']) }
-  let!(:asset2) { create(:asset, user: user, program_title: ['foo bar']) }
-  let!(:asset3) { create(:asset, user: user, needs_update: true) }
+  let!(:asset) { create(:asset, user: user, program_title: ['foo'], validation_status_for_aapb: [Asset::VALIDATION_STATUSES[:valid]]) }
+  let!(:asset2) { create(:asset, user: user, program_title: ['foo bar'], validation_status_for_aapb: [Asset::VALIDATION_STATUSES[:valid]]) }
+  let!(:asset3) { create(:asset, user: user, needs_update: true, validation_status_for_aapb: [Asset::VALIDATION_STATUSES[:valid]]) }
 
   # Login/logout before/after each test.
   before { login_as(user) }
