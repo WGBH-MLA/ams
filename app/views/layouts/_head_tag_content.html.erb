@@ -1,3 +1,4 @@
+<%# OVERRIDE Hyrax 4.0 to allow for dual boot %>
 <%= csrf_meta_tag %>
 <meta charset="utf-8" />
 <%# Only display meta tag, which enables creation of the ActionCable
@@ -17,6 +18,7 @@ signed in %>
 
 <title><%= content_for?(:page_title) ? yield(:page_title) : default_page_title %></title>
 
+<%# OVERRIDE to allow for dual boot start %>
 <% if App.rails_5_1? %>
   <!-- application css -->
   <%= stylesheet_link_tag 'application' %>
@@ -28,6 +30,7 @@ signed in %>
   <!-- application js -->
   <%= javascript_include_tag 'application_rails_6_1' %>
 <% end %>
+<%# OVERRIDE end %>
 
 <%= render 'shared/appearance_styles' %>
 
