@@ -53,6 +53,7 @@ module AMS
 
     def backfill_validation_status(id)
       asset = Asset.find(id)
+      attrs = {}
 
       source = if asset.admin_data.bulkrax_importer_id.present?
                  importer = Bulkrax::Importer.find(asset.admin_data.bulkrax_importer_id)
@@ -61,18 +62,26 @@ module AMS
                  Hyrax::BatchIngest::BatchItem.find_by(repo_object_id: asset.id)
                end
 
-      raise StandardError, "Unable to find source data for Asset #{asset.id}" if source.blank?
+      if source.is_a?(Bulkrax::Entry)
+        # TODO: extract :intended_children_count from source data
+      elsif source.is_a?(Hyrax::BatchIngest::BatchItem)
+        data = File.read(source.source_location)
+        asset_xml_attrs = AAPB::BatchIngest::PBCoreXMLMapper.new(data).asset_attributes
+        return if asset_xml_attrs[:intended_children_count].blank?
 
-      # TODO:
-      # - Figure out intended child record count from original data source
-      #   - Can probably be found on a record's corresponding Bulkrax::Entry or BatchItem
-      #   - Set value to :intended_children_count
-      # - Figure out current validation status
-      #   - @see AssetActor#set_validation_status
-      #   - Set controlled value to :validation_status_for_aapb
-      # TODO: handle when source data can't be found (possible?)
-      # Possible way to get data from Asset ingested by a BatchIngester:
-      # File.read(@batch_item.source_location)
+        attrs['intended_children_count'] = asset_xml_attrs[:intended_children_count]
+      else
+        # TODO: figure out how to set :intended_children_count when source data can't be found (possible?)
+        raise StandardError, "Unable to find source data for Asset #{asset.id}" if source.blank?
+      end
+
+      raise StandardError, "Unable to count intended children for Asset #{asset.id}" if attrs['intended_children_count'].blank?
+
+      user = User.find_by(email: 'wgbh_admin@wgbh-mla.org')
+      actor = Hyrax::CurationConcern.actor
+      env = Hyrax::Actors::Environment.new(asset, Ability.new(user), attrs)
+
+      actor.update(env)
     end
 
     def write_asset_ids_to_file
