@@ -10,7 +10,7 @@ class Asset < ActiveFedora::Base
     valid: 'valid',
     missing_children: 'missing child record(s)',
     status_not_validated: 'not yet validated',
-    empty: 'unable to validate'
+    empty: 'missing a validation status'
   }.freeze
 
   self.indexer = AssetIndexer
