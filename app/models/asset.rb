@@ -8,7 +8,9 @@ class Asset < ActiveFedora::Base
   # @see Push#add_status_error
   VALIDATION_STATUSES = {
     valid: 'valid',
-    missing_children: 'missing child record(s)'
+    missing_children: 'missing child record(s)',
+    status_not_validated: 'not yet validated',
+    empty: 'unable to validate'
   }.freeze
 
   self.indexer = AssetIndexer

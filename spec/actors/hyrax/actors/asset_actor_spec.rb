@@ -57,12 +57,12 @@ RSpec.describe Hyrax::Actors::AssetActor do
     context "when the asset's intended number of children is not set" do
       let(:intended_children_count) { nil }
 
-      it 'sets the status to "valid"' do
+      it 'sets the status to "not yet validated"' do
         expect(asset.validation_status_for_aapb).to be_empty
 
         middleware.public_send(method, env)
 
-        expect(asset.validation_status_for_aapb).to eq(['valid'])
+        expect(asset.validation_status_for_aapb).to eq(['not yet validated'])
       end
     end
   end
