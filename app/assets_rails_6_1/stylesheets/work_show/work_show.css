@@ -1,0 +1,216 @@
+table.contributions {
+    margin:0px;
+}
+.work-panel button {
+    margin: 0 0 5px 0;
+}
+.show-actions {
+    padding: 15px 10px;
+}
+.work-panel .dropdown-menu{
+    margin: -5px 0 0 0;
+}
+.work-panel .label {
+    border-radius: 0px;
+}
+.work-panel .block a.header {
+    font-size: 18px;
+    font-weight: bold;
+    margin: 0 0 15px;
+    background-color: #f5f5f5;
+    padding: 5px 5px 5px 20px;
+    border-radius: 3px;
+    border: 1px #ddd;
+    text-align: left;
+}
+.work-panel .block a:hover,
+.work-panel .block a:focus,
+.work-panel .block a:active {
+    background: #f9f9f9;
+}
+.work-panel .details {
+    margin-top: 20px;
+}
+.work-panel .block a.header:before {
+    content: "\f0d7";
+    font-family: "FontAwesome";
+    font-size: 18px;
+    color: #000;
+    padding: 10px;
+}
+.work-panel .block a.header.collapsed:before {
+    content: "\f0da";
+    font-family: "FontAwesome";
+    font-size: 18px;
+    color: #000;
+    padding: 10px;
+}
+.work-panel .block ul.tabular a {
+    display: block;
+    border: none;
+    padding: 0;
+    font-size: 14px;
+}
+.work-panel .block ul.tabular a:after {
+    display: none !important;
+}
+.work-panel .details .well {
+    border-radius: 0;
+    background: #fff;
+    margin: 0;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+    border: none;
+}
+.work-panel .head {
+    padding: 20px;
+}
+.work-panel .head h3 {
+    font-size: 28px;
+    text-transform: capitalize;
+    margin: 0 0 10px;
+}
+.work-panel .head span {
+    font-size: 16px;
+    line-height: 26px;
+}
+.work-panel .head a {
+    display: block;
+    font-size: 14px;
+    line-height: 30px;
+}
+.work-panel .table th {
+    font-weight: bold;
+    border: none;
+    border-bottom: 2px solid #3379b8;
+    background: #ffffff;
+    color: #000;
+}
+.work-show dt {
+    text-align: right;
+    width: 25%;
+    float: none;
+    font-weight: bold;
+    padding: 0 5px 0 0;
+    display: inline-block;
+}
+
+.work-show dd {
+    overflow: hidden;
+    background: #fff;
+    padding: 0px;
+    display: inline-block;
+    width: 60%;
+    vertical-align: top;
+    margin-left: 5%;
+}
+
+.work-type .panel-body li.attribute a {
+    background: #fff;
+}
+
+.custom-info {
+    margin-top: 20px;
+}
+.custom-info h3 {
+    font-size: 28px;
+    text-transform: capitalize;
+    margin: 0 0 15px;
+}
+.custom-info ul {
+    border: none !important;
+    margin: 0 !important;
+}
+.custom-info .table th {
+    font-weight: bold;
+    border: none;
+    border-bottom: 2px solid #3379b8;
+    background: #ffffff;
+    color: #000;
+}
+.custom-info .img {
+    width: 35px;
+    margin: 15px;
+}
+.custom-info .img img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+.work-panel .options {
+    text-align: right;
+    padding-top: 8px;
+}
+.canonical-image {
+    width: auto;
+    margin: 0 auto;
+}
+.hold h2 {
+    font-size: 18px;
+    font-weight: bold;
+    margin: 0 0 15px;
+    background-color: #f5f5f5;
+    padding: 5px 5px 5px 20px;
+    border-radius: 3px;
+    border-color: #ddd;
+}
+.hold dl {
+    margin: 0 10% 0 10%;
+}
+.hold dt {
+    text-align: right;
+    width: 25%;
+    float: none;
+    font-weight: bold;
+    padding: 0 5px 0 0;
+    display: inline-block;
+}
+.hold dd {
+    overflow: hidden;
+    background: #fff;
+    padding: 0px;
+    display: inline-block;
+    width: 60%;
+    vertical-align: top;
+    margin-left: 10%;
+}
+.related-files .thumbnail {
+    width: 60px;
+    border: none;
+    margin: 0;
+    background: transparent;
+}
+.show-actions a {
+    margin: 0 0 5px !important;
+}
+ul.tabular {
+    padding: 0 !important;
+}
+.related-files .thumbnail {
+    width: auto !important;
+    border-top: 1px solid #ddd !important;
+}
+.related-files .thumbnail a {
+    width: 40px;
+    display: block;
+    margin: 0 0 0 10px;
+}
+@media screen and (max-width: 767px){
+    .hold dt {
+        width: 100%;
+        float: none;
+        text-align: left;
+    }
+    .hold dd {
+        width: 100%;
+        overflow: hidden;
+        background: #fff;
+        padding-bottom: 20px;
+    }
+    .work-panel .options {
+        text-align: center;
+    }
+    .work-panel .options li {
+        margin: 0 0 5px;
+    }
+}

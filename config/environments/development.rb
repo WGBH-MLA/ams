@@ -60,6 +60,13 @@ Rails.application.configure do
   # Suppress logger output for asset requests.
   config.assets.quiet = true
 
+  # Dual Boot asset pipeline
+  if App.rails_5_1?
+    config.assets.prefix = "/assets"
+  else
+    config.assets.prefix = "/assets_rails_6_1"
+  end
+
   # Config background Jobs to use Sidekiq queue, so we can do production-like
   # testing of concurrent background jobs during batch ingests.
   config.active_job.queue_adapter = :sidekiq
