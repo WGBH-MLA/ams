@@ -13,7 +13,7 @@ class EssenceTrackIndexer < AMS::WorkIndexer
   # Uncomment this block if you want to add custom indexing behavior:
   def generate_solr_document
    super.tap do |solr_doc|
-    solr_doc[Solrizer.solr_name('bulkrax_identifier', :facetable)] = object.bulkrax_identifier
+    solr_doc[solr_name('bulkrax_identifier', :facetable)] = object.bulkrax_identifier
    end
   end
 end
