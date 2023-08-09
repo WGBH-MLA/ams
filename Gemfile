@@ -13,6 +13,7 @@ if ENV['DEPENDENCIES_NEXT'] && !ENV['DEPENDENCIES_NEXT'].empty?
   gem 'hyrax', '~> 4.0'
   # Use SCSS for stylesheets
   gem 'sass-rails', '~> 6.0'
+  gem 'bootstrap', '~> 4.0'
   gem 'sony_ci_api', github: 'WGBH-MLA/sony_ci_api_rewrite', branch: 'main'
   gem 'hydra-role-management', '1.1.0'
   gem 'blacklight', '~> 7.29'
