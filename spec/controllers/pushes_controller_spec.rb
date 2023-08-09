@@ -6,7 +6,7 @@ RSpec.describe PushesController, type: :controller do
   let!(:user) { create :admin_user }
 
   # Use a real memoized method to generate test assets once.
-  let!(:assets) { create_list :asset, rand(2..4) }
+  let!(:assets) { create_list :asset, rand(2..4), validation_status_for_aapb: [Asset::VALIDATION_STATUSES[:valid]] }
 
   # Ensure user is signed in before each test.
   before { sign_in(user) }
