@@ -1,7 +1,6 @@
 module AAPB
   module InstantiationAdminDataPresenter
     extend ActiveSupport::Concern
-    include SolrHelper
     included do
       def display_admin_data?
         !(aapb_preservation_lto.blank? &&
@@ -18,7 +17,7 @@ module AAPB
 
         if attribute_indexed_to_parent?(field, work_class) && attribute_facetable?(field, work_class)
           # Use :symbol for field_name since all attributes indexed to parent are indexed as symbols.
-          field_name = solr_name(field, :symbol)
+          field_name = Solrizer.solr_name(field, :symbol)
 
           # Use parent SolrDocument to get value
           solr_document = ::SolrDocument.find(work_class.find(id).member_of.first.id) if work_class&.find(id)&.member_of&.present?

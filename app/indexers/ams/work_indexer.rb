@@ -1,7 +1,5 @@
 module AMS
   class WorkIndexer < Hyrax::WorkIndexer
-    include SolrHelper
-
     def generate_solr_document
       find_index_child_attributes(super)
     end
@@ -15,9 +13,9 @@ module AMS
               parent_indexable_properties = work_type.properties.select{|index,val| val["index_to_parent"]||index=="language"||index=="contributor"?true:false}
               parent_indexable_properties.each do |prop, config|
                 solr_doc["#{work_type.to_s.underscore}_#{prop}_ssim"] ||= []
-                solr_doc["#{work_type.to_s.underscore}_#{prop}_ssim"] |= work[solr_name(prop)] if work[solr_name(prop)]
+                solr_doc["#{work_type.to_s.underscore}_#{prop}_ssim"] |= work[Solrizer.solr_name(prop)] if work[Solrizer.solr_name(prop)]
                 solr_doc["#{prop}_ssim"] ||= []
-                solr_doc["#{prop}_ssim"] |=  work[solr_name(prop)] if work[solr_name(prop)]
+                solr_doc["#{prop}_ssim"] |=  work[Solrizer.solr_name(prop)] if work[Solrizer.solr_name(prop)]
               end
           end
         end

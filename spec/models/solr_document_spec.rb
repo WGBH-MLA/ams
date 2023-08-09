@@ -124,7 +124,7 @@ describe SolrDocument do
     let(:expected_id_data) {
       {
         "id" => asset_solr_doc.id,
-        solr_name('admin_set') => asset_solr_doc.admin_set
+        Solrizer.solr_name('admin_set') => asset_solr_doc.admin_set
       }
     }
 

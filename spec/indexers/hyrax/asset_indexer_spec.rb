@@ -149,7 +149,7 @@ RSpec.describe AssetIndexer do
       solr_doc = asset_solr_doc_with_annotations.generate_solr_document
       # We randomize the annotation_type, so use Solrizer on the annotation_type since it
       # gets indexed in Solr by the annotation_type.
-      expect(solr_doc.fetch(solr_name(annotation.annotation_type,'ssim'))).to eq([annotation.value])
+      expect(solr_doc.fetch(Solrizer.solr_name(annotation.annotation_type,'ssim'))).to eq([annotation.value])
     end
   end
 end

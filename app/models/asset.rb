@@ -4,7 +4,6 @@ class Asset < ActiveFedora::Base
   include ::AMS::IdentifierService
   include ::AMS::CascadeDestroyMembers
   include ::AMS::AllMembers
-  include SolrHelper
 
   # @see Push#add_status_error
   VALIDATION_STATUSES = {
@@ -231,7 +230,7 @@ class Asset < ActiveFedora::Base
   end
 
   def admin_data_gid_document_field_name
-    solr_name('admin_data_gid', *index_admin_data_gid_as)
+    Solrizer.solr_name('admin_data_gid', *index_admin_data_gid_as)
   end
 
   def sonyci_id
