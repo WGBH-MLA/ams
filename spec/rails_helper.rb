@@ -121,6 +121,8 @@ RSpec.configure do |config|
 
   # For Devise >= 4.1.0
   config.extend ControllerMacros, :type => :controller
+
+  config.include SolrHelper
 end
 
 # Uncomment this to specify a version of ChromeDriver, a list of which can be

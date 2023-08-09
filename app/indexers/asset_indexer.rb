@@ -9,6 +9,8 @@ class AssetIndexer < AMS::WorkIndexer
   # this behavior
   include Hyrax::IndexesLinkedMetadata
 
+  include SolrHelper
+
   self.thumbnail_path_service = AAPB::AssetThumbnailPathService
 
   def generate_solr_document
@@ -17,7 +19,7 @@ class AssetIndexer < AMS::WorkIndexer
       solr_doc['broadcast_date_drsim'] = object.broadcast_date if object.broadcast_date
       solr_doc['created_date_drsim'] = object.created_date if object.created_date
       solr_doc['copyright_date_drsim'] = object.copyright_date if object.copyright_date
-      solr_doc[Solrizer.solr_name('bulkrax_identifier', :facetable)] = object.bulkrax_identifier
+      solr_doc[solr_name('bulkrax_identifier', :facetable)] = object.bulkrax_identifier
       solr_doc['intended_children_count_isi'] = object.intended_children_count.to_i
 
       if object.admin_data
@@ -29,7 +31,7 @@ class AssetIndexer < AMS::WorkIndexer
         AnnotationTypesService.new.select_all_options.each do |type|
           # Use the ID defined in the AnnotationType service
           type_id = type[1]
-          solr_doc[ Solrizer.solr_name(type_id.underscore,'ssim') ] = object.try(type_id.to_sym) unless object.try(type_id.to_sym).empty?
+          solr_doc[ solr_name(type_id.underscore,'ssim') ] = object.try(type_id.to_sym) unless object.try(type_id.to_sym).empty?
         end
 
         #Indexing for search by batch_id

@@ -1,6 +1,7 @@
 module Hyrax
   module Renderers
     class IndexedToParentRenderer < Hyrax::Renderers::FacetedAttributeRenderer
+      include SolrHelper
       def render
         markup = ''
 
@@ -19,7 +20,7 @@ module Hyrax
       private
 
       def search_field
-        ERB::Util.h(Solrizer.solr_name(options.fetch(:search_field, field), :symbol, type: :string))
+        ERB::Util.h(solr_name(options.fetch(:search_field, field), :symbol, type: :string))
       end
     end
   end
