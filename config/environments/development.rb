@@ -60,11 +60,13 @@ Rails.application.configure do
   # Suppress logger output for asset requests.
   config.assets.quiet = true
 
-  # Dual Boot asset pipeline
+  # Dual Boot
   if App.rails_5_1?
     config.assets.prefix = "/assets"
+    config.analytics_settings = YAML.load_file(Rails.root.join("config/analytics.yml"))
   else
     config.assets.prefix = "/assets_rails_6_1"
+    config.analytics_settings = YAML.load_file(Rails.root.join("config/analytics_rails_6_1.yml"))
   end
 
   # Config background Jobs to use Sidekiq queue, so we can do production-like
