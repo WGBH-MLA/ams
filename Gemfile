@@ -8,7 +8,7 @@ end
 plugin 'bootboot', '~> 0.2.1'
 
 if ENV['DEPENDENCIES_NEXT'] && !ENV['DEPENDENCIES_NEXT'].empty?
-  gem 'rails', '6.0'
+  gem 'rails', '~> 6.0'
   gem 'hyrax-batch_ingest', git: 'https://github.com/samvera-labs/hyrax-batch_ingest', branch: 'dependency-upgrades'
   gem 'hyrax', '~> 4.0'
   # Use SCSS for stylesheets
@@ -18,6 +18,11 @@ if ENV['DEPENDENCIES_NEXT'] && !ENV['DEPENDENCIES_NEXT'].empty?
   gem 'hydra-role-management', '1.1.0'
   gem 'blacklight', '~> 7.29'
   gem 'blacklight_advanced_search', '7.0'
+  group :bulkrax do
+    # our custom changes require us to lock in the version of bulkrax
+    gem 'bulkrax', git: 'https://github.com/samvera-labs/bulkrax.git', branch: 'gbh-patch'
+    gem 'willow_sword', git: 'https://github.com/notch8/willow_sword.git'
+  end
 else
   # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
   gem 'rails', '~> 5.1.5'
@@ -28,13 +33,12 @@ else
   gem 'sony_ci_api', github: 'WGBH-MLA/sony_ci_api_rewrite', branch: 'v0.1'
   gem 'hydra-role-management', '~> 1.0'
   gem 'blacklight_advanced_search', '~> 6.4.0'
-end
-
-# Bulkrax
-group :bulkrax do
-  # our custom changes require us to lock in the version of bulkrax
-  gem 'bulkrax', git: 'https://github.com/samvera-labs/bulkrax.git', ref: '23efea3fd9d8d98746b73e570e0dc214ff764271'
-  gem 'willow_sword', git: 'https://github.com/notch8/willow_sword.git'
+  # Bulkrax
+  group :bulkrax do
+    # our custom changes require us to lock in the version of bulkrax
+    gem 'bulkrax', git: 'https://github.com/samvera-labs/bulkrax.git', ref: '23efea3fd9d8d98746b73e570e0dc214ff764271'
+    gem 'willow_sword', git: 'https://github.com/notch8/willow_sword.git'
+  end
 end
 
 gem 'dotenv-rails'
