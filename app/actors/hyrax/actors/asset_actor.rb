@@ -63,6 +63,7 @@ module Hyrax
 
         def should_empty_admin_data_value?(key, admin_data, env)
           key != :bulkrax_importer_id &&
+          env.attributes.key?(key) &&
           admin_data.send(key).present? &&
           !env.attributes[key].present?
         end
