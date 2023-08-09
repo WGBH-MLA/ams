@@ -17,15 +17,17 @@ signed in %>
 
 <title><%= content_for?(:page_title) ? yield(:page_title) : default_page_title %></title>
 
-<!-- application css -->
 <% if App.rails_5_1? %>
+  <!-- application css -->
   <%= stylesheet_link_tag 'application' %>
+  <!-- application js -->
+  <%= javascript_include_tag 'application' %>
 <% else %>
+  <!-- application css -->
   <%= stylesheet_link_tag 'application_rails_6_1' %>
+  <!-- application js -->
+  <%= javascript_include_tag 'application_rails_6_1' %>
 <% end %>
-
-<!-- application js -->
-<%= javascript_include_tag 'application' %>
 
 <%= render 'shared/appearance_styles' %>
 
