@@ -39,6 +39,10 @@ module AMS
       # preventing any data loss. In addition, it conserves IO processing resources by not continuously
       # opening and closing the file.
       begin
+        # Suppress most ActiveRecord logging to be able to clearly see the ProgressBar's progress
+        original_log_level = ActiveRecord::Base.logger.level
+        ActiveRecord::Base.logger.level = Logger::ERROR
+
         processed_file = File.open(PROCESSED_IDS_PATH, 'a')
         ids.each do |id|
           # This nested #begin lets us log the `id` currently being processed if an error is thrown
@@ -52,6 +56,7 @@ module AMS
           end
         end
       ensure
+        ActiveRecord::Base.logger.level = original_log_level
         processed_file&.close
       end
     end
@@ -82,7 +87,16 @@ module AMS
       actor = Hyrax::CurationConcern.actor
       env = Hyrax::Actors::Environment.new(asset, Ability.new(user), attrs_for_actor)
 
-      actor.update(env)
+      begin
+        # This will suppress this very repetitive warning originating from hydra-access-controls v10.7.0:
+        # warning: URI.unescape is obsolete
+        original_verbosity = $VERBOSE
+        $VERBOSE = nil
+
+        actor.update(env)
+      ensure
+        $VERBOSE = original_verbosity
+      end
     end
 
     def raw_data_from_bulkrax_entry(importer_id, asset)
