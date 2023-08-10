@@ -66,8 +66,9 @@ module AMS
     private
 
     def backfill_validation_status(id)
-      asset_admin_data_gid = ActiveFedora::SolrService.get("id:#{id}", fl: [:admin_data_gid_ssim], rows: 1).dig('response', 'docs').first
-      admin_data = AdminData.find_by_gid!(asset_admin_data_gid['admin_data_gid_ssim'].first)
+      solr_response = ActiveFedora::SolrService.get("id:#{id}", fl: [:admin_data_gid_ssim], rows: 1)
+      asset_admin_data_gid = solr_response.dig('response', 'docs', 0, 'admin_data_gid_ssim', 0)
+      admin_data = AdminData.find_by_gid!(asset_admin_data_gid)
       attrs_for_actor = {}
 
       raw_source_data = if admin_data.bulkrax_importer_id.present?
