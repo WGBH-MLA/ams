@@ -57,9 +57,9 @@ module AMS
       raise StandardError, "Unable to find admin data for Asset #{asset.id}" if asset.admin_data.blank?
 
       raw_source_data = if asset.admin_data.bulkrax_importer_id.present?
-                          raw_data_from_bulkrax_entry(asset.admin_data.bulkrax_importer_id)
+                          raw_data_from_bulkrax_entry(asset.admin_data.bulkrax_importer_id, asset)
                         elsif asset.admin_data.hyrax_batch_ingest_batch_id.present?
-                          raw_data_from_batch_item(asset.admin_data.hyrax_batch_ingest_batch_id)
+                          raw_data_from_batch_item(asset.admin_data.hyrax_batch_ingest_batch_id, asset)
                         else
                           raise StandardError, "Unable to find source data for Asset #{asset.id}"
                         end
@@ -78,7 +78,7 @@ module AMS
       actor.update(env)
     end
 
-    def raw_data_from_bulkrax_entry(importer_id)
+    def raw_data_from_bulkrax_entry(importer_id, asset)
       importer = Bulkrax::Importer.find(importer_id)
       matching_entries = importer.entries.select(:id).where("JSON_EXTRACT(parsed_metadata, '$.id') = '#{asset.id}'")
       raise StandardError, "Ambiguous data sources found for Asset #{asset.id}" if matching_entries.count > 1
@@ -90,7 +90,7 @@ module AMS
       entry.raw_metadata['pbcore_xml']
     end
 
-    def raw_data_from_batch_item(batch_id)
+    def raw_data_from_batch_item(batch_id, asset)
       batch = Hyrax::BatchIngest::Batch.find(batch_id)
       ## NOTE:
       # As of 9 August, 2023, the logic to count the number of intended children an Asset should have has only
