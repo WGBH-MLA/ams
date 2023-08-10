@@ -34,16 +34,23 @@ module AMS
       @ids ||= File.read(ids_file).split("\n")
       progressbar = ProgressBar.create(total: ids.size, format: '%a %e %P% Processed: %c from %C')
 
+      # Use #begin here to avoid the need to repeatedly open and close the processed_file each time
+      # we need to write to it. The #ensure makes sure the file closes properly even if an error arises,
+      # preventing any data loss. In addition, it conserves IO processing resources by not continuously
+      # opening and closing the file.
       begin
         processed_file = File.open(PROCESSED_IDS_PATH, 'a')
         ids.each do |id|
-          logger.info("Starting ID: #{id}")
-          backfill_validation_status(id)
-          processed_file.puts(id)
-          progressbar.increment
+          # This nested #begin lets us log the `id` currently being processed if an error is thrown
+          begin # rubocop:disable Style/RedundantBegin
+            logger.info("Starting ID: #{id}")
+            backfill_validation_status(id)
+            processed_file.puts(id)
+            progressbar.increment
+          rescue => e
+            logger.error("#{e.class} | #{e.message} | #{id} | Continuing...")
+          end
         end
-      rescue => e
-        logger.error("#{e.class} | #{e.message} | #{id} | Continuing...")
       ensure
         processed_file&.close
       end
