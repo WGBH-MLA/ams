@@ -57,38 +57,18 @@ module AMS
       raise StandardError, "Unable to find admin data for Asset #{asset.id}" if asset.admin_data.blank?
 
       raw_data = if asset.admin_data.bulkrax_importer_id.present?
-                   # TODO: extract
-                   importer = Bulkrax::Importer.find(asset.admin_data.bulkrax_importer_id)
-                   resp = importer.entries.select(:id).where("JSON_EXTRACT(parsed_metadata, '$.id') = '#{asset.id}'")
-                   raise StandardError, "Ambiguous data sources found for Asset #{asset.id}" if resp.count > 1
-
-                   source = Bulkrax::Entry.find(resp.first.try(:id))
-                   ## NOTE:
-                   # As of 9 August, 2023, all Bulkrax entries in production are instances of Bulkrax::PbcoreXmlEntry, thus
-                   # we can safely assume that the data we're after won't be anywhere other than in `raw_metadata['pbcore_xml']`
-                   source.raw_metadata['pbcore_xml']
+                   raw_data_from_bulkrax_entry(asset.admin_data.bulkrax_importer_id)
                  elsif asset.admin_data.hyrax_batch_ingest_batch_id.present?
-                   # TODO: extract
-                   batch = Hyrax::BatchIngest::Batch.find(asset.admin_data.hyrax_batch_ingest_batch_id)
-                   ## NOTE:
-                   # As of 9 August, 2023, the logic to count the number of intended children an Asset should have has only
-                   # been applied to PBCore XML BatchIngests. Once this logic has been applied to other types of ingests
-                   # (CSV, etc.), this short-circuit should be removed and this class should be modified to extrac the data
-                   # from more than just PBCore XML.
-                   # @see https://github.com/scientist-softserv/ams/issues/9
-                   if batch.ingest_type != 'aapb_pbcore_zipped'
-                     raise StandardError, "Don't know how to count intended children when BatchIngest type is #{batch.ingest_type}"
-                   end
-
-                   source = batch.batch_items.find_by(repo_object_id: asset.id)
-                   File.read(source.source_location)
+                   raw_data_from_batch_item(asset.admin_data.hyrax_batch_ingest_batch_id)
                  else
                    raise StandardError, "Unable to find source data for Asset #{asset.id}"
                  end
 
       asset_xml_attrs = AAPB::BatchIngest::PBCoreXMLMapper.new(raw_data).asset_attributes
       attrs_for_actor['intended_children_count'] = asset_xml_attrs[:intended_children_count]
-      raise StandardError, "Unable to count intended children for Asset #{asset.id}" if attrs_for_actor['intended_children_count'].blank?
+      if attrs_for_actor['intended_children_count'].blank?
+        raise StandardError, "Unable to count intended children for Asset #{asset.id}"
+      end
 
       # Generic admin user we can count on existing
       user = User.find_by(email: 'wgbh_admin@wgbh-mla.org')
@@ -96,6 +76,34 @@ module AMS
       env = Hyrax::Actors::Environment.new(asset, Ability.new(user), attrs_for_actor)
 
       actor.update(env)
+    end
+
+    def raw_data_from_bulkrax_entry(importer_id)
+      importer = Bulkrax::Importer.find(importer_id)
+      resp = importer.entries.select(:id).where("JSON_EXTRACT(parsed_metadata, '$.id') = '#{asset.id}'")
+      raise StandardError, "Ambiguous data sources found for Asset #{asset.id}" if resp.count > 1
+
+      source = Bulkrax::Entry.find(resp.first.try(:id))
+      ## NOTE:
+      # As of 9 August, 2023, all Bulkrax entries in production are instances of Bulkrax::PbcoreXmlEntry, thus
+      # we can safely assume that the data we're after won't be anywhere other than in `raw_metadata['pbcore_xml']`
+      source.raw_metadata['pbcore_xml']
+    end
+
+    def raw_data_from_batch_item(batch_id)
+      batch = Hyrax::BatchIngest::Batch.find(batch_id)
+      ## NOTE:
+      # As of 9 August, 2023, the logic to count the number of intended children an Asset should have has only
+      # been applied to PBCore XML BatchIngests. Once this logic has been applied to other types of ingests
+      # (CSV, etc.), this short-circuit should be removed and this class should be modified to extrac the data
+      # from more than just PBCore XML.
+      # @see https://github.com/scientist-softserv/ams/issues/9
+      if batch.ingest_type != 'aapb_pbcore_zipped'
+        raise StandardError, "Don't know how to count intended children when BatchIngest type is #{batch.ingest_type}"
+      end
+
+      source = batch.batch_items.find_by(repo_object_id: asset.id)
+      File.read(source.source_location)
     end
 
     def write_asset_ids_to_file
