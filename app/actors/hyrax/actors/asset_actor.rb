@@ -235,7 +235,7 @@ module Hyrax
           current_children_count = env.curation_concern.all_members.reject { |child| child.is_a?(Contribution) }.size
           intended_children_count = env.curation_concern.intended_children_count.to_i
 
-          if env.curation_concern.intended_children_count.nil? && env.curation_concern.validation_status_for_aapb.empty?
+          if env.curation_concern.intended_children_count.blank? && env.curation_concern.validation_status_for_aapb.blank?
             env.curation_concern.validation_status_for_aapb = [Asset::VALIDATION_STATUSES[:status_not_validated]]
           elsif current_children_count < intended_children_count
             env.curation_concern.validation_status_for_aapb = [Asset::VALIDATION_STATUSES[:missing_children]]

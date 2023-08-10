@@ -41,11 +41,12 @@ class Push < ApplicationRecord
     end
 
     def add_status_error(invalid_docs, status)
-      if status == Asset::VALIDATION_STATUSES[:empty]
-        ids_matching_status = invalid_docs.select { |doc| doc.validation_status_for_aapb.blank? }.map(&:id)
-      else
-       ids_matching_status = invalid_docs.select { |doc| doc.validation_status_for_aapb.include?(status) }.map(&:id)
-      end
+      ids_matching_status = if status == Asset::VALIDATION_STATUSES[:empty]
+                              invalid_docs.select { |doc| doc.validation_status_for_aapb.blank? }.map(&:id)
+                            else
+                              invalid_docs.select { |doc| doc.validation_status_for_aapb.include?(status) }.map(&:id)
+                            end
+
       # Prevents adding errors to docs that don't have a value
       # in :validation_status_for_aapb, including all non-Assets.
       return if ids_matching_status.blank?
