@@ -17,6 +17,7 @@ module AMS
 
     def fresh_run
       write_asset_ids_to_file
+      FileUtils.rm(PROCESSED_IDS_PATH) if File.exist?(PROCESSED_IDS_PATH)
 
       run(ids_file: ALL_IDS_PATH)
     end
