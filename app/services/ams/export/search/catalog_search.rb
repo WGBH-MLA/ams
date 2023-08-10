@@ -4,7 +4,7 @@ module AMS
       class CatalogSearch < Base
         # Include Blacklight modules that provide methods for configurating and
         # performing searches.
-        include Blacklight::SearchHelper
+        include Blacklight::SearchHelper if App.rails_5_1?
 
         # this is required - advanced_search will crash without it
         copy_blacklight_config_from(CatalogController)
@@ -15,14 +15,39 @@ module AMS
         end
 
         private
-          # Overwrite Base#response to use Blacklgiht::SearchHelper#search_results.
+          # Overwrite Base#response to use Blacklight::SearchHelper#search_results.
+          # TODO: Make this work for Blacklight 7.0.0 which doesn't have Blacklight::SearchHelper
+          # ref: https://github.com/scientist-softserv/ams/issues/62
           def response
-            @response ||= search_results(search_params)[0]
+            @response ||= if App.rails_5_1?
+                            search_results(search_params)[0]
+                          else
+                            # favoring Hyrax::SearchService over BlackLight::SearchService
+                            search_service = Hyrax::SearchService.new(
+                              config: CatalogController.blacklight_config,
+                              user_params: search_params,
+                              scope: CatalogController,
+                              current_ability: user.ability
+                            )
+                            search_service.search_results[0]
+                          end
           end
 
-          # Overwrite Base#response to use Blacklgiht::SearchHelper#search_results.
+          # Overwrite Base#response to use Blacklight::SearchHelper#search_results.
+          # TODO: Make this work for Blacklight 7.0.0 which doesn't have Blacklight::SearchHelper
+          # ref: https://github.com/scientist-softserv/ams/issues/62
           def response_without_rows
-            @response_without_rows ||= search_results(search_params.merge(rows: 0))[0]
+            @response_without_rows ||= if App.rails_5_1?
+                                         search_results(search_params.except(:rows))[0]
+                                       else
+                                         # favoring Hyrax::SearchService over BlackLight::SearchService
+                                         Hyrax::SearchService.new(
+                                           config: CatalogController.blacklight_config,
+                                           user_params: search_params.except(:rows),
+                                           scope: CatlogController,
+                                           current_ability: user.ability
+                                         ).search_results[0]
+                                       end
           end
       end
     end
