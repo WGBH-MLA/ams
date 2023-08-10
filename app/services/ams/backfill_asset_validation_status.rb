@@ -85,22 +85,7 @@ module AMS
         raise StandardError, "Unable to count intended children for Asset #{id}"
       end
 
-      # TODO: extract to job
-      # Generic admin user we can count on existing
-      user = User.find_by(email: 'wgbh_admin@wgbh-mla.org')
-      actor = Hyrax::CurationConcern.actor
-      env = Hyrax::Actors::Environment.new(asset, Ability.new(user), attrs_for_actor)
-
-      begin
-        # This will suppress this very repetitive warning originating from hydra-access-controls v10.7.0:
-        # warning: URI.unescape is obsolete
-        original_verbosity = $VERBOSE
-        $VERBOSE = nil
-
-        actor.update(env)
-      ensure
-        $VERBOSE = original_verbosity
-      end
+      BackfillAssetValidationStatusJob.perform_later(id, attrs_for_actor)
     end
 
     def raw_data_from_bulkrax_entry(importer_id, asset_id)
