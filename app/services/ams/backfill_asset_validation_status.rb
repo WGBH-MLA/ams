@@ -12,6 +12,7 @@ module AMS
 
     def initialize
       setup_working_directory
+      # TODO: replace with tagged logger
       @logger = ActiveSupport::Logger.new(WORKING_DIR.join('backfill_asset_validation_status.log'))
     end
 
@@ -65,24 +66,25 @@ module AMS
     private
 
     def backfill_validation_status(id)
-      asset = Asset.find(id)
+      asset_admin_data_gid = ActiveFedora::SolrService.get("id:#{id}", fl: [:admin_data_gid_ssim], rows: 1).dig('response', 'docs').first
+      admin_data = AdminData.find_by_gid!(asset_admin_data_gid['admin_data_gid_ssim'].first)
       attrs_for_actor = {}
-      raise StandardError, "Unable to find admin data for Asset #{asset.id}" if asset.admin_data.blank?
 
-      raw_source_data = if asset.admin_data.bulkrax_importer_id.present?
-                          raw_data_from_bulkrax_entry(asset.admin_data.bulkrax_importer_id, asset)
-                        elsif asset.admin_data.hyrax_batch_ingest_batch_id.present?
-                          raw_data_from_batch_item(asset.admin_data.hyrax_batch_ingest_batch_id, asset)
+      raw_source_data = if admin_data.bulkrax_importer_id.present?
+                          raw_data_from_bulkrax_entry(admin_data.bulkrax_importer_id, id)
+                        elsif admin_data.hyrax_batch_ingest_batch_id.present?
+                          raw_data_from_batch_item(admin_data.hyrax_batch_ingest_batch_id, id)
                         else
-                          raise StandardError, "Unable to find source data for Asset #{asset.id}"
+                          raise StandardError, "Unable to find source data for Asset #{id}"
                         end
 
       parsed_source_data = AAPB::BatchIngest::PBCoreXMLMapper.new(raw_source_data).asset_attributes
       attrs_for_actor['intended_children_count'] = parsed_source_data[:intended_children_count]
       if attrs_for_actor['intended_children_count'].blank?
-        raise StandardError, "Unable to count intended children for Asset #{asset.id}"
+        raise StandardError, "Unable to count intended children for Asset #{id}"
       end
 
+      # TODO: extract to job
       # Generic admin user we can count on existing
       user = User.find_by(email: 'wgbh_admin@wgbh-mla.org')
       actor = Hyrax::CurationConcern.actor
@@ -100,10 +102,10 @@ module AMS
       end
     end
 
-    def raw_data_from_bulkrax_entry(importer_id, asset)
+    def raw_data_from_bulkrax_entry(importer_id, asset_id)
       importer = Bulkrax::Importer.find(importer_id)
-      matching_entries = importer.entries.select(:id).where("JSON_EXTRACT(parsed_metadata, '$.id') = '#{asset.id}'")
-      raise StandardError, "Ambiguous data sources found for Asset #{asset.id}" if matching_entries.count > 1
+      matching_entries = importer.entries.select(:id).where("JSON_EXTRACT(parsed_metadata, '$.id') = '#{asset_id}'")
+      raise StandardError, "Ambiguous data sources found for Asset #{asset_id}" if matching_entries.count > 1
 
       entry = Bulkrax::Entry.find(matching_entries.first.try(:id))
       ## NOTE:
@@ -112,7 +114,7 @@ module AMS
       entry.raw_metadata['pbcore_xml']
     end
 
-    def raw_data_from_batch_item(batch_id, asset)
+    def raw_data_from_batch_item(batch_id, asset_id)
       batch = Hyrax::BatchIngest::Batch.find(batch_id)
       ## NOTE:
       # As of 9 August, 2023, the logic to count the number of intended children an Asset should have has only
@@ -124,7 +126,7 @@ module AMS
         raise StandardError, "Don't know how to count intended children when BatchIngest type is #{batch.ingest_type}"
       end
 
-      batch_item = batch.batch_items.find_by(repo_object_id: asset.id)
+      batch_item = batch.batch_items.find_by(repo_object_id: asset_id)
       File.read(batch_item.source_location)
     end
 
