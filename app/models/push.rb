@@ -34,11 +34,19 @@ class Push < ApplicationRecord
       end
       return if invalid_docs.blank?
 
-      add_status_error(invalid_docs, Asset::VALIDATION_STATUSES[:missing_children])
+      Asset::VALIDATION_STATUSES.each_pair do |status_key, status_value|
+        next if status_key == :valid
+        add_status_error(invalid_docs, status_value)
+      end
     end
 
     def add_status_error(invalid_docs, status)
-      ids_matching_status = invalid_docs.select { |doc| doc.validation_status_for_aapb.include?(status) }.map(&:id)
+      ids_matching_status = if status == Asset::VALIDATION_STATUSES[:empty]
+                              invalid_docs.select { |doc| doc.validation_status_for_aapb.blank? }.map(&:id)
+                            else
+                              invalid_docs.select { |doc| doc.validation_status_for_aapb.include?(status) }.map(&:id)
+                            end
+
       # Prevents adding errors to docs that don't have a value
       # in :validation_status_for_aapb, including all non-Assets.
       return if ids_matching_status.blank?
