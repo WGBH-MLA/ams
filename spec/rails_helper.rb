@@ -41,25 +41,46 @@ end
 
 ENV['WEB_HOST'] ||= `hostname -s`.strip
 if ENV['CHROME_HOSTNAME'].present?
+  # Uses faster rack_test driver when JavaScript support not needed
   Capybara.default_max_wait_time = 8
+  # Capybara.default_driver = :rack_test
 
-  capabilities = Selenium::WebDriver::Remote::Capabilities.chrome(
-    chromeOptions: {
-      args: %w[disable-gpu no-sandbox whitelisted-ips window-size=1400,1400]
-    }
-  )
+  if App.rails_5_1?
+    capabilities = Selenium::WebDriver::Remote::Capabilities.chrome(
+      chromeOptions: {
+        args: %w[disable-gpu no-sandbox whitelisted-ips window-size=1400,1400]
+      }
+    )
 
-  Capybara.register_driver :chrome do |app|
-    d = Capybara::Selenium::Driver.new(app,
-                                       browser: :remote,
-                                       desired_capabilities: capabilities,
-                                       url: "http://#{ENV['CHROME_HOSTNAME']}:4444/wd/hub")
-    # Fix for capybara vs remote files. Selenium handles this for us
-    d.browser.file_detector = lambda do |args|
-      str = args.first.to_s
-      str if File.exist?(str)
+    Capybara.register_driver :chrome do |app|
+      d = Capybara::Selenium::Driver.new(app,
+                                        browser: :remote,
+                                        desired_capabilities: capabilities,
+                                        url: "http://#{ENV['CHROME_HOSTNAME']}:4444/wd/hub")
+      # Fix for capybara vs remote files. Selenium handles this for us
+      d.browser.file_detector = lambda do |args|
+        str = args.first.to_s
+        str if File.exist?(str)
+      end
+      d
     end
-    d
+  else
+    chrome_options = Selenium::WebDriver::Chrome::Options.new(
+      args: %w[--disable-gpu --no-sandbox --whitelisted-ips --window-size=1400,1400]
+    )
+
+    Capybara.register_driver :chrome do |app|
+      d = Capybara::Selenium::Driver.new(app,
+                                         browser: :remote,
+                                         options: chrome_options,
+                                         url: "http://#{ENV['CHROME_HOSTNAME']}:4444/wd/hub")
+      # Fix for capybara vs remote files. Selenium handles this for us
+      d.browser.file_detector = lambda do |args|
+        str = args.first.to_s
+        str if File.exist?(str)
+      end
+      d
+    end
   end
   Capybara.server_host = '0.0.0.0'
   Capybara.server_port = 3001
