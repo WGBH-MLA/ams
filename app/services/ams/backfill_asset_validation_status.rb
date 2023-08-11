@@ -36,7 +36,30 @@ module AMS
       run(ids_file: REMAINING_IDS_PATH)
     end
 
+    ## NOTE:
+    # Running this method will result in duplicate IDs being added to the PROCESSED_IDS_PATH
+    # file. However, while this means that the line count of that file won't match one-to-one
+    # with the number of IDs processed, the line count of the FAILED_IDS_PATH already isn't
+    # one-to-one and, more importantly, it won't break the logic in the #setup_remaining_ids_file
+    # method, which is the primary purpose of the PROCESSED_IDS_PATH file.
+    def run_failed
+      raise StandardError, 'No failed IDs found' unless File.exist?(FAILED_IDS_PATH)
+
+      ## NOTE:
+      # Since some processing will happen within the BackfillAssetValidationStatusJob,
+      # and since failed jobs retry automatically, it is very likely that IDs within
+      # the FAILED_IDS_PATH file will be duplicated several times. Because of this,
+      # to avoid duplicate processing, we use Set#uniq and don't fall back on the
+      # FAILED_IDS_PATH file when calling #run.
+      failed_ids = Set.new(File.read(FAILED_IDS_PATH).split("\n"))
+      @ids = failed_ids.uniq
+      run(ids_file: nil)
+    end
+
     def run(ids_file:)
+      msg = 'To avoid duplicate processing, use #run_failed to reprocess failed IDs'
+      raise StandardError, msg if ids_file == FAILED_IDS_PATH
+
       @ids ||= File.read(ids_file).split("\n")
       progressbar = ProgressBar.create(total: ids.size, format: '%a %e %P% Processed: %c from %C')
 

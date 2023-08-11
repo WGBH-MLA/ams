@@ -10,6 +10,9 @@ class BackfillAssetValidationStatusJob < ApplicationJob
     actor = Hyrax::CurationConcern.actor
     env = Hyrax::Actors::Environment.new(asset, Ability.new(user), attrs_for_actor)
 
+    # The 'intended_children_count' value in attrs_for_actor will be used to
+    # update the Asset's :validation_status_for_aapb property.
+    # @see Hyrax::Actors::AssetActor#set_validation_status
     actor.update(env)
   rescue => e
     logger.error("Asset update failed! | #{e.class} | #{e.message} | #{asset_id}")
