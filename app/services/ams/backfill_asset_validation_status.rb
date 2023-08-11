@@ -4,6 +4,7 @@ require 'ruby-progressbar'
 module AMS
   class BackfillAssetValidationStatus
     WORKING_DIR = Rails.root.join('tmp', 'imports', 'backfill_asset_validation_status').freeze
+    LOGGER_PATH = WORKING_DIR.join('backfill_asset_validation_status.log').freeze
     ALL_IDS_PATH = WORKING_DIR.join('all_ids.txt').freeze
     PROCESSED_IDS_PATH = WORKING_DIR.join('processed_ids.txt').freeze
     REMAINING_IDS_PATH = WORKING_DIR.join('remaining_ids.txt').freeze
@@ -13,7 +14,7 @@ module AMS
     def initialize
       setup_working_directory
       # TODO: replace with tagged logger
-      @logger = ActiveSupport::Logger.new(WORKING_DIR.join('backfill_asset_validation_status.log'))
+      @logger = ActiveSupport::Logger.new(LOGGER_PATH)
     end
 
     def fresh_run
