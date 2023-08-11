@@ -29,7 +29,7 @@ class AssetIndexer < AMS::WorkIndexer
         AnnotationTypesService.new.select_all_options.each do |type|
           # Use the ID defined in the AnnotationType service
           type_id = type[1]
-          solr_doc[ solr_name(type_id.underscore,'ssim') ] = object.try(type_id.to_sym) unless object.try(type_id.to_sym).empty?
+          solr_doc[solr_name(type_id.underscore, :symbol)] = object.try(type_id.to_sym) unless object.try(type_id.to_sym).empty?
         end
 
         #Indexing for search by batch_id
@@ -44,4 +44,3 @@ class AssetIndexer < AMS::WorkIndexer
     end
   end
 end
-
