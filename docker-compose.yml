@@ -121,7 +121,7 @@ services:
     expose:
       - 8080
     environment:
-      - VIRTUAL_PORT=8983
+      - VIRTUAL_PORT=8080
       - VIRTUAL_HOST=fcrepo.ams.test
       - JAVA_OPTIONS=-Dfcrepo.object.directory="/data/objects" -Dfcrepo.binary.directory="/data/binaries" -Dfcrepo.mysql.host=db -Dfcrepo.mysql.username=root -Dfcrepo.mysql.password=DatabaseFTW
       - MODESHAPE_CONFIG=classpath:/config/jdbc-mysql/repository.json
