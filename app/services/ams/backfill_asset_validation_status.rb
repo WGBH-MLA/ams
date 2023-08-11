@@ -8,6 +8,7 @@ module AMS
     ALL_IDS_PATH = WORKING_DIR.join('all_ids.txt').freeze
     PROCESSED_IDS_PATH = WORKING_DIR.join('processed_ids.txt').freeze
     REMAINING_IDS_PATH = WORKING_DIR.join('remaining_ids.txt').freeze
+    FAILED_IDS_PATH = WORKING_DIR.join('failed_ids.txt').freeze
 
     attr_accessor :ids, :logger
 
@@ -19,7 +20,9 @@ module AMS
 
     def fresh_run
       write_asset_ids_to_file
-      FileUtils.rm(PROCESSED_IDS_PATH) if File.exist?(PROCESSED_IDS_PATH)
+      [PROCESSED_IDS_PATH, FAILED_IDS_PATH].each do |file|
+        FileUtils.rm(file) if File.exist?(file)
+      end
 
       run(ids_file: ALL_IDS_PATH)
     end
@@ -56,6 +59,7 @@ module AMS
             progressbar.increment
           rescue => e
             logger.error("#{e.class} | #{e.message} | #{id} | Continuing...")
+            File.open(FAILED_IDS_PATH, 'a') { |file| file.puts(id) }
           end
         end
       ensure
