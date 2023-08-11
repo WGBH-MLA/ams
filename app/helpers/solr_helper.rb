@@ -4,7 +4,7 @@ module SolrHelper
     if Module.const_defined?(:Solrizer)
       ::Solrizer.solr_name(field_name, *opts)
     else
-      ::ActiveFedora.index_field_mapper.solr_name(field_name)
+      ::ActiveFedora.index_field_mapper.solr_name(field_name, *opts)
     end
   end
 end
