@@ -41,7 +41,9 @@ end
 
 ENV['WEB_HOST'] ||= `hostname -s`.strip
 if ENV['CHROME_HOSTNAME'].present?
+  # Uses faster rack_test driver when JavaScript support not needed
   Capybara.default_max_wait_time = 8
+  # Capybara.default_driver = :rack_test
 
   if App.rails_5_1?
     capabilities = Selenium::WebDriver::Remote::Capabilities.chrome(
