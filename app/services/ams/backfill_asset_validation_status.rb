@@ -54,8 +54,8 @@ module AMS
           # This nested #begin lets us log the `id` currently being processed if an error is thrown
           begin # rubocop:disable Style/RedundantBegin
             logger.info("Starting ID: #{id}")
-            backfill_validation_status(id)
             processed_file.puts(id)
+            backfill_validation_status(id)
             progressbar.increment
           rescue => e
             logger.error("#{e.class} | #{e.message} | #{id} | Continuing...")
