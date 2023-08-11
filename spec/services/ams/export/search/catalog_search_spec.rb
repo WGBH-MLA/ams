@@ -2,6 +2,7 @@ require 'rails_helper'
 
 RSpec.describe AMS::Export::Search::CatalogSearch do
   context 'when searching for Asset records' do
+    skip "Make this work for Blacklight 7.0.0 which doesn't have Blacklight::SearchHelper" unless App.rails_5_1?
     # create assets first with let!
     # Here we create a few more than what would normally show up in a paginated
     # result (default 10 per page), to guarantee that catalog's per_page limit

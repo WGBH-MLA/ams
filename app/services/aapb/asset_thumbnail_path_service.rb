@@ -1,15 +1,18 @@
 module AAPB
   class AssetThumbnailPathService < Hyrax::WorkThumbnailPathService
+
+    S3_THUMBNAIL_BASE = 'http://americanarchive.org.s3.amazonaws.com/thumbnail'.freeze
+
     class << self
-      S3_THUMBNAIL_BASE = 'http://americanarchive.org.s3.amazonaws.com/thumbnail'.freeze
-      class_attribute :object_type, :sonyci_id, :id, :aapb_digital_instantiation, :digital_instantiations
+      attr_accessor :object_type, :sonyci_id, :id, :aapb_digital_instantiation, :digital_instantiations
 
       def call(object)
-        self.object_type = object.class.name.underscore
-        self.sonyci_id = object.admin_data.sonyci_id || []
-        self.id = object.id
-        self.digital_instantiations = object.digital_instantiations
-        self.aapb_digital_instantiation = object.digital_instantiations.find { |inst| inst.holding_organization&.include?( "American Archive of Public Broadcasting") } || nil
+        @object_type = object.class.name.underscore
+        @sonyci_id = object.admin_data.sonyci_id || []
+        @id = object.id
+        @digital_instantiations = object.digital_instantiations
+        @aapb_digital_instantiation = object.digital_instantiations.find { |inst| inst.holding_organization&.include?( "American Archive of Public Broadcasting") } || nil
+
         super
       end
 
