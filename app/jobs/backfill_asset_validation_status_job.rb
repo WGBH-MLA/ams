@@ -13,6 +13,9 @@ class BackfillAssetValidationStatusJob < ApplicationJob
     actor.update(env)
   rescue => e
     logger.error("Asset update failed! | #{e.class} | #{e.message} | #{asset_id}")
+    File.open(AMS::BackfillAssetValidationStatus::FAILED_IDS_PATH, 'a') do |file|
+      file.puts(asset_id)
+    end
     raise e
   end
 
