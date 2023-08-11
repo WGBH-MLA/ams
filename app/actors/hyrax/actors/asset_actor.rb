@@ -53,19 +53,19 @@ module Hyrax
         def set_admin_data_attributes(admin_data, env)
           AdminData.attributes_for_update.each do |k|
             # Some attributes are serialized on AdminData, so always send an array
-            if should_empty_admin_data_value?(k, admin_data, env)
-              AdminData::SERIALIZED_FIELDS.include?(k) ? admin_data.send("#{k}=", Array.new) : admin_data.send("#{k}=", "")
+            if should_empty_admin_data_value?(k, env)
+              AdminData::SERIALIZED_FIELDS.include?(k) ? admin_data.send("#{k}=", Array.new) : admin_data.send("#{k}=", nil)
             elsif env.attributes[k].present?
               AdminData::SERIALIZED_FIELDS.include?(k) ? admin_data.send("#{k}=", Array(env.attributes[k])) : admin_data.send("#{k}=", env.attributes[k].to_s)
             end
           end
         end
 
-        def should_empty_admin_data_value?(key, admin_data, env)
-          key != :bulkrax_importer_id &&
-          env.attributes.key?(key) &&
-          admin_data.send(key).present? &&
-          !env.attributes[key].present?
+        def should_empty_admin_data_value?(key, env)
+          return false if %i[bulkrax_importer_id hyrax_batch_ingest_batch_id].include?(key)
+
+          # The presence of the key with a "blank" value indicates we're intentionally emptying the value
+          env.attributes.key?(key) && env.attributes[key].blank?
         end
 
         def delete_removed_annotations(admin_data, env)
