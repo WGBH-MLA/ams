@@ -389,7 +389,7 @@ class SolrDocument
   end
 
   def holding_organization_ssim
-    self[solr_name('holding_organization','ssim')]
+    self[solr_name('holding_organization', :symbol)]
   end
 
   def affiliation
@@ -401,39 +401,39 @@ class SolrDocument
   end
 
   def level_of_user_access
-    self[solr_name('level_of_user_access', 'ssim')]
+    self[solr_name('level_of_user_access', :symbol)]
   end
 
   def outside_url
-    self[solr_name('outside_url', 'ssim')]
+    self[solr_name('outside_url', :symbol)]
   end
 
   def special_collections
-    self[solr_name('special_collections', 'ssim')]
+    self[solr_name('special_collections', :symbol)]
   end
 
   def transcript_status
-    self[solr_name('transcript_status', 'ssim')]
+    self[solr_name('transcript_status', :symbol)]
   end
 
   def organization
-    self[solr_name('organization', 'ssim')]
+    self[solr_name('organization', :symbol)]
   end
 
   def sonyci_id
-    self[solr_name('sonyci_id', 'ssim')]
+    self[solr_name('sonyci_id', :symbol)]
   end
 
   def licensing_info
-    self[solr_name('licensing_info', 'ssim')]
+    self[solr_name('licensing_info', :symbol)]
     end
 
   def playlist_group
-    self[solr_name('playlist_group', 'ssim')]
+    self[solr_name('playlist_group', :symbol)]
   end
 
   def playlist_order
-    self[solr_name('playlist_order', 'ssim')]
+    self[solr_name('playlist_order', :symbol)]
   end
 
   def media_src(part)
@@ -477,47 +477,47 @@ class SolrDocument
   end
 
   def special_collection_category
-    self[solr_name('special_collection_category', 'ssim')]
+    self[solr_name('special_collection_category', :symbol)]
   end
 
   def canonical_meta_tag
-    self[solr_name('canonical_meta_tag', 'ssim')]
+    self[solr_name('canonical_meta_tag', :symbol)]
   end
 
   def cataloging_status
-    self[solr_name('cataloging_status', 'ssim')]
+    self[solr_name('cataloging_status', :symbol)]
   end
 
   def captions_url
-    self[solr_name('captions_url', 'ssim')]
+    self[solr_name('captions_url', :symbol)]
   end
 
   def external_reference_url
-    self[solr_name('external_reference_url','ssim')]
+    self[solr_name('external_reference_url', :symbol)]
   end
 
   def last_modified
-    self[solr_name('last_modified','ssim')]
+    self[solr_name('last_modified', :symbol)]
   end
 
   def mavis_number
-    self[solr_name('mavis_number','ssim')]
+    self[solr_name('mavis_number', :symbol)]
   end
 
   def project_code
-    self[solr_name('project_code','ssim')]
+    self[solr_name('project_code', :symbol)]
   end
 
   def supplemental_material
-    self[solr_name('supplemental_material','ssim')]
+    self[solr_name('supplemental_material', :symbol)]
   end
 
   def transcript_url
-    self[solr_name('transcript_url','ssim')]
+    self[solr_name('transcript_url', :symbol)]
   end
 
   def transcript_source
-    self[solr_name('transcript_source','ssim')]
+    self[solr_name('transcript_source', :symbol)]
   end
 
   def md5
@@ -526,7 +526,7 @@ class SolrDocument
   end
 
   def proxy_start_time
-    self[solr_name('proxy_start_time','ssim')]
+    self[solr_name('proxy_start_time', :symbol)]
   end
 
   def all_members(only: [], exclude: [])

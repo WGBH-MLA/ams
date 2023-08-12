@@ -16,8 +16,6 @@ module AMS
 
         private
           # Overwrite Base#response to use Blacklight::SearchHelper#search_results.
-          # TODO: Make this work for Blacklight 7.0.0 which doesn't have Blacklight::SearchHelper
-          # ref: https://github.com/scientist-softserv/ams/issues/62
           def response
             @response ||= if App.rails_5_1?
                             search_results(search_params)[0]
@@ -26,7 +24,7 @@ module AMS
                             search_service = Hyrax::SearchService.new(
                               config: CatalogController.blacklight_config,
                               user_params: search_params,
-                              scope: CatalogController,
+                              scope: self,
                               current_ability: user.ability
                             )
                             search_service.search_results[0]
@@ -34,8 +32,6 @@ module AMS
           end
 
           # Overwrite Base#response to use Blacklight::SearchHelper#search_results.
-          # TODO: Make this work for Blacklight 7.0.0 which doesn't have Blacklight::SearchHelper
-          # ref: https://github.com/scientist-softserv/ams/issues/62
           def response_without_rows
             @response_without_rows ||= if App.rails_5_1?
                                          search_results(search_params.except(:rows))[0]
@@ -44,7 +40,7 @@ module AMS
                                          Hyrax::SearchService.new(
                                            config: CatalogController.blacklight_config,
                                            user_params: search_params.except(:rows),
-                                           scope: CatlogController,
+                                           scope: self,
                                            current_ability: user.ability
                                          ).search_results[0]
                                        end
