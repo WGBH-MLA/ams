@@ -6,3 +6,9 @@ collection:
  persist: true
  dir: solr/config/
  name: hydra-development
+
+cloud: true
+
+configsets:
+  - dir: solr/conf/
+    name: hyku
