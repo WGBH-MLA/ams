@@ -83,6 +83,13 @@ services:
       - OOM=script
       - VIRTUAL_PORT=8983
       - VIRTUAL_HOST=solr.ams.test
+      - SOLR_ADMIN_USERNAME=solr
+      - SOLR_ADMIN_PASSWORD=SolrRocks
+      - SOLR_COLLECTION=hydra-development
+      - SOLR_CLOUD_BOOTSTRAP=yes
+      - SOLR_ENABLE_CLOUD_MODE=yes
+      - SOLR_ENABLE_AUTHENTICATION=yes
+      - ZK_HOST=zoo:2181
     user: root
     command: bash -c "
       chown -R 8983:8983 /var/solr
@@ -152,6 +159,12 @@ services:
     # we need to do seed seperate because activerecord doesn't reload properly otherwise
     command:
       - >
+        if [ -v DEPENDENCIES_NEXT ]; then
+          export BUNDLE_GEMFILE=Gemfile_next;
+          export BUNDLER_VERSION=2.0.1
+        else
+          export BUNDLE_GEMFILE=Gemfile;
+        fi;
         solrcloud-upload-configset.sh /app/samvera/hyrax-webapp/solr/config &&
         solrcloud-assign-configset.sh &&
         SOLR_COLLECTION_NAME=hydra-test solrcloud-assign-configset.sh &&
