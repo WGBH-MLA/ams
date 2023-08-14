@@ -1,0 +1,43 @@
+<% provide :page_header do %>
+  <h1><span class="fa fa-sitemap"></span><%= t('hyrax.admin.sidebar.manage_roles') %></h1>
+  <%if can? :create, Role %>
+    <div class="pull-right">
+      <% if can? :create, Role %>
+        <%= link_to t('hyrax.dashboard.manage_role.create_role'), role_management.new_role_path, method: :get, class: 'btn btn-primary' %>
+      <% end %>
+  <% end %>
+  </div>
+<% end %>
+
+<div class="panel panel-default">
+  <div class="panel-body">
+    <% if @roles.present? %>
+      <div class="table-responsive">
+        <table class="table table-striped datatable">
+          <thead>
+          <tr>
+            <th><%= t('hyrax.dashboard.manage_role.name')%></th>
+            <th><%= t('hyrax.dashboard.manage_role.role_total_users') %></th>
+            <th><%= t('hyrax.dashboard.manage_role.actions') %></th>
+          </tr>
+          </thead>
+          <tbody>
+          <% @roles.each do |row| %>
+            <tr>
+              <td><%=link_to row.name, role_management.role_path(row) %></td>
+              <td><%= row.users.count %></td>
+              <td>
+                <% if can? :destroy, Role %>
+                  <%= button_to t('role-management.edit.delete'), role_management.role_path(row.id), :method=>:delete, data: { confirm: t('hyrax.dashboard.manage_role.confirm')}, class:'btn btn-xs btn-danger' %>
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+          </tbody>
+        </table>
+      </div>
+    <% else %>
+      <p><%= t('hyrax.dashboard.manage_role.role_not_available')%></p>
+    <% end %>
+  </div>
+</div>

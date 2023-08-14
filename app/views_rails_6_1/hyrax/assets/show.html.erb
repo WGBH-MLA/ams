@@ -1,0 +1,40 @@
+<% provide :page_title, @presenter.page_title %>
+<% content_for :head do %>
+  <%= stylesheet_link_tag 'work_show/work_show' -%>
+  <meta name="turbolinks-visit-control" content="reload">
+<% end %>
+<div class="row work-type">
+  <div class="col-xs-12">
+    <%= render 'work_type', presenter: @presenter %>
+  </div>
+  <div class="col-xs-12">&nbsp;</div>
+  <div itemscope itemtype="http://schema.org/CreativeWork" class="col-xs-12">
+    <div class="panel panel-default work-panel">
+      <div class="panel-heading">
+        <%= render 'work_title', presenter: @presenter %>
+      </div>
+      <div class="panel-body">
+        <div class="col-sm-12">
+          <%= render 'representative_media', presenter: @presenter %>
+        </div>
+
+          <%= render 'workflow_actions_widget', presenter: @presenter %>
+          <div class="col-sm-12">
+            <%= render 'metadata', presenter: @presenter %>
+          </div>
+
+          <div class="col-sm-12">
+
+            <%= render 'instantiations', presenter: @presenter %>
+            <%# TODO: we may consider adding these partials in the future %>
+            <%# = render 'sharing_with', presenter: @presenter %>
+            <%# = render 'user_activity', presenter: @presenter %>
+          </div>
+
+          <div class="col-sm-12">
+            <%= render 'relationships', presenter: @presenter %>
+          </div>
+      </div>
+    </div>
+  </div>
+</div>

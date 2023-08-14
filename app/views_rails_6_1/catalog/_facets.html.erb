@@ -1,0 +1,28 @@
+<%
+  # This is an override of Blacklight [https://github.com/projectblacklight/blacklight/blob/release-6.10.2/app/views/catalog/_facets.html.erb]
+  # WARNING: upgrading Hyrax/Blacklight may break this override.
+  # Display facets sidebar
+%>
+<% # main container for facets/limits menu  -%>
+  <div id="facets" class="facets sidenav">
+
+    <div class="top-panel-heading panel-heading">
+      <button type="button" class="facets-toggle" data-toggle="collapse" data-target="#facet-panel-collapse">
+        <span class="sr-only">Toggle facets</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+
+      <h2 class='facets-heading'>
+        <%= t('blacklight.search.facets.title') %>
+      </h2>
+    </div>
+
+    <div id="facet-panel-collapse" class="collapse panel-group">
+      <%= render 'search_filters' %>
+      <% if has_facet_values? %>
+        <%= render_facet_partials %>
+      <% end %>
+    </div>
+  </div>

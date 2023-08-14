@@ -1,0 +1,33 @@
+<%  array_of_ids = presenter.list_of_contribution_ids_to_display %>
+<%  contributions = presenter.member_presenters_for(array_of_ids) %>
+<% if contributions.any? %>
+<div class="block">
+  <a class="btn btn-default btn-block header collapsed" id="tab-<%= t('.credits') %>" role="button" data-toggle="collapse" href="#collapse-<%= t('.credits') %>" aria-expanded="false" aria-controls="collapse-<%= t('.credits') %>">
+    <%= t('.credits') %>
+  </a>
+  <div class="collapse" id="collapse-<%= t('.credits') %>">
+    <div class="well">
+      <table class="table table-striped">
+        <thead>
+        <tr>
+          <th><%= t('.role') %></th>
+          <th><%= t('.name') %></th>
+          <th><%= t('.affiliation') %></th>
+          <th><%= t('.portrayal') %></th>
+        </tr>
+        </thead>
+        <tbody>
+        <% contributions.each  do |contribution|  %>
+        <tr>
+          <td><%= contribution.solr_document.try(:contributor_role).try(:first) %></td>
+          <td><%= contribution.solr_document.try(:contributor).try(:first) %></td>
+          <td><%= contribution.solr_document.try(:affiliation).try(:first) %></td>
+          <td><%= contribution.solr_document.try(:portrayal).try(:first) %></td>
+        </tr>
+        <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<% end %>

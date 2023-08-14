@@ -1,0 +1,76 @@
+<style>
+  #webhook_logs thead {
+    border-bottom: solid 1px #888;
+    background-color: #ccc;
+  }
+
+  #webhook_logs tr {
+    padding: 3px 0;
+    vertical-align: top;
+  }
+
+  #webhook_logs tr.odd {
+    background: #eee;
+  }
+
+  #webhook_logs td, th {
+    padding: 3px 30px 3px 3px;
+  }
+
+  #webhook_logs ul.guids {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  #webhook_logs .pagination {
+    text-align: center;
+    background-color: orange;
+  }
+</style>
+
+<p id="notice"><%= notice %></p>
+
+<h1>Sony Ci Webhook Logs</h1>
+
+<% if @pagination %>
+  <div>
+    <p>Showing <%= @pagination.showing %> of <%= @pagination.total %></p>
+    <p>Pages:
+      <% ( @pagination.total / @pagination.per_page + 1 ).times do |page| %>
+        <%= link_to (page + 1).to_i, sony_ci_webhook_logs_path( page: page + 1, per_page: @pagination.per_page ) %>
+      <% end %>
+    </p>
+  </div>
+<% end %>
+
+<table id="webhook_logs">
+  <thead>
+    <tr>
+      <th>Date/Time</th>
+      <th>Action</th>
+      <th>Status</th>
+      <th>GUIDs</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @presenters.each_with_index do |presenter, i| %>
+      <tr class="<%= (i % 2 == 0) ? "even" : "odd" %>">
+        <td><%= presenter.created_at %></td>
+        <td>
+          <%= link_to presenter.action, sony_ci_webhook_log_path(presenter.id) %>
+        </td>
+        <td><%= presenter.status %></td>
+        <td>
+          <ul class="guids">
+            <% presenter.guids.each_with_index do |guid, i| %>
+              <li><%= link_to guid, hyrax_asset_path(guid) %></li>
+            <% end %>
+          </ul>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+<br>

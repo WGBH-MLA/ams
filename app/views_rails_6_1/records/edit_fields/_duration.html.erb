@@ -1,0 +1,2 @@
+<!-- The pattern matches HH:MM:SS, H:MM:SS, MM:SS, or M:SS  -->
+<%= f.input :duration, input_html: { pattern: AMS::TimeCodeService.regex_for_html } , required: f.object.required?(key), disabled:f.object.respond_to?(:disabled?) && f.object.disabled?(key) %>
