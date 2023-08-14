@@ -66,7 +66,14 @@ module Hyrax
       end
 
       def query_solr
-        search_results(params)
+        if App.rails_5_1?
+          search_results(params)
+        else
+          Hyrax::SearchService.new(config: blacklight_config,
+                                   scope: self,
+                                   user_params: params,
+                                   search_builder_class: blacklight_config.search_builder_class).search_results
+        end
       end
   end
 end

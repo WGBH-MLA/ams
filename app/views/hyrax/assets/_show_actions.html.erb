@@ -20,7 +20,7 @@
       <% if can? :destroy, Asset %>
         <%= link_to "Delete", [main_app, presenter], class: 'btn btn-danger', data: { confirm: "Delete this #{presenter.human_readable_type}?" }, method: :delete %>
       <% end %>
-      
+
       <% if presenter.media_available? %>
         <%= link_to "Download Media", "/concern/assets/#{presenter.id}/download_media.zip", class: 'btn btn-default' %>
       <% end %>
@@ -31,7 +31,11 @@
             <ul class="dropdown-menu">
               <% presenter.valid_child_concerns.each do |concern| %>
                 <li>
-                  <%= link_to "Attach #{concern.human_readable_type}", polymorphic_path([main_app, :new, :hyrax, :parent, concern.model_name.singular], parent_id: presenter.id) %>
+                  <% if App.rails_5_1? %>
+                    <%= link_to "Attach #{concern.human_readable_type}", polymorphic_path([main_app, :new, :hyrax, :parent, concern.model_name.singular], parent_id: presenter.id) %>
+                  <% else %>
+                    <%= link_to "Attach #{concern.human_readable_type}", polymorphic_path([main_app, :new, :hyrax, :parent, concern.model_name.singular.to_sym], parent_id: presenter.id) %>
+                  <% end %>
                 </li>
               <% end %>
             </ul>
