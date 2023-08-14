@@ -42,4 +42,14 @@ module ApplicationHelper
   def query_ids(query)
     query_docs(query).map(&:id)
   end
+
+  # passing in just a field_name has been deprecated in Blacklight 7.0
+  # we need to pass in a Blacklight::Configuration::Field object instead
+  def field_value_for(doc_presenter, field_name)
+    if App.rails_5_1?
+      doc_presenter.field_value(field_name)
+    else
+      doc_presenter.field_value(Blacklight::Configuration::Field.new(field: field_name))
+    end
+  end
 end
