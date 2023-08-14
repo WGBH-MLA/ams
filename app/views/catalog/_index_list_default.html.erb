@@ -6,56 +6,112 @@
 # view will have to be updated to reflect those changes if so desired.
 %>
 
-<% doc_presenter = index_presenter(document) %>
+<% if App.rails_5_1? %>
+  <% doc_presenter = index_presenter(document) %>
 
-<% if field_value_for(doc_presenter, 'has_model_ssim') == 'Collection' %>
-  <div class="col-md-8">
-<% else %>
-  <div class="col-md-10">
-<% end %>
-    <div class="metadata">
-      <div class="row">
-      <% if !document.display_dates.empty? %>
-        <div class="col-md-12 metadata-col">
-          <% index_fields(document).select{ |k,v| document.display_dates.has_key?(k) }.each do |field_name, field| %>
-            <% if should_render_index_field? document, field %>
-              <h4><%= render_index_field_label document, field: field_name %></h4> <%= field_value_for(doc_presenter, field_name) %>
+  <% if(doc_presenter.field_value('has_model_ssim') == 'Collection') %>
+    <div class="col-md-8">
+  <% else %>
+    <div class="col-md-10">
+  <% end %>
+      <div class="metadata">
+        <div class="row">
+        <% if !document.display_dates.empty? %>
+          <div class="col-md-12 metadata-col">
+            <% index_fields(document).select{ |k,v| document.display_dates.has_key?(k) }.each do |field_name, field| %>
+              <% if should_render_index_field? document, field %>
+                <h4><%= render_index_field_label document, field: field_name %></h4> <%= doc_presenter.field_value field_name %>
+              <% end %>
             <% end %>
-          <% end %>
-        </div>
-      <% end %>
+          </div>
+        <% end %>
 
-      <% if !document.identifying_data.empty? %>
-        <div class="col-md-12 metadata-col">
-          <% index_fields(document).select{ |k,v| document.identifying_data.has_key?(k) }.each do |field_name, field| %>
-            <% if should_render_index_field? document, field %>
-              <h4><%= render_index_field_label document, field: field_name %></h4> <%= field_value_for(doc_presenter, field_name) %>
+        <% if !document.identifying_data.empty? %>
+          <div class="col-md-12 metadata-col">
+            <% index_fields(document).select{ |k,v| document.identifying_data.has_key?(k) }.each do |field_name, field| %>
+              <% if should_render_index_field? document, field %>
+                <h4><%= render_index_field_label document, field: field_name %></h4> <%= doc_presenter.field_value field_name %>
+              <% end %>
             <% end %>
-          <% end %>
-        </div>
-      <% end %>
+          </div>
+        <% end %>
 
-      <% if document.display_description.present? %>
-        <% index_fields(document).select{ |k,v| k == "description" }.each do |field_name, field| %>
-          <% if should_render_index_field? document, field %>
-            <div class="col-md-12 metadata-desc-col">
-              <p><strong>Description:</strong> <%= field_value_for(doc_presenter, field_name) %></p>
-            </div>
+        <% if document.display_description.present? %>
+          <% index_fields(document).select{ |k,v| k == "description" }.each do |field_name, field| %>
+            <% if should_render_index_field? document, field %>
+              <div class="col-md-12 metadata-desc-col">
+                <p><strong>Description:</strong> <%= doc_presenter.field_value field_name %></p>
+              </div>
+            <% end %>
           <% end %>
         <% end %>
-      <% end %>
-    </div>
-  </div>
-<% if(field_value_for(doc_presenter, 'has_model_ssim') == 'Collection') %>
-  <% collection_presenter = Hyrax::CollectionPresenter.new(document, current_ability) %>
-  <div class="col-md-4">
-    <div class="collection-counts-wrapper">
-      <div class="collection-counts-item">
-        <span><%= collection_presenter.total_viewable_collections %></span>Collections
-      </div>
-      <div class="collection-counts-item">
-        <span><%= collection_presenter.total_viewable_works %></span>Works
       </div>
     </div>
-  </div>
+  <% if(doc_presenter.field_value('has_model_ssim') == 'Collection') %>
+    <% collection_presenter = Hyrax::CollectionPresenter.new(document, current_ability) %>
+    <div class="col-md-4">
+      <div class="collection-counts-wrapper">
+        <div class="collection-counts-item">
+          <span><%= collection_presenter.total_viewable_collections %></span>Collections
+        </div>
+        <div class="collection-counts-item">
+          <span><%= collection_presenter.total_viewable_works %></span>Works
+        </div>
+      </div>
+    </div>
+  <% end %>
+<% else %>
+  <% doc_presenter = index_presenter(document) %>
+
+  <% if field_value_for(doc_presenter, 'has_model_ssim') == 'Collection' %>
+    <div class="col-md-8">
+  <% else %>
+    <div class="col-md-10">
+  <% end %>
+      <div class="metadata">
+        <div class="row">
+        <% if !document.display_dates.empty? %>
+          <div class="col-md-12 metadata-col">
+            <% index_fields(document).select{ |k,v| document.display_dates.has_key?(k) }.each do |field_name, field| %>
+              <% if should_render_index_field? document, field %>
+                <h4><%= render_index_field_label document, field: field_name %></h4> <%= field_value_for(doc_presenter, field_name) %>
+              <% end %>
+            <% end %>
+          </div>
+        <% end %>
+
+        <% if !document.identifying_data.empty? %>
+          <div class="col-md-12 metadata-col">
+            <% index_fields(document).select{ |k,v| document.identifying_data.has_key?(k) }.each do |field_name, field| %>
+              <% if should_render_index_field? document, field %>
+                <h4><%= render_index_field_label document, field: field_name %></h4> <%= field_value_for(doc_presenter, field_name) %>
+              <% end %>
+            <% end %>
+          </div>
+        <% end %>
+
+        <% if document.display_description.present? %>
+          <% index_fields(document).select{ |k,v| k == "description" }.each do |field_name, field| %>
+            <% if should_render_index_field? document, field %>
+              <div class="col-md-12 metadata-desc-col">
+                <p><strong>Description:</strong> <%= field_value_for(doc_presenter, field_name) %></p>
+              </div>
+            <% end %>
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+  <% if(field_value_for(doc_presenter, 'has_model_ssim') == 'Collection') %>
+    <% collection_presenter = Hyrax::CollectionPresenter.new(document, current_ability) %>
+    <div class="col-md-4">
+      <div class="collection-counts-wrapper">
+        <div class="collection-counts-item">
+          <span><%= collection_presenter.total_viewable_collections %></span>Collections
+        </div>
+        <div class="collection-counts-item">
+          <span><%= collection_presenter.total_viewable_works %></span>Works
+        </div>
+      </div>
+    </div>
+  <% end %>
 <% end %>
