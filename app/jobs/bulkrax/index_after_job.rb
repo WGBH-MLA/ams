@@ -1,3 +1,4 @@
+# TODO: delete with dual boot cleanup - nested indexing is replaced by graph indexer
 module Bulkrax
   class IndexAfterJob < ApplicationJob
     queue_as :import
