@@ -200,6 +200,7 @@ jobs:
           echo ${HEAD_TAG::8}
         env:
           HEAD_TAG: ${{ github.event.pull_request.head.sha || github.sha }}
+          SE_NODE_SESSION_TIMEOUT: 999999
           DEPENDENCIES_NEXT: 1
         shell: bash
       - name: Downcase repo
