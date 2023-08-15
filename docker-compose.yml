@@ -83,13 +83,6 @@ services:
       - OOM=script
       - VIRTUAL_PORT=8983
       - VIRTUAL_HOST=solr.ams.test
-      - SOLR_ADMIN_USERNAME=solr
-      - SOLR_ADMIN_PASSWORD=SolrRocks
-      - SOLR_COLLECTION=hydra-development
-      - SOLR_CLOUD_BOOTSTRAP=yes
-      - SOLR_ENABLE_CLOUD_MODE=yes
-      - SOLR_ENABLE_AUTHENTICATION=yes
-      - ZK_HOST=zoo:2181
     user: root
     command: bash -c "
       chown -R 8983:8983 /var/solr
