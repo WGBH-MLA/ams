@@ -1,31 +1,37 @@
 <!-- This template is overwritten to add the batch link to the dashboard sidebar. -->
 
-  <li class="h5"><%= t('hyrax.admin.sidebar.repository_objects') %></li>
+  <li class="h5 nav-item"><%= t('hyrax.admin.sidebar.repository_objects') %></li>
 
   <%= menu.nav_link(hyrax.my_collections_path,
+                    class: "nav-link",
+                    onclick: "dontChangeAccordion(event);",
                     also_active_for: hyrax.dashboard_collections_path) do %>
     <span class="fa fa-folder-open" aria-hidden="true"></span> <span class="sidebar-action-text"><%= t('hyrax.admin.sidebar.collections') %></span>
   <% end %>
 
   <%= menu.nav_link(hyrax.my_works_path,
+                    class: "nav-link",
+                    onclick: "dontChangeAccordion(event);",
                     also_active_for: hyrax.dashboard_works_path) do %>
     <span class="fa fa-file" aria-hidden="true"></span> <span class="sidebar-action-text"><%= t('hyrax.admin.sidebar.works') %></span>
   <% end %>
 
   <% if ENV['SETTINGS__BULKRAX__ENABLED'] == 'false' %>
     <% if can? :index, Hyrax::BatchIngest::Batch %>
-      <%= menu.nav_link(hyrax_batch_ingest.batches_path) do %>
+      <%= menu.nav_link(hyrax_batch_ingest.batches_path, class: "nav-link") do %>
         <span class="fa fa-table" aria-hidden="true"></span> <span class="sidebar-action-text"><%= 'Batches' %></span>
       <% end %>
     <% end %>
   <% else %>
-    <%= menu.nav_link(bulkrax.importers_path) do %>
+    <%= menu.nav_link(bulkrax.importers_path, class: "nav-link") do %>
       <span class="fa fa-cloud-upload" aria-hidden="true"></span> <span class="sidebar-action-text"><%= t('bulkrax.admin.sidebar.importers') %></span>
     <% end %>
 
     <% unless Rails.env.production? %>
-      <%= menu.nav_link(bulkrax.exporters_path) do %>
+      <%= menu.nav_link(bulkrax.exporters_path, class: "nav-link") do %>
         <span class="fa fa-cloud-download" aria-hidden="true"></span> <span class="sidebar-action-text"><%= t('bulkrax.admin.sidebar.exporters') %></span>
       <% end %>
     <% end %>
   <% end %>
+
+  <%= render 'hyrax/dashboard/sidebar/menu_partials', menu: menu, section: :repository_content %>
