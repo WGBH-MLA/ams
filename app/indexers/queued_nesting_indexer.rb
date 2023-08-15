@@ -1,5 +1,5 @@
 # frozen_string_literal: true
-
+# TODO: Remove this with if App.rails_5_1? cleanup
 class QueuedNestingIndexer
   extend Samvera::NestingIndexer
   def self.reindex_relationships(id:, maximum_nesting_depth: nil, extent:)
