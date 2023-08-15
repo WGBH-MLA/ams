@@ -8,9 +8,3 @@ collection:
     persist: true
     dir: solr/config
     name: hydra-test
-
-cloud: true
-
-configsets:
-  - dir: solr/conf/
-    name: hyku
