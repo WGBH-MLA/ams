@@ -1,6 +1,6 @@
 # deal with fact that this class creates a brand new environment and does not pass
 # any added arguments down to the new version. For importer flag compatibility
-
+# TODO: Remove with if App.rails_5_1? cleanup
 module Hyrax
   module Actors
     module InterpretVisibilityActorDecorator

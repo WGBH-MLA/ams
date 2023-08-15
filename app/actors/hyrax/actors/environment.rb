@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 # OVERRIDE Hyrax 2.9 to add in import flag
+# TODO: Remove this with if App.rails_5_1? cleanup
 module Hyrax
   module Actors
     class Environment
