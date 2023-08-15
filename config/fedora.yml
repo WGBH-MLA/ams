@@ -6,11 +6,11 @@ development:
 test:
   user: fedoraAdmin
   password: fedoraAdmin
-  url: <%= ENV['FCREPO_URL']
+  url: <%= ENV['FCREPO_URL'] || "http://127.0.0.1:#{ENV['FCREPO_TEST_PORT'] || 8986}/rest" %>
   base_path: /test
 production:
   user: fedoraAdmin
   password: fedoraAdmin
-  url: <%= ENV['FCREPO_URL'] || "http://127.0.0.1:8983/fedora/rest" %>
+  url: <%= ENV['FCREPO_URL']
   base_path: /prod
   request: { timeout: 600, open_timeout: 60}
