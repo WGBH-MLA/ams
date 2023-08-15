@@ -24,6 +24,7 @@ if ENV['DEPENDENCIES_NEXT'] && !ENV['DEPENDENCIES_NEXT'].empty?
     gem 'bulkrax', git: 'https://github.com/samvera-labs/bulkrax.git', branch: 'gbh-patch'
     gem 'willow_sword', git: 'https://github.com/notch8/willow_sword.git'
   end
+  gem 'sidekiq', '~> 6.4.0'
 else
   # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
   gem 'rails', '~> 5.1.5'
@@ -40,6 +41,7 @@ else
     gem 'bulkrax', git: 'https://github.com/samvera-labs/bulkrax.git', ref: '23efea3fd9d8d98746b73e570e0dc214ff764271'
     gem 'willow_sword', git: 'https://github.com/notch8/willow_sword.git'
   end
+  gem 'sidekiq'
 end
 
 gem 'dotenv-rails'
@@ -59,7 +61,6 @@ gem 'jbuilder', '~> 2.5'
 
 # Use Redis adapter to run Action Cable in production
 gem 'redis', '~> 4.0'
-gem 'sidekiq'
 
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
@@ -97,7 +98,7 @@ group :development do
   # gem 'spring-watcher-listen', '~> 2.0.0'
   gem "letter_opener"
   gem 'faker'
-  gem 'xray-rails'
+  # gem 'xray-rails' should be commented out when actively using sidekiq.
 end
 
 gem 'rsolr', '>= 1.0'
