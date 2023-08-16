@@ -1,0 +1,31 @@
+<tr class="<%= dom_class(instantiation_member) %> attributes">
+  <td class="thumbnail">
+    <%= render_thumbnail_tag instantiation_member %>
+    <%
+      details = {}
+      details.merge!(local_instantiation_identifier: instantiation_member.solr_document.try(:local_instantiation_identifier))
+      details.merge!(format: instantiation_member.solr_document.try(:format) ? instantiation_member.solr_document.try(:format):instantiation_member.solr_document.try(:digital_format))
+      details.merge!(generations: instantiation_member.solr_document.try(:generations))
+      details.merge!(duration: instantiation_member.solr_document.try(:duration))
+
+    %>
+  </td>
+  <td class="attribute instantiation_details ">
+    <% details.each_with_index do |(key,val),index| %>
+      <% if val && !val.first.empty? %>
+        <% if index > 0 %>
+          <br/>
+        <% end %>
+        <% label = t(".#{key}") %>
+        <%=  link_to("#{label}: #{val.join(", ")}", contextual_path(instantiation_member, @presenter)) %>
+      <% end %>
+    <% end %>
+  </td>
+  <td class="attribute ">
+    <%= instantiation_member.date_uploaded ?
+      Date.strptime(instantiation_member.date_uploaded,'%m/%d/%Y') :
+      Time.parse(instantiation_member.solr_document[:date_uploaded_ssi]).strftime('%m/%d/%Y')
+    %>
+  </td>
+  <td class="attribute "><%= instantiation_member.solr_document.try(:holding_organization).try(:first) %></td>
+</tr>

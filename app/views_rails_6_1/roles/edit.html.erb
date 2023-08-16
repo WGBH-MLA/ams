@@ -1,0 +1,54 @@
+<% provide :page_header do %>
+  <h1><span class="fa fa-sitemap"></span> <%= 'Manage Roles' %></h1>
+<% end %>
+
+<%= simple_form_for @role, :url => role_management.role_path(@role) do |g| %>
+  <div class="form-group row">
+    <label class="col-sm-1 col-form-label"><%= t('hyrax.dashboard.manage_role.role_name') %></label>
+    <div class="col-sm-6">
+      <%= g.text_field :name, :label => false, class: 'form-control' %>
+    </div>
+    <div class="col-sm-2">
+      <%= g.submit t('role-management.edit.update'), class: 'btn btn-primary' %>
+    </div>
+  </div>
+<% end %>
+
+<div class="card">
+  <div class="card-header">
+    <div class="d-flex justify-content-end">
+      <a href="#newRoleModal" role="button" class="btn btn-primary" data-toggle="modal">
+        <%= t('hyrax.dashboard.manage_role.add_user') %> <i class="fa fa-plus"></i>
+      </a>
+      <%= render 'roles/add_user_modal' %>
+    </div>
+  </div>
+
+  <div class="card-body">
+    <div class="table-responsive">
+      <table class="table table-striped datatable">
+        <thead>
+          <tr>
+            <th>User Key</th>
+            <th>Status</th>
+            <th class="text-center"><%= t('.actions') %></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @role.users.each do |user| %>
+            <tr>
+              <td><%= user.user_key %></td>
+              <td><%= user.deleted == false ? t('admin.users.index.active') : t('admin.users.index.not_active') %></td>
+              <td class="text-center">
+                <% if can? :remove_user, Role %>
+                  <%= button_to t('role-management.edit.remove'), role_management.role_user_path(@role, user.id), :method => :delete, data: { confirm: t('hyrax.dashboard.manage_role.confirm')}, class: 'btn btn-danger btn-sm' %>
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+
+</table>
+    </div>
+  </div>
+</div>

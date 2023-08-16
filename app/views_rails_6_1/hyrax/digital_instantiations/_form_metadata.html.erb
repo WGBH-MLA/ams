@@ -1,0 +1,50 @@
+<div class="base-terms">
+  <% f.object.primary_terms.each do |term| %>
+    <%= render_edit_field_partial(term, f: f) %>
+  <% end %>
+</div>
+<% if f.object.display_additional_fields? %>
+  <%= link_to t('hyrax.works.form.additional_fields'),
+              '#extended-terms',
+              class: 'btn btn-secondary additional-fields',
+              data: {toggle: 'collapse'},
+              role: "button",
+              'aria-expanded' => "false",
+              'aria-controls' => "extended-terms" %>
+  <div id="extended-terms" class='collapse'>
+    <%= render 'form_media', f: f %>
+    <% f.object.secondary_terms.each do |term| %>
+      <%= render_edit_field_partial(term, f: f) %>
+    <% end %>
+  </div>
+<% end %>
+<% if f.object.respond_to?(:field_groups) %>
+  <div id="accordion">
+    <% f.object.field_groups.map do |group, fields| %>
+      <% if fields.any? %>
+        <div class="card">
+          <div class="card-header" id="heading-<%= group %>">
+            <h5 class="mb-0">
+              <a class="accordion-toggle" data-toggle="collapse" href="#collapse-<%= group %>">
+                <%= t("form.#{group}") %>
+              </a>
+            </h5>
+          </div>
+          <div id="collapse-<%= group %>" class="panel-collapse collapse  <%= "in" if f.object.expand_field_group?(group) %>" aria-expanded="<%= f.object.expand_field_group?(group) ? "true" : "false" %>">
+            <div class="panel-body">
+              <!--  Custom override of DigitalInstantiation form -->
+              <% if group == :technical_info %>
+                <div class="alert alert-warning" role="alert">These fields are disabled. To add or update techincal metadata for Digital Instantiations you must upload a PBCore file above.</div>
+              <% end %>
+              <div class="card-body">
+                <% fields.each do |term| %>
+                  <%= render_edit_field_partial(term, f: f) %>
+                <% end %>
+              </div>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    <% end %>
+    </div>
+  <% end %>

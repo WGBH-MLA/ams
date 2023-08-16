@@ -1,0 +1,52 @@
+<%
+# This is an override of Hyrax 2.2.4 [6e1970b] [hyrax/app/views/catalog/_search_form.html.erb]
+# WARNING: upgrading Hyrax may break this override
+%>
+<%= form_tag search_form_action, method: :get, class: "search-form", id: "search-form-header", role: "search" do %>
+  <%= render Blacklight::HiddenSearchStateComponent.new(params: search_state.params_for_search.except(:q, :search_field, :qt, :page, :utf8)) %>
+  <%= hidden_field_tag :search_field, 'all_fields' %>
+  <div class="form-group row">
+
+    <div class="input-group">
+      <% if search_fields.length > 1 %>
+        <span class="input-group-text for-search-field">
+          <label for="search_field" class="sr-only"><%= t('blacklight.search.form.search_field.label') %></label>
+          <%= select_tag(:search_field, options_for_select(search_fields, h(params[:search_field])), title: t('blacklight.search.form.search_field.title'), id: "search_field", class: "search_field") %>
+        </span>
+      <% elsif search_fields.length == 1 %>
+        <%= hidden_field_tag :search_field, search_fields.first.last %>
+      <% end %>
+
+      <label for="q" class="sr-only"><%= t('blacklight.search.form.search.label') %></label>
+      <%= text_field_tag :q, current_search_parameters , class: "q form-control", id: "search-field-header", placeholder: t("hyrax.search.form.q.placeholder") %>
+
+      <div class="input-group-append">
+        <button type="submit" class="btn btn-primary" id="search-submit-header">
+          <%= t('hyrax.search.button.html') %>
+        </button>
+        <% if current_user %>
+          <button class="btn btn-default dropdown-toggle scope_select" type="button" data-toggle="dropdown" aria-expanded="false">
+            <span class="sr-only" data-search-element="label"><%= t("hyrax.search.form.option.all.label_long", application_name: application_name) %></span>
+            <span aria-hidden="true"><%= t("hyrax.search.form.option.all.label_short") %></span>
+          </button>
+
+          <ul class="dropdown-menu dropdown-menu-right">
+            <li class="dropdown-item">
+              <%= link_to t("hyrax.search.form.option.all.label_long", application_name: application_name), "#",
+                  data: { "search-option" => main_app.search_catalog_path, "search-label" => t("hyrax.search.form.option.all.label_short") } %>
+            </li>
+            <li class="dropdown-item">
+              <%= link_to t("hyrax.search.form.option.my_works.label_long"), "#",
+                  data: { "search-option" => hyrax.my_works_path, "search-label" => t("hyrax.search.form.option.my_works.label_short") } %>
+            </li>
+            <li class="dropdown-item">
+              <%= link_to t("hyrax.search.form.option.my_collections.label_long"), "#",
+                  data: { "search-option" => hyrax.my_collections_path, "search-label" => t("hyrax.search.form.option.my_collections.label_short") } %>
+            </li>
+          </ul>
+          <%= link_to 'More options', blacklight_advanced_search_engine.advanced_search_path(search_state.to_h), class: 'advanced_search btn btn-default' %>
+        <% end %>
+      </div><!-- /.input-group-btn -->
+    </div><!-- /.input-group -->
+  </div><!-- /.form-group -->
+<% end %>
