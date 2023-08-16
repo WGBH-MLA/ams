@@ -56,7 +56,7 @@ ENV PATH="${PATH}:/app/fits"
 COPY --chown=1001:101 $APP_PATH/Gemfile* /app/samvera/hyrax-webapp/
 RUN bundle install --jobs "$(nproc)"
 
-COPY --chown=1001:101 Gemfile /app/samvera/hyrax-webapp/Gemfile_next
+COPY --chown=1001:101 $APP_PATH/Gemfile /app/samvera/hyrax-webapp/Gemfile_next
 RUN DEPENDENCIES_NEXT=1 bundle install --jobs "$(nproc)"
 
 COPY --chown=1001:101 $APP_PATH /app/samvera/hyrax-webapp
