@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 class SavedSearchesController < ApplicationController
-  include Blacklight::SavedSearches
+  # TODO what is the replacement?
+  if App.rails_5_1?
+    include Blacklight::SavedSearches
+  end
 
   helper BlacklightAdvancedSearch::RenderConstraintsOverride
 end

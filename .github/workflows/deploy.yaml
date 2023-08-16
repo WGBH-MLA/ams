@@ -30,13 +30,7 @@ jobs:
     container: dtzar/helm-kubectl:3.9.4
     environment: ${{ inputs.environment }}
     env:
-      HELM_EXPERIMENTAL_OCI: 1
-      HELM_RELEASE_NAME: ${{ github.event.repository.name }}-${{ inputs.environment }}
-      KUBE_NAMESPACE: ${{ github.event.repository.name }}-${{ inputs.environment }}
-      HELM_EXTRA_ARGS: >
-        --values ops/${{ inputs.environment }}-deploy.yaml
       KUBECONFIG_FILE: ${{ secrets.KUBECONFIG_FILE }}
-      ENCODED_ENV_FILE: ${{ secrets.ENCODED_ENV_FILE }}
       KUBECONFIG: ./kubeconfig.yml
     steps:
       - name: Set env
@@ -67,8 +61,4 @@ jobs:
       - name: Do deploy
         run: |
           echo $KUBECONFIG_FILE | base64 -d > $KUBECONFIG;
-          DOLLAR=$ envsubst < ops/${{ inputs.environment }}-deploy.tmpl.yaml > ops/${{ inputs.environment }}-deploy.yaml;
-          export DEPLOY_TAG=${TAG};
-          export DEPLOY_IMAGE=ghcr.io/${REPO_LOWER};
-          export WORKER_IMAGE=ghcr.io/${REPO_LOWER}/worker;
-          ./bin/helm_deploy ${{ inputs.k8s-release-name || format('{0}-{1}', github.event.repository.name, inputs.environment) }} ${{ inputs.k8s-namespace || format('{0}-{1}', github.event.repository.name, inputs.environment) }}
+          ./bin/deploy.sh ${{ inputs.environment) }} $TAG
