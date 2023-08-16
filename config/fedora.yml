@@ -11,6 +11,6 @@ test:
 production:
   user: fedoraAdmin
   password: fedoraAdmin
-  url: <%= ENV['FCREPO_URL'] %>
-  base_path: <%= ENV['FCREPO_BASE_PATH'] %>
+  url: <%= ENV['FCREPO_URL']
+  base_path: /prod
   request: { timeout: 600, open_timeout: 60}
