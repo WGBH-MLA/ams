@@ -308,6 +308,7 @@ jobs:
       ALLOW_ANONYMOUS_LOGIN: "yes"
       CONFDIR: "/app/samvera/hyrax-webapp/solr/config"
       DB_CLEANER_ALLOW_REMOTE_DB_URL: "true"
+      DEPENDENCIES_NEXT: 1
       TB_RSPEC_FORMATTER: progress
       TB_RSPEC_OPTIONS: --format RspecJunitFormatter --out rspec.xml
     steps:
