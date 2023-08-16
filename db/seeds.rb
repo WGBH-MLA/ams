@@ -50,4 +50,11 @@ if rob_admin.any? {|r| r.name == 'aapb-admin'} == false
   aapb_admin_role.users << User.find_by(email: 'rob@notch8.com')
 end
 
-admin_set = AdminSet.find(AdminSet.find_or_create_default_admin_set_id)
+# TODO `Hyrax::AdminSetCreateService.find_or_create_default_admin_set` does not work
+# it just spins forever
+if App.rails_5_1?
+  admin_set = AdminSet.find(AdminSet.find_or_create_default_admin_set_id)
+else
+  admin_set = AdminSet.find(Hyrax::AdminSetCreateService::DEFAULT_ID)
+  admin_set ||= AdminSet.create(id: Hyrax::AdminSetCreateService::DEFAULT_ID, title: Array.wrap(Hyrax::AdminSetCreateService::DEFAULT_TITLE))
+end
