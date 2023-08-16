@@ -8,6 +8,7 @@ class CatalogController < ApplicationController
   add_results_collection_tool :export_search_results if App.rails_5_1?
 
   configure_blacklight do |config|
+    config.add_results_collection_tool :export_search_results if !App.rails_5_1?
     # default advanced config values
     config.advanced_search ||= Blacklight::OpenStructWithHashAccess.new
     # config.advanced_search[:qt] ||= 'advanced'
