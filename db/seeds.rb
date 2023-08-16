@@ -51,10 +51,14 @@ if rob_admin.any? {|r| r.name == 'aapb-admin'} == false
 end
 
 # TODO `Hyrax::AdminSetCreateService.find_or_create_default_admin_set` does not work
-# it just spins forever
+# it just spins forever because it tries to load all associated models
 if App.rails_5_1?
   admin_set = AdminSet.find(AdminSet.find_or_create_default_admin_set_id)
 else
-  admin_set = AdminSet.find(Hyrax::AdminSetCreateService::DEFAULT_ID)
-  admin_set ||= AdminSet.create(id: Hyrax::AdminSetCreateService::DEFAULT_ID, title: Array.wrap(Hyrax::AdminSetCreateService::DEFAULT_TITLE))
+  begin
+    admin_set = AdminSet.find(Hyrax::AdminSetCreateService::DEFAULT_ID)
+  rescue ActiveFedora::ObjectNotFoundError
+    Hyrax::AdminSetCreateService.create_default_admin_set
+    admin_set = AdminSet.find(Hyrax::AdminSetCreateService::DEFAULT_ID)
+  end
 end
