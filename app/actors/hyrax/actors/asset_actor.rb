@@ -14,8 +14,10 @@ module Hyrax
         add_date_types(env)
         set_validation_status(env)
 
-        # queue indexing if we are importing
-        env.curation_concern.reindex_extent = "queue#{env.importing.id}" if env.importing
+        if App.rails_5_1?
+          # queue indexing if we are importing
+          env.curation_concern.reindex_extent = "queue#{env.importing.id}" if env.importing
+        end
         save_aapb_admin_data(env) && super && create_or_update_contributions(env, contributions)
       end
 
@@ -26,8 +28,10 @@ module Hyrax
         add_date_types(env)
         set_validation_status(env)
 
-        # queue indexing if we are importing
-        env.curation_concern.reindex_extent = "queue#{env.importing.id}" if env.importing
+        if App.rails_5_1?
+          # queue indexing if we are importing
+          env.curation_concern.reindex_extent = "queue#{env.importing.id}" if env.importing
+        end
         save_aapb_admin_data(env) && super && create_or_update_contributions(env, contributions)
       end
 
@@ -53,18 +57,19 @@ module Hyrax
         def set_admin_data_attributes(admin_data, env)
           AdminData.attributes_for_update.each do |k|
             # Some attributes are serialized on AdminData, so always send an array
-            if should_empty_admin_data_value?(k, admin_data, env)
-              AdminData::SERIALIZED_FIELDS.include?(k) ? admin_data.send("#{k}=", Array.new) : admin_data.send("#{k}=", "")
+            if should_empty_admin_data_value?(k, env)
+              AdminData::SERIALIZED_FIELDS.include?(k) ? admin_data.send("#{k}=", Array.new) : admin_data.send("#{k}=", nil)
             elsif env.attributes[k].present?
               AdminData::SERIALIZED_FIELDS.include?(k) ? admin_data.send("#{k}=", Array(env.attributes[k])) : admin_data.send("#{k}=", env.attributes[k].to_s)
             end
           end
         end
 
-        def should_empty_admin_data_value?(key, admin_data, env)
-          key != :bulkrax_importer_id &&
-          admin_data.send(key).present? &&
-          !env.attributes[key].present?
+        def should_empty_admin_data_value?(key, env)
+          return false if %i[bulkrax_importer_id hyrax_batch_ingest_batch_id].include?(key)
+
+          # The presence of the key with a "blank" value indicates we're intentionally emptying the value
+          env.attributes.key?(key) && env.attributes[key].blank?
         end
 
         def delete_removed_annotations(admin_data, env)

@@ -1001,8 +1001,6 @@ GEM
       rexml
     xpath (3.2.0)
       nokogiri (~> 1.8)
-    xray-rails (0.3.2)
-      rails (>= 3.1.0)
 
 PLATFORMS
   ruby
@@ -1065,7 +1063,6 @@ DEPENDENCIES
   webmock (~> 3.7)
   webpacker
   willow_sword!
-  xray-rails
 
 BUNDLED WITH
    2.3.7
