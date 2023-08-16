@@ -1,15 +1,15 @@
 <%# OVERRIDE Bulkrax 1.0.2 to hide ability to delete per previous batch ingest behavior (inability to delete importers due to foreign key ref) %>
 <% provide :page_header do %>
   <h1><span class="fa fa-cloud-upload" aria-hidden="true"></span> Importers</h1>
-  <div class="pull-right">
+  <div class="float-right">
     <%= link_to new_importer_path, class: 'btn btn-primary' do %>
       <span class="fa fa-edit" aria-hidden="true"></span> <%= t(:'helpers.action.importer.new') %>
     <% end %>
   </div>
 <% end %>
 
-<div class="panel panel-default">
-  <div class="panel-body">
+<div class="card">
+  <div class="card-body">
     <% if @importers.present? %>
       <div class="table-responsive">
         <table class="table table-striped datatable">
@@ -44,9 +44,9 @@
                 <td><%= importer.importer_runs.last&.total_collection_entries %></td>
                 <td><%= importer.importer_runs.last&.total_work_entries %></td>
                 <%# OVERRIDE Bulkrax 1.0.2 to hide ability to delete per previous batch ingest behavior (inability to delete importers due to foreign key ref) %>
-                <td><%#= link_to raw('<span class="glyphicon glyphicon-remove"></span>'), importer, method: :delete, data: { confirm: 'Are you sure?' } %></td>
-                <td><%= link_to raw('<span class="glyphicon glyphicon-info-sign"></span>'), importer_path(importer) %></td>
-                <td><%= link_to raw('<span class="glyphicon glyphicon-pencil"></span>'), edit_importer_path(importer) %></td>
+                <td><%#= link_to raw('<span class="fa fa-trash"></span>'), importer, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+                <td><%= link_to raw('<span class="fa fa-info-circle"></span>'), importer_path(importer) %></td>
+                <td><%= link_to raw('<span class="fa fa-pencil"></span>'), edit_importer_path(importer) %></td>
               </tr>
             <% end %>
           </tbody>
