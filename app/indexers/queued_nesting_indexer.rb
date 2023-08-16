@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# TODO: Remove this with if App.rails_5_1? cleanup
 if App.rails_5_1?
   class QueuedNestingIndexer
     extend Samvera::NestingIndexer
