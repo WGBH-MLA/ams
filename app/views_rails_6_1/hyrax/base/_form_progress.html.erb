@@ -37,13 +37,11 @@
       <div class="list-group-item">
         <%= f.input :child_work_create , :as => :hidden, :input_html => { :value => "", name:"child_work_create", id: "child_work_create" } %>
         <% @form.model.valid_child_concerns.each do |child| %>
-          <%# Using `button_tag` here because simple form button comes
-              with `btn btn-default` which was throwing off the style %>
-          <%= button_tag "Save & Create #{child.model_name.human.titleize}",
-                         type: 'button',
-                         class: 'btn btn-primary associated_work_actions',
-                         onclick: "ChildWorkActions.saveActon(this);",
-                         value: child.model_name %>
+          <%= f.button :button,"Save & Create "+child.model_name.human.titleize,
+                       onclick:"ChildWorkActions.saveActon(this);",
+                       class: 'btn btn-primary associated_work_actions',
+                       value:child.model_name,
+                       style: "color: white;" %>
           <br />
           <br />
         <% end %>
