@@ -1,0 +1,18 @@
+<div class='table-responsive'>
+  <table class='table table-sm'>
+    <thead>
+      <th scope='col'>ID</th>
+      <th scope='col'>AMS1 PBCore Not Found</th>
+      <th scope='col'>AMS2 Asset Not Found</th>
+    </thead>
+    <tbody>
+      <% comparisons.each do |comparison| %>
+        <tr class="batch-row">
+          <td><%= comparison["id"] %></td>
+          <td><%= comparison["ams1"]["pbcore_not_found?"] %></td>
+          <td><%= comparison["ams2"]["solr_document_not_found?"] %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

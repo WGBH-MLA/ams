@@ -1,0 +1,5 @@
+<% if f.object.multiple? key %>
+  <%= f.input :rights_summary, as: :multi_value, input_html: { rows: '14', type: 'textarea'}, disabled:f.object.respond_to?(:disabled?) && f.object.disabled?(key), required: f.object.required?(key) %>
+<% else %>
+  <%= f.input :rights_summary, as: :text, input_html: { rows: '14' }, disabled:f.object.respond_to?(:disabled?) && f.object.disabled?(key), required: f.object.required?(key) %>
+<% end %>

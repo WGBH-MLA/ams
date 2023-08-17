@@ -1,0 +1,18 @@
+<div class='table-responsive'>
+  <table class='table table-sm'>
+    <thead>
+      <th scope='col'>ID</th>
+      <th scope='col'>AMS1 Digital Instantiations</th>
+      <th scope='col'>AMS2 Digital Instantiations</th>
+      <th scope='col'>AMS1 Physical Instantiations</th>
+      <th scope='col'>AMS2 Physical Instantiations</th>
+      <th scope='col'>AMS1 Essence Tracks</th>
+      <th scope='col'>AMS2 Essence Tracks</th>
+    </thead>
+    <tbody>
+      <% comparisons.each do |comparison| %>
+        <%= render 'audit_row', comparison: comparison %>
+      <% end %>
+    </tbody>
+  </table>
+</div>

@@ -1,0 +1,7 @@
+<% format_service =  FormatService.new %>
+<%= f.input :format, as: :select,
+            collection: format_service.select_all_options,
+            include_blank: true,
+            disabled:f.object.respond_to?(:disabled?) && f.object.disabled?(key),
+            input_html: { class: 'form-control'}
+%>
