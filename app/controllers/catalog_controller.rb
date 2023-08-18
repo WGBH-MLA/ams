@@ -8,7 +8,6 @@ class CatalogController < ApplicationController
   add_results_collection_tool :export_search_results if App.rails_5_1?
 
   configure_blacklight do |config|
-    config.add_results_collection_tool :export_search_results if !App.rails_5_1?
     # default advanced config values
     config.advanced_search ||= Blacklight::OpenStructWithHashAccess.new
     # config.advanced_search[:qt] ||= 'advanced'
@@ -16,9 +15,15 @@ class CatalogController < ApplicationController
     config.advanced_search[:query_parser] ||= 'dismax'
     config.advanced_search[:form_solr_parameters] ||= {}
 
-    config.view.gallery.partials = [:index_header, :index]
-    config.view.masonry.partials = [:index]
-    config.view.slideshow.partials = [:index]
+    if App.rails_5_1?
+      config.view.gallery.partials = [:index_header, :index]
+      config.view.masonry.partials = [:index]
+      config.view.slideshow.partials = [:index]
+    else
+      config.view.gallery(document_component: Blacklight::Gallery::DocumentComponent)
+      config.view.masonry(document_component: Blacklight::Gallery::DocumentComponent)
+      config.view.slideshow(document_component: Blacklight::Gallery::SlideshowComponent)
+    end
 
     config.show.tile_source_field = :content_metadata_image_iiif_info_ssm
     config.show.partials.insert(1, :openseadragon)
@@ -45,6 +50,18 @@ class CatalogController < ApplicationController
     # override default thumbnail method to handle 'cpb-aacip-' id vs 'cpb-aacip_' in S3 filename
     config.index.thumbnail_method = :render_thumbnail
 
+    config.add_results_document_tool(:bookmark, partial: 'bookmark_control', if: :render_bookmarks_control?)
+    config.add_results_collection_tool(:sort_widget)
+    config.add_results_collection_tool(:per_page_widget)
+    config.add_results_collection_tool(:view_type_group)
+    config.add_show_tools_partial(:bookmark, partial: 'bookmark_control', if: :render_bookmarks_control?)
+    config.add_show_tools_partial(:email, callback: :email_action, validator: :validate_email_params)
+    config.add_show_tools_partial(:sms, if: :render_sms_action?, callback: :sms_action, validator: :validate_sms_params)
+    config.add_show_tools_partial(:citation)
+    config.add_nav_action(:bookmark, partial: 'blacklight/nav/bookmark', if: :render_bookmarks_control?)
+    config.add_nav_action(:search_history, partial: 'blacklight/nav/search_history')
+
+    config.add_results_collection_tool :export_search_results if !App.rails_5_1?
 
     # solr fields that will be treated as facets by the blacklight application
     #   The ordering of the field names is the order of the display
