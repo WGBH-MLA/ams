@@ -1,7 +1,6 @@
 require 'rails_helper'
 
 RSpec.feature 'AssignMultipleRolesAsManager.', js: true do
-  if App.rails_5_1?
     context 'Add Manager permissions to user (Role)' do
       let(:admin_user) { create :admin_user }
       let!(:user) { create :user }
@@ -60,12 +59,11 @@ RSpec.feature 'AssignMultipleRolesAsManager.', js: true do
 
         # Check other user AdminSet permissions exist
         visit '/admin/admin_sets'
-        expect(page).to have_content 'You are not authorized to access this page.'
+        if App.rails_5_1?
+          expect(page).to have_content 'You are not authorized to access this page.'
+        else
+          expect(page).to have_content '0 collections you own in the repository'
+        end
       end
     end
-  else
-    skip 'Skipping tests until bootstrap upgrade is complete'
-    # ref: https://github.com/scientist-softserv/ams/issues/28
-    # ref: https://github.com/scientist-softserv/ams/issues/32
   end
-end

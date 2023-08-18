@@ -33,7 +33,7 @@
               </a>
             </h5>
           </div>
-          <div id="collapse-<%= group %>" class="collapse <%= 'show' if f.object.expand_field_group?(group) %>" aria-labelledby="heading-<%= group %>" data-parent="#accordion">
+          <div id="collapse-<%= group %>" class="collapse <%= 'show' if f.object.expand_field_group?(group) %>" aria-labelledby="heading-<%= group %>">
             <div class="card-body">
               <% fields.each do |term| %>
                 <%= render_edit_field_partial(term, f: f) %>
