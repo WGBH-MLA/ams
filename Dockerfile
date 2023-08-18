@@ -62,13 +62,15 @@ RUN DEPENDENCIES_NEXT=1 bundle install --jobs "$(nproc)"
 COPY --chown=1001:101 $APP_PATH /app/samvera/hyrax-webapp
 
 ARG SETTINGS__BULKRAX__ENABLED="false"
-RUN sh -l -c " \
-  DEPENDENCIES_NEXT=1 yarn install && \
-  SOLR_URL=localhost DEPENDENCIES_NEXT=1 RAILS_ENV=production SECRET_KEY_BASE=fake-key-for-asset-building-only DB_ADAPTER=nulldb bundle exec rake assets:precompile"
 
 RUN sh -l -c " \
   yarn install && \
   RAILS_ENV=production SECRET_KEY_BASE=fake-key-for-asset-building-only DB_ADAPTER=nulldb bundle exec rake assets:precompile"
+
+RUN sh -l -c " \
+  export DEPENDENCIES_NEXT=1 && \
+  yarn install && \
+  SOLR_URL=localhost RAILS_ENV=production SECRET_KEY_BASE=fake-key-for-asset-building-only DB_ADAPTER=nulldb bundle exec rake assets:precompile"
 
 CMD ./bin/web
 
