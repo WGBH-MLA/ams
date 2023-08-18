@@ -84,6 +84,10 @@ extraEnvVars: &envVars
     value: gbh
   - name: REDIS_SERVER
     value: redis://:staging@gbh-staging-redis-master:6379
+  - name: SENTRY_DSN
+    value: https://6f6e6b5f54234b5bb2218786c3493a37@o1008683.ingest.sentry.io/6745030 
+  - name: SENTRY_ENVIRONMENT
+    value: "staging"
   - name: SETTINGS__ACTIVE_JOB__QUEUE_ADAPTER
     value: sidekiq
   - name: SETTINGS__BULKRAX__ENABLED
@@ -116,8 +120,6 @@ extraEnvVars: &envVars
     value: http://admin:$SOLR_PASSWORD@solr.staging-solr.svc.cluster.local:8983/solr/ams-staging
   - name: SIDEKIQ_CONCURRENCY
     value: "10"
-  - name: SENTRY_DSN
-    value: $SENTRY_DSN
 
 worker:
   replicaCount: 1
