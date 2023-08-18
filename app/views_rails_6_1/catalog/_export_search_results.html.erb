@@ -1,6 +1,6 @@
 <!-- Single button -->
 <div class="btn-group">
-  <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+  <button type="button" class="btn catalog-export-button dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
     Export <span class="caret"></span>
   </button>
   <ul class="dropdown-menu">
@@ -15,9 +15,8 @@
 </div>
 
 <% if can?(:push_to_aapb, nil) && request.env['QUERY_STRING'].present? %>
-  <button class="btn btn-default aapb-push-button"
-          onclick="window.location.href='/pushes/new?transfer=true&<%= request.env['QUERY_STRING'] %>'"
-          style="font-size: inherit;">
+  <button class="aapb-push-button"
+          onclick="window.location.href='/pushes/new?transfer=true&<%= request.env['QUERY_STRING'] %>'">
     Push To AAPB
   </button>
 <% end %>
