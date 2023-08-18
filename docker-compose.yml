@@ -210,6 +210,7 @@ services:
       context: .
       target: ams-worker
       args:
+        - DEPENDENCIES_NEXT=1
         - SETTINGS__BULKRAX__ENABLED=true
     image: ghcr.io/wgbh-mla/ams/worker:${TAG:-latest}
     depends_on:
