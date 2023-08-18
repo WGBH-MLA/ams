@@ -32,6 +32,7 @@ jobs:
     env:
       KUBECONFIG_FILE: ${{ secrets.KUBECONFIG_FILE }}
       KUBECONFIG: ./kubeconfig.yml
+      TARGET: ${{ inputs.environment }}
     steps:
       - name: Set env
         run: >-
@@ -61,4 +62,4 @@ jobs:
       - name: Do deploy
         run: |
           echo $KUBECONFIG_FILE | base64 -d > $KUBECONFIG;
-          ./bin/deploy.sh ${{ inputs.environment) }} $TAG
+          ./bin/deploy.sh $TARGET $TAG
