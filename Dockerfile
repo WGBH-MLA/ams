@@ -67,8 +67,6 @@ RUN sh -l -c " \
   yarn install && \
   RAILS_ENV=production SECRET_KEY_BASE=fake-key-for-asset-building-only DB_ADAPTER=nulldb bundle exec rake assets:precompile"
 
-ARG DEPENDENCIES_NEXT
-
 RUN sh -l -c " \
   export DEPENDENCIES_NEXT=1 && \
   DEPENDENCIES_NEXT=1 yarn install && \
