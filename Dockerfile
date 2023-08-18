@@ -67,10 +67,10 @@ RUN sh -l -c " \
   yarn install && \
   RAILS_ENV=production SECRET_KEY_BASE=fake-key-for-asset-building-only DB_ADAPTER=nulldb bundle exec rake assets:precompile"
 
-RUN sh -l -c " \
-  export DEPENDENCIES_NEXT=1 && \
-  DEPENDENCIES_NEXT=1 yarn install && \
-  DEPENDENCIES_NEXT=1 SOLR_URL=localhost RAILS_ENV=production SECRET_KEY_BASE=fake-key-for-asset-building-only DB_ADAPTER=nulldb bundle exec rake assets:precompile"
+# RUN sh -l -c " \
+#   export DEPENDENCIES_NEXT=1 && \
+#   DEPENDENCIES_NEXT=1 yarn install && \
+#   DEPENDENCIES_NEXT=1 SOLR_URL=localhost RAILS_ENV=production SECRET_KEY_BASE=fake-key-for-asset-building-only DB_ADAPTER=nulldb bundle exec rake assets:precompile"
 
 CMD ./bin/web
 
