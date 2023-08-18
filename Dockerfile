@@ -68,9 +68,10 @@ RUN sh -l -c " \
   RAILS_ENV=production SECRET_KEY_BASE=fake-key-for-asset-building-only DB_ADAPTER=nulldb bundle exec rake assets:precompile"
 
 RUN sh -l -c " \
-  export DEPENDENCIES_NEXT=1 && \
-  yarn install && \
-  SOLR_URL=localhost RAILS_ENV=production SECRET_KEY_BASE=fake-key-for-asset-building-only DB_ADAPTER=nulldb bundle exec rake assets:precompile"
+  RAILS_VERSION=$(bundle exec rails -v | cut -d ' ' -f 2) && \
+  if [ \"$RAILS_VERSION\" = \"6.1.0\" ]; then export DEPENDENCIES_NEXT=1; fi && \
+  DEPENDENCIES_NEXT=1 yarn install && \
+  DEPENDENCIES_NEXT=1 SOLR_URL=localhost RAILS_ENV=production SECRET_KEY_BASE=fake-key-for-asset-building-only DB_ADAPTER=nulldb bundle exec rake assets:precompile"
 
 CMD ./bin/web
 
