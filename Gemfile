@@ -25,6 +25,7 @@ if ENV['DEPENDENCIES_NEXT'] && !ENV['DEPENDENCIES_NEXT'].empty?
     gem 'willow_sword', git: 'https://github.com/notch8/willow_sword.git'
   end
   gem 'sidekiq', '~> 6.4.0'
+  gem 'deprecation_toolkit', '~> 2.0', '>= 2.0.3'
 else
   # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
   gem 'rails', '~> 5.1.5'

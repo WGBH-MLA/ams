@@ -264,6 +264,8 @@ GEM
     declarative (0.0.20)
     deprecation (1.1.0)
       activesupport
+    deprecation_toolkit (2.0.3)
+      activesupport (>= 5.2)
     devise (4.9.2)
       bcrypt (~> 3.0)
       orm_adapter (~> 0.1)
@@ -1138,6 +1140,7 @@ DEPENDENCIES
   coffee-rails (~> 4.2)
   curb
   database_cleaner
+  deprecation_toolkit (~> 2.0, >= 2.0.3)
   devise
   devise-guests (~> 0.6)
   dotenv-rails

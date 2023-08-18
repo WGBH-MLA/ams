@@ -61,3 +61,5 @@ module App
     Rails.version.start_with? '5.1'
   end
 end
+
+DeprecationToolkit::Configuration.test_runner = :rspec
