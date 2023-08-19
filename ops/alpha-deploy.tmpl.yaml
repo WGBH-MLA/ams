@@ -97,6 +97,10 @@ extraEnvVars: &envVars
     value: prod
   - name: REDIS_SERVER
     value: redis://:prod@ams-prod-redis-master.ams-prod.svc.cluster.local:6379
+  - name: SENTRY_DSN
+    value: https://6f6e6b5f54234b5bb2218786c3493a37@o1008683.ingest.sentry.io/6745030 
+  - name: SENTRY_ENVIRONMENT
+    value: "alpha"
   - name: SETTINGS__BULKRAX__ENABLED
     value: "true"
   - name: SOLR_HOST
