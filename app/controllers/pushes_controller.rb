@@ -26,7 +26,7 @@ class PushesController < ApplicationController
   def validate_ids
     response = {}
     @push = Push.new(user: current_user, pushed_id_csv: pushed_id_csv_from_id_field)
-    response[:error] = @push.errors.values.flatten.join("\n\n") if @push.invalid?
+    response[:error] = @push.errors.map(&:message).flatten.join("\n\n") if @push.invalid?
     render json: response
   end
 
