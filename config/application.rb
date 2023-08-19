@@ -62,4 +62,9 @@ module App
   end
 end
 
-DeprecationToolkit::Configuration.test_runner = :rspec
+unless App.rails_5_1?
+  DeprecationToolkit::Configuration.config do |config|
+    config.test_runner = :rspec
+    config.warnings_treated_as_deprecation = [//]
+  end
+end
