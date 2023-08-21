@@ -21,8 +21,7 @@ if ENV['DEPENDENCIES_NEXT'] && !ENV['DEPENDENCIES_NEXT'].empty?
   gem 'twitter-typeahead-rails', '0.11.1.pre.corejavascript'
   group :bulkrax do
     # our custom changes require us to lock in the version of bulkrax
-    gem 'bulkrax', git: 'https://github.com/samvera-labs/bulkrax.git', branch: 'gbh-patch'
-    gem 'willow_sword', git: 'https://github.com/notch8/willow_sword.git'
+    gem 'bulkrax', git: 'https://github.com/samvera-labs/bulkrax.git', branch: 'hyrax-4-support'
   end
   gem 'sidekiq', '~> 6.4.0'
 else

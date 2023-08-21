@@ -9,31 +9,24 @@ GIT
       faraday_middleware
 
 GIT
-  remote: https://github.com/notch8/willow_sword.git
-  revision: 74f7684ff9ca96251f341e50a3afc34b5bd312cc
-  specs:
-    willow_sword (0.2.0)
-      bagit (~> 0.4.1)
-      rails (>= 5.1.6)
-      rubyzip (>= 1.0.0)
-
-GIT
   remote: https://github.com/samvera-labs/bulkrax.git
-  revision: eca45757eabde6fe2e4ad53048c7e639950ea950
-  branch: gbh-patch
+  revision: 28875a8ddc0b1bf8265dbd88fb830ed29a7af570
+  branch: hyrax-4-support
   specs:
-    bulkrax (1.0.2)
+    bulkrax (5.3.0)
       bagit (~> 0.4)
       coderay
+      dry-monads (~> 1.5.0)
       iso8601 (~> 0.9.0)
       kaminari
       language_list (~> 1.2, >= 1.2.1)
-      libxml-ruby (~> 3.1.0)
+      libxml-ruby (~> 3.2.4)
       loofah (>= 2.2.3)
       oai (>= 0.4, < 2.x)
       rack (>= 2.0.6)
       rails (>= 5.1.6)
       rdf (>= 2.0.2, < 4.0)
+      rubyzip
       simple_form
 
 GIT
@@ -591,7 +584,7 @@ GEM
       multi_json
     letter_opener (1.8.1)
       launchy (>= 2.2, < 3)
-    libxml-ruby (3.1.0)
+    libxml-ruby (3.2.4)
     link_header (0.0.8)
     linkeddata (3.2.2)
       json-ld (~> 3.2, >= 3.2.5)
@@ -1182,7 +1175,6 @@ DEPENDENCIES
   webdrivers (~> 4.0)
   webmock (~> 3.7)
   webpacker
-  willow_sword!
 
 BUNDLED WITH
    2.3.7

@@ -34,6 +34,12 @@ if ENV['SETTINGS__BULKRAX__ENABLED'] == 'true'
 
     config.fill_in_blank_source_identifiers = ->(type, index, key_count) { "#{type}-#{index}-#{key_count}" }
 
+    config.field_mappings['Bulkrax::CsvParser'] = {
+      'bulkrax_identifier' => { from: ['source_identifier'], source_identifier: true },
+      'children' => { from: ['children'], split: /\s*[;|]\s*/, related_children_field_mapping: true },
+      'parents' => { from: ['parents'], split: /\s*[;|]\s*/, related_parents_field_mapping: true }
+    }
+
     config.field_mappings['CsvParser'] = {
       'admin_data_gid' => { from: headers('admin_data_gid') },
       'affiliation' => { from: 'Contributor.affiliation' },
@@ -203,12 +209,25 @@ if ENV['SETTINGS__BULKRAX__ENABLED'] == 'true'
 
     # Properties that should not be used in imports/exports. They are reserved for use by Hyrax.
     # config.reserved_properties += ['my_field']
+
+    # List of Questioning Authority properties that are controlled via YAML files in
+    # the config/authorities/ directory. For example, the :rights_statement property
+    # is controlled by the active terms in config/authorities/rights_statements.yml
+    # Defaults: 'rights_statement' and 'license'
+    # config.qa_controlled_properties += ['my_field']
+
+    # Specify the delimiter regular expression for splitting an attribute's values into a multi-value array.
+    # config.multi_value_element_split_on = /\s*[:;|]\s*/.freeze
+
+    # Specify the delimiter for joining an attribute's multi-value array into a string.  Note: the
+    # specific delimeter should likely be present in the multi_value_element_split_on expression.
+    # config.multi_value_element_join_on = ' | '
   end
 end
 # rubocop:enable Metrics/BlockLength
 
 # # Sidebar for hyrax 3+ support
-#   if Object.const_defined?(:Hyrax) && ::Hyrax::DashboardController&.respond_to?(:sidebar_partials)
-#     path = "hyrax/dashboard/sidebar/bulkrax_sidebar_additions"
-#     Hyrax::DashboardController.sidebar_partials[:repository_content] << path
-#   end
+  # if Object.const_defined?(:Hyrax) && ::Hyrax::DashboardController&.respond_to?(:sidebar_partials)
+  #   path = "hyrax/dashboard/sidebar/bulkrax_sidebar_additions"
+  #   Hyrax::DashboardController.sidebar_partials[:repository_content] << path
+  # end

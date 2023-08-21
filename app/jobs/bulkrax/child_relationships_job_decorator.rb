@@ -50,4 +50,4 @@ module Bulkrax
   end
 end
 
-::Bulkrax::ChildRelationshipsJob.prepend(Bulkrax::ChildRelationshipsJobDecorator)
+::Bulkrax::ChildRelationshipsJob.prepend(Bulkrax::ChildRelationshipsJobDecorator) if App.rails_5_1?
