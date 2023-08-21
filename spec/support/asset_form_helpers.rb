@@ -101,7 +101,7 @@ module AssetFormHelpers
   #  `index` to specify which description you want to set. If no index is given
   #  it will set the last one found.
   def fill_in_description(description, index: nil)
-    description_value_input(index).set description
+    description_value_input(index).send_keys description
   end
 
   # Selects a description type.
