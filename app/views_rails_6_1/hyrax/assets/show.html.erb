@@ -5,37 +5,47 @@
 <% end %>
 
 <div class="row work-type">
-  <div class="col-12">
+  <div class="col-sm-12">
     <%= render 'work_type', presenter: @presenter %>
   </div>
-  <div class="col-12 mb-4"></div>
   <div itemscope itemtype="http://schema.org/CreativeWork" class="col-12">
+    <%= render 'work_title', presenter: @presenter %>
+    <%= render 'show_actions', presenter: @presenter %>
     <div class="card work-panel">
+      <div class="card-body">
+        <div class="row">
+          <div class="col-sm-12">
+            <%= render 'representative_media', presenter: @presenter %>
+          </div>
+          <%= render 'workflow_actions_widget', presenter: @presenter %>
+          <div class="col-sm-12">
+            <%= render 'metadata', presenter: @presenter %>
+          </div>
+        </div>
+      </div>
+    </div><!-- /.card -->
+
+    <div class="card">
       <div class="card-header">
-        <%= render 'work_title', presenter: @presenter %>
+        <h2 class="card-title"><%= t(".instantiations") %></h2>
       </div>
       <div class="card-body">
-        <div class="col-sm-12">
-          <%= render 'representative_media', presenter: @presenter %>
-        </div>
-
-        <%= render 'workflow_actions_widget', presenter: @presenter %>
-
-        <div class="col-sm-12">
-          <%= render 'metadata', presenter: @presenter %>
-        </div>
-
-        <div class="col-sm-12">
-          <%= render 'instantiations', presenter: @presenter %>
-          <%# TODO: we may consider adding these partials in the future %>
-          <%# = render 'sharing_with', presenter: @presenter %>
-          <%# = render 'user_activity', presenter: @presenter %>
-        </div>
-
-        <div class="col-sm-12">
-          <%= render 'relationships', presenter: @presenter %>
-        </div>
+        <%= render 'instantiations', presenter: @presenter %>
       </div>
     </div>
+
+    <div class="card">
+      <div class="card-header">
+        <h2 class="card-title"><%= t('hyrax.base.show.relationships') %></h2>
+      </div>
+      <div class="card-body">
+        <%= render 'relationships', presenter: @presenter %>
+      </div>
+    </div>
+
+
+      <%# TODO: we may consider adding these partials in the future %>
+      <%# = render 'sharing_with', presenter: @presenter %>
+      <%# = render 'user_activity', presenter: @presenter %>
   </div>
 </div>
