@@ -12,7 +12,7 @@
 <div id="facet-date_drsim" class="panel-collapse facet-content collapse <%= 'show' if !params['exact_or_range'].blank? %>" aria-labelledby="facet-date_drsim-header">
   <div class="card-body">
   <%= form_tag search_action_path, :method => :get, id:"date_range_filter_form" do %>
-    <%= render_hash_as_hidden_fields(search_state.params_for_search.except(:page, :exact_or_range, :after_date, :before_date)) %>
+    <%= render Blacklight::HiddenSearchStateComponent.new(params: search_state.params_for_search.except(:page, :exact_or_range, :after_date, :before_date)) %>
 
     <!-- Inputs and labels for choosing filtering by exact date or date range  -->
     <div class="form-group row">
