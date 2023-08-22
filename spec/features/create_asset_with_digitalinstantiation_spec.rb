@@ -21,6 +21,7 @@ RSpec.feature 'Create and Validate Asset,Digital Instantiation, EssenseTrack', j
 
     let(:digital_instantiation_attributes) do
       {
+        main_title: main_title,
         location: 'Test Location',
         rights_summary: 'My Test Rights summary',
         rights_link: 'In Copyright',

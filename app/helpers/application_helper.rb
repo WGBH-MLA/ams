@@ -52,4 +52,19 @@ module ApplicationHelper
       doc_presenter.field_value(Blacklight::Configuration::Field.new(field: field_name))
     end
   end
+
+  # moving this method out of Blacklight into a helper due to deprecations in Blacklight 8
+  # most likely the entire facets and date_range_filter partials will need to be re-written
+  def search_fields
+    blacklight_config.search_fields.collect do |_key, field_def|
+      [label_for_search_field(field_def.key), field_def.key] if should_render_field?(field_def)
+    end.compact
+  end
+
+  # moving this method out of Blacklight into a helper due to deprecations in Blacklight 8
+  def thumbnail_url(document)
+    if document.has? blacklight_config.view_config(document_index_view_type).thumbnail_field
+      document.first(blacklight_config.view_config(document_index_view_type).thumbnail_field)
+    end
+  end
 end

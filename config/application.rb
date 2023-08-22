@@ -61,3 +61,11 @@ module App
     Rails.version.start_with? '5.1'
   end
 end
+
+unless App.rails_5_1?
+  DeprecationToolkit::Configuration.config do |config|
+    config.test_runner = :rspec
+    # this line includes recording warnings from gems
+    # config.warnings_treated_as_deprecation = [//]
+  end
+end

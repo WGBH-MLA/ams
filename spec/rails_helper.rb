@@ -19,6 +19,7 @@ require 'selenium/webdriver'
 require 'capybara/rails'
 require 'ams'
 require 'webdrivers'
+require "deprecation_toolkit/rspec" unless App.rails_5_1?
 
 # Require support files
 Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each { |f| require f }
