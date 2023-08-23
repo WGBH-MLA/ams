@@ -103,7 +103,6 @@ group :development do
   gem "sentry-rails"
   gem "sentry-sidekiq"
   gem "sentry-resque"
-  gem "sentry-opentelemetry"
   # gem 'xray-rails' should be commented out when actively using sidekiq.
 end
 
