@@ -22,8 +22,8 @@
         <%= link_to t("hyrax.toolbar.dashboard.menu"), hyrax.dashboard_path, class: "dropdown-item" %>
         <div class="dropdown-divider"></div>
         <%= link_to t("ams.toolbar.profile.edit_registration"), main_app.edit_user_registration_path, class: "dropdown-item" %>
-        <div class="dropdown-divider"></div>
         <% if current_user.ability.admin? %>
+          <div class="dropdown-divider"></div>
           <%= link_to t("ams.toolbar.profile.create_user"), main_app.new_admin_user_path, class: "dropdown-item" %>
         <% end %>
         <div class="dropdown-divider"></div>
