@@ -971,6 +971,8 @@ GEM
       rubyzip (>= 1.2.2, < 3.0)
       websocket (~> 1.0)
     semantic_range (3.0.0)
+    sentry-ruby (5.10.0)
+      concurrent-ruby (~> 1.0, >= 1.0.2)
     shacl (0.3.0)
       json-ld (~> 3.2)
       rdf (~> 3.2, >= 3.2.8)
@@ -1170,6 +1172,7 @@ DEPENDENCIES
   rspec_junit_formatter
   sass-rails (~> 6.0)
   selenium-webdriver
+  sentry-ruby
   shoulda-matchers
   sidekiq (~> 6.4.0)
   simple_form (= 5.0.0)
