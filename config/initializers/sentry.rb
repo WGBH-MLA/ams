@@ -1,3 +1,5 @@
+require 'sentry-ruby'
+
 # in Rails, this might be in config/initializers/sentry.rb
 Sentry.init do |config|
   config.dsn = ENV['SENTRY_DSN']
