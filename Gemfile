@@ -125,7 +125,10 @@ gem 'httparty', '~> 0.21'
 
 # Sentry-ruby for error handling
 gem "sentry-ruby"
-
+gem "sentry-rails"
+gem "sentry-sidekiq"
+gem "sentry-resque"
+gem "sentry-opentelemetry"
 # Adding pry to all environments, because it's very useful for debugging
 # production environments on demo instances.
 gem 'pry-byebug', platforms: [:mri, :mingw, :x64_mingw]
