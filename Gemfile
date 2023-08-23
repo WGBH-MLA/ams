@@ -98,11 +98,6 @@ group :development do
   # gem 'spring-watcher-listen', '~> 2.0.0'
   gem "letter_opener"
   gem 'faker'
-  # Sentry-ruby for error handling
-  gem "sentry-ruby"
-  gem "sentry-rails"
-  gem "sentry-sidekiq"
-  gem "sentry-resque"
   # gem 'xray-rails' should be commented out when actively using sidekiq.
 end
 
@@ -127,6 +122,12 @@ gem 'react-rails'
 gem 'database_cleaner'
 gem 'redlock', '~> 1.0'
 gem 'httparty', '~> 0.21'
+
+# Sentry-ruby for error handling
+gem "sentry-ruby"
+gem "sentry-rails"
+gem "sentry-sidekiq"
+gem "sentry-resque"
 
 # Adding pry to all environments, because it's very useful for debugging
 # production environments on demo instances.
