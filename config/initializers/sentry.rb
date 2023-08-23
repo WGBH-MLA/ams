@@ -12,4 +12,4 @@ Sentry.init do |config|
   config.traces_sampler = lambda do |context|
     true
   end
-end
+end unless Rails.env.test?
