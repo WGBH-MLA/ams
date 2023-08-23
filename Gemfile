@@ -24,7 +24,7 @@ if ENV['DEPENDENCIES_NEXT'] && !ENV['DEPENDENCIES_NEXT'].empty?
     gem 'bulkrax', git: 'https://github.com/samvera-labs/bulkrax.git', branch: 'gbh-patch'
     gem 'willow_sword', git: 'https://github.com/notch8/willow_sword.git'
   end
-  gem 'sidekiq', '~> 6.4.0'
+  gem 'sidekiq', '~> 6.5.6'
 else
   # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
   gem 'rails', '~> 5.1.5'
@@ -98,7 +98,7 @@ group :development do
   # gem 'spring-watcher-listen', '~> 2.0.0'
   gem "letter_opener"
   gem 'faker'
-  # gem 'xray-rails' should be commented out when actively using sidekiq.
+  # gem 'xray-rails' # should be commented out when actively using sidekiq.
 end
 
 gem 'rsolr', '>= 1.0'
