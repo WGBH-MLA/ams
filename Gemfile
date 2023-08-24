@@ -127,7 +127,6 @@ gem 'httparty', '~> 0.21'
 gem "sentry-ruby"
 gem "sentry-rails"
 gem "sentry-sidekiq"
-gem "sentry-resque"
 
 # Adding pry to all environments, because it's very useful for debugging
 # production environments on demo instances.
