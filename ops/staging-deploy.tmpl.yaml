@@ -89,7 +89,7 @@ extraEnvVars: &envVars
   - name: SENTRY_ENVIRONMENT
     value: "staging"
   - name: SENTRY_TRACES_SAMPLE_RATE`
-    value: "0.1"
+    value: "1.0"
   - name: SETTINGS__ACTIVE_JOB__QUEUE_ADAPTER
     value: sidekiq
   - name: SETTINGS__BULKRAX__ENABLED
