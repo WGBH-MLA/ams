@@ -964,6 +964,14 @@ GEM
       rubyzip (>= 1.2.2, < 3.0)
       websocket (~> 1.0)
     semantic_range (3.0.0)
+    sentry-rails (5.10.0)
+      railties (>= 5.0)
+      sentry-ruby (~> 5.10.0)
+    sentry-ruby (5.10.0)
+      concurrent-ruby (~> 1.0, >= 1.0.2)
+    sentry-sidekiq (5.10.0)
+      sentry-ruby (~> 5.10.0)
+      sidekiq (>= 3.0)
     shacl (0.3.0)
       json-ld (~> 3.2)
       rdf (~> 3.2, >= 3.2.8)
@@ -980,10 +988,10 @@ GEM
       sxp (~> 1.2)
     shoulda-matchers (5.3.0)
       activesupport (>= 5.2.0)
-    sidekiq (6.4.2)
-      connection_pool (>= 2.2.2)
+    sidekiq (6.5.9)
+      connection_pool (>= 2.2.5, < 3)
       rack (~> 2.0)
-      redis (>= 4.2.0)
+      redis (>= 4.5.0, < 5)
     signet (0.17.0)
       addressable (~> 2.8)
       faraday (>= 0.17.5, < 3.a)
@@ -1163,8 +1171,11 @@ DEPENDENCIES
   rspec_junit_formatter
   sass-rails (~> 6.0)
   selenium-webdriver
+  sentry-rails
+  sentry-ruby
+  sentry-sidekiq
   shoulda-matchers
-  sidekiq (~> 6.4.0)
+  sidekiq (~> 6.5.6)
   simple_form (= 5.0.0)
   solr_wrapper (~> 2.1)
   sony_ci_api!

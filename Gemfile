@@ -23,7 +23,7 @@ if ENV['DEPENDENCIES_NEXT'] && !ENV['DEPENDENCIES_NEXT'].empty?
     # our custom changes require us to lock in the version of bulkrax
     gem 'bulkrax', git: 'https://github.com/samvera-labs/bulkrax.git', branch: 'hyrax-4-support'
   end
-  gem 'sidekiq', '~> 6.4.0'
+  gem 'sidekiq', '~> 6.5.6'
 else
   # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
   gem 'rails', '~> 5.1.5'
@@ -97,7 +97,7 @@ group :development do
   # gem 'spring-watcher-listen', '~> 2.0.0'
   gem "letter_opener"
   gem 'faker'
-  # gem 'xray-rails' should be commented out when actively using sidekiq.
+  # gem 'xray-rails' # should be commented out when actively using sidekiq.
 end
 
 gem 'rsolr', '>= 1.0'
@@ -121,6 +121,11 @@ gem 'react-rails'
 gem 'database_cleaner'
 gem 'redlock', '~> 1.0'
 gem 'httparty', '~> 0.21'
+
+# Sentry-ruby for error handling
+gem "sentry-ruby"
+gem "sentry-rails"
+gem "sentry-sidekiq"
 
 # Adding pry to all environments, because it's very useful for debugging
 # production environments on demo instances.
