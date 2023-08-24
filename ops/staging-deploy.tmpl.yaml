@@ -88,6 +88,8 @@ extraEnvVars: &envVars
     value: https://6f6e6b5f54234b5bb2218786c3493a37@o1008683.ingest.sentry.io/6745030 
   - name: SENTRY_ENVIRONMENT
     value: "staging"
+  - name: SENTRY_TRACES_SAMPLE_RATE`
+    value: "1.0"
   - name: SETTINGS__ACTIVE_JOB__QUEUE_ADAPTER
     value: sidekiq
   - name: SETTINGS__BULKRAX__ENABLED
