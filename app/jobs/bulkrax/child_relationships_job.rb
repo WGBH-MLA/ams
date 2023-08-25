@@ -74,7 +74,6 @@ module Bulkrax
     # This is adding the reverse relatinship, from the child to the parent
     def work_child_collection_parent(work_id)
       attrs = { id: work_id, collections: [{ id: entry&.factory&.find&.id }] }
-      byebug
       Bulkrax::ObjectFactory.new(attributes: attrs,
                                  source_identifier_value: child_works_hash[work_id][entry.parser.source_identifier],
                                  work_identifier: entry.parser.work_identifier,
@@ -91,7 +90,6 @@ module Bulkrax
     # Collection-Collection membership is added to the as member_ids
     def collection_parent_collection_child(member_ids)
       attrs = { id: entry&.factory&.find&.id, children: member_ids }
-      byebug
       Bulkrax::ObjectFactory.new(attributes: attrs,
                                  source_identifier_value: entry.identifier,
                                  work_identifier: entry.parser.work_identifier,
@@ -112,7 +110,6 @@ module Bulkrax
                 work_members_attributes: member_ids.each.with_index.each_with_object({}) do |(member, index), ids|
                   ids[index] = { id: member }
                 end }
-                byebug
       Bulkrax::ObjectFactory.new(attributes: attrs,
                                  source_identifier_value: entry.identifier,
                                  work_identifier: entry.parser.work_identifier,
