@@ -10,7 +10,7 @@ GIT
 
 GIT
   remote: https://github.com/samvera-labs/bulkrax.git
-  revision: 28875a8ddc0b1bf8265dbd88fb830ed29a7af570
+  revision: bae61a7dbdc0c664d21d9ccd02b6d4d5ff6bd194
   branch: hyrax-4-support
   specs:
     bulkrax (5.3.0)
@@ -964,14 +964,8 @@ GEM
       rubyzip (>= 1.2.2, < 3.0)
       websocket (~> 1.0)
     semantic_range (3.0.0)
-    sentry-rails (5.10.0)
-      railties (>= 5.0)
-      sentry-ruby (~> 5.10.0)
-    sentry-ruby (5.10.0)
+    sentry-ruby (5.4.2)
       concurrent-ruby (~> 1.0, >= 1.0.2)
-    sentry-sidekiq (5.10.0)
-      sentry-ruby (~> 5.10.0)
-      sidekiq (>= 3.0)
     shacl (0.3.0)
       json-ld (~> 3.2)
       rdf (~> 3.2, >= 3.2.8)
@@ -1171,9 +1165,7 @@ DEPENDENCIES
   rspec_junit_formatter
   sass-rails (~> 6.0)
   selenium-webdriver
-  sentry-rails
   sentry-ruby
-  sentry-sidekiq
   shoulda-matchers
   sidekiq (~> 6.5.6)
   simple_form (= 5.0.0)

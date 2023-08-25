@@ -34,12 +34,6 @@ if ENV['SETTINGS__BULKRAX__ENABLED'] == 'true'
 
     config.fill_in_blank_source_identifiers = ->(type, index, key_count) { "#{type}-#{index}-#{key_count}" }
 
-    config.field_mappings['Bulkrax::CsvParser'] = {
-      'bulkrax_identifier' => { from: ['source_identifier'], source_identifier: true },
-      'children' => { from: ['children'], split: /\s*[;|]\s*/, related_children_field_mapping: true },
-      'parents' => { from: ['parents'], split: /\s*[;|]\s*/, related_parents_field_mapping: true }
-    }
-
     config.field_mappings['CsvParser'] = {
       'admin_data_gid' => { from: headers('admin_data_gid') },
       'affiliation' => { from: 'Contributor.affiliation' },
