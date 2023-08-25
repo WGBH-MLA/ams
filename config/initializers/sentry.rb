@@ -8,7 +8,7 @@ Sentry.init do |config|
 
   # report exceptions rescued by ActionDispatch::ShowExceptions or ActionDispatch::DebugExceptions middlewares
   # the default value is true
-  config.rails.report_rescued_exceptions = true
+  # config.rails.report_rescued_exceptions = true
 
   # Set traces_sample_rate to 1.0 to capture 100%
   # of transactions for performance monitoring.
