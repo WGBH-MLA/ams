@@ -672,7 +672,7 @@ GEM
     noid-rails (3.1.0)
       actionpack (>= 5.0.0, < 7.1)
       noid (~> 0.9)
-    nokogiri (1.15.3)
+    nokogiri (1.15.4)
       mini_portile2 (~> 2.8.2)
       racc (~> 1.4)
     oai (1.2.1)
@@ -971,13 +971,13 @@ GEM
       rubyzip (>= 1.2.2, < 3.0)
       websocket (~> 1.0)
     semantic_range (3.0.0)
-    sentry-rails (5.10.0)
+    sentry-rails (5.4.2)
       railties (>= 5.0)
-      sentry-ruby (~> 5.10.0)
-    sentry-ruby (5.10.0)
+      sentry-ruby (~> 5.4.2)
+    sentry-ruby (5.4.2)
       concurrent-ruby (~> 1.0, >= 1.0.2)
-    sentry-sidekiq (5.10.0)
-      sentry-ruby (~> 5.10.0)
+    sentry-sidekiq (5.4.2)
+      sentry-ruby (~> 5.4.2)
       sidekiq (>= 3.0)
     shacl (0.3.0)
       json-ld (~> 3.2)
@@ -1178,9 +1178,9 @@ DEPENDENCIES
   rspec_junit_formatter
   sass-rails (~> 6.0)
   selenium-webdriver
-  sentry-rails
-  sentry-ruby
-  sentry-sidekiq
+  sentry-rails (= 5.4.2)
+  sentry-ruby (= 5.4.2)
+  sentry-sidekiq (= 5.4.2)
   shoulda-matchers
   sidekiq (~> 6.5.6)
   simple_form (= 5.0.0)
