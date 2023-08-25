@@ -89,7 +89,7 @@ extraEnvVars: &envVars
     value: https://6f6e6b5f54234b5bb2218786c3493a37@o1008683.ingest.sentry.io/6745030 
   - name: SENTRY_ENVIRONMENT
     value: "charlie"
-  - name: SENTRY_TRACES_SAMPLE_RATE`
+  - name: SENTRY_TRACES_SAMPLE_RATE
     value: "0.1"
   - name: SETTINGS__BULKRAX__ENABLED
     value: "true"
