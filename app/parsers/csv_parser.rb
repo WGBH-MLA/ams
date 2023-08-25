@@ -290,4 +290,8 @@ class CsvParser < Bulkrax::CsvParser
       objects << current_object
     end
   end
+
+  def collection_field_mapping
+    :collection
+  end
 end
