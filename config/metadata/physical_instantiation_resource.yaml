@@ -19,4 +19,196 @@
 # Generated via
 #  `rails generate hyrax:work_resource PhysicalInstantiationResource`
 
-attributes: {}
+attributes:
+  bulkrax_identifier:
+    type: string
+    multiple: false
+    index_keys:
+      - "bulkrax_identifier_sim"
+      - "bulkrax_identifier_tesim"
+    form:
+      required: false
+      primary: false
+      multiple: false
+  date:
+    type: string
+    multiple: true
+    index_keys:
+      - "date_sim"
+      - "date_tesim"
+    form:
+      required: false
+      primary: false
+      multiple: true
+  digitization_date:
+    type: string
+    multiple: false
+    index_keys:
+      - "digitization_date_tesim"
+    form:
+      required: false
+      primary: false
+      multiple: false
+  dimensions:
+    type: string
+    multiple: true
+    index_keys:
+      - "dimensions_tesim"
+    form:
+      required: false
+      primary: false
+      multiple: true
+  format:
+    type: string
+    multiple: false
+    index_keys:
+      - "format_tesim"
+    form:
+      required: true
+      primary: false
+      multiple: false
+  standard:
+    type: string
+    multiple: false
+    index_keys:
+      - "standard_tesim"
+    form:
+      required: false
+      primary: false
+      multiple: false
+  location:
+    type: string
+    multiple: false
+    index_keys:
+      - "location_tesim"
+    form:
+      required: true
+      primary: false
+      multiple: false
+  media_type:
+    type: string
+    multiple: false
+    index_keys:
+      - "media_type_sim"
+      - "media_type_tesim"
+    form:
+      required: true
+      primary: false
+      multiple: false
+  generations:
+    type: string
+    multiple: true
+    index_keys:
+      - "generations_sim"
+      - "generations_tesim"
+    form:
+      required: false
+      primary: false
+      multiple: true
+  time_start:
+    type: string
+    multiple: false
+    index_keys:
+      - "time_start_tesim"
+    form:
+      required: false
+      primary: false
+      multiple: false
+  duration:
+    type: string
+    multiple: false
+    index_keys:
+      - "duration_tesim"
+    form:
+      required: false
+      primary: false
+      multiple: false
+  colors:
+    type: string
+    multiple: false
+    index_keys:
+      - "colors_tesim"
+    form:
+      required: false
+      primary: false
+      multiple: false
+  rights_summary:
+    type: string
+    multiple: true
+    index_keys:
+      - "rights_summary_tesim"
+    form:
+      required: false
+      primary: false
+      multiple: true
+  rights_link:
+    type: string
+    multiple: true
+    index_keys:
+      - "rights_link_tesim"
+    form:
+      required: false
+      primary: false
+      multiple: true
+  annotation:
+    type: string
+    multiple: true
+    index_keys:
+      - "annotation_tesim"
+    form:
+      required: false
+      primary: false
+      multiple: true
+  local_instantiation_identifier:
+    type: string
+    multiple: true
+    index_keys:
+      - "local_instantiation_identifier_tesim"
+    form:
+      required: false
+      primary: false
+      multiple: true
+  tracks:
+    type: string
+    multiple: false
+    index_keys:
+      - "tracks_tesim"
+    form:
+      required: false
+      primary: false
+      multiple: false
+  channel_configuration:
+    type: string
+    multiple: false
+    index_keys:
+      - "channel_configuration_tesim"
+    form:
+      required: false
+      primary: false
+      multiple: false
+  alternative_modes:
+    type: string
+    multiple: false
+    index_keys:
+      - "alternative_modes_tesim"
+    form:
+      required: false
+      primary: false
+      multiple: false
+  holding_organization:
+    type: string
+    multiple: false
+    index_keys:
+      - "holding_organization_sim"
+      - "holding_organization_tesim"
+    form:
+      required: true
+      primary: false
+      multiple: false
+  instantiation_admin_data_gid:
+    type: string
+    multiple: false
+    form:
+      required: false
+      primary: false
+      multiple: false

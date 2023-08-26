@@ -19,4 +19,41 @@
 # Generated via
 #  `rails generate hyrax:work_resource ContributionResource`
 
-attributes: {}
+attributes:
+  bulkrax_identifier:
+    type: string
+    multiple: false
+    index_keys:
+      - "bulkrax_identifier_sim"
+      - "bulkrax_identifier_tesim"
+    form:
+      required: false
+      primary: false
+      multiple: false
+  contributor_role:
+    type: string
+    multiple: false
+    index_keys:
+      - "contributor_role_tesim"
+    form:
+      required: false
+      primary: false
+      multiple: false
+  portrayal:
+    type: string
+    multiple: false
+    index_keys:
+      - "portrayal_tesim"
+    form:
+      required: false
+      primary: false
+      multiple: false
+  affiliation:
+    type: string
+    multiple: false
+    index_keys:
+      - "affiliation_tesim"
+    form:
+      required: false
+      primary: false
+      multiple: false
