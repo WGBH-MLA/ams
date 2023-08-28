@@ -43,7 +43,7 @@ ingress:
     }
   tls:
     - hosts:
-        - ams2-demo.wgbh-mla.org
+        - ams2-delta.wgbh-mla.org
       secretName: letencrypt-tls
 
 extraEnvVars: &envVars
