@@ -1,16 +1,15 @@
 # frozen_string_literal: true
 
+# OVERRIDE: a modified version of the job from Bulkrax v1.0.0
+#     - adds attempts parameter to prevent endless reschedules
+#     - overrides method work_membership
 module Bulkrax
   class ChildWorksError < RuntimeError; end
   class ChildRelationshipsJob < ApplicationJob
-    include DynamicRecordLookup
-
     queue_as :import
 
-    def perform(parent_id: parent_id, child_entry_ids: child_entry_ids, importer_run_id: current_run.id, args: {})
-      @parent_id = parent_id
-      @child_entry_ids = child_entry_ids
-      @importer_run_id = importer_run_id
+    def perform(*args)
+      @args = args
 
       if entry.factory_class == Collection
         collection_membership
@@ -18,11 +17,13 @@ module Bulkrax
         work_membership
       end
 
-      @parent_record = entry.parser.work_identifier
-
-      # Not all of the Works/Collections exist yet; reschedule
     rescue Bulkrax::ChildWorksError
-      reschedule(args[0], args[1], args[2])
+      # Not all of the Works/Collections exist yet; reschedule
+      # In case the work hasn't been created, don't endlessly reschedule the job
+      attempts = (args[3] || 0) + 1
+      child_ids = @missing_entry_ids.presence || args[1]
+
+      reschedule(args[0], child_ids, args[2], attempts) unless attempts > 5
     end
 
     def collection_membership
@@ -38,23 +39,28 @@ module Bulkrax
     end
 
     def work_membership
-      # add works to work
-      # reject any Collections, they can't be children of Works
-      members_works = []
-      # reject any Collections, they can't be children of Works
-      child_works_hash.each { |k, v| members_works << k if v[:class_name] != 'Collection' }
-      if members_works.length < child_entries.length # rubocop:disable Style/IfUnlessModifier
-        Rails.logger.warn("Cannot add collections as children of works: #{(@child_entries.length - members_works.length)} collections were discarded for parent entry #{@entry.id} (of #{@child_entries.length})")
+      seen_count = 0
+      child_entries.each do |child_entry|
+        child_record = child_entry.factory.find
+        next if child_record.blank? or child_record.is_a?(Collection)
+        next if parent_record.ordered_members&.to_a&.include?(child_record)
+        parent_record.ordered_members << child_record
+        seen_count += 1
       end
-      work_parent_work_child(members_works) if members_works.present?
+      parent_record.save!
+      raise ChildWorksError if seen_count < child_entries.count
     end
 
     def entry
-      @entry ||= Bulkrax::Entry.find(@parent_id)
+      @entry ||= Bulkrax::Entry.find(@args[0])
+    end
+
+    def parent_record
+      @parent_record ||= entry&.factory&.find
     end
 
     def child_entries
-      @child_entries ||= @child_entry_ids.map { |e| Bulkrax::Entry.find(e) }
+      @child_entries ||= @args[1].map { |e| Bulkrax::Entry.find(e) }
     end
 
     def child_works_hash
@@ -67,7 +73,7 @@ module Bulkrax
     end
 
     def importer_run_id
-      @importer_run_id
+      @args[2]
     end
 
     def user
@@ -84,14 +90,13 @@ module Bulkrax
       Bulkrax::ObjectFactory.new(attributes: attrs,
                                  source_identifier_value: child_works_hash[work_id][entry.parser.source_identifier],
                                  work_identifier: entry.parser.work_identifier,
-                                 collection_field_mapping: entry.parser.collection_field_mapping,
                                  replace_files: false,
                                  user: user,
                                  klass: child_works_hash[work_id][:class_name].constantize).run
-      ImporterRun.find(importer_run_id).increment!(:processed_relationships)
+      ImporterRun.find(importer_run_id).increment!(:processed_children)
     rescue StandardError => e
       entry.status_info(e)
-      ImporterRun.find(importer_run_id).increment!(:failed_relationships)
+      ImporterRun.find(importer_run_id).increment!(:failed_children)
     end
 
     # Collection-Collection membership is added to the as member_ids
@@ -100,82 +105,37 @@ module Bulkrax
       Bulkrax::ObjectFactory.new(attributes: attrs,
                                  source_identifier_value: entry.identifier,
                                  work_identifier: entry.parser.work_identifier,
-                                 collection_field_mapping: entry.parser.collection_field_mapping,
                                  replace_files: false,
                                  user: user,
                                  klass: entry.factory_class).run
-      ImporterRun.find(importer_run_id).increment!(:processed_relationships)
+      ImporterRun.find(importer_run_id).increment!(:processed_children)
     rescue StandardError => e
       entry.status_info(e)
-      ImporterRun.find(importer_run_id).increment!(:failed_relationships)
+      ImporterRun.find(importer_run_id).increment!(:failed_children)
     end
 
     # Work-Work membership is added to the parent as member_ids
     def work_parent_work_child(member_ids)
       # build work_members_attributes
-      # attrs = { id: entry&.factory&.find&.id,
-      #           work_members_attributes: member_ids.each.with_index.each_with_object({}) do |(member, index), ids|
-      #             ids[index] = { id: member }
-      #           end }
-
-      # this calls actor stack, skip this and do the work here instead
-      # Bulkrax::ObjectFactory.new(attributes: attrs,
-      #                            source_identifier_value: entry.identifier,
-      #                            work_identifier: entry.parser.work_identifier,
-      #                            collection_field_mapping: entry.parser.collection_field_mapping,
-      #                            replace_files: false,
-      #                            user: user,
-      #                            klass: entry.factory_class).run
-
-      member_ids.each do |child_record|
-        add_to_work(child_record, @parent_record)
-      end
-
-      # add_to_work(member)
-
-      ImporterRun.find(importer_run_id).increment!(:processed_relationships)
+      attrs = { id: entry&.factory&.find&.id,
+                work_members_attributes: member_ids.each.with_index.each_with_object({}) do |(member, index), ids|
+                  ids[index] = { id: member }
+                end }
+      Bulkrax::ObjectFactory.new(attributes: attrs,
+                                 source_identifier_value: entry.identifier,
+                                 work_identifier: entry.parser.work_identifier,
+                                 replace_files: false,
+                                 user: user,
+                                 klass: entry.factory_class).run
+      ImporterRun.find(importer_run_id).increment!(:processed_children)
     rescue StandardError => e
       entry.status_info(e)
-      ImporterRun.find(importer_run_id).increment!(:failed_relationships)
+      ImporterRun.find(importer_run_id).increment!(:failed_children)
     end
     # rubocop:enable Rails/SkipsModelValidations
 
-    def add_to_work(child_record, parent_record)
-      return true if parent_record.ordered_members.to_a.include?(child_record)
-
-      parent_record.ordered_members << child_record
-      @parent_record_members_added = true
-      @child_members_added << child_record
-    end
-
-    def reschedule(entry_id, child_entry_ids, importer_run_id)
-      ChildRelationshipsJob.set(wait: 10.minutes).perform_later(entry_id, child_entry_ids, importer_run_id)
-    end
-
-    private
-
-    ##
-    # We can use Hyrax's lock manager when we have one available.
-    if defined?(::Hyrax)
-      include Hyrax::Lockable
-
-      def conditionally_acquire_lock_for(*args, &block)
-        if Bulkrax.use_locking?
-          acquire_lock_for(*args, &block)
-        else
-          yield
-        end
-      end
-    else
-      # Otherwise, we're providing no meaningful lock manager at this time.
-      def acquire_lock_for(*)
-        yield
-      end
-
-      alias conditionally_acquire_lock_for acquire_lock_for
+    def reschedule(entry_id, child_entry_ids, importer_run_id, attempts)
+      ChildRelationshipsJob.set(wait: 10.minutes).perform_later(entry_id, child_entry_ids, importer_run_id, attempts)
     end
   end
 end
-
-
-# ::Bulkrax::ChildRelationshipsJob.prepend(Bulkrax::ChildRelationshipsJobDecorator) #if App.rails_5_1?
