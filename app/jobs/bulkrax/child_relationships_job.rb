@@ -3,16 +3,23 @@
 module Bulkrax
   class ChildWorksError < RuntimeError; end
   class ChildRelationshipsJob < ApplicationJob
+    include DynamicRecordLookup
+
     queue_as :import
 
-    def perform(*args)
-      @args = args
+    def perform(parent_id: parent_id, child_entry_ids: child_entry_ids, importer_run_id: current_run.id, args: {})
+      @parent_id = parent_id
+      @child_entry_ids = child_entry_ids
+      @importer_run_id = importer_run_id
 
       if entry.factory_class == Collection
         collection_membership
       else
         work_membership
       end
+
+      @parent_record = entry.parser.work_identifier
+
       # Not all of the Works/Collections exist yet; reschedule
     rescue Bulkrax::ChildWorksError
       reschedule(args[0], args[1], args[2])
@@ -43,11 +50,11 @@ module Bulkrax
     end
 
     def entry
-      @entry ||= Bulkrax::Entry.find(@args[0])
+      @entry ||= Bulkrax::Entry.find(@parent_id)
     end
 
     def child_entries
-      @child_entries ||= @args[1].map { |e| Bulkrax::Entry.find(e) }
+      @child_entries ||= @child_entry_ids.map { |e| Bulkrax::Entry.find(e) }
     end
 
     def child_works_hash
@@ -60,7 +67,7 @@ module Bulkrax
     end
 
     def importer_run_id
-      @args[2]
+      @importer_run_id
     end
 
     def user
@@ -106,17 +113,26 @@ module Bulkrax
     # Work-Work membership is added to the parent as member_ids
     def work_parent_work_child(member_ids)
       # build work_members_attributes
-      attrs = { id: entry&.factory&.find&.id,
-                work_members_attributes: member_ids.each.with_index.each_with_object({}) do |(member, index), ids|
-                  ids[index] = { id: member }
-                end }
-      Bulkrax::ObjectFactory.new(attributes: attrs,
-                                 source_identifier_value: entry.identifier,
-                                 work_identifier: entry.parser.work_identifier,
-                                 collection_field_mapping: entry.parser.collection_field_mapping,
-                                 replace_files: false,
-                                 user: user,
-                                 klass: entry.factory_class).run
+      # attrs = { id: entry&.factory&.find&.id,
+      #           work_members_attributes: member_ids.each.with_index.each_with_object({}) do |(member, index), ids|
+      #             ids[index] = { id: member }
+      #           end }
+
+      # this calls actor stack, skip this and do the work here instead
+      # Bulkrax::ObjectFactory.new(attributes: attrs,
+      #                            source_identifier_value: entry.identifier,
+      #                            work_identifier: entry.parser.work_identifier,
+      #                            collection_field_mapping: entry.parser.collection_field_mapping,
+      #                            replace_files: false,
+      #                            user: user,
+      #                            klass: entry.factory_class).run
+
+      member_ids.each do |child_record|
+        add_to_work(child_record, @parent_record)
+      end
+
+      # add_to_work(member)
+
       ImporterRun.find(importer_run_id).increment!(:processed_relationships)
     rescue StandardError => e
       entry.status_info(e)
@@ -124,8 +140,39 @@ module Bulkrax
     end
     # rubocop:enable Rails/SkipsModelValidations
 
+    def add_to_work(child_record, parent_record)
+      return true if parent_record.ordered_members.to_a.include?(child_record)
+
+      parent_record.ordered_members << child_record
+      @parent_record_members_added = true
+      @child_members_added << child_record
+    end
+
     def reschedule(entry_id, child_entry_ids, importer_run_id)
       ChildRelationshipsJob.set(wait: 10.minutes).perform_later(entry_id, child_entry_ids, importer_run_id)
+    end
+
+    private
+
+    ##
+    # We can use Hyrax's lock manager when we have one available.
+    if defined?(::Hyrax)
+      include Hyrax::Lockable
+
+      def conditionally_acquire_lock_for(*args, &block)
+        if Bulkrax.use_locking?
+          acquire_lock_for(*args, &block)
+        else
+          yield
+        end
+      end
+    else
+      # Otherwise, we're providing no meaningful lock manager at this time.
+      def acquire_lock_for(*)
+        yield
+      end
+
+      alias conditionally_acquire_lock_for acquire_lock_for
     end
   end
 end

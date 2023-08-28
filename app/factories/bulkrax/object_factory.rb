@@ -4,15 +4,17 @@ require_dependency Bulkrax::Engine.root.join('app', 'factories', 'bulkrax', 'obj
 
 Bulkrax::ObjectFactory.class_eval do     # rubocop:disable Metrics/ParameterLists
     # rubocop:disable Metrics/ParameterLists
-    def initialize(attributes:, source_identifier_value:, work_identifier:, collection_field_mapping:, replace_files: false, user: nil, klass: nil, update_files: false, importer: nil)
+    def initialize(attributes:, source_identifier_value:, work_identifier:, related_parents_parsed_mapping: nil, collection_field_mapping:, replace_files: false, user: nil, klass: nil, update_files: false, importer: nil)
       @attributes = ActiveSupport::HashWithIndifferentAccess.new(attributes)
       @replace_files = replace_files
       @update_files = update_files
       @user = user || User.batch_user
       @work_identifier = work_identifier
       @collection_field_mapping = collection_field_mapping
+      @related_parents_parsed_mapping = related_parents_parsed_mapping
       @source_identifier_value = source_identifier_value
       @klass = klass || Bulkrax.default_work_type.constantize
+      @importer_run_id = importer_run_id
     end
 
   # Regardless of what the Parser gives us, these are the properties we are prepared to accept.
