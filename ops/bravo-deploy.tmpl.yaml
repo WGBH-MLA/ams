@@ -117,6 +117,26 @@ extraEnvVars: &envVars
     value: "10"
   - name: SIDEKIQ_REDIS_URL
     value: "redis://:prod@ams-prod-redis-master:6379/0"
+  - name: AWS_ACCESS_KEY
+    value: "AKIAIWFN3WW3WBIMKNCQ"
+  - name: MAIL_DELIVERY_METHOD
+    value: "smtp"
+  - name: PRODUCTION_HOST
+    value: "ams2.wgbh-mla.org"
+  - name: S3_EXPORT_BUCKET
+    value: "ams-edge.wgbh-mla.org"
+  - name: S3_EXPORT_DIR
+    value: "ip-10-10-1-77"
+  - name: SMTP_ADDRESS
+    value: "email-smtp.us-east-1.amazonaws.com"
+  - name: SMTP_AUTHENTICATION
+    value: "login"
+  - name: SMTP_ENABLE_STARTTLS
+    value: "true"
+  - name: SMTP_PORT
+    value: "587"
+  - name: SMTP_USERNAME
+    value: "AKIAINCFFPY4ILW2LNJQ"
 
 worker:
   replicaCount: 0
