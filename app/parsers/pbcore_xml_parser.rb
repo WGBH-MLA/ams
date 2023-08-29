@@ -130,6 +130,10 @@ class PbcoreXmlParser < Bulkrax::XmlParser
     status_info(e)
   end
 
+  def collection_field_mapping
+    :collection
+  end
+
   private
 
   def set_objects(file, index)
@@ -220,4 +224,6 @@ class PbcoreXmlParser < Bulkrax::XmlParser
     # return the record so that we retain the parent/child relationships
     record
   end
+
+  def create_relationships; end
 end

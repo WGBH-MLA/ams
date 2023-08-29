@@ -20,4 +20,12 @@ Bulkrax::ImporterJob.class_eval do
     Rails.logger.error "#{e.class}: #{e.message}\n\nBacktrace:\n#{e.backtrace.join("\n")}"
     nil
   end
+
+  def import(importer, only_updates_since_last_import)
+    importer.only_updates = only_updates_since_last_import || false
+    return unless importer.valid_import?
+    importer.import_collections
+    importer.import_works
+    importer.create_parent_child_relationships unless importer.validate_only
+  end
 end

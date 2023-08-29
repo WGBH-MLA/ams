@@ -82,4 +82,16 @@ class Ability
                                         Contribution,
                                         Annotation ]
   end
+
+  def can_import_works?
+    can_create_any_work?
+  end
+
+  def can_export_works?
+    can_create_any_work?
+  end
+
+  def can_create_any_work?
+    true
+  end
 end
