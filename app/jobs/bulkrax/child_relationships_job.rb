@@ -92,12 +92,10 @@ module Bulkrax
                                  replace_files: false,
                                  user: user,
                                  klass: child_works_hash[work_id][:class_name].constantize).run
-      processed_attr = App.rails_5_1? ? :processed_children : :processed_relationships
-      ImporterRun.find(importer_run_id).increment!(processed_attr)
+      ImporterRun.find(importer_run_id).increment!(:processed_relationships)
     rescue StandardError => e
       entry.status_info(e)
-      failed_attr = App.rails_5_1? ? :failed_children : :failed_relationships
-      ImporterRun.find(importer_run_id).increment!(failed_attr)
+      ImporterRun.find(importer_run_id).increment!(:failed_relationships)
     end
 
     # Collection-Collection membership is added to the as member_ids
@@ -109,12 +107,10 @@ module Bulkrax
                                  replace_files: false,
                                  user: user,
                                  klass: entry.factory_class).run
-      processed_attr = App.rails_5_1? ? :processed_children : :processed_relationships
-      ImporterRun.find(importer_run_id).increment!(processed_attr)
+      ImporterRun.find(importer_run_id).increment!(:processed_relationships)
     rescue StandardError => e
       entry.status_info(e)
-      failed_attr = App.rails_5_1? ? :failed_children : :failed_relationships
-      ImporterRun.find(importer_run_id).increment!(failed_attr)
+      ImporterRun.find(importer_run_id).increment!(:failed_relationships)
     end
 
     # Work-Work membership is added to the parent as member_ids
@@ -130,12 +126,10 @@ module Bulkrax
                                  replace_files: false,
                                  user: user,
                                  klass: entry.factory_class).run
-      processed_attr = App.rails_5_1? ? :processed_children : :processed_relationships
-      ImporterRun.find(importer_run_id).increment!(processed_attr)
+      ImporterRun.find(importer_run_id).increment!(:processed_relationships)
     rescue StandardError => e
       entry.status_info(e)
-      failed_attr = App.rails_5_1? ? :failed_children : :failed_relationships
-      ImporterRun.find(importer_run_id).increment!(failed_attr)
+      ImporterRun.find(importer_run_id).increment!(:failed_relationships)
     end
     # rubocop:enable Rails/SkipsModelValidations
 
