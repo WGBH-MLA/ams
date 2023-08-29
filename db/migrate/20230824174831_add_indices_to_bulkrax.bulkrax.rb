@@ -11,7 +11,16 @@ class AddIndicesToBulkrax < ActiveRecord::Migration[5.1]
     check_and_add_index :bulkrax_statuses, [:statusable_id, :statusable_type], name: 'bulkrax_statuses_statusable_idx'
   end
 
-  def check_and_add_index(table_name, column_name, options = {})
-    add_index(table_name, column_name, options) unless index_exists?(table_name, column_name, options)
+  if RUBY_VERSION =~ /^2/
+    def check_and_add_index(table_name, column_name, options = {})
+      add_index(table_name, column_name, options) unless index_exists?(table_name, column_name, options)
+    end
+  elsif RUBY_VERSION =~ /^3/
+    def check_and_add_index(table_name, column_name, **options)
+      add_index(table_name, column_name, **options) unless index_exists?(table_name, column_name, **options)
+    end
+  else
+    raise "Ruby version #{RUBY_VERSION} is unknown"
   end
+
 end
