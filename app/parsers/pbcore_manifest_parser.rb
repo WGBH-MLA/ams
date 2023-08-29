@@ -119,6 +119,10 @@ class PbcoreManifestParser < Bulkrax::XmlParser
     status_info(e)
   end
 
+  def collection_field_mapping
+    :collection
+  end
+
   private
 
   def set_objects
