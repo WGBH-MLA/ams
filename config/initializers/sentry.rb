@@ -6,6 +6,10 @@ Sentry.init do |config|
   config.environment = ENV['SENTRY_ENVIRONMENT']
   config.breadcrumbs_logger = [:active_support_logger, :http_logger]
 
+  # report exceptions rescued by ActionDispatch::ShowExceptions or ActionDispatch::DebugExceptions middlewares
+  # the default value is true
+  # config.rails.report_rescued_exceptions = true
+
   # Set traces_sample_rate to 1.0 to capture 100%
   # of transactions for performance monitoring.
   # We recommend adjusting this value in production.
