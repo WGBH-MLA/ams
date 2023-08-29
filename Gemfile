@@ -8,6 +8,8 @@ end
 plugin 'bootboot', '~> 0.2.1'
 
 if ENV['DEPENDENCIES_NEXT'] && !ENV['DEPENDENCIES_NEXT'].empty?
+
+else
   gem 'rails', '~> 6.0'
   gem 'hyrax-batch_ingest', git: 'https://github.com/samvera-labs/hyrax-batch_ingest', branch: 'dependency-upgrades'
   gem 'hyrax', '~> 4.0'
@@ -22,23 +24,6 @@ if ENV['DEPENDENCIES_NEXT'] && !ENV['DEPENDENCIES_NEXT'].empty?
   # our custom changes require us to lock in the version of bulkrax
   gem 'bulkrax', git: 'https://github.com/samvera-labs/bulkrax.git', branch: 'hyrax-4-support'
   gem 'sidekiq', '~> 6.5.6'
-else
-  # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-  gem 'rails', '~> 5.1.5'
-  gem 'hyrax-batch_ingest', git: 'https://github.com/samvera-labs/hyrax-batch_ingest'
-  gem 'hyrax', '~> 2.9.0'
-  # Use SCSS for stylesheets
-  gem 'sass-rails', '~> 5.0'
-  gem 'sony_ci_api', github: 'WGBH-MLA/sony_ci_api_rewrite', branch: 'v0.1'
-  gem 'hydra-role-management', '~> 1.0'
-  gem 'blacklight_advanced_search', '~> 6.4.0'
-  # Bulkrax
-  group :bulkrax do
-    # our custom changes require us to lock in the version of bulkrax
-    gem 'bulkrax', git: 'https://github.com/samvera-labs/bulkrax.git', ref: '23efea3fd9d8d98746b73e570e0dc214ff764271'
-    gem 'willow_sword', git: 'https://github.com/notch8/willow_sword.git'
-  end
-  gem 'sidekiq'
 end
 
 gem 'dotenv-rails'
