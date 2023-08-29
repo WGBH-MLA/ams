@@ -19,10 +19,8 @@ if ENV['DEPENDENCIES_NEXT'] && !ENV['DEPENDENCIES_NEXT'].empty?
   gem 'blacklight', '~> 7.29'
   gem 'blacklight_advanced_search', '7.0'
   gem 'twitter-typeahead-rails', '0.11.1.pre.corejavascript'
-  group :bulkrax do
-    # our custom changes require us to lock in the version of bulkrax
-    gem 'bulkrax', git: 'https://github.com/samvera-labs/bulkrax.git', branch: 'hyrax-4-support'
-  end
+  # our custom changes require us to lock in the version of bulkrax
+  gem 'bulkrax', git: 'https://github.com/samvera-labs/bulkrax.git', branch: 'hyrax-4-support'
   gem 'sidekiq', '~> 6.5.6'
 else
   # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'

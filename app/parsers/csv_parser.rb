@@ -149,6 +149,10 @@ class CsvParser < Bulkrax::CsvParser
     end
   end
 
+  def collection_field_mapping
+    :collection
+  end
+
   private
 
   def validate_csv_headers(headers, file_for_import)
@@ -289,9 +293,5 @@ class CsvParser < Bulkrax::CsvParser
       record_objects << current_object
       objects << current_object
     end
-  end
-
-  def collection_field_mapping
-    :collection
   end
 end
