@@ -59,11 +59,7 @@ RSpec.feature 'AssignMultipleRolesAsManager.', js: true do
 
         # Check other user AdminSet permissions exist
         visit '/admin/admin_sets'
-        if App.rails_5_1?
-          expect(page).to have_content 'You are not authorized to access this page.'
-        else
-          expect(page).to have_content '0 collections you own in the repository'
-        end
+        expect(page).to have_content '0 collections you own in the repository'
       end
     end
   end

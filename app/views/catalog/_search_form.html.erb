@@ -16,11 +16,7 @@
     <% end %>
 
     <label for="q" class="sr-only"><%= t('blacklight.search.form.search.label') %></label>
-    <% if App.rails_5_1? %>
-      <%= text_field_tag :q, params[:q], placeholder: t('blacklight.search.form.search.placeholder'), class: "search_q q form-control", id: "q", autofocus: should_autofocus_on_search_box?, data: { autocomplete_enabled: autocomplete_enabled?, autocomplete_path: blacklight.suggest_index_path }  %>
-    <% else %>
-      <%= text_field_tag :q, params[:q], placeholder: t('blacklight.search.form.search.placeholder'), class: "search_q q form-control", id: "q", autofocus: should_autofocus_on_search_box?, data: { autocomplete_enabled: autocomplete_enabled? }  %>
-    <% end %>
+    <%= text_field_tag :q, params[:q], placeholder: t('blacklight.search.form.search.placeholder'), class: "search_q q form-control", id: "q", autofocus: should_autofocus_on_search_box?, data: { autocomplete_enabled: autocomplete_enabled? }  %>
 
     <div class="input-group-btn">
       <button type="submit" class="btn btn-primary" id="search-submit-header">

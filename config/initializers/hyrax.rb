@@ -10,18 +10,16 @@ Hyrax.config do |config|
   # Injected via `rails g hyrax:work Contribution`
   config.register_curation_concern :contribution
 
-  unless App.rails_5_1?
-    # Injected via `rails g hyrax:work_resource AssetResource`
-    config.register_curation_concern :asset_resource
-    # Injected via `rails g hyrax:work_resource PhysicalInstantiationResource`
-    config.register_curation_concern :physical_instantiation_resource
-    # Injected via `rails g hyrax:work_resource DigitalInstantiationResource`
-    config.register_curation_concern :digital_instantiation_resource
-    # Injected via `rails g hyrax:work_resource EssenceTrackResource`
-    config.register_curation_concern :essence_track_resource
-    # Injected via `rails g hyrax:work_resource ContributionResource`
-    config.register_curation_concern :contribution_resource
-  end
+  # Injected via `rails g hyrax:work_resource AssetResource`
+  config.register_curation_concern :asset_resource
+  # Injected via `rails g hyrax:work_resource PhysicalInstantiationResource`
+  config.register_curation_concern :physical_instantiation_resource
+  # Injected via `rails g hyrax:work_resource DigitalInstantiationResource`
+  config.register_curation_concern :digital_instantiation_resource
+  # Injected via `rails g hyrax:work_resource EssenceTrackResource`
+  config.register_curation_concern :essence_track_resource
+  # Injected via `rails g hyrax:work_resource ContributionResource`
+  config.register_curation_concern :contribution_resource
 
   # Register roles that are expected by your implementation.
   # @see Hyrax::RoleRegistry for additional details.
@@ -63,11 +61,6 @@ Hyrax.config do |config|
   # Defaults to false
   # Requires a Google Analytics id and OAuth2 keyfile.  See README for more info
   # config.analytics = false
-
-  if App.rails_5_1?
-    # Google Analytics tracking ID to gather usage statistics
-    # config.google_analytics_id = 'UA-99999999-1'
-  end
 
   # Date you wish to start collecting Google Analytic statistics for
   # Leaving it blank will set the start date to when ever the file was uploaded by
@@ -278,13 +271,6 @@ Hyrax.config do |config|
   # Increase the number of Asset members that are displayed on the Asset's
   # #show page.
   config.show_work_item_rows = 100
-
-  if App.rails_5_1?
-    # production Rails code
-    config.nested_relationship_reindexer = ->(id:, extent:) { QueuedNestingIndexer.reindex_relationships(id: id, extent: extent) }
-  else
-    # future Rails code
-  end
 end
 
 Date::DATE_FORMATS[:standard] = "%m/%d/%Y"

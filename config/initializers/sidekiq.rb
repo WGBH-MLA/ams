@@ -2,11 +2,7 @@ config = YAML.load(ERB.new(IO.read(Rails.root + 'config' + 'redis.yml')).result)
 
 url = Rails.env == 'production' ? "redis://:#{config[:password]}@#{config[:host]}:#{config[:port]}/" : "redis://#{config[:host]}:#{config[:port]}/"
 
-redis_conn = if App.rails_5_1?
-  { url: url, network_timeout: config[:network_timeout] }
-else
-  { url: url }
-end
+redis_conn = { url: url }
 
 Sidekiq.configure_server do |s|
   s.redis = redis_conn

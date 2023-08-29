@@ -28,11 +28,7 @@ Bulkrax::HasMatchers.class_eval do     # rubocop:disable Metrics/ParameterLists
                 single_metadata(node_content)
               end
 
-      if App.rails_5_1?
-        set_parsed_data(object_multiple, object_name, name, index, value)
-      else
-        object_name.present? ? set_parsed_object_data(object_multiple, object_name, name, index, value) : set_parsed_data(name, value)
-      end
+      object_name.present? ? set_parsed_object_data(object_multiple, object_name, name, index, value) : set_parsed_data(name, value)
     end
   end
 

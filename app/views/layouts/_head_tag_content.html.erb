@@ -17,21 +17,10 @@ signed in %>
 <%= yield :gscholar_meta %>
 
 <title><%= content_for?(:page_title) ? yield(:page_title) : default_page_title %></title>
-
-<%# OVERRIDE to allow for dual boot start %>
-<% if App.rails_5_1? %>
-  <!-- application css -->
-  <%= stylesheet_link_tag 'application' %>
-  <!-- application js -->
-  <%= javascript_include_tag 'application' %>
-<% else %>
-  <!-- application css -->
-  <%= stylesheet_link_tag 'application_rails_6_1' %>
-  <!-- application js -->
-  <%= javascript_include_tag 'application_rails_6_1' %>
-<% end %>
-<%# OVERRIDE end %>
-
+<!-- application css -->
+<%= stylesheet_link_tag 'application' %>
+<!-- application js -->
+<%= javascript_include_tag 'application' %>
 <%= render 'shared/appearance_styles' %>
 
 <% if Hyrax.config.analytics? %>

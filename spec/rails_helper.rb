@@ -45,43 +45,23 @@ if ENV['CHROME_HOSTNAME'].present?
   Capybara.default_max_wait_time = 8
   # Capybara.default_driver = :rack_test
 
-  if App.rails_5_1?
-    capabilities = Selenium::WebDriver::Remote::Capabilities.chrome(
-      chromeOptions: {
-        args: %w[disable-gpu no-sandbox whitelisted-ips window-size=1400,1400]
-      }
-    )
+  chrome_options = Selenium::WebDriver::Chrome::Options.new(
+    args: %w[--disable-gpu --no-sandbox --whitelisted-ips --window-size=1400,1400]
+  )
 
-    Capybara.register_driver :chrome do |app|
-      d = Capybara::Selenium::Driver.new(app,
+  Capybara.register_driver :chrome do |app|
+    d = Capybara::Selenium::Driver.new(app,
                                         browser: :remote,
-                                        desired_capabilities: capabilities,
+                                        options: chrome_options,
                                         url: "http://#{ENV['CHROME_HOSTNAME']}:4444/wd/hub")
-      # Fix for capybara vs remote files. Selenium handles this for us
-      d.browser.file_detector = lambda do |args|
-        str = args.first.to_s
-        str if File.exist?(str)
-      end
-      d
+    # Fix for capybara vs remote files. Selenium handles this for us
+    d.browser.file_detector = lambda do |args|
+      str = args.first.to_s
+      str if File.exist?(str)
     end
-  else
-    chrome_options = Selenium::WebDriver::Chrome::Options.new(
-      args: %w[--disable-gpu --no-sandbox --whitelisted-ips --window-size=1400,1400]
-    )
-
-    Capybara.register_driver :chrome do |app|
-      d = Capybara::Selenium::Driver.new(app,
-                                         browser: :remote,
-                                         options: chrome_options,
-                                         url: "http://#{ENV['CHROME_HOSTNAME']}:4444/wd/hub")
-      # Fix for capybara vs remote files. Selenium handles this for us
-      d.browser.file_detector = lambda do |args|
-        str = args.first.to_s
-        str if File.exist?(str)
-      end
-      d
-    end
+    d
   end
+
   Capybara.server_host = '0.0.0.0'
   Capybara.server_port = 3001
   Capybara.app_host = "http://#{ENV['WEB_HOST']}:#{Capybara.server_port}"
@@ -160,23 +140,21 @@ end
 # Travis or development.
 # Webdrivers.logger.level = :DEBUG
 
-unless App.rails_5_1?
-  require 'valkyrie'
-  Valkyrie::MetadataAdapter.register(Valkyrie::Persistence::Memory::MetadataAdapter.new, :test_adapter)
-  Valkyrie::StorageAdapter.register(Valkyrie::Storage::Memory.new, :memory)
+require 'valkyrie'
+Valkyrie::MetadataAdapter.register(Valkyrie::Persistence::Memory::MetadataAdapter.new, :test_adapter)
+Valkyrie::StorageAdapter.register(Valkyrie::Storage::Memory.new, :memory)
 
-  query_registration_target =
-    Valkyrie::MetadataAdapter.find(:test_adapter).query_service.custom_queries
-  custom_queries = [Hyrax::CustomQueries::Navigators::CollectionMembers,
-                    Hyrax::CustomQueries::Navigators::ChildFilesetsNavigator,
-                    Hyrax::CustomQueries::Navigators::ChildWorksNavigator,
-                    Hyrax::CustomQueries::FindAccessControl,
-                    Hyrax::CustomQueries::FindCollectionsByType,
-                    Hyrax::CustomQueries::FindManyByAlternateIds,
-                    Hyrax::CustomQueries::FindIdsByModel,
-                    Hyrax::CustomQueries::FindFileMetadata,
-                    Hyrax::CustomQueries::Navigators::FindFiles]
-  custom_queries.each do |handler|
-    query_registration_target.register_query_handler(handler)
-  end
+query_registration_target =
+  Valkyrie::MetadataAdapter.find(:test_adapter).query_service.custom_queries
+custom_queries = [Hyrax::CustomQueries::Navigators::CollectionMembers,
+                  Hyrax::CustomQueries::Navigators::ChildFilesetsNavigator,
+                  Hyrax::CustomQueries::Navigators::ChildWorksNavigator,
+                  Hyrax::CustomQueries::FindAccessControl,
+                  Hyrax::CustomQueries::FindCollectionsByType,
+                  Hyrax::CustomQueries::FindManyByAlternateIds,
+                  Hyrax::CustomQueries::FindIdsByModel,
+                  Hyrax::CustomQueries::FindFileMetadata,
+                  Hyrax::CustomQueries::Navigators::FindFiles]
+custom_queries.each do |handler|
+  query_registration_target.register_query_handler(handler)
 end

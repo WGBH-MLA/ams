@@ -1,4 +1,5 @@
 <%
+# TODO upgrade cleanup: Verify if this can be deleted.
 # Overwrites Hyrax Gem's version of
 # app/views/catalog/_index_list_default.html.erb to explicitly show display
 # dates, identifying data, and display descriptions, when present.
@@ -6,92 +7,36 @@
 # view will have to be updated to reflect those changes if so desired.
 %>
 
-<% if App.rails_5_1? %>
-  <% doc_presenter = index_presenter(document) %>
-
-  <% if(doc_presenter.field_value('has_model_ssim') == 'Collection') %>
-    <div class="col-md-8">
-  <% else %>
-    <div class="col-md-10">
-  <% end %>
-      <div class="metadata">
+<%
+# I couldn't find anything that the override was affecting so I put the normal Hyrax view here for now.
+# All the dates seem to show up and Collections don't even show up in the catalog search.
+# If this poses no problems, we can delete this file.
+%>
+<div class="col-md-9 col-lg-6">
+  <div class="metadata">
+    <dl>
+    <% doc_presenter = index_presenter(document) %>
+    <% index_fields(document).each do |field_name, field| -%>
+      <% if should_render_index_field? document, field %>
         <div class="row">
-        <% if !document.display_dates.empty? %>
-          <div class="col-md-12 metadata-col">
-            <% index_fields(document).select{ |k,v| document.display_dates.has_key?(k) }.each do |field_name, field| %>
-              <% if should_render_index_field? document, field %>
-                <h4><%= render_index_field_label document, field: field_name %></h4> <%= doc_presenter.field_value field_name %>
-              <% end %>
-            <% end %>
-          </div>
-        <% end %>
-
-        <% if !document.identifying_data.empty? %>
-          <div class="col-md-12 metadata-col">
-            <% index_fields(document).select{ |k,v| document.identifying_data.has_key?(k) }.each do |field_name, field| %>
-              <% if should_render_index_field? document, field %>
-                <h4><%= render_index_field_label document, field: field_name %></h4> <%= doc_presenter.field_value field_name %>
-              <% end %>
-            <% end %>
-          </div>
-        <% end %>
-
-        <% if document.display_description.present? %>
-          <% index_fields(document).select{ |k,v| k == "description" }.each do |field_name, field| %>
-            <% if should_render_index_field? document, field %>
-              <div class="col-md-12 metadata-desc-col">
-                <p><strong>Description:</strong> <%= doc_presenter.field_value field_name %></p>
-              </div>
-            <% end %>
-          <% end %>
-        <% end %>
-      </div>
-    </div>
-  <% if(doc_presenter.field_value('has_model_ssim') == 'Collection') %>
-    <% collection_presenter = Hyrax::CollectionPresenter.new(document, current_ability) %>
-    <div class="col-md-4">
-      <div class="collection-counts-wrapper">
-        <div class="collection-counts-item">
-          <span><%= collection_presenter.total_viewable_collections %></span>Collections
+          <dt class="col-5 text-right" data-solr-field-name="<%= field_name %>"><%= render_index_field_label document, field: field_name %></dt>
+          <dd class="col-7"><%= doc_presenter.field_value field %></dd>
         </div>
-        <div class="collection-counts-item">
-          <span><%= collection_presenter.total_viewable_works %></span>Works
-        </div>
-      </div>
-    </div>
-  <% end %>
-<% else %>
-  <%
-  # I couldn't find anything that the override was affecting so I put the normal Hyrax view here for now.
-  # All the dates seem to show up and Collections don't even show up in the catalog search.
-  # If this poses no problems, we can delete this file.
-  %>
-  <div class="col-md-9 col-lg-6">
-    <div class="metadata">
-      <dl>
-      <% doc_presenter = index_presenter(document) %>
-      <% index_fields(document).each do |field_name, field| -%>
-        <% if should_render_index_field? document, field %>
-          <div class="row">
-            <dt class="col-5 text-right" data-solr-field-name="<%= field_name %>"><%= render_index_field_label document, field: field_name %></dt>
-            <dd class="col-7"><%= doc_presenter.field_value field %></dd>
-          </div>
-        <% end %>
       <% end %>
-      </dl>
+    <% end %>
+    </dl>
+  </div>
+</div>
+<% if document.collection? %>
+  <% collection_presenter = Hyrax::CollectionPresenter.new(document, current_ability) %>
+  <div class="col-md-12 col-lg-3">
+    <div class="collection-counts-wrapper">
+      <div class="collection-counts-item">
+        <span><%= collection_presenter.total_viewable_collections %></span>Collections
+      </div>
+      <div class="collection-counts-item">
+        <span><%= collection_presenter.total_viewable_works %></span>Works
+      </div>
     </div>
   </div>
-  <% if document.collection? %>
-    <% collection_presenter = Hyrax::CollectionPresenter.new(document, current_ability) %>
-    <div class="col-md-12 col-lg-3">
-      <div class="collection-counts-wrapper">
-        <div class="collection-counts-item">
-          <span><%= collection_presenter.total_viewable_collections %></span>Collections
-        </div>
-        <div class="collection-counts-item">
-          <span><%= collection_presenter.total_viewable_works %></span>Works
-        </div>
-      </div>
-    </div>
-  <% end %>
 <% end %>
