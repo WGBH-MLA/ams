@@ -6,7 +6,7 @@ unless App.rails_5_1?
   require 'rails_helper'
   require 'hyrax/specs/shared_specs/hydra_works'
 
-  RSpec.describe EssenceTrackResource, skip: 'until test_adapter works' do
+  RSpec.describe EssenceTrackResource do
     subject(:work) { described_class.new }
 
     it_behaves_like 'a Hyrax::Work'
