@@ -13,4 +13,3 @@ Rails.application.config.assets.paths << Rails.root.join('node_modules')
 # folder are already added.
 # Rails.application.config.assets.precompile += %w( admin.js admin.css )
 Rails.application.config.assets.precompile += %w( work_actions.js work_show/work_show.css sony_ci/find_media.coffee )
-end
