@@ -6,7 +6,7 @@ RSpec.feature 'Create Asset with Asset Type', js: true, asset_form_helpers: true
     let(:admin_user) { create :admin_user }
     let!(:user_with_role) { create :user, role_names: ['ingester'] }
 
-    let(:admin_set_id) { AdminSet.find_or_create_default_admin_set_id }
+    let(:admin_set_id) { Hyrax::AdminSetCreateService.find_or_create_default_admin_set.id.to_s }
     let(:permission_template) { Hyrax::PermissionTemplate.find_or_create_by!(source_id: admin_set_id) }
     let(:workflow) { Sipity::Workflow.create!(active: true, name: 'test-workflow', permission_template: permission_template) }
 

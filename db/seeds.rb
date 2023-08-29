@@ -53,7 +53,7 @@ end
 # TODO `Hyrax::AdminSetCreateService.find_or_create_default_admin_set` does not work
 # it just spins forever because it tries to load all associated models
 if App.rails_5_1?
-  admin_set = AdminSet.find(AdminSet.find_or_create_default_admin_set_id)
+  admin_set = AdminSet.find(Hyrax::AdminSetCreateService.find_or_create_default_admin_set.id.to_s)
 else
   begin
     admin_set = AdminSet.find(Hyrax::AdminSetCreateService::DEFAULT_ID)

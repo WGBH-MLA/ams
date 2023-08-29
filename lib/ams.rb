@@ -98,7 +98,7 @@ module AMS
         end
 
         def admin_set
-          AdminSet.find_or_create_default_admin_set_id
+          Hyrax::AdminSetCreateService.find_or_create_default_admin_set.id.to_s
         end
       end
     end
