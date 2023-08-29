@@ -58,7 +58,6 @@ module Bulkrax
       let(:raw_metadata) { described_class.data_for_entry(data, source_identifier) }
       let(:importer) do
         i = FactoryBot.create(:bulkrax_importer_pbcore_xml)
-        i.field_mapping['source'] = { from: ['pbcoreIdentifier'], source_identifier: true }
         i.current_run
         i
       end
@@ -95,7 +94,7 @@ module Bulkrax
             {
               "admin_set_id"=>"MyString",
               "bulkrax_identifier"=>"cpb-aacip-20-000000hr",
-              "collection"=>[],
+              "children"=>[],
               "delete"=>nil,
               "file"=>nil,
               "model"=>nil,

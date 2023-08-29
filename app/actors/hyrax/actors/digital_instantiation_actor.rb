@@ -8,11 +8,6 @@ module Hyrax
         pbcore_doc = PBCore::InstantiationDocument.parse(xml_file)
         set_env_attributes_from_pbcore(env, pbcore_doc)
 
-        if App.rails_5_1?
-          # queue indexing if we are importing
-          env.curation_concern.reindex_extent = "queue#{env.importing.id}" if env.importing
-        end
-
         if env.attributes['bulkrax_identifier'].present?
           save_instantiation_aapb_admin_data(env) && super
         else
@@ -22,11 +17,6 @@ module Hyrax
 
       def update(env)
         xml_file = file_uploaded?(env) ? uploaded_xml(env) : env.attributes.delete(:pbcore_xml)
-
-        if App.rails_5_1?
-          # queue indexing if we are importing
-          env.curation_concern.reindex_extent = "queue#{env.importing.id}" if env.importing
-        end
 
         if env.curation_concern&.bulkrax_identifier
           save_instantiation_aapb_admin_data(env) && super

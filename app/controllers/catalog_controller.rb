@@ -5,8 +5,6 @@ class CatalogController < ApplicationController
   # This filter applies the hydra access controls
   before_action :enforce_show_permissions, only: :show
 
-  add_results_collection_tool :export_search_results if App.rails_5_1?
-
   configure_blacklight do |config|
     # default advanced config values
     config.advanced_search ||= Blacklight::OpenStructWithHashAccess.new
@@ -15,15 +13,9 @@ class CatalogController < ApplicationController
     config.advanced_search[:query_parser] ||= 'dismax'
     config.advanced_search[:form_solr_parameters] ||= {}
 
-    if App.rails_5_1?
-      config.view.gallery.partials = [:index_header, :index]
-      config.view.masonry.partials = [:index]
-      config.view.slideshow.partials = [:index]
-    else
-      config.view.gallery(document_component: Blacklight::Gallery::DocumentComponent)
-      config.view.masonry(document_component: Blacklight::Gallery::DocumentComponent)
-      config.view.slideshow(document_component: Blacklight::Gallery::SlideshowComponent)
-    end
+    config.view.gallery(document_component: Blacklight::Gallery::DocumentComponent)
+    config.view.masonry(document_component: Blacklight::Gallery::DocumentComponent)
+    config.view.slideshow(document_component: Blacklight::Gallery::SlideshowComponent)
 
     config.show.tile_source_field = :content_metadata_image_iiif_info_ssm
     config.show.partials.insert(1, :openseadragon)
@@ -61,7 +53,7 @@ class CatalogController < ApplicationController
     config.add_nav_action(:bookmark, partial: 'blacklight/nav/bookmark', if: :render_bookmarks_control?)
     config.add_nav_action(:search_history, partial: 'blacklight/nav/search_history')
 
-    config.add_results_collection_tool :export_search_results if !App.rails_5_1?
+    config.add_results_collection_tool :export_search_results
 
     # solr fields that will be treated as facets by the blacklight application
     #   The ordering of the field names is the order of the display

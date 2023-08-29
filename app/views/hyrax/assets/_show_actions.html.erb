@@ -31,11 +31,7 @@
             <ul class="dropdown-menu">
               <% presenter.valid_child_concerns.each do |concern| %>
                 <li>
-                  <% if App.rails_5_1? %>
-                    <%= link_to "Attach #{concern.human_readable_type}", polymorphic_path([main_app, :new, :hyrax, :parent, concern.model_name.singular], parent_id: presenter.id) %>
-                  <% else %>
-                    <%= link_to "Attach #{concern.human_readable_type}", polymorphic_path([main_app, :new, :hyrax, :parent, concern.model_name.singular.to_sym], parent_id: presenter.id) %>
-                  <% end %>
+                  <%= link_to "Attach #{concern.human_readable_type}", polymorphic_path([main_app, :new, :hyrax, :parent, concern.model_name.singular.to_sym], parent_id: presenter.id) %>
                 </li>
               <% end %>
             </ul>

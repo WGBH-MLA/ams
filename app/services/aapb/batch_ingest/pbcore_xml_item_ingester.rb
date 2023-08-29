@@ -179,12 +179,7 @@ module AAPB
         # created. So we go ahead and just create it synchronously before hand
         # to avoid that issue.
         def sipity_agent
-          if App.rails_5_1?
-            # Hyrax 4.0.0 deprecated PowerConverter
-            PowerConverter.convert_to_sipity_agent(submitter)
-          else
-            Sipity.Agent(submitter)
-          end
+          Sipity.Agent(submitter)
         end
 
         # When running ingest methods concurrently in background jobs, we need
