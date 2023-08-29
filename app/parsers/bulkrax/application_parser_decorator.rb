@@ -1,5 +1,8 @@
 # frozen_literal: true
 
+# OVERRIDE Bulkrax 5.3.0 to adopt Bulkrax 1.0.2 implementation
+# keeping this code allows us to continue use custom relationships for GBH
+
 Bulkrax::ApplicationParser.class_eval do
   def parents
     @parents ||= setup_parents
