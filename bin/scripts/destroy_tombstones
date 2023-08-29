@@ -5,7 +5,7 @@ puts "Rails done loading."
 
 # Fetch the file containing all the Tombstone IDs to destroy.
 tombstone_ids_file_path = ARGV.first.to_s
-raise ArgumentError, "File '#{tombstone_ids_file_path}' does not exist" unless File.exists? tombstone_ids_file_path
+raise ArgumentError, "File '#{tombstone_ids_file_path}' does not exist" unless File.exist? tombstone_ids_file_path
 
 # Fetch the Asset IDs from the file.
 tombstone_ids = File.readlines tombstone_ids_file_path, chomp: true

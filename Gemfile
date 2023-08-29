@@ -78,7 +78,7 @@ group :development do
   # gem 'spring'
   # gem 'spring-watcher-listen', '~> 2.0.0'
   gem "letter_opener"
-  gem 'faker'
+  gem 'faker', '~> 3.0'
   # gem 'xray-rails' # should be commented out when actively using sidekiq.
 end
 
@@ -93,7 +93,7 @@ gem 'carrierwave', '~> 1.3'
 gem 'mysql2', '~> 0.5.3'
 gem 'nokogiri'
 gem 'bootstrap-multiselect-rails'
-gem 'pbcore', '~> 0.3.0'
+gem 'pbcore', github: 'scientist-softserv/pbcore', branch: 'fake_out'
 gem 'curb'
 # gem 'sony_ci_api', '~> 0.2.1'
 # gem 'hyrax-iiif_av', '>= 0.2.0'

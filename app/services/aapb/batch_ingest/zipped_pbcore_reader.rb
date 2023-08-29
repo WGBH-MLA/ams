@@ -50,7 +50,7 @@ module AAPB
           # TODO: fetch extraction path from Batch ingest config, if present.
           @extraction_path ||= Rails.root.join("tmp", "imports", "batch_ingest", "#{Time.now.to_i}#{rand(1000)}")
         ensure
-          FileUtils.mkdir_p @extraction_path unless Dir.exists? @extraction_path
+          FileUtils.mkdir_p @extraction_path unless Dir.exist? @extraction_path
         end
     end
   end

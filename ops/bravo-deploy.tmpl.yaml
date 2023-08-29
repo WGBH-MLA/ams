@@ -61,8 +61,6 @@ extraEnvVars: &envVars
     value: "/app/samvera/hyrax-webapp/solr/config"
   - name: DB_ADAPTER
     value: mysql2
-  - name: DEPENDENCIES_NEXT
-    value: "1"
   - name: MYSQL_HOST
     value: ams-prod-rails-db.cmrjt7rckp5r.us-east-1.rds.amazonaws.com
   - name: MYSQL_DATABASE
@@ -100,7 +98,7 @@ extraEnvVars: &envVars
   - name: REDIS_SERVER
     value: redis://:prod@ams-prod-redis-master.ams-prod.svc.cluster.local:6379
   - name: SENTRY_DSN
-    value: https://6f6e6b5f54234b5bb2218786c3493a37@o1008683.ingest.sentry.io/6745030 
+    value: https://6f6e6b5f54234b5bb2218786c3493a37@o1008683.ingest.sentry.io/6745030
   - name: SENTRY_ENVIRONMENT
     value: "bravo"
   - name: SENTRY_TRACES_SAMPLE_RATE
