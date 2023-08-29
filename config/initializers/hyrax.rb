@@ -10,6 +10,19 @@ Hyrax.config do |config|
   # Injected via `rails g hyrax:work Contribution`
   config.register_curation_concern :contribution
 
+  unless App.rails_5_1?
+    # Injected via `rails g hyrax:work_resource AssetResource`
+    config.register_curation_concern :asset_resource
+    # Injected via `rails g hyrax:work_resource PhysicalInstantiationResource`
+    config.register_curation_concern :physical_instantiation_resource
+    # Injected via `rails g hyrax:work_resource DigitalInstantiationResource`
+    config.register_curation_concern :digital_instantiation_resource
+    # Injected via `rails g hyrax:work_resource EssenceTrackResource`
+    config.register_curation_concern :essence_track_resource
+    # Injected via `rails g hyrax:work_resource ContributionResource`
+    config.register_curation_concern :contribution_resource
+  end
+
   # Register roles that are expected by your implementation.
   # @see Hyrax::RoleRegistry for additional details.
   # @note there are magical roles as defined in Hyrax::RoleRegistry::MAGIC_ROLES

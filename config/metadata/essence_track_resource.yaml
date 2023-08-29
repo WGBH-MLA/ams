@@ -1,0 +1,176 @@
+# Simple yaml config-driven schema which is used to define model attributes,
+# index key names, and form properties.
+#
+# Attributes must have a type but all other configuration options are optional.
+#
+# attributes:
+#   attribute_name:
+#     type: string
+#     multiple: false
+#     index_keys:
+#       - "attribute_name_sim"
+#     form:
+#       required: true
+#       primary: true
+#       multiple: false
+#
+# @see config/metadata/basic_metadata.yaml for an example configuration
+#
+# Generated via
+#  `rails generate hyrax:work_resource EssenceTrackResource`
+
+attributes:
+  bulkrax_identifier:
+    type: string
+    multiple: false
+    index_keys:
+      - "bulkrax_identifier_sim"
+      - "bulkrax_identifier_tesim"
+    form:
+      required: false
+      primary: false
+      multiple: false
+  track_type:
+    type: string
+    multiple: false
+    index_keys:
+      - "track_type_tesim"
+    form:
+      required: true
+      primary: false
+      multiple: false
+  track_id:
+    type: string
+    multiple: true
+    index_keys:
+      - "track_id_tesim"
+    form:
+      required: true
+      primary: false
+      multiple: true
+  standard:
+    type: string
+    multiple: false
+    index_keys:
+      - "standard_tesim"
+    form:
+      required: false
+      primary: false
+      multiple: false
+  encoding:
+    type: string
+    multiple: false
+    index_keys:
+      - "encoding_tesim"
+    form:
+      required: false
+      primary: false
+      multiple: false
+  data_rate:
+    type: string
+    multiple: false
+    index_keys:
+      - "data_rate_tesim"
+    form:
+      required: false
+      primary: false
+      multiple: false
+  frame_rate:
+    type: string
+    multiple: false
+    index_keys:
+      - "frame_rate_tesim"
+    form:
+      required: false
+      primary: false
+      multiple: false
+  playback_speed:
+    type: string
+    multiple: false
+    index_keys:
+      - "playback_speed_tesim"
+    form:
+      required: false
+      primary: false
+      multiple: false
+  playback_speed_units:
+    type: string
+    multiple: false
+    index_keys:
+      - "playback_speed_units_tesim"
+    form:
+      required: false
+      primary: false
+      multiple: false
+  sample_rate:
+    type: string
+    multiple: false
+    index_keys:
+      - "sample_rate_tesim"
+    form:
+      required: false
+      primary: false
+      multiple: false
+  bit_depth:
+    type: string
+    multiple: false
+    index_keys:
+      - "bit_depth_tesim"
+    form:
+      required: false
+      primary: false
+      multiple: false
+  frame_width:
+    type: string
+    multiple: false
+    index_keys:
+      - "frame_width_tesim"
+    form:
+      required: false
+      primary: false
+      multiple: false
+  frame_height:
+    type: string
+    multiple: false
+    index_keys:
+      - "frame_height_tesim"
+    form:
+      required: false
+      primary: false
+      multiple: false
+  aspect_ratio:
+    type: string
+    multiple: false
+    index_keys:
+      - "aspect_ratio_tesim"
+    form:
+      required: false
+      primary: false
+      multiple: false
+  time_start:
+    type: string
+    multiple: false
+    index_keys:
+      - "time_start_tesim"
+    form:
+      required: false
+      primary: false
+      multiple: false
+  duration:
+    type: string
+    multiple: false
+    index_keys:
+      - "duration_tesim"
+    form:
+      required: false
+      primary: false
+      multiple: false
+  annotation:
+    type: string
+    multiple: true
+    index_keys:
+      - "annotation_tesim"
+    form:
+      required: false
+      primary: false
+      multiple: true
