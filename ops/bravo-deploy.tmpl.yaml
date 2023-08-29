@@ -106,7 +106,7 @@ extraEnvVars: &envVars
   - name: SENTRY_TRACES_SAMPLE_RATE
     value: "1.0"
   - name: SETTINGS__BULKRAX__ENABLED
-    value: "false"
+    value: "true"
   - name: SOLR_HOST
     value: 10.0.4.93
   - name: SOLR_PORT
