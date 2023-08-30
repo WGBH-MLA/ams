@@ -1,25 +1,27 @@
 <% provide :page_title, @presenter.page_title %>
-<% content_for :head do %>
-  <%= stylesheet_link_tag 'work_show/work_show' -%>
-<% end %>
+
+<%= render 'shared/citations' %>
+
 <div class="row work-type">
-  <div class="col-xs-12">
+  <div class="col-sm-12">
     <%= render 'work_type', presenter: @presenter %>
   </div>
-  <div class="col-xs-12">&nbsp;</div>
-  <div itemscope itemtype="http://schema.org/CreativeWork" class="col-xs-12">
-    <div class="panel panel-default work-panel">
-      <div class="panel-heading">
-        <%= render 'work_title', presenter: @presenter %>
-      </div>
-      <div class="panel-body">
-        <div class="col-sm-12">
-          <%= render 'representative_media', presenter: @presenter, viewer: @presenter.universal_viewer? %>
-        </div>
-
+  <div itemscope itemtype="http://schema.org/CreativeWork" class="col-12">
+    <%= render 'work_title', presenter: @presenter %>
+    <%= render 'show_actions', presenter: @presenter %>
+    <div class="card">
+      <div class="card-body">
+        <div class="row">
           <%= render 'workflow_actions_widget', presenter: @presenter %>
-          <div class="col-sm-3">
+          <% if @presenter.iiif_viewer? %>
+            <div class="col-sm-12">
+              <%= render 'representative_media', presenter: @presenter, viewer: true %>
+            </div>
+          <% end %>
+          <div class="col-sm-3 text-center">
+            <%= render 'representative_media', presenter: @presenter, viewer: false unless @presenter.iiif_viewer? %>
             <%= render 'relationships', presenter: @presenter %>
+            <%= render 'social_media' %>
           </div>
           <div class="col-sm-9">
             <div class="hold">
@@ -31,14 +33,26 @@
               </div>
             </div>
           </div>
-          <div class="col-sm-12">
+        </div>
+      </div>
+    </div><!-- /.card -->
 
-            <%= render 'items', presenter: @presenter %>
-            <%# TODO: we may consider adding these partials in the future %>
-            <%# = render 'sharing_with', presenter: @presenter %>
-            <%# = render 'user_activity', presenter: @presenter %>
-          </div>
+    <div class="card">
+      <div class="card-header">
+        <h2 class="card-title"><%= t('.items') %></h2>
+      </div>
+      <div class="card-body">
+        <%= render 'items', presenter: @presenter %>
       </div>
     </div>
+
+    <%# TODO: we may consider adding these partials in the future %>
+    <%# = render 'sharing_with', presenter: @presenter %>
+    <%# = render 'user_activity', presenter: @presenter %>
+
+  <span class='hide analytics-event' data-category="work" data-action="work-view" data-name="<%= @presenter.id %>" >
+  <% @presenter.member_of_collection_ids.each do |collection_id| %>
+    <span class='hide analytics-event' data-category="work-in-collection" data-action="work-in-collection-view" data-name="<%= collection_id %>" >
+  <% end %>
   </div>
 </div>

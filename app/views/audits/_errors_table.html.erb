@@ -1,5 +1,5 @@
 <div class='table-responsive'>
-  <table class='table table-condensed'>
+  <table class='table table-sm'>
     <thead>
       <th scope='col'>ID</th>
       <th scope='col'>AMS1 PBCore Not Found</th>
@@ -11,6 +11,7 @@
           <td><%= comparison["id"] %></td>
           <td><%= comparison["ams1"]["pbcore_not_found?"] %></td>
           <td><%= comparison["ams2"]["solr_document_not_found?"] %></td>
+        </tr>
       <% end %>
     </tbody>
   </table>
