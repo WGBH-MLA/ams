@@ -2,6 +2,10 @@
 if ENV['SETTINGS__BULKRAX__ENABLED'] == 'true'
   # rubocop:disable Metrics/BlockLength
   Bulkrax.setup do |config|
+
+    # Factory Class to use when generating and saving objects
+    config.object_factory = Bulkrax::ValkyrieObjectFactory
+  
     # Add local parsers
     config.parsers = [
       {

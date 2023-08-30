@@ -39,7 +39,7 @@ module Bulkrax
       self.parsed_metadata = {}
       self.parsed_metadata[work_identifier] = self.raw_metadata[source_identifier]
       self.parsed_metadata['model'] = self.raw_metadata['model']
-      if self.raw_metadata['model'] == 'DigitalInstantiation'
+      if self.raw_metadata['model'] == 'DigitalInstantiationResource'
         self.parsed_metadata['pbcore_xml'] = self.raw_metadata['pbcore_xml'] if self.raw_metadata['pbcore_xml'].present?
         self.parsed_metadata['format'] = self.raw_metadata['format']
         self.parsed_metadata['skip_file_upload_validation'] = self.raw_metadata['skip_file_upload_validation'] if self.raw_metadata['skip_file_upload_validation'] == true
@@ -49,7 +49,7 @@ module Bulkrax
         add_metadata(key_without_numbers(key), value)
       end
 
-      if self.raw_metadata['model'] == 'Asset'
+      if self.raw_metadata['model'] == 'AssetResource'
         bulkrax_importer_id = importer.id
         admin_data_gid = update_or_create_admin_data_gid(bulkrax_importer_id)
 
