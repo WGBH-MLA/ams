@@ -220,7 +220,7 @@ if ENV['SETTINGS__BULKRAX__ENABLED'] == 'true'
 
       def multiple_field?(field)
         form_definition = schema_form_definitions[field.to_sym]
-        form_definition.nil? ? false : form_definition.multiple?
+        form_definition.nil? ? false : form_definition[:multiple]
       end
 
       # override: we want to directly infer from a property being multiple that we should split when it's a String
