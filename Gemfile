@@ -12,7 +12,7 @@ if ENV['DEPENDENCIES_NEXT'] && !ENV['DEPENDENCIES_NEXT'].empty?
 else
   gem 'rails', '~> 6.0'
   gem 'hyrax-batch_ingest', git: 'https://github.com/samvera-labs/hyrax-batch_ingest', branch: 'dependency-upgrades'
-  gem 'hyrax', '~> 4.0'
+  gem 'hyrax', github: 'samvera/hyrax', tag: 'hyrax-v5.0.0.rc1'
   # Use SCSS for stylesheets
   gem 'sass-rails', '~> 6.0'
   gem 'bootstrap', '~> 4.0'
@@ -79,7 +79,7 @@ group :development do
   # gem 'spring'
   # gem 'spring-watcher-listen', '~> 2.0.0'
   gem "letter_opener"
-  gem 'faker'
+  gem 'faker', '~> 3.0'
   # gem 'xray-rails' # should be commented out when actively using sidekiq.
 end
 
@@ -94,7 +94,7 @@ gem 'carrierwave', '~> 1.3'
 gem 'mysql2', '~> 0.5.3'
 gem 'nokogiri'
 gem 'bootstrap-multiselect-rails'
-gem 'pbcore', '~> 0.3.0'
+gem 'pbcore', github: 'scientist-softserv/pbcore', branch: 'fake_out'
 gem 'curb'
 # gem 'sony_ci_api', '~> 0.2.1'
 # gem 'hyrax-iiif_av', '>= 0.2.0'

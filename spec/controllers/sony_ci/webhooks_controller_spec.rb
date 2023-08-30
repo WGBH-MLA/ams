@@ -2,17 +2,17 @@ require 'rails_helper'
 
 RSpec.describe SonyCi::WebhooksController do
   describe 'POST save_sony_ci_id' do
-    let(:sony_ci_id) { Faker::Number.hexadecimal(16) }
+    let(:sony_ci_id) { Faker::Number.hexadecimal(digits: 16) }
     let(:asset) { create(:asset) }
     let(:sony_ci_filename) { "#{asset.id}.mp4" }
 
     let(:request_body) {
       {
-        "id" => Faker::Number.hexadecimal(16),
+        "id" => Faker::Number.hexadecimal(digits: 16),
         "type" => "AssetProcessingFinished",
         "createdOn" => Time.now.utc.iso8601,
         "createdBy" => {
-          "id" => Faker::Number.hexadecimal(16),
+          "id" => Faker::Number.hexadecimal(digits: 16),
           "name" => "John Smith",
           "email" => "johnsmith@example.com"
         },

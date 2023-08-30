@@ -20,7 +20,7 @@ RSpec.feature 'Homepage.', js: false do
     end
 
     before do
-      AdminSet.find_or_create_default_admin_set_id
+      Hyrax::AdminSetCreateService.find_or_create_default_admin_set.id.to_s
       login_as user
     end
 
