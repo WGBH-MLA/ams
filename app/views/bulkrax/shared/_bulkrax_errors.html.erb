@@ -2,18 +2,18 @@
 <% if item.failed? %>
   <div class="accordion-container">
     <div class="accordion-heading" role="tab" id="error-trace-heading">
-      <a class="accordion-title" role="button" data-toggle="collapse" data-target="#error-trace-show" aria-expanded="true" aria-controls="error-trace-show">
+      <a class="accordion-title collapsed" role="button" data-toggle="collapse" href="#error-trace-show" aria-expanded="true" aria-controls="error-trace-show">
         Errors:
       </a>
-      <a role="button" data-toggle="collapse" data-target="#error-trace-show" aria-expanded="true" aria-controls="error-trace-show">
-        <div class="accordion-icon glyphicon glyphicon-remove-circle" aria-hidden="true"></div>
+      <a role="button" class="collapsed" data-toggle="collapse" href="#error-trace-show" aria-expanded="true" aria-controls="error-trace-show">
+        <div class="accordion-icon fa fa-times-circle" aria-hidden="true"></div>
       </a>
     </div>
-    <div id="error-trace-show" class="accordion-collapse collapse" role="tabpanel" aria-labelledby="error-trace-show">
-      <div class="accordion-body">
+    <div id="error-trace-show" class="collapse" role="tabpanel" aria-labelledby="error-trace-show">
+      <div class="card-body">
         <div class="bulkrax-nav-tab-bottom-margin">
           <!-- Toggle buttons -->
-          <div class="btn-group pull-right" role="group" aria-label="...">
+          <div class="btn-group float-right" role="group" aria-label="...">
             <button type="button" class="btn btn-default active"><a href="#bulkrax-full-toggle-1" aria-controls="bulkrax-full-toggle-1" role="tab" data-toggle="tab">Full</a></button>
             <button type="button" class="btn btn-default"><a href="#bulkrax-raw-toggle-1" aria-controls="bulkrax-raw-toggle-1" role="tab" data-toggle="tab">Raw</a></button>
           </div>

@@ -1,7 +1,0 @@
-<% asset_types_service =  AssetTypesService.new %>
-<%= f.input :asset_types, as: :select,
-            collection: asset_types_service.select_all_options,
-            include_blank: true,
-            disabled:f.object.respond_to?(:disabled?) && f.object.disabled?(key),
-            input_html: { class: 'form-control' , multiple: true}
-%>

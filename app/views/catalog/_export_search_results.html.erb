@@ -1,19 +1,22 @@
 <!-- Single button -->
 <div class="btn-group">
-  <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+  <button type="button" class="btn catalog-export-button dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
     Export <span class="caret"></span>
   </button>
   <ul class="dropdown-menu">
-    <li><%= link_to("Asset Report",catalog_export_path({:format=>"csv", :object_type=>"asset"}.merge(search_state.to_h))) %></li>
-    <li><%= link_to("Digital Instantiation Report",catalog_export_path({:format=>"csv", :object_type=>"digital_instantiation"}.merge(search_state.to_h))) %></li>
-    <li><%= link_to("Physical Instantiation Report",catalog_export_path({:format=>"csv", :object_type=>"physical_instantiation"}.merge(search_state.to_h))) %></li>
-    <li><%= link_to("PBCore XML",catalog_export_path({:format=>"pbcore", :object_type=>"pbcore_zip"}.merge(search_state.to_h))) %></li>
+    <li><%= link_to("Asset Report", catalog_export_path({:format=>"csv", :object_type=>"asset"}.merge(search_state.to_h)), class: 'dropdown-item') %></li>
+    <li><%= link_to("Digital Instantiation Report", catalog_export_path({:format=>"csv", :object_type=>"digital_instantiation"}.merge(search_state.to_h)), class: 'dropdown-item') %></li>
+    <li><%= link_to("Physical Instantiation Report", catalog_export_path({:format=>"csv", :object_type=>"physical_instantiation"}.merge(search_state.to_h)), class: 'dropdown-item') %></li>
+    <li><%= link_to("PBCore XML", catalog_export_path({:format=>"pbcore", :object_type=>"pbcore_zip"}.merge(search_state.to_h)), class: 'dropdown-item') %></li>
     <% if ENV['SETTINGS__BULKRAX__ENABLED'] == 'true' %>
-      <li><%= link_to("For Re-Ingest", bulkrax.exporters_path) %></li>
+      <li><%= link_to("For Re-Ingest", bulkrax.exporters_path, class: 'dropdown-item') %></li>
     <% end %>
   </ul>
 </div>
 
-<% if can? :push_to_aapb, nil && request.env['QUERY_STRING'] && request.env['QUERY_STRING'].present? %>
-  <a class="aapb-push-button" href="/pushes/new?transfer=true&<%= request.env['QUERY_STRING'] %>">Push To AAPB</a>
+<% if can?(:push_to_aapb, nil) && request.env['QUERY_STRING'].present? %>
+  <button class="aapb-push-button"
+          onclick="window.location.href='/pushes/new?transfer=true&<%= request.env['QUERY_STRING'] %>'">
+    Push To AAPB
+  </button>
 <% end %>
