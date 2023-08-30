@@ -42,7 +42,7 @@ module AAPB
       # TODO: make private methods private again
       # private
         def validate_record_does_not_exist!(id)
-          raise RecordExists.new(id) if ActiveFedora::Base.exists?(id: id)
+          raise RecordExists.new(id) if ActiveFedora::Base.exist?(id: id)
         end
 
         def batch_item_is_asset?
