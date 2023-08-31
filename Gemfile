@@ -22,7 +22,7 @@ else
   gem 'blacklight_advanced_search', '7.0'
   gem 'twitter-typeahead-rails', '0.11.1.pre.corejavascript'
   # our custom changes require us to lock in the version of bulkrax
-  gem 'bulkrax', path: 'vendor/bulkrax' #git: 'https://github.com/samvera-labs/bulkrax.git', branch: 'hyrax-4-valkyrie-support'
+  gem 'bulkrax', git: 'https://github.com/samvera-labs/bulkrax.git', branch: 'hyrax-4-valkyrie-support'
   gem 'sidekiq', '~> 6.5.6'
 end
 
