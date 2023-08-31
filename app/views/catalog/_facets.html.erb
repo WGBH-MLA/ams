@@ -6,23 +6,24 @@
 <% # main container for facets/limits menu  -%>
   <div id="facets" class="facets sidenav">
 
-    <div class="top-panel-heading panel-heading">
-      <button type="button" class="facets-toggle" data-toggle="collapse" data-target="#facet-panel-collapse">
+    <div class="top-panel-heading p-3">
+      <%# Commenting out the button for now because it doesn't seem to be functional %>
+      <%# <button type="button" class="facets-toggle" data-toggle="collapse" data-target="#facet-panel-collapse">
         <span class="sr-only">Toggle facets</span>
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
-      </button>
+      </button> %>
 
       <h2 class='facets-heading'>
         <%= t('blacklight.search.facets.title') %>
       </h2>
     </div>
 
-    <div id="facet-panel-collapse" class="collapse panel-group">
+    <div class="card facet-limit blacklight-date_drsim <% if (!params['exact_or_range'].blank?) %>facet-limit-active <% end %>">
       <%= render 'search_filters' %>
-      <% if has_facet_values? %>
-        <%= render_facet_partials %>
-      <% end %>
     </div>
+    <% if has_facet_values? %>
+      <%= render_facet_partials %>
+    <% end %>
   </div>

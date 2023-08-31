@@ -11,7 +11,7 @@ RSpec.describe PushesController, type: :controller do
   before { sign_in(user) }
 
   describe 'GET /pushes/index' do
-    render_views unless App.rails_5_1?
+    render_views
     let(:pushes) { create_list(:push, rand(2..4), user: user) }
 
     before do
@@ -25,12 +25,9 @@ RSpec.describe PushesController, type: :controller do
   end
 
   describe 'GET /pushes/:id' do
-    if App.rails_5_1?
-      let(:push) { create(:push, user: user) }
-    else
-      render_views
-      let(:push) { create(:push, user: user, pushed_id_csv: assets.first.id) }
-    end
+    render_views
+    let(:push) { create(:push, user: user, pushed_id_csv: assets.first.id) }
+
     before { get :show, params: { id: push.id } }
     it 'assign @push to the Push instance for the ID given' do
       expect(assigns(:push)).to eq push

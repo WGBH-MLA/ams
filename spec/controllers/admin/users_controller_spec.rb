@@ -6,7 +6,7 @@ RSpec.describe Admin::UsersController, type: :controller do
   before { sign_in admin_user }
 
   describe "GET #new" do
-    render_views unless App.rails_5_1?
+    render_views
     before { get :new }
 
     it "returns a success response" do

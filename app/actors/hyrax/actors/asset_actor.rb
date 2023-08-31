@@ -14,10 +14,6 @@ module Hyrax
         add_date_types(env)
         set_validation_status(env)
 
-        if App.rails_5_1?
-          # queue indexing if we are importing
-          env.curation_concern.reindex_extent = "queue#{env.importing.id}" if env.importing
-        end
         save_aapb_admin_data(env) && super && create_or_update_contributions(env, contributions)
       end
 
@@ -28,10 +24,6 @@ module Hyrax
         add_date_types(env)
         set_validation_status(env)
 
-        if App.rails_5_1?
-          # queue indexing if we are importing
-          env.curation_concern.reindex_extent = "queue#{env.importing.id}" if env.importing
-        end
         save_aapb_admin_data(env) && super && create_or_update_contributions(env, contributions)
       end
 

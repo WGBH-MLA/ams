@@ -1,11 +1,21 @@
-.panel-heading .accordion-toggle:after {
-    /* symbol for "opening" panels */
-    font-family: 'Glyphicons Halflings';  /* essential for enabling glyphicon */
-    content: "\e114";    /* adjust as needed, taken from bootstrap.css */
-    float: right;        /* adjust as needed */
-    color: grey;         /* adjust as needed */
+.accordion-toggle {
+    color: #4E4A43;
 }
-.panel-heading .accordion-toggle.collapsed:after {
+
+.accordion-toggle:hover {
+    color: #4E4A43;
+}
+
+.accordion-toggle:after {
     /* symbol for "collapsed" panels */
-    content: "\e080";    /* adjust as needed, taken from bootstrap.css */
+    content: '❯';
+    float: right;  /* align symbol to the right */
+    color: grey;   /* adjust as needed */
+    transition: transform 0.2s ease; /* transition for smooth rotation */
+}
+
+.accordion-toggle[aria-expanded="true"]:after {
+    /* symbol for "expanded" panels */
+    content: '❯';
+    transform: rotate(90deg); /* rotate symbol to point down */
 }

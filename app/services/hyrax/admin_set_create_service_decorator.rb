@@ -7,11 +7,7 @@ module Hyrax
     private
 
     def find_default_admin_set
-      if App.rails_5_1?
-        super
-      else
         AdminSet.first
-      end
     end
   end
 end
