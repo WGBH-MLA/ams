@@ -41,8 +41,8 @@ GIT
 
 GIT
   remote: https://github.com/samvera/hyrax.git
-  revision: 966951ffaa72524e4a775f8a198bd51a47ece7d9
-  tag: hyrax-v5.0.0.rc1
+  revision: e1d9720340c1fd6b2f9c08b43eb1f900a1411044
+  branch: double_combo
   specs:
     hyrax (5.0.0.rc1)
       active-fedora (~> 14.0)
@@ -709,6 +709,7 @@ GEM
       ast (~> 2.4.1)
       racc
     parslet (2.0.0)
+    pg (1.5.3)
     popper_js (1.16.1)
     posix-spawn (0.3.15)
     pry (0.14.2)
@@ -1159,6 +1160,7 @@ DEPENDENCIES
   mysql2 (~> 0.5.3)
   nokogiri
   pbcore!
+  pg
   pry-byebug
   puma (~> 4.3)
   rails (~> 6.0)

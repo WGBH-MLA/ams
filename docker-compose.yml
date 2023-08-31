@@ -25,6 +25,7 @@ volumes:
   fcrepo:
   mysql:
   redis:
+  postgres:
   solr:
   uploads:
   zk:
@@ -34,6 +35,18 @@ networks:
   internal:
 
 services:
+  postgres:
+    image: postgres:latest
+    env_file:
+      - .env
+      - .env.development
+    ports:
+      - "5432"
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    networks:
+      internal:
+
   db:
     image: mariadb:10.11.2
     environment:
@@ -52,6 +65,25 @@ services:
     networks:
       internal:
     command: ['mysqld', '--character-set-server=utf8', '--collation-server=utf8_unicode_ci', '--max-allowed-packet=1073741824']
+
+
+  pgloader:
+    image: alpine
+    command: sh -c "
+      if [ -z ${MIGRATE_DB} ]; then exit 1;
+      else
+        apk add pgloader;
+        pgloader mysql://root:DatabaseFTW@db/gbh postgresql://ams_user:ams_password@postgres/ams;
+      fi"
+    networks:
+      internal:
+    tty: true
+    stdin_open: true
+    depends_on:
+      db:
+        condition: service_started
+      postgres:
+        condition: service_started
 
   zoo:
     image: zookeeper:3.6.2
@@ -182,6 +214,8 @@ services:
     cap_add:
       - SYS_PTRACE
     depends_on:
+      postgres:
+        condition: service_started
       db:
         condition: service_started
       solr:

@@ -11,7 +11,7 @@ if ENV['DEPENDENCIES_NEXT'] && !ENV['DEPENDENCIES_NEXT'].empty?
 else
   gem 'rails', '~> 6.0'
   gem 'hyrax-batch_ingest', git: 'https://github.com/samvera-labs/hyrax-batch_ingest', branch: 'dependency-upgrades'
-  gem 'hyrax', github: 'samvera/hyrax', tag: 'hyrax-v5.0.0.rc1'
+  gem 'hyrax', github: 'samvera/hyrax', branch: 'double_combo' # , tag: 'hyrax-v5.0.0.rc1'
   # Use SCSS for stylesheets
   gem 'sass-rails', '~> 6.0'
   gem 'bootstrap', '~> 4.0'
@@ -91,6 +91,7 @@ gem 'aws-sdk-s3'
 gem 'aws-sdk-codedeploy'
 gem 'carrierwave', '~> 1.3'
 gem 'mysql2', '~> 0.5.3'
+gem 'pg'
 gem 'nokogiri'
 gem 'bootstrap-multiselect-rails'
 gem 'pbcore', github: 'scientist-softserv/pbcore', branch: 'fake_out'
