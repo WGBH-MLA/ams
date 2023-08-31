@@ -11,7 +11,7 @@ RSpec.describe AMS::TimeCodeService do
     end
 
     it 'is not the same things as calling #regex_string (which is invalid syntax for HTML5 pattern attribute)' do
-      expect(regex_for_html).to_not eq regex_string
+      expect(regex_for_html).to_not eq regex.to_s
     end
   end
 

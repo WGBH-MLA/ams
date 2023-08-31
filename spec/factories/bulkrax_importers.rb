@@ -26,7 +26,9 @@ FactoryBot.define do
     limit { 10 }
     parser_fields { { 'import_file_path' => 'spec/fixtures/bulkrax/csv/good.csv' } }
     field_mapping { {} }
-    after :create, &:current_run
+    after(:create) do |record|
+      record.current_run
+    end
   end
 
   factory :bulkrax_importer_pbcore_xml, class: 'Bulkrax::Importer' do
