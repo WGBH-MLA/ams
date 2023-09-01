@@ -196,6 +196,8 @@ services:
         rails db:create db:migrate &&
         rails db:seed
     depends_on:
+      postgres:
+        condition: service_started
       db:
         condition: service_started
       solr:
@@ -249,6 +251,8 @@ services:
     depends_on:
       check_volumes:
         condition: service_completed_successfully
+      postgres:
+        condition: service_started
       db:
         condition: service_started
       solr:
