@@ -15,7 +15,6 @@ on:
 env:
   REGISTRY: ghcr.io
   RAILS_ENV: test
-  DATABASE_CLEANER_ALLOW_REMOTE_DATABASE_URL: true
 
 jobs:
   build-rails-6-1:
@@ -48,11 +47,11 @@ jobs:
         run: >-
           touch .env.development;
           TAG=latest docker compose pull web || true
-      # - name: Setup tmate session
-      #   uses: mxschmitt/action-tmate@v3
-      #   if: ${{ github.event_name == 'workflow_dispatch' && inputs.debug_enabled }}
-      #   with:
-          # limit-access-to-actor: true
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.debug_enabled }}
+        with:
+          limit-access-to-actor: true
       - name: Build and push
         uses: docker/build-push-action@v3
         with:
@@ -153,6 +152,11 @@ jobs:
           touch .env.development;
           docker compose pull web;
           docker compose pull worker
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.debug_enabled }}
+        with:
+          limit-access-to-actor: true
       - name: Start containers
         run: docker compose up -d web
       - name: Setup solr
@@ -179,12 +183,6 @@ jobs:
           "gem install semaphore_test_boosters &&
           rspec_booster --job $CI_NODE_INDEX/$CI_NODE_TOTAL &&
           ls -l $PWD"
-      - name: Setup tmate session
-        uses: mxschmitt/action-tmate@v3
-        if: success() || failure()
-        with:
-          limit-access-to-actor: true
-
       - name: Publish Test Report
         uses: mikepenz/action-junit-report@v3
         if: success() || failure()
