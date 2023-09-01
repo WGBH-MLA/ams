@@ -45,7 +45,7 @@ jobs:
       - name: Pull from cache to speed up build
         run: >-
           touch .env.development;
-          TAG=latest docker-compose pull web || true
+          TAG=latest docker compose pull web || true
       - name: Setup tmate session
         uses: mxschmitt/action-tmate@v3
         if: ${{ github.event_name == 'workflow_dispatch' && inputs.debug_enabled }}
@@ -104,10 +104,10 @@ jobs:
   #     - name: Pull from cache to speed up build
   #       run: >-
   #         touch .env.development;
-  #         docker-compose pull web;
-  #         docker-compose pull worker
+  #         docker compose pull web;
+  #         docker compose pull worker
   #     - name: Run Rubocop
-  #       run: docker-compose run web bundle exec rubocop --parallel --format progress --format junit --out rubocop.xml --display-only-failed
+  #       run: docker compose run web bundle exec rubocop --parallel --format progress --format junit --out rubocop.xml --display-only-failed
   #     - name: Publish Test Report
   #       uses: mikepenz/action-junit-report@v3
   #       if: always() # always run even if the previous step fails
@@ -152,24 +152,24 @@ jobs:
       - name: Pull from cache to speed up build
         run: >-
           touch .env.development;
-          docker-compose pull web;
-          docker-compose pull worker
+          docker compose pull web;
+          docker compose pull worker
       - name: Setup tmate session
         uses: mxschmitt/action-tmate@v3
         if: ${{ github.event_name == 'workflow_dispatch' && inputs.debug_enabled }}
         with:
           limit-access-to-actor: true
       - name: Start containers
-        run: docker-compose up -d web
+        run: docker compose up -d web
       - name: Setup solr
         run: >-
-          docker-compose exec -T web bash -c
+          docker compose exec -T web bash -c
           "solrcloud-upload-configset.sh /app/samvera/hyrax-webapp/solr/config &&
           SOLR_COLLECTION_NAME=hydra-test solrcloud-assign-configset.sh &&
           solrcloud-assign-configset.sh"
       - name: Setup db
         run: >-
-          docker-compose exec -T web bash -c
+          docker compose exec -T web bash -c
           "RAILS_ENV=test bundle exec rake db:schema:load db:migrate db:seed"
       - name: Run Specs
         id: run-specs
@@ -181,7 +181,7 @@ jobs:
           CI_NODE_INDEX: ${{ matrix.ci_node_index }}
         continue-on-error: true
         run: >-
-          docker-compose exec -T web bash -c
+          docker compose exec -T web bash -c
           "gem install semaphore_test_boosters &&
           rspec_booster --job $CI_NODE_INDEX/$CI_NODE_TOTAL"
       - name: Fail job if spec failure
@@ -225,7 +225,7 @@ jobs:
   #     - name: Pull from cache to speed up build
   #       run: >-
   #         touch .env.development;
-  #         TAG=latest docker-compose pull web || true
+  #         TAG=latest docker compose pull web || true
   #     - name: Setup tmate session
   #       uses: mxschmitt/action-tmate@v3
   #       if: ${{ github.event_name == 'workflow_dispatch' && inputs.debug_enabled }}
@@ -284,10 +284,10 @@ jobs:
   #     - name: Pull from cache to speed up build
   #       run: >-
   #         touch .env.development;
-  #         docker-compose pull web;
-  #         docker-compose pull worker
+  #         docker compose pull web;
+  #         docker compose pull worker
   #     - name: Run Rubocop
-  #       run: docker-compose run web bundle exec rubocop --parallel --format progress --format junit --out rubocop.xml --display-only-failed
+  #       run: docker compose run web bundle exec rubocop --parallel --format progress --format junit --out rubocop.xml --display-only-failed
   #     - name: Publish Test Report
   #       uses: mikepenz/action-junit-report@v3
   #       if: always() # always run even if the previous step fails
@@ -337,24 +337,24 @@ jobs:
   #     - name: Pull from cache to speed up build
   #       run: >-
   #         touch .env.development;
-  #         docker-compose pull web;
-  #         docker-compose pull worker
+  #         docker compose pull web;
+  #         docker compose pull worker
   #     - name: Setup tmate session
   #       uses: mxschmitt/action-tmate@v3
   #       if: ${{ github.event_name == 'workflow_dispatch' && inputs.debug_enabled }}
   #       with:
   #         limit-access-to-actor: true
   #     - name: Start containers
-  #       run: docker-compose up -d web
+  #       run: docker compose up -d web
   #     - name: Setup solr
   #       run: >-
-  #         docker-compose exec -T web bash -c
+  #         docker compose exec -T web bash -c
   #         "solrcloud-upload-configset.sh /app/samvera/hyrax-webapp/solr/config &&
   #         SOLR_COLLECTION_NAME=hydra-test solrcloud-assign-configset.sh &&
   #         solrcloud-assign-configset.sh"
   #     - name: Setup db
   #       run: >-
-  #         docker-compose exec -T web bash -c
+  #         docker compose exec -T web bash -c
   #         "DEPENDENCIES_NEXT=1 RAILS_ENV=test bundle exec rake db:schema:load db:migrate db:seed"
   #     - name: Run Specs
   #       id: run-specs
@@ -366,7 +366,7 @@ jobs:
   #         CI_NODE_INDEX: ${{ matrix.ci_node_index }}
   #       continue-on-error: true
   #       run: >-
-  #         docker-compose exec -T web bash -c
+  #         docker compose exec -T web bash -c
   #         "DEPENDENCIES_NEXT=1 gem install semaphore_test_boosters &&
   #         DEPENDENCIES_NEXT=1 rspec_booster --job $CI_NODE_INDEX/$CI_NODE_TOTAL"
   #     - name: Fail job if spec failure

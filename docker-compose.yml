@@ -193,7 +193,7 @@ services:
         solrcloud-upload-configset.sh /app/samvera/hyrax-webapp/solr/config &&
         solrcloud-assign-configset.sh &&
         SOLR_COLLECTION_NAME=hydra-test solrcloud-assign-configset.sh &&
-        rails db:create db:migrate &&
+        rails db:create db:schema:load db:migrate &&
         rails db:seed
     depends_on:
       postgres:

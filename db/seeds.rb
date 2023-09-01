@@ -55,6 +55,5 @@ end
 begin
   admin_set = AdminSet.find(Hyrax::AdminSetCreateService::DEFAULT_ID)
 rescue ActiveFedora::ObjectNotFoundError
-  Hyrax::AdminSetCreateService.create_default_admin_set
-  admin_set = AdminSet.find(Hyrax::AdminSetCreateService::DEFAULT_ID)
+  admin_set = AdminSet.create(id: Hyrax::AdminSetCreateService::DEFAULT_ID)
 end
