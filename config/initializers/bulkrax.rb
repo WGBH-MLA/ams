@@ -157,6 +157,7 @@ if ENV['SETTINGS__BULKRAX__ENABLED'] == 'true'
 
       namespace "change_set" do |ops|
         ops.register "set_child_title" do
+          # Hyrax::Transactions::Steps::CreateAapbAdminData.new
         end
       end
 
@@ -164,7 +165,6 @@ if ENV['SETTINGS__BULKRAX__ENABLED'] == 'true'
         ops.register "create_with_bulk_behavior" do
           steps = Hyrax::Transactions::WorkCreate::DEFAULT_STEPS.dup
           steps[steps.index("work_resource.add_file_sets")] = "work_resource.add_bulkrax_files"
-          steps.insert(steps.index("change_set.apply"), "change_set.set_child_title")
 
           Hyrax::Transactions::WorkCreate.new(steps: steps)
         end
