@@ -157,7 +157,6 @@ if ENV['SETTINGS__BULKRAX__ENABLED'] == 'true'
 
       namespace "change_set" do |ops|
         ops.register "set_child_title" do
-          Hyrax::Transactions::Steps::SetChildTitle.new
         end
       end
 
