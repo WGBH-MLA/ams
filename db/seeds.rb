@@ -50,4 +50,4 @@ if rob_admin.any? {|r| r.name == 'aapb-admin'} == false
   aapb_admin_role.users << User.find_by(email: 'rob@notch8.com')
 end
 
-Hyrax::AdminSetCreateService.find_or_create_default_admin_set
+Hyrax::AdminSetCreateService.find_or_create_default_admin_set unless Rails.env.production?
