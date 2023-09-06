@@ -8,9 +8,10 @@
 class AssetResourceForm < Hyrax::Forms::ResourceForm(AssetResource)
   include Hyrax::FormFields(:basic_metadata)
   include Hyrax::FormFields(:asset_resource)
-  cattr_accessor :hidden_fields, :field_groups, :disabled_fields do
-    []
-  end
+  include ChildCreateButton
+  include DisabledFields
+  class_attribute :field_groups
+
 
   self.hidden_fields += [ :hyrax_batch_ingest_batch_id, :last_pushed, :last_updated, :needs_update, :bulkrax_importer_id ]
 
