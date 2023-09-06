@@ -55,7 +55,7 @@ ARG SETTINGS__BULKRAX__ENABLED="false"
 #   SOLR_URL=localhost DEPENDENCIES_NEXT=1 RAILS_ENV=production SECRET_KEY_BASE=fake-key-for-asset-building-only DB_ADAPTER=nulldb bundle exec rake assets:precompile"
 
 RUN sh -l -c " \
-  NODE_OPTIONS=--openssl-legacy-provider SOLR_URL=localhost RAILS_ENV=production SECRET_KEY_BASE=fake-key-for-asset-building-only DB_ADAPTER=nulldb bundle exec rake assets:precompile"
+  NODE_OPTIONS=--openssl-legacy-provider RAILS_ENV=production SECRET_KEY_BASE=fake-key-for-asset-building-only DB_ADAPTER=nulldb bundle exec rake assets:precompile"
 
 CMD ./bin/web
 
