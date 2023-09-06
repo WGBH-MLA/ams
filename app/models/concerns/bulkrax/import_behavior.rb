@@ -6,7 +6,7 @@ require_dependency Bulkrax::Engine.root.join('app', 'models', 'concerns', 'bulkr
 
 Bulkrax::ImportBehavior.class_eval do
   def factory
-    @factory ||= Bulkrax::ObjectFactory.new(attributes: self.parsed_metadata || self.raw_metadata,
+    @factory ||= Bulkrax.object_factory.new(attributes: self.parsed_metadata || self.raw_metadata,
                                             source_identifier_value: identifier,
                                             work_identifier: parser.work_identifier,
                                             collection_field_mapping: parser.collection_field_mapping,

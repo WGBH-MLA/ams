@@ -15,7 +15,7 @@ class AssetResource < Hyrax::Work
   end
 
   def admin_data=(new_admin_data)
-    self[:admin_data_gid] = new_admin_data.gid
+    self.admin_data_gid = new_admin_data.gid
   end
 
   def annotations

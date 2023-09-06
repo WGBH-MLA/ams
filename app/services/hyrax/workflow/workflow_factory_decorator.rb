@@ -10,4 +10,4 @@ module Hyrax
     end
   end
 end
-Hyrax::Workflow::WorkflowFactory.prepend(Hyrax::Workflow::WorkflowFactoryDecorator)
+# Hyrax::Workflow::WorkflowFactory.prepend(Hyrax::Workflow::WorkflowFactoryDecorator)

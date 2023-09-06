@@ -145,10 +145,12 @@ class PbcoreXmlParser < Bulkrax::XmlParser
     xml_asset = AAPB::BatchIngest::PBCoreXMLMapper.new(file[:data]).asset_attributes.merge!({ delete: file[:delete], pbcore_xml: file[:data] })
     xml_asset[:children] = []
     asset_id = xml_asset[:id]
+    # resource = Hyrax.query_service.find_by(id: Valkyrie::ID.new(doc_id))
+
     asset = Asset.where(id: xml_asset[:id])&.first
     asset_attributes = asset&.attributes&.symbolize_keys
     xml_asset = asset_attributes.merge(xml_asset) if asset_attributes
-    parse_rows([xml_asset], 'Asset', asset_id)
+    parse_rows([xml_asset], 'AssetResource', asset_id)
     add_object(xml_asset)
     instantiation_rows(instantiations, xml_asset, asset, asset_id)
     objects
@@ -157,13 +159,14 @@ class PbcoreXmlParser < Bulkrax::XmlParser
   def instantiation_rows(instantiations, xml_asset, asset, asset_id)
     xml_records = []
     instantiations.each.with_index do |inst, i|
-      instantiation_class =  'PhysicalInstantiation' if inst.physical
-      instantiation_class ||= 'DigitalInstantiation' if inst.digital
+      instantiation_class =  'PhysicalInstantiationResource' if inst.physical
+      instantiation_class ||= 'DigitalInstantiationResource' if inst.digital
       next unless instantiation_class
       xml_record = AAPB::BatchIngest::PBCoreXMLMapper.new(inst.to_xml).send("#{instantiation_class.to_s.underscore}_attributes").merge!({ pbcore_xml: inst.to_xml, skip_file_upload_validation: true })
       # Find members of the asset that have the same class and local identifier. If no asset, then no digital instantiation can exist
       instantiation = asset.members[i] if asset && asset.members[i]&.class == instantiation_class.constantize
       xml_record = instantiation.attributes.symbolize_keys.merge(xml_record) if instantiation
+      xml_record[:title] = create_title(nil)
       xml_record[:children] = []
       # we accumulate the tracks here so that they are added to the bulkrax entries list in the order they appear in the pbcore xml
       xml_tracks = []
@@ -171,7 +174,8 @@ class PbcoreXmlParser < Bulkrax::XmlParser
         xml_track = AAPB::BatchIngest::PBCoreXMLMapper.new(track.to_xml).essence_track_attributes.merge({ pbcore_xml: track.to_xml })
         essence_track = instantiation.members[j] if instantiation&.members&.[](j)&.class == EssenceTrack
         xml_track = essence_track.attributes.symbolize_keys.merge(xml_track) if essence_track
-        parse_rows([xml_track], 'EssenceTrack', asset_id, asset, j+1)
+        xml_track[:title] = create_title(nil)
+        parse_rows([xml_track], 'EssenceTrackResource', asset_id, asset, j+1)
         xml_record[:children] << xml_track[work_identifier]
         xml_tracks << xml_track
       end
