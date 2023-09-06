@@ -19,6 +19,8 @@ Rails.application.config.after_initialize do
     :freyja
   )
   Valkyrie.config.metadata_adapter = :freyja
+  Hyrax.config.query_index_from_valkyrie = true
+  Hyrax.config.index_adapter = :solr_index
 
   Valkyrie::StorageAdapter.register(
     Valkyrie::Storage::Disk.new(base_path: Rails.root.join("storage", "files"),

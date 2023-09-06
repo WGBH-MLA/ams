@@ -1,4 +1,4 @@
-<% if f.object.class.multiple? key %>
+<% if f.object.multiple? key %>
   <%= f.input key, as: :multi_value, input_html: { class: 'form-control' }, disabled:f.object.respond_to?(:disabled?) && f.object.disabled?(key), readonly:f.object.respond_to?(:readonly?) && f.object.readonly?(key) , required: f.object.required?(key) %>
 <% elsif f.object.class.try(:hidden?, key) %>
   <%= f.input key, required: f.object.required?(key), as: :hidden %>

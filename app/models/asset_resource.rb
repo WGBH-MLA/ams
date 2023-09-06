@@ -5,8 +5,20 @@
 class AssetResource < Hyrax::Work
   include Hyrax::Schema(:basic_metadata)
   include Hyrax::Schema(:asset_resource)
+  include AMS::WorkBehavior
 
-  # override valk definition to make sure the internal_resource name stays the same no matter
-  # how the record was created
-  attribute :internal_resource, Valkyrie::Types::Any.default(self.name.gsub(/Resource$/,'').freeze), internal: true
+  self.valid_child_concerns = [DigitalInstantiationResource, PhysicalInstantiationResource, ContributionResource]
+
+
+  def admin_data
+    @admin_data ||= AdminData.find_by_gid(admin_data_gid)
+  end
+
+  def admin_data=(new_admin_data)
+    self[:admin_data_gid] = new_admin_data.gid
+  end
+
+  def annotations
+    @annotations ||= admin_data.annotations
+  end
 end

@@ -5,5 +5,8 @@
 class DigitalInstantiationResource < Hyrax::Work
   include Hyrax::Schema(:basic_metadata)
   include Hyrax::Schema(:digital_instantiation_resource)
-  attribute :internal_resource, Valkyrie::Types::Any.default(self.name.gsub(/Resource$/,'').freeze), internal: true
+  include AMS::WorkBehavior
+
+  self.valid_child_concerns = [EssenceTrackResource]
+
 end
