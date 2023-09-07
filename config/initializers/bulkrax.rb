@@ -153,24 +153,17 @@ if ENV['SETTINGS__BULKRAX__ENABLED'] == 'true'
 
     class BulkraxTransactionContainer
       extend Dry::Container::Mixin
-      require 'hyrax/transactions/steps/create_aapb_admin_data'
-
-      namespace "change_set" do |ops|
-        ops.register "create_aapb_admin_data" do
-          Hyrax::Transactions::Steps::CreateAapbAdminData.new
-        end
-      end
 
       namespace "work_resource" do |ops|
         ops.register "create_with_bulk_behavior" do
-          steps = Hyrax::Transactions::WorkCreate::DEFAULT_STEPS.dup
+          steps = Ams::WorkCreate::DEFAULT_STEPS.dup
           steps[steps.index("work_resource.add_file_sets")] = "work_resource.add_bulkrax_files"
-          steps.insert(steps.index("change_set.apply"), "change_set.create_aapb_admin_data")
 
           Hyrax::Transactions::WorkCreate.new(steps: steps)
         end
 
         ops.register "update_with_bulk_behavior" do
+          # TODO create Ams::WorkUpdate
           steps = Hyrax::Transactions::WorkUpdate::DEFAULT_STEPS.dup
           steps[steps.index("work_resource.add_file_sets")] = "work_resource.add_bulkrax_files"
 

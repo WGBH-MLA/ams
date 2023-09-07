@@ -55,6 +55,8 @@ Rails.application.config.after_initialize do
   Wings::ModelRegistry.register(DigitalInstantiationResource, DigitalInstantiation)
   Wings::ModelRegistry.register(EssenceTrackResource, EssenceTrack)
   Wings::ModelRegistry.register(ContributionResource, Contribution)
+
+  Hyrax::Transactions::Container.merge(Ams::Container)
 end
 
 Rails.application.config.to_prepare do
