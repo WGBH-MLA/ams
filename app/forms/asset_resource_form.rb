@@ -12,10 +12,16 @@ class AssetResourceForm < Hyrax::Forms::ResourceForm(AssetResource)
   include DisabledFields
   class_attribute :field_groups
 
-
   self.hidden_fields += [ :hyrax_batch_ingest_batch_id, :last_pushed, :last_updated, :needs_update, :bulkrax_importer_id ]
 
   admin_data_attributes = (AdminData.attribute_names.dup - ['id', 'created_at', 'updated_at']).map &:to_sym
+
+  # Add fields that we want to be required
+  self.required_fields += [:titles_with_types, :descriptions_with_types]
+
+  # Remove fields that we don't want to be required.
+  self.required_fields -= [:creator, :keyword, :rights_statement, :title, :description]
+
   self.field_groups = {
     identifying_info: [:titles_with_types, :producing_organization, :local_identifier, :pbs_nola_code, :eidr_id, :asset_types, :dates_with_types, :descriptions_with_types],
     subject_info: [:genre, :topics, :subject, :spatial_coverage, :temporal_coverage, :audience_level, :audience_rating, :annotation],
@@ -198,6 +204,22 @@ class AssetResourceForm < Hyrax::Forms::ResourceForm(AssetResource)
     else
       ""
     end
+  end
+
+  def permitted_params
+    @permitted ||= build_permitted_params
+  end
+
+  def build_permitted_params
+    permitted = []
+    (self.class.required_fields + field_groups.values.map(&:to_a).flatten).uniq.each do |term|
+      if multiple?(term)
+        permitted << { term => [] }
+      else
+        permitted << term
+      end
+    end
+    permitted
   end
 
   # Define custom form fields using the Valkyrie::ChangeSet interface

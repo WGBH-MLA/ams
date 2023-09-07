@@ -37,7 +37,7 @@ attributes:
       - "track_type_tesim"
     form:
       required: true
-      primary: false
+      primary: true
       multiple: false
   track_id:
     type: string
@@ -46,7 +46,7 @@ attributes:
       - "track_id_tesim"
     form:
       required: true
-      primary: false
+      primary: true
       multiple: true
   standard:
     type: string
