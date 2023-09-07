@@ -9,6 +9,7 @@ x-app: &app
   # command: sh -l -c "bundle && bundle exec puma -v -b tcp://0.0.0.0:3000"
   env_file:
     - .env
+    - .env.development
   # NOTE: all common env variables moved to .env
   image: ghcr.io/wgbh-mla/ams:${TAG:-latest}
   volumes:
