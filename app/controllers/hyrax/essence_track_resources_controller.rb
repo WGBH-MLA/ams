@@ -1,5 +1,5 @@
 # frozen_string_literal: true
- 
+
 # Generated via
 #  `rails generate hyrax:work_resource EssenceTrackResource`
 module Hyrax
@@ -13,5 +13,6 @@ module Hyrax
     # Use a Valkyrie aware form service to generate Valkyrie::ChangeSet style
     # forms.
     self.work_form_service = Hyrax::FormFactory.new
+    self.show_presenter = EssenceTrackResourcePresenter
   end
 end
