@@ -2,11 +2,15 @@
 
 # Generated via
 #  `rails generate hyrax:work_resource DigitalInstantiationResource`
+require 'carrierwave/validations/active_model'
+
 class DigitalInstantiationResource < Hyrax::Work
   include Hyrax::Schema(:basic_metadata)
   include Hyrax::Schema(:digital_instantiation_resource)
   include AMS::WorkBehavior
   include ::AMS::CreateMemberMethods
+  # TODO: need to look into this
+  # include ::AMS::CascadeDestroyMembers
 
   self.valid_child_concerns = [EssenceTrackResource]
 
@@ -16,6 +20,7 @@ class DigitalInstantiationResource < Hyrax::Work
   def initialize(*args)
     super
     create_child_methods
+    save_instantiation_admin_data
   end
 
   def instantiation_admin_data
@@ -25,4 +30,15 @@ class DigitalInstantiationResource < Hyrax::Work
   def instantiation_admin_data=(new_admin_data)
     self.instantiation_admin_data_gid = new_admin_data.gid
   end
+
+  private
+
+    def find_or_create_instantiation_admin_data
+      self.instantiation_admin_data ||= InstantiationAdminData.create
+    end
+
+    def save_instantiation_admin_data
+      find_or_create_instantiation_admin_data
+      self.instantiation_admin_data.save
+    end
 end

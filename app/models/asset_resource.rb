@@ -16,6 +16,7 @@ class AssetResource < Hyrax::Work
   def initialize(*args)
     super
     create_child_methods
+    save_admin_data
   end
 
   def admin_data

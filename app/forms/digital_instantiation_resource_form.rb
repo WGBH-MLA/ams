@@ -116,4 +116,6 @@ class DigitalInstantiationResourceForm < Hyrax::Forms::ResourceForm(DigitalInsta
   def instantiation_admin_data=(new_admin_data)
     self[:instantiation_admin_data_gid] = new_admin_data.gid
   end
+
+  property :digital_instantiation_pbcore_xml, virtual: true
 end

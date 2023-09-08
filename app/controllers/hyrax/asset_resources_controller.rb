@@ -9,6 +9,8 @@ module Hyrax
     include Hyrax::WorksControllerBehavior
     include Hyrax::BreadcrumbsForWorks
     self.curation_concern_type = ::AssetResource
+    # Handle Child Work button and redirect to child work page
+    include Hyrax::ChildWorkRedirect
 
     # Use a Valkyrie aware form service to generate Valkyrie::ChangeSet style
     # forms.
