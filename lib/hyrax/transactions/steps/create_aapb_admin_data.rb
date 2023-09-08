@@ -122,36 +122,24 @@ module Hyrax
           end
 
           def add_title_types(change_set)
-            return unless change_set.fields[:titles_with_types].present?
+            return unless change_set.fields["titles_with_types"].present?
 
             title_type_service = TitleTypesService.new
-            fill_attributes_from_typed_values(title_type_service, change_set, change_set.fields[:titles_with_types])
-
-            # Now that we're done with these attributes, remove them from the
-            # environment to avoid errors later in the save process.
-            change_set.fields.delete(:titles_with_types)
+            fill_attributes_from_typed_values(title_type_service, change_set, change_set.fields["titles_with_types"])
           end
 
           def add_description_types(change_set)
-            return unless change_set.fields[:descriptions_with_types].present?
+            return unless change_set.fields["descriptions_with_types"].present?
 
             description_type_service = DescriptionTypesService.new
-            fill_attributes_from_typed_values(description_type_service, change_set, change_set.fields[:descriptions_with_types])
-
-            # Now that we're done with these attributes, remove them from the
-            # environment to avoid errors later in the save process.
-            change_set.fields.delete(:descriptions_with_types)
+            fill_attributes_from_typed_values(description_type_service, change_set, change_set.fields["descriptions_with_types"])
           end
 
           def add_date_types(change_set)
-            return unless change_set.fields[:dates_with_types].present?
+            return unless change_set.fields["dates_with_types"].present?
 
             date_type_service = DateTypesService.new
-            fill_attributes_from_typed_values(date_type_service, change_set, change_set.fields[:dates_with_types])
-
-            # Now that we're done with these attributes, remove them from the
-            # environment to avoid errors later in the save process.
-            change_set.fields.delete(:dates_with_types)
+            fill_attributes_from_typed_values(date_type_service, change_set, change_set.fields["dates_with_types"])
           end
 
           # @param child of [AMS::TypedFieldService] type_service
