@@ -355,15 +355,3 @@ attributes:
       required: false
       primary: false
       multiple: true
-  titles_with_types:
-    type: string
-    form:
-      required: true
-      primary: false
-      multiple: false
-  descriptions_with_types:
-    type: string
-    form:
-      required: true
-      primary: false
-      multiple: false
