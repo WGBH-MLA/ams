@@ -201,7 +201,6 @@ jobs:
         env:
           HEAD_TAG: ${{ github.event.pull_request.head.sha || github.sha }}
           SE_NODE_SESSION_TIMEOUT: 999999
-          DEPENDENCIES_NEXT: 1
           BUNDLE_GEMFILE: Gemfile_next
           BUNDLER_VERSION: 2.0.1
         shell: bash
@@ -312,7 +311,6 @@ jobs:
       BUNDLER_VERSION: 2.0.1
       CONFDIR: "/app/samvera/hyrax-webapp/solr/config"
       DB_CLEANER_ALLOW_REMOTE_DB_URL: "true"
-      DEPENDENCIES_NEXT: 1
       SE_NODE_SESSION_TIMEOUT: 999999
       TB_RSPEC_FORMATTER: progress
       TB_RSPEC_OPTIONS: --format RspecJunitFormatter --out rspec.xml
@@ -353,7 +351,7 @@ jobs:
       - name: Setup db
         run: >-
           docker-compose exec -T web bash -c
-          "DEPENDENCIES_NEXT=1 RAILS_ENV=test bundle exec rake db:schema:load db:migrate db:seed"
+          "RAILS_ENV=test bundle exec rake db:schema:load db:migrate db:seed"
       - name: Run Specs
         id: run-specs
         env:
@@ -365,8 +363,8 @@ jobs:
         continue-on-error: true
         run: >-
           docker-compose exec -T web bash -c
-          "DEPENDENCIES_NEXT=1 gem install semaphore_test_boosters &&
-          DEPENDENCIES_NEXT=1 rspec_booster --job $CI_NODE_INDEX/$CI_NODE_TOTAL"
+          "gem install semaphore_test_boosters &&
+          rspec_booster --job $CI_NODE_INDEX/$CI_NODE_TOTAL"
       - name: Fail job if spec failure
         run: if [[ ${{ steps.run-specs.outcome }} == "failure" ]]; then exit 1; else exit 0; fi
       - name: Publish Test Report
