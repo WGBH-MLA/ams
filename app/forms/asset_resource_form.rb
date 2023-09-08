@@ -16,12 +16,6 @@ class AssetResourceForm < Hyrax::Forms::ResourceForm(AssetResource)
 
   admin_data_attributes = (AdminData.attribute_names.dup - ['id', 'created_at', 'updated_at']).map &:to_sym
 
-  # Add fields that we want to be required
-  self.required_fields += [:titles_with_types, :descriptions_with_types]
-
-  # Remove fields that we don't want to be required.
-  self.required_fields -= [:creator, :keyword, :rights_statement, :title, :description]
-
   self.field_groups = {
     identifying_info: [:titles_with_types, :producing_organization, :local_identifier, :pbs_nola_code, :eidr_id, :asset_types, :dates_with_types, :descriptions_with_types],
     subject_info: [:genre, :topics, :subject, :spatial_coverage, :temporal_coverage, :audience_level, :audience_rating, :annotation],
@@ -106,7 +100,7 @@ class AssetResourceForm < Hyrax::Forms::ResourceForm(AssetResource)
     child_annotations
   end
 
-  property :titles_with_types, virtual: true
+  property :titles_with_types, virtual: true, required: true
   def titles_with_types
     titles_with_types = []
     title_type_service = TitleTypesService.new
@@ -119,7 +113,7 @@ class AssetResourceForm < Hyrax::Forms::ResourceForm(AssetResource)
     titles_with_types
   end
 
-  property :descriptions_with_types, virtual: true
+  property :descriptions_with_types, virtual: true, required: true
   def descriptions_with_types
     descriptions_with_types = []
     description_type_service = DescriptionTypesService.new

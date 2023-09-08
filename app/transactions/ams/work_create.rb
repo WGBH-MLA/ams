@@ -14,7 +14,7 @@ module Ams
     ##
     # @see Hyrax::Transactions::Transaction
     def initialize(container: Container, steps: DEFAULT_STEPS)
-      super
+      super(steps: steps)
     end
   end
 end

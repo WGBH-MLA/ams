@@ -49,7 +49,7 @@ module Hyrax
     end
 
     def annotations
-      @annotations ||= Asset.find(solr_document['id']).annotations
+      @annotations ||= Hyrax.query_service.find_by(id: solr_document['id']).annotations
     end
 
     def last_pushed
@@ -68,7 +68,7 @@ module Hyrax
       return [] if authorized_item_ids.empty?
       query_ids = authorized_item_ids.map {|id| "id:#{id}"} .join(" OR ")
       solr_query += " AND (#{query_ids})"
-      ActiveFedora::SolrService.query(solr_query,rows: 10_000,fl: "id").map(&:id)
+      Hyrax::SolrService.query(solr_query, rows: 10_000, fl: "id").map(&:id)
     end
 
     def list_of_instantiation_ids_to_display

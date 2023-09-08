@@ -13,7 +13,7 @@ class DigitalInstantiationResourceForm < Hyrax::Forms::ResourceForm(DigitalInsta
   # include InheritParentTitle
 
   self.required_fields -= [:creator, :keyword, :rights_statement]
-  self.required_fields += [:title, :digital_instantiation_pbcore_xml, :location, :holding_organization]
+  self.required_fields += [:title, :location, :holding_organization]
 
   class_attribute :field_groups
 

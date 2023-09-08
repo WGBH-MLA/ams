@@ -221,9 +221,3 @@ attributes:
       required: false
       primary: false
       multiple: false
-  digital_instantiation_pbcore_xml:
-    type: string
-    form:
-      required: true
-      primary: false
-      multiple: false
