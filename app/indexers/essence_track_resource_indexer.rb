@@ -6,11 +6,12 @@ class EssenceTrackResourceIndexer < Hyrax::ValkyrieWorkIndexer
   include Hyrax::Indexer(:basic_metadata)
   include Hyrax::Indexer(:essence_track_resource)
 
+  self.thumbnail_path_service = AAPB::WorkThumbnailPathService
+
   # Uncomment this block if you want to add custom indexing behavior:
-  #  def to_solr
-  #    super.tap do |index_document|
-  #      index_document[:my_field_tesim]   = resource.my_field.map(&:to_s)
-  #      index_document[:other_field_ssim] = resource.other_field
-  #    end
-  #  end
+  def to_solr
+    super.tap do |index_document|
+      index_document['bulkrax_identifier_sim'] = resource.bulkrax_identifier
+    end
+  end
 end
