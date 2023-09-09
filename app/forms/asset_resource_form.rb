@@ -10,6 +10,9 @@ class AssetResourceForm < Hyrax::Forms::ResourceForm(AssetResource)
   include Hyrax::FormFields(:asset_resource)
   include ChildCreateButton
   include DisabledFields
+
+  attr_accessor :controller, :current_ability
+
   class_attribute :field_groups
 
   self.hidden_fields += [ :hyrax_batch_ingest_batch_id, :last_pushed, :last_updated, :needs_update, :bulkrax_importer_id ]
@@ -27,7 +30,7 @@ class AssetResourceForm < Hyrax::Forms::ResourceForm(AssetResource)
 
   def disabled?(field)
     disabled_fields = self.disabled_fields.dup
-    # TODO disabled_fields += self.field_groups[:aapb_admin_data] if current_ability.cannot?(:create, AdminData)
+    disabled_fields += self.field_groups[:aapb_admin_data] if current_ability.cannot?(:create, AdminData)
     disabled_fields.include?(field)
   end
 
@@ -157,7 +160,7 @@ class AssetResourceForm < Hyrax::Forms::ResourceForm(AssetResource)
     end
   end
 
-  property :bulkrax_importer_id, virtual: true
+  property :bulkrax_importer_id, virtual: true, display: false, multiple: false
   def bulkrax_importer_id
     if model.admin_data
       model.admin_data.bulkrax_importer_id
@@ -166,7 +169,7 @@ class AssetResourceForm < Hyrax::Forms::ResourceForm(AssetResource)
     end
   end
 
-  property :hyrax_batch_ingest_batch_id, virtual: true
+  property :hyrax_batch_ingest_batch_id, virtual: true, multiple: false
   def hyrax_batch_ingest_batch_id
     if model.admin_data
       model.admin_data.hyrax_batch_ingest_batch_id
@@ -175,7 +178,7 @@ class AssetResourceForm < Hyrax::Forms::ResourceForm(AssetResource)
     end
   end
 
-  property :last_pushed, virtual: true
+  property :last_pushed, virtual: true, display: false, multiple: false
   def last_pushed
     if model.admin_data
       model.admin_data.last_pushed
@@ -183,7 +186,7 @@ class AssetResourceForm < Hyrax::Forms::ResourceForm(AssetResource)
       ""
     end
   end
-  property :last_updated, virtual: true
+  property :last_updated, virtual: true, display: false, multiple: false
   def last_updated
     if model.admin_data
       model.admin_data.last_updated
@@ -191,7 +194,7 @@ class AssetResourceForm < Hyrax::Forms::ResourceForm(AssetResource)
       ""
     end
   end
-  property :needs_update, virtual: true
+  property :needs_update, virtual: true, display: false, multiple: false
   def needs_update
     if model.admin_data
       model.admin_data.needs_update

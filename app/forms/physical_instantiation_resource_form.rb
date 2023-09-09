@@ -12,7 +12,9 @@ class PhysicalInstantiationResourceForm < Hyrax::Forms::ResourceForm(PhysicalIns
   include ChildCreateButton
   include SingleValuedForm
   # TODO comment back in when we have a parent
-  # include InheritParentTitle
+  include InheritParentTitle
+
+  attr_accessor :controller, :current_ability
 
   self.required_fields -= [:creator, :keyword, :rights_statement]
   self.required_fields += [:format, :location, :media_type, :holding_organization]

@@ -10,16 +10,9 @@ class EssenceTrackResourceForm < Hyrax::Forms::ResourceForm(EssenceTrackResource
   include Hyrax::FormFields(:essence_track_resource)
   include DisabledFields
   # TODO comment back in when we have a parent
-  # include InheritParentTitle
+  include InheritParentTitle
 
-  self.fields -= [:description, :relative_path, :import_url, :date_created, :resource_type, :creator, :contributor, :keyword, :license, :rights_statement, :publisher, :subject,
-                   :identifier, :based_near, :related_url, :bibliographic_citation, :source, :language]
-
-  self.fields += [:track_id, :track_type, :standard, :encoding, :frame_rate, :data_rate, :playback_speed, :playback_speed_units,
-                   :sample_rate, :bit_depth, :language, :aspect_ratio, :frame_width, :frame_height, :duration, :time_start, :annotation]
-
-  self.required_fields -= [:creator, :keyword, :rights_statement]
-  self.required_fields += [:track_type, :track_id]
+  attr_accessor :controller, :current_ability
 
   self.readonly_fields = [:title]
 
@@ -28,6 +21,39 @@ class EssenceTrackResourceForm < Hyrax::Forms::ResourceForm(EssenceTrackResource
     clean_params[:title] = Array(clean_params[:title])
     clean_params
   end
+
+  property :title, required: true, primary: true, multiple: false
+
+  # remove fields from the form that are defined either from the
+  # core metadata or basic metadata
+  def self.remove(terms)
+    terms.each do |term|
+      property term, required: false, display: false
+    end
+  end
+  remove(
+    %i(
+      based_near
+      bibliographic_citation
+      contributor
+      creator
+      date_created
+      description
+      identifier
+      import_url
+      keyword
+      label
+      language
+      license
+      publisher
+      related_url
+      relative_path
+      resource_type
+      rights_statement
+      source
+      subject
+    )
+  )
 
   # Define custom form fields using the Valkyrie::ChangeSet interface
   #

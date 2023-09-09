@@ -17,7 +17,7 @@ module Hyrax::ChildWorkRedirect
   end
 
   def after_update_response
-    if curation_concern.file_sets.present?
+    if curation_concern.try(:file_sets).present? || Hyrax.custom_queries.find_child_file_sets(resource: curation_concern).to_a.present?
       return redirect_to hyrax.confirm_access_permission_path(curation_concern) if permissions_changed?
       return redirect_to main_app.confirm_hyrax_permission_path(curation_concern) if curation_concern.visibility_changed?
     end

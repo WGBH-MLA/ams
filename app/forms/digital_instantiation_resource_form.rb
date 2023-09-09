@@ -9,8 +9,9 @@ class DigitalInstantiationResourceForm < Hyrax::Forms::ResourceForm(DigitalInsta
   include Hyrax::FormFields(:basic_metadata)
   include Hyrax::FormFields(:digital_instantiation_resource)
   include DisabledFields
-  # TODO comment back in when we have a parent
-  # include InheritParentTitle
+  include InheritParentTitle
+
+  attr_accessor :controller, :current_ability
 
   self.required_fields -= [:creator, :keyword, :rights_statement]
   self.required_fields += [:title, :location, :holding_organization]
@@ -85,8 +86,7 @@ class DigitalInstantiationResourceForm < Hyrax::Forms::ResourceForm(DigitalInsta
 
   def disabled?(field)
     disabled_fields = self.disabled_fields.dup
-    # TODO: current_ability isn't a thing right now so I'm commenting this out for now
-    # disabled_fields += self.field_groups[:instantiation_admin_data] if current_ability.cannot?(:create, InstantiationAdminData)
+    disabled_fields += self.field_groups[:instantiation_admin_data] if current_ability.cannot?(:create, InstantiationAdminData)
     disabled_fields.include?(field)
   end
 

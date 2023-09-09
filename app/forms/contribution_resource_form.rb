@@ -9,13 +9,44 @@ class ContributionResourceForm < Hyrax::Forms::ResourceForm(ContributionResource
   include Hyrax::FormFields(:basic_metadata)
   include Hyrax::FormFields(:contribution_resource)
   include SingleValuedForm
-  # TODO comment back in when we have a parent
-  # include InheritParentTitle
+  include InheritParentTitle
 
-  self.fields += [:contributor_role, :portrayal]
-  self.fields -= [:language, :description, :relative_path, :import_url, :date_created, :resource_type, :creator, :keyword, :license, :rights_statement, :publisher, :subject, :identifier, :based_near, :related_url, :bibliographic_citation, :source]
-  self.required_fields -= [:creator, :keyword, :rights_statement]
+  attr_accessor :controller, :current_ability
+
   self.single_valued_fields = [:title, :contributor]
+
+  property :title, required: true, primary: true
+
+  # remove fields from the form that are defined either from the
+  # core metadata or basic metadata
+  def self.remove(terms)
+    terms.each do |term|
+      property term, required: false, display: false
+    end
+  end
+  remove(
+    %i(
+      affiliation
+      based_near
+      bibliographic_citation
+      creator
+      date_created
+      description
+      identifier
+      import_url
+      keyword
+      label
+      language
+      license
+      publisher
+      related_url
+      relative_path
+      resource_type
+      rights_statement
+      source
+      subject
+    )
+  )
 
   # Define custom form fields using the Valkyrie::ChangeSet interface
   #
