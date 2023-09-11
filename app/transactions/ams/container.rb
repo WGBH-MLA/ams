@@ -11,6 +11,9 @@ module Ams
       ops.register 'create_work' do
         Ams::WorkCreate.new
       end
+      ops.register 'update_work' do
+        Ams::WorkUpdate.new
+      end
     end
   end
 end
