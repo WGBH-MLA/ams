@@ -29,25 +29,25 @@ module Hyrax
         private
 
           def save_aapb_admin_data(change_set)
-            change_set.model.admin_data = find_or_create_admin_data(change_set)
             set_admin_data_attributes(change_set.model.admin_data, change_set)
+            change_set['admin_data_gid'] = change_set.model.admin_data_gid
+            change_set.model.admin_data.save!
             remove_admin_data_from_env_attributes(change_set)
             delete_removed_annotations(change_set.model.admin_data, change_set)
             set_annotations_attributes(change_set.model.admin_data, change_set)
             remove_annotations_from_env_attributes(change_set)
 
-            # TODO: do we still need to return a boolean for `Transactions`?
-            return true if change_set.model.admin_data
-            false
+            !!change_set.model.admin_data
           end
 
           def set_admin_data_attributes(admin_data, change_set)
             AdminData.attributes_for_update.each do |k|
               # Some attributes are serialized on AdminData, so always send an array
+              k_string = k.to_s
               if should_empty_admin_data_value?(k, change_set)
                 AdminData::SERIALIZED_FIELDS.include?(k) ? admin_data.send("#{k}=", Array.new) : admin_data.send("#{k}=", nil)
-              elsif change_set.fields[k].present?
-                AdminData::SERIALIZED_FIELDS.include?(k) ? admin_data.send("#{k}=", Array(change_set.fields[k])) : admin_data.send("#{k}=", change_set.fields[k].to_s)
+              elsif change_set.fields[k_string].present?
+                AdminData::SERIALIZED_FIELDS.include?(k) ? admin_data.send("#{k}=", Array(change_set.fields[k_string])) : admin_data.send("#{k}=", change_set.fields[k_string].to_s)
               end
             end
           end
@@ -71,26 +71,31 @@ module Hyrax
           def set_annotations_attributes(admin_data, change_set)
             return if change_set.fields["annotations"].nil?
             change_set.fields["annotations"].each do |annotation|
+              permitted_annotation = annotation.permit(annotation_attributes)
+
               # Fixes an issue where manually deleting annotations sent an
               # empty annotation to the env
-              next if annotation_empty?(annotation)
+              next if annotation_empty?(permitted_annotation)
               # We should always have an AdminData object by this point
-              annotation["admin_data_id"] = admin_data.id
-              case annotation["id"].present?
-              when true
-                a = Annotation.find(annotation["id"])
-                annotation_attributes.each do |attr|
-                  if annotation[attr].present?
-                    a.send("#{attr}=", annotation[attr].to_s)
-                  elsif !annotation[attr].present? && a.send(attr).present?
-                    a.send("#{attr}=", annotation[attr].to_s)
-                  end
-                end
-                a.save!
-              when false
-                a = Annotation.create!(annotation)
+              permitted_annotation["admin_data_id"] = admin_data.id
+              annotation["id"].present? ? update_annotation(permitted_annotation) : create_annotation(permitted_annotation)
+            end
+          end
+
+          def update_annotation(annotation)
+            a = Annotation.find(annotation["id"])
+            annotation_attributes.each do |attr|
+              if annotation[attr].present?
+                a.send("#{attr}=", annotation[attr].to_s)
+              elsif !annotation[attr].present? && a.send(attr).present?
+                a.send("#{attr}=", annotation[attr].to_s)
               end
             end
+            a.save!
+          end
+
+          def create_annotation(annotation)
+            Annotation.create!(annotation)
           end
 
           def annotation_empty?(annotation_env)
@@ -109,16 +114,6 @@ module Hyrax
           def annotation_attributes
             # removing id, created_at & updated_at from attributes
             (Annotation.attribute_names.dup - ['id', 'created_at', 'updated_at']).map(&:to_sym)
-          end
-
-          def find_or_create_admin_data(change_set)
-            return change_set.model.admin_data if change_set.model.admin_data.is_a?(AdminData)
-
-            admin_data = AdminData.find_by_gid(change_set.fields['admin_data_gid']) if change_set.fields['bulkrax_identifier'].present?
-            admin_data ||= AdminData.create
-
-            Rails.logger.debug "Create AdminData at #{admin_data.gid}"
-            return admin_data
           end
 
           def add_title_types(change_set)

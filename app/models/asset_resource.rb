@@ -14,17 +14,25 @@ class AssetResource < Hyrax::Work
   # so to get the #create_child_methods method to run
   # we have to call it like this
   def initialize(*args)
-    super
     create_child_methods
-    save_admin_data
+    super
   end
 
   def admin_data
-    @admin_data ||= AdminData.find_by_gid(admin_data_gid)
+    return @admin_data if @admin_data
+
+    if admin_data_gid.present?
+      @admin_data = AdminData.find_by_gid!(admin_data_gid)
+    else
+      @admin_data = AdminData.create
+      self.admin_data_gid = @admin_data.to_global_id.to_s
+    end
+    @admin_data
   end
 
   def admin_data=(new_admin_data)
     self.admin_data_gid = new_admin_data.gid
+    @admin_data = new_admin_data
   end
 
   def annotations
@@ -131,12 +139,4 @@ class AssetResource < Hyrax::Work
       []
     end
   end
-
-  private
-
-    def save_admin_data
-      self.admin_data ||= AdminData.create
-      self.admin_data.save
-      self.admin_data_gid = self.admin_data.gid
-    end
 end

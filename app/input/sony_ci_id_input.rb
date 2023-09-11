@@ -10,7 +10,11 @@ class SonyCiIdInput < MultiValueInput
       # we need to guard against that.
       filename = if object.model.admin_data.present?
         object.model.admin_data.sonyci_records&.fetch(sony_ci_id, nil)&.fetch('name', nil)
+                 end
+      if filename.present?
+        "<p style='width: 100%'>Filename: <span class=\"sony_ci_filename\">#{filename}</span></p>"
+      else
+        ''
       end
-      "<p>Filename: <span class=\"sony_ci_filename\">#{filename}</span></p>"
     end
 end
