@@ -12,6 +12,8 @@ Rails.application.config.after_initialize do
     Wings::ModelRegistry.register(klass, klass)
   end
   Wings::ModelRegistry.register(Collection, Collection)
+  Wings::ModelRegistry.register(Hyrax::PcdmCollection, Collection)
+  Wings::ModelRegistry.register(Hyrax::AdministrativeSet, AdminSet)
   Wings::ModelRegistry.register(AdminSet, AdminSet)
 
   Valkyrie::MetadataAdapter.register(
@@ -65,9 +67,23 @@ Rails.application.config.after_initialize do
   Wings::ModelRegistry.register(ContributionResource, Contribution)
 
   Hyrax::Transactions::Container.merge(Ams::Container)
+  Hyrax::Transactions::Container.merge(Bulkrax::Container)
 end
 
 Rails.application.config.to_prepare do
+  Hyrax::AdministrativeSet.class_eval do
+    attribute :internal_resource, Valkyrie::Types::Any.default("AdminSet".freeze), internal: true
+  end
+
+  Hyrax::PcdmCollection.class_eval do
+    attribute :internal_resource, Valkyrie::Types::Any.default("Collection".freeze), internal: true
+  end
+
+
+  Hyrax::FileSet.class_eval do
+    attribute :internal_resource, Valkyrie::Types::Any.default("FileSet".freeze), internal: true
+  end
+
   Valkyrie.config.resource_class_resolver = lambda do |resource_klass_name|
     klass_name = resource_klass_name.gsub(/Resource$/, '')
     if %w[

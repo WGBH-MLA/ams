@@ -146,43 +146,6 @@ if ENV['SETTINGS__BULKRAX__ENABLED'] == 'true'
       'media_type' => { from: headers('media_type'), split: true, join: true }
     }
 
-    # Sidebar for hyrax 3+ support
-    if Object.const_defined?(:Hyrax) && ::Hyrax::DashboardController&.respond_to?(:sidebar_partials)
-      Hyrax::DashboardController.sidebar_partials[:repository_content] << "hyrax/dashboard/sidebar/bulkrax_sidebar_additions"
-    end
-
-    class BulkraxTransactionContainer
-      extend Dry::Container::Mixin
-
-      namespace "work_resource" do |ops|
-        ops.register "create_with_bulk_behavior" do
-          steps = Ams::WorkCreate::DEFAULT_STEPS.dup
-          steps[steps.index("work_resource.add_file_sets")] = "work_resource.add_bulkrax_files"
-
-          Hyrax::Transactions::WorkCreate.new(steps: steps)
-        end
-
-        ops.register "update_with_bulk_behavior" do
-          # TODO create Ams::WorkUpdate
-          steps = Hyrax::Transactions::WorkUpdate::DEFAULT_STEPS.dup
-          steps[steps.index("work_resource.add_file_sets")] = "work_resource.add_bulkrax_files"
-
-          Hyrax::Transactions::WorkUpdate.new(steps: steps)
-        end
-
-        # TODO: uninitialized constant BulkraxTransactionContainer::InlineUploadHandler
-        # ops.register "add_file_sets" do
-        #   Hyrax::Transactions::Steps::AddFileSets.new(handler: InlineUploadHandler)
-        # end
-
-        ops.register "add_bulkrax_files" do
-          Bulkrax::Transactions::Steps::AddFiles.new
-        end
-      end
-    end
-
-    Hyrax::Transactions::Container.merge(BulkraxTransactionContainer)
-
     module HasMappingExt
       ##
       # Field of the model that can be supported
@@ -326,11 +289,12 @@ if ENV['SETTINGS__BULKRAX__ENABLED'] == 'true'
     # specific delimeter should likely be present in the multi_value_element_split_on expression.
     # config.multi_value_element_join_on = ' | '
   end
+
+  # Sidebar for hyrax 3+ support
+  if Object.const_defined?(:Hyrax) && ::Hyrax::DashboardController&.respond_to?(:sidebar_partials)
+    path = "hyrax/dashboard/sidebar/bulkrax_sidebar_additions"
+    Hyrax::DashboardController.sidebar_partials[:repository_content] << path
+  end
+  # Sidebar for hyrax 3+ support
 end
 # rubocop:enable Metrics/BlockLength
-
-# # Sidebar for hyrax 3+ support
-  # if Object.const_defined?(:Hyrax) && ::Hyrax::DashboardController&.respond_to?(:sidebar_partials)
-  #   path = "hyrax/dashboard/sidebar/bulkrax_sidebar_additions"
-  #   Hyrax::DashboardController.sidebar_partials[:repository_content] << path
-  # end
