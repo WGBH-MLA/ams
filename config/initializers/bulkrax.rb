@@ -177,7 +177,7 @@ if ENV['SETTINGS__BULKRAX__ENABLED'] == 'true'
         return true if @multiple_bulkrax_fields.include?(field)
         return false if field == "model"
         # title is not defined in M3
-        return false if field == "title"
+        return true if field == "title"
 
         field_supported?(field) && (multiple_field?(field) || factory_class.singleton_methods.include?(:properties) && factory_class&.properties&.[](field)&.[]("multiple"))
       end
