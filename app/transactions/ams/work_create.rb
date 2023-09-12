@@ -1,3 +1,5 @@
+# Extend Hyrax::Transactions::WorkCreate to create aapb admin data
+
 module Ams
   class WorkCreate < Hyrax::Transactions::Transaction
     DEFAULT_STEPS = ['change_set.set_default_admin_set',
