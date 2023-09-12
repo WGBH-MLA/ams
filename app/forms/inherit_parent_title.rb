@@ -3,15 +3,22 @@ module InheritParentTitle
   included do
     def title
       #Get parent title from solr document where title logic is defined
-
       solr_document = case model
                       when ActiveFedora::Base
                         ::SolrDocument.new(find_parent_object_hash) unless find_parent_object_hash.nil?
                       when Valkyrie::Resource
                         # TODO: Bulkrax imports don't seem to have a controller so we're guarding for now
                         return nil unless @controller.present?
+                        action = @controller.params[:action]
+                        if action == "new"
+                          # find parent title
+                          return nil unless (@controller.params[:parent_id] ||find_parent_object_hash)
 
-                        ::SolrDocument.find(@controller.params[:parent_id]) || (::SolrDocument.new(find_parent_object_hash) unless find_parent_object_hash.nil?)
+                          ::SolrDocument.find(@controller.params[:parent_id]) || (::SolrDocument.new(find_parent_object_hash) unless find_parent_object_hash.nil?)
+                        else
+                          # find object title
+                          ::SolrDocument.find(@controller.params[:id])
+                        end
                       end
 
       if(solr_document.title.any?)
