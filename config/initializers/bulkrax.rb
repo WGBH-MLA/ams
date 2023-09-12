@@ -289,12 +289,5 @@ if ENV['SETTINGS__BULKRAX__ENABLED'] == 'true'
     # specific delimeter should likely be present in the multi_value_element_split_on expression.
     # config.multi_value_element_join_on = ' | '
   end
-
-  # Sidebar for hyrax 3+ support
-  if Object.const_defined?(:Hyrax) && ::Hyrax::DashboardController&.respond_to?(:sidebar_partials)
-    path = "hyrax/dashboard/sidebar/bulkrax_sidebar_additions"
-    Hyrax::DashboardController.sidebar_partials[:repository_content] << path
-  end
-  # Sidebar for hyrax 3+ support
 end
 # rubocop:enable Metrics/BlockLength
