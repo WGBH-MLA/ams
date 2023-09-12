@@ -203,6 +203,9 @@ class AssetResourceForm < Hyrax::Forms::ResourceForm(AssetResource)
     end
   end
 
+  # Id can be written by importers, but not in the UI
+  property :id, display: false
+
   def permitted_params
     @permitted ||= build_permitted_params
   end

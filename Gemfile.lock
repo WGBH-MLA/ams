@@ -10,7 +10,7 @@ GIT
 
 GIT
   remote: https://github.com/samvera-labs/bulkrax.git
-  revision: f6fb201998d71fa1d5a7610d7855c29fcae87e67
+  revision: 03544c7a536f18d81a06c99b8bbe83452466d627
   branch: hyrax-4-valkyrie-support
   specs:
     bulkrax (5.3.0)

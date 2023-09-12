@@ -112,7 +112,7 @@ class PbcoreXmlParser < Bulkrax::XmlParser
 
   def setup_parents
     parents = []
-    importer.entries.where('raw_metadata REGEXP ?', '.*children\":\[.+\].*')
+    importer.entries.where('raw_metadata ~ ?', '.*children\":\[.+\].*')
   end
 
   # Will be skipped unless the #record is a Hash
