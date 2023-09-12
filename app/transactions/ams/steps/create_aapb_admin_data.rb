@@ -78,12 +78,12 @@ module Ams
           next if annotation_empty?(permitted_annotation)
           # We should always have an AdminData object by this point
           permitted_annotation["admin_data_id"] = admin_data.id
-          annotation["id"].present? ? update_annotation(permitted_annotation) : create_annotation(permitted_annotation)
+          annotation["id"].present? ? update_annotation(annotation["id"], permitted_annotation) : create_annotation(permitted_annotation)
         end
       end
 
-      def update_annotation(annotation)
-        a = Annotation.find(annotation["id"])
+      def update_annotation(id, annotation)
+        a = Annotation.find(id)
         annotation_attributes.each do |attr|
           if annotation[attr].present?
             a.send("#{attr}=", annotation[attr].to_s)
