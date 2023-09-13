@@ -4,6 +4,7 @@ require 'nokogiri'
 
 module Bulkrax
   class PbcoreXmlEntry < XmlEntry
+    include HasAmsMatchers
     def self.read_data(path)
       if MIME::Types.type_for(path).include?('text/csv')
         CSV.read(path,

@@ -4,6 +4,8 @@
 require_dependency Bulkrax::Engine.root.join('app', 'models', 'bulkrax', 'csv_entry')
 
 Bulkrax::CsvEntry.class_eval do
+  include HasAmsMatchers
+
   def self.read_data(path)
     raise StandardError, 'CSV path empty' if path.blank?
 
