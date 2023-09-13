@@ -61,11 +61,11 @@ extraEnvVars: &envVars
   - name: DB_ADAPTER
     value: postgresql
   - name: DB_HOST
-    value: 10.0.4.190
+    value: "10.0.4.190"
   - name: DB_NAME
     value: hyrax
   - name: DB_PORT
-    value: 5432
+    value: "5432"
   - name: DB_USERNAME
     value: ams_user
   - name: FCREPO_BASE_PATH
