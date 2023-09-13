@@ -59,13 +59,15 @@ extraEnvVars: &envVars
   - name: CONFDIR
     value: "/app/samvera/hyrax-webapp/solr/config"
   - name: DB_ADAPTER
-    value: mysql2
-  - name: MYSQL_HOST
-    value: ams-demo-rails-db.cmrjt7rckp5r.us-east-1.rds.amazonaws.com
-  - name: MYSQL_DATABASE
+    value: postgresql
+  - name: DB_HOST
+    value: 10.0.4.190
+  - name: DB_NAME
     value: hyrax
-  - name: MYSQL_USER
-    value: hyrax
+  - name: DB_PORT
+    value: 5432
+  - name: DB_USERNAME
+    value: ams_user
   - name: FCREPO_BASE_PATH
     value: /prod
   - name: FCREPO_HOST

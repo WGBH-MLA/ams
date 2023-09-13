@@ -94,42 +94,6 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 {{- printf "%s-%s" .Release.Name "minio" | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
 
-{{- define "hyrax.mariadb.fullname" -}}
-{{- printf "%s-%s" .Release.Name "mariadb" | trunc 63 | trimSuffix "-" -}}
-{{- end -}}
-
-{{- define "hyrax.mariadb.host" -}}
-{{- if .Values.mariadb.enabled }}
-{{- include "hyrax.mariadb.fullname" . }}
-{{- else }}
-{{- .Values.externalMariadb.db.host }}
-{{- end }}
-{{- end -}}
-
-{{- define "hyrax.mariadb.database" -}}
-{{- if .Values.mariadb.enabled }}
-{{- .Values.mariadb.auth.database }}
-{{- else }}
-{{- .Values.externalMariadb.auth.database | default ( include "hyrax.fullname" . ) }}
-{{- end }}
-{{- end -}}
-
-{{- define "hyrax.mariadb.username" -}}
-{{- if .Values.mariadb.enabled }}
-{{- .Values.mariadb.auth.username }}
-{{- else }}
-{{- .Values.externalMariadb.auth.username | default "mysql" }}
-{{- end }}
-{{- end -}}
-
-{{- define "hyrax.mariadb.password" -}}
-{{- if .Values.mariadb.enabled }}
-{{- .Values.mariadb.auth.password }}
-{{- else }}
-{{- .Values.externalMariadb.auth.password }}
-{{- end }}
-{{- end -}}
-
 {{- define "hyrax.redis.fullname" -}}
 {{- printf "%s-%s" .Release.Name "redis" | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
