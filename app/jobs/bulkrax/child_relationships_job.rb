@@ -5,6 +5,7 @@
 #     - overrides method work_membership
 module Bulkrax
   class ChildWorksError < RuntimeError; end
+  class ParentWorkError < RuntimeError; end
   class ChildRelationshipsJob < ApplicationJob
     queue_as :import
 
@@ -16,12 +17,11 @@ module Bulkrax
         work_membership
       end
 
-    rescue Bulkrax::ChildWorksError
+    rescue Bulkrax::ChildWorksError, Bulkrax::ParentWorkError
       # Not all of the Works/Collections exist yet; reschedule
       # In case the work hasn't been created, don't endlessly reschedule the job
       attempts = (args[3] || 0) + 1
       child_ids = @missing_entry_ids.presence || args[1]
-
       reschedule(args[0], child_ids, args[2], attempts) unless attempts > 5
     end
 
@@ -38,6 +38,7 @@ module Bulkrax
     end
 
     def work_membership
+      raise ParentWorkError unless parent_record
       seen_count = 0
       child_entries.each do |child_entry|
         child_record = child_entry.factory.find

@@ -124,7 +124,7 @@ class PbcoreXmlParser < Bulkrax::XmlParser
         importer.entries.find_by(identifier: child_id)
       end
 
-      Bulkrax::ChildRelationshipsJob.perform_later(parent.id, children.map(&:id), current_run.id) if parent.present? && children.present?
+      Bulkrax::ChildRelationshipsJob.set(wait: 5.minutes).perform_later(parent.id, children.map(&:id), current_run.id) if parent.present? && children.present?
     end
   rescue StandardError => e
     status_info(e)
