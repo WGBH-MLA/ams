@@ -2,13 +2,15 @@
 #  `rails generate hyrax:work Asset`
 module Hyrax
   class AssetResourcePresenter < Hyrax::WorkShowPresenter
+    include ActionView::Helpers::TagHelper
+
     delegate :id, :genre, :asset_types, :broadcast_date, :created_date, :copyright_date,
              :episode_number, :spatial_coverage, :temporal_coverage,
              :audience_level, :audience_rating, :annotation, :rights_summary, :rights_link,
              :date, :local_identifier, :pbs_nola_code, :eidr_id, :topics, :subject,
              :program_title, :episode_title, :segment_title, :raw_footage_title, :promo_title, :clip_title, :description,
              :program_description, :episode_description, :segment_description, :raw_footage_description,
-             :promo_description, :clip_description, :copyright_date,
+             :promo_description, :clip_description, :copyright_date, :validation_status_for_aapb,
              :level_of_user_access, :outside_url, :special_collections, :transcript_status, :organization,
              :sonyci_id, :licensing_info, :producing_organization, :series_title, :series_description,
              :playlist_group, :playlist_order, :hyrax_batch_ingest_batch_id, :bulkrax_importer_id, :last_pushed, :last_update, :needs_update, :special_collection_category, :canonical_meta_tag, :cataloging_status,
@@ -50,6 +52,16 @@ module Hyrax
 
     def annotations
       @annotations ||= Hyrax.query_service.find_by(id: solr_document['id']).annotations
+    end
+
+    def aapb_badge
+      if validation_status_for_aapb.to_a.include?('valid')
+        tag.span('AAPB Valid', class: "aapb-badge badge badge-success")
+      elsif validation_status_for_aapb.blank?
+        tag.span('Not AAPB Validated', class: "aapb-badge badge badge-warning")
+      else
+        tag.span(validation_status_for_aapb.join(", ").humanize, class: "aapb-badge badge badge-danger")
+      end
     end
 
     def last_pushed

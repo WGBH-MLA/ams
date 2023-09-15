@@ -10,7 +10,7 @@ GIT
 
 GIT
   remote: https://github.com/samvera-labs/bulkrax.git
-  revision: 759a481c60153d649f9a312b83bcd92fb49be19b
+  revision: ed49dc2b366cd564ea9593aa60fdb6c63aa5aec9
   branch: hyrax-4-valkyrie-support
   specs:
     bulkrax (5.3.0)
@@ -41,7 +41,7 @@ GIT
 
 GIT
   remote: https://github.com/samvera/hyrax.git
-  revision: cfca6b124eb4dc553c166b0a1666c43fe00f0d6e
+  revision: ec8fea9bee215d9e8de8346084b68c04fcf820c0
   branch: double_combo
   specs:
     hyrax (5.0.0.rc1)
@@ -553,7 +553,7 @@ GEM
     json-ld-preloaded (3.3.0)
       json-ld (~> 3.3)
       rdf (~> 3.3)
-    json-schema (4.0.0)
+    json-schema (4.1.1)
       addressable (>= 2.8)
     jwt (2.7.1)
     kaminari (1.2.2)
@@ -599,12 +599,12 @@ GEM
       launchy (>= 2.2, < 3)
     libxml-ruby (3.2.4)
     link_header (0.0.8)
-    linkeddata (3.3.0)
+    linkeddata (3.3.1)
       json-ld (~> 3.3)
       json-ld-preloaded (~> 3.3)
       ld-patch (~> 3.3)
       nokogiri (~> 1.15, >= 1.15.4)
-      rdf (~> 3.2)
+      rdf (~> 3.2, >= 3.2.1)
       rdf-aggregate-repo (~> 3.2)
       rdf-hamster-repo (~> 3.3)
       rdf-isomorphic (~> 3.3)
