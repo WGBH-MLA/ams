@@ -43,6 +43,7 @@ module Bulkrax
       child_entries.each do |child_entry|
         child_record = child_entry.factory.find
         next if child_record.blank? or child_record.is_a?(Collection)
+        next if parent_record.blank?
         parent_record.member_ids << child_record.id unless parent_record.member_ids&.to_a&.include?(child_record.id)
         seen_count += 1
       end
