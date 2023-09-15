@@ -10,6 +10,13 @@ class AssetResource < Hyrax::Work
 
   self.valid_child_concerns = [DigitalInstantiationResource, PhysicalInstantiationResource, ContributionResource]
 
+  VALIDATION_STATUSES = {
+    valid: 'valid',
+    missing_children: 'missing child record(s)',
+    status_not_validated: 'not yet validated',
+    empty: 'missing a validation status'
+  }.freeze
+
   # after_initialize does not work with Valkyrie apparently
   # so to get the #create_child_methods method to run
   # we have to call it like this
@@ -139,4 +146,18 @@ class AssetResource < Hyrax::Work
       []
     end
   end
+
+  def set_validation_status
+    current_children_count = SolrDocument.get_members(self).reject { |child| child.is_a?(Contribution) || child.id == self.id }.size
+    intended_children_count = self.intended_children_count.to_i
+
+    self.validation_status_for_aapb = if intended_children_count.blank? && self.validation_status_for_aapb.blank?
+       [Asset::VALIDATION_STATUSES[:status_not_validated]]
+    elsif current_children_count < intended_children_count
+       [Asset::VALIDATION_STATUSES[:missing_children]]
+    else
+       [Asset::VALIDATION_STATUSES[:valid]]
+    end
+  end
+
 end
