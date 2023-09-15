@@ -14,7 +14,7 @@ module Listeners
         parent_resource = Hyrax.query_service.custom_queries.find_parent_work(resource: instantiation_resource) if instantiation_resource
       when PhysicalInstantiationResource, DigitalInstantiationResource
         parent_resource = Hyrax.query_service.custom_queries.find_parent_work(resource: resource)
-      when Asset
+      when AssetResource
         parent_resource = resource
       else
         return

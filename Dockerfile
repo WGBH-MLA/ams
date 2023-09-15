@@ -39,6 +39,7 @@ RUN mkdir -p /app/fits && \
     chmod a+x /app/fits/fits.sh
 ENV PATH="${PATH}:/app/fits"
 
+RUN rm -f /app/samvera/rails
 COPY --chown=1001:101 $APP_PATH/Gemfile* /app/samvera/hyrax-webapp/
 RUN bundle install --jobs "$(nproc)"
 
