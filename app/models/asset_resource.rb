@@ -22,11 +22,9 @@ class AssetResource < Hyrax::Work
     return @admin_data if @admin_data
 
     if admin_data_gid.present?
-      @admin_data = AdminData.find_by_gid!(admin_data_gid)
-    else
-      @admin_data = AdminData.create
-      self.admin_data_gid = @admin_data.to_global_id.to_s
+      @admin_data = AdminData.find_by_gid(admin_data_gid)
     end
+
     @admin_data
   end
 

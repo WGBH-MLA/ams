@@ -28,9 +28,19 @@ module Ams
 
       private
 
+      def find_or_create_admin_data(change_set)
+        if change_set.model.admin_data_gid.present?
+          change_set['admin_data_gid'] = change_set.model.admin_data_gid
+        else
+          change_set.model.admin_data_gid = change_set['admin_data_gid']
+        end
+
+        change_set.model.admin_data || change_set.model.create_admin_data
+      end
+
       def save_aapb_admin_data(change_set)
+        find_or_create_admin_data(change_set)
         set_admin_data_attributes(change_set.model.admin_data, change_set)
-        change_set['admin_data_gid'] = change_set.model.admin_data_gid
         change_set.model.admin_data.save!
         remove_admin_data_from_env_attributes(change_set)
         delete_removed_annotations(change_set.model.admin_data, change_set)

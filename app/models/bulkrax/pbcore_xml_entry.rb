@@ -70,10 +70,9 @@ module Bulkrax
     end
 
     def update_or_create_admin_data_gid(bulkrax_importer_id)
-      manifest_asset_id = self.raw_metadata['Asset.id'].strip if self.raw_metadata.keys.include?('Asset.id')
-      xml_asset_id = self.raw_metadata['id']
-      work = Asset.where(id: manifest_asset_id || xml_asset_id).first if manifest_asset_id || xml_asset_id
-
+      asset_resource_id = self.raw_metadata['Asset.id'].strip if self.raw_metadata.keys.include?('Asset.id')
+      asset_resource_id ||= self.raw_metadata['id']
+      work = Hyrax.query_service.find_by(id: asset_resource_id) if asset_resource_id
       admin_data_gid =  if work.present? && work.admin_data.present?
                           work.admin_data.update!(bulkrax_importer_id: bulkrax_importer_id)
                           work.admin_data_gid
@@ -82,6 +81,8 @@ module Bulkrax
                         end
 
       admin_data_gid
+    rescue Valkyrie::Persistence::ObjectNotFoundError
+      AdminData.create(bulkrax_importer_id: bulkrax_importer_id).gid
     end
 
     def build_annotations(annotations, admin_data_gid)
@@ -90,14 +91,13 @@ module Bulkrax
           raise "annotation_type not registered with the AnnotationTypesService: #{annotation['annotation_type']}."
         end
 
-        admin_data = AdminData.find_by_gid(admin_data_gid)
         Annotation.find_or_create_by(
           annotation_type: annotation['annotation_type'],
           source: annotation['source'],
           value: annotation['value'],
           annotation: annotation['annotation'],
           version: annotation['version'],
-          admin_data_id: admin_data.id
+          admin_data_id: admin_data_gid.split('/').last
         )
       end
     end
