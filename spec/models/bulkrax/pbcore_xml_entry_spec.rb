@@ -38,7 +38,7 @@ module Bulkrax
         i.current_run
         i
       end
-      let(:object_factory) { instance_double(ObjectFactory) }
+      let(:object_factory) { instance_double(ValkyrieObjectFactory) }
 
       before do
         Bulkrax.field_mappings.merge!(
@@ -61,7 +61,7 @@ module Bulkrax
         i.current_run
         i
       end
-      let(:object_factory) { instance_double(ObjectFactory) }
+      let(:object_factory) { instance_double(ValkyrieObjectFactory) }
 
       before do
         Bulkrax.field_mappings.merge!(
@@ -78,8 +78,8 @@ module Bulkrax
       context 'with raw_metadata' do
         before do
           xml_entry.raw_metadata = raw_metadata
-          allow(ObjectFactory).to receive(:new).and_return(object_factory)
-          allow(object_factory).to receive(:run!).and_return(instance_of(Asset))
+          allow(ValkyrieObjectFactory).to receive(:new).and_return(object_factory)
+          allow(object_factory).to receive(:run!).and_return(instance_of(AssetResource))
           allow(User).to receive(:batch_user)
         end
 
@@ -160,7 +160,7 @@ module Bulkrax
            "subject"=>[],
            "contributors"=>[],
            "producing_organization"=>[],
-           "model"=>"Asset",
+           "model"=>"AssetResource",
            "bulkrax_identifier"=>"1-Asset-0-1"
             }
           }
@@ -171,7 +171,7 @@ module Bulkrax
               {
                 "bulkrax_identifier"=>"1-Asset-0-1",
                 "bulkrax_importer_id"=>1,
-                "model"=>"Asset",
+                "model"=>"AssetResource",
                 "id"=>"cpb-aacip-20-000000hr",
                 "series_title"=>["Houston Symphony"],
                 "description"=>["5/11/96"],

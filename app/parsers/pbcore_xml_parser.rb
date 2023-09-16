@@ -147,7 +147,10 @@ class PbcoreXmlParser < Bulkrax::XmlParser
     asset_id = xml_asset[:id]
     # resource = Hyrax.query_service.find_by(id: Valkyrie::ID.new(doc_id))
 
-    asset = Asset.where(id: xml_asset[:id])&.first
+    begin
+      asset = Hyrax.query_service.find_by(id: xml_asset[:id])
+    rescue Valkyrie::Persistence::ObjectNotFoundError
+    end
     asset_attributes = asset&.attributes&.symbolize_keys
     xml_asset = asset_attributes.merge(xml_asset) if asset_attributes
     parse_rows([xml_asset], 'AssetResource', asset_id)

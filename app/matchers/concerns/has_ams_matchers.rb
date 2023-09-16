@@ -12,6 +12,7 @@ module HasAmsMatchers
     # title is not defined in M3
     return true if field == "title"
     return true if field == "description"
+    return true if field == "subject"
 
     property_defined = factory_class.singleton_methods.include?(:properties) && factory_class.properties[field].present?
 
@@ -35,6 +36,7 @@ module HasAmsMatchers
     # title is not defined in M3
     return true if field == "title"
     return true if field == "description"
+    return true if field == "subject"
 
     field_supported?(field) && (multiple_field?(field) || factory_class.singleton_methods.include?(:properties) && factory_class&.properties&.[](field)&.[]("multiple"))
   end
