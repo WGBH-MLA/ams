@@ -5,12 +5,15 @@
 require 'carrierwave/validations/active_model'
 
 class DigitalInstantiationResource < Hyrax::Work
+  attr_accessor :skip_file_upload_validation
+
   include Hyrax::Schema(:basic_metadata)
   include Hyrax::Schema(:digital_instantiation_resource)
   include AMS::WorkBehavior
   include ::AMS::CreateMemberMethods
-  # TODO: need to look into this
-  # include ::AMS::CascadeDestroyMembers
+  extend CarrierWave::Mount
+
+  mount_uploader :digital_instantiation_pbcore_xml, PbCoreInstantiationXmlUploader
 
   self.valid_child_concerns = [EssenceTrackResource]
 
@@ -20,25 +23,33 @@ class DigitalInstantiationResource < Hyrax::Work
   def initialize(*args)
     super
     create_child_methods
-    save_instantiation_admin_data
+  end
+
+  def pbcore_validate_instantiation_xsd
+    if digital_instantiation_pbcore_xml.file
+      schema = Nokogiri::XML::Schema(File.read(Rails.root.join('spec', 'fixtures', 'pbcore-2.1.xsd')))
+      document = Nokogiri::XML(File.read(digital_instantiation_pbcore_xml.file.file))
+      schema.validate(document).each do |error|
+        errors.add(:digital_instantiation_pbcore_xml, error.message)
+      end
+    elsif self.new_record? && !skip_file_upload_validation
+      errors.add(:digital_instantiation_pbcore_xml,"Please select pbcore xml document")
+    end
   end
 
   def instantiation_admin_data
-    @instantiation_admin_data_gid ||= InstantiationAdminData.find_by_gid(instantiation_admin_data_gid)
+    return @instantiation_admin_data if @instantiation_admin_data.present?
+
+    if instantiation_admin_data_gid.present?
+      @instantiation_admin_data = InstantiationAdminData.find_by_gid(instantiation_admin_data_gid)
+    end
+
+    @instantiation_admin_data
   end
 
   def instantiation_admin_data=(new_admin_data)
     self.instantiation_admin_data_gid = new_admin_data.gid
+    @instantiation_admin_data = new_admin_data
   end
 
-  private
-
-    def find_or_create_instantiation_admin_data
-      self.instantiation_admin_data ||= InstantiationAdminData.create
-    end
-
-    def save_instantiation_admin_data
-      find_or_create_instantiation_admin_data
-      self.instantiation_admin_data.save
-    end
 end

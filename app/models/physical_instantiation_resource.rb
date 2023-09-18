@@ -19,10 +19,17 @@ class PhysicalInstantiationResource < Hyrax::Work
   end
 
   def instantiation_admin_data
-    @instantiation_admin_data_gid ||= InstantiationAdminData.find_by_gid(instantiation_admin_data_gid)
+    return @instantiation_admin_data if @instantiation_admin_data
+
+    if instantiation_admin_data_gid.present?
+      @instantiation_admin_data = InstantiationAdminData.find_by_gid(instantiation_admin_data_gid)
+    end
+
+    @instantiation_admin_data
   end
 
   def instantiation_admin_data=(new_admin_data)
     self.instantiation_admin_data_gid = new_admin_data.gid
+    @instantiation_admin_data = new_admin_data
   end
 end

@@ -8,7 +8,7 @@ module AAPB
 
       def call(object)
         @object_type = object.class.name.underscore
-        @sonyci_id = object.admin_data.sonyci_id || []
+        @sonyci_id = object.admin_data&.sonyci_id || []
         @id = object.id
         case object
         when ActiveFedora::Base

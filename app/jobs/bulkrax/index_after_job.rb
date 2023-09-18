@@ -10,14 +10,14 @@ module Bulkrax
       return reschedule(importer.id) unless pending_num.zero?
 
       # read queue and index objects
-      set = Redis.current.zpopmax("nested:index:#{importer.id}", 100)
+      set = Hyrax.config.redis_connection.zpopmax("nested:index:#{importer.id}", 100)
       logger.debug(set.to_s)
       return if set.blank?
       loop do
         set.each do |key, score|
           Hyrax.config.nested_relationship_reindexer.call(id: key, extent: 'full')
         end
-        set = Redis.current.zpopmax("nested:index:#{importer.id}", 100)
+        set = Hyrax.config.redis_connection.zpopmax("nested:index:#{importer.id}", 100)
         logger.debug(set.to_s)
         break if set.blank?
       end

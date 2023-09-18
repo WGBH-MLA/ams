@@ -4,8 +4,8 @@ RSpec.describe PushesController, type: :controller do
   # Use a real memoized method to generate test user once.
   let!(:user) { create :admin_user }
 
-  # Use a real memoized method to generate test assets once.
-  let!(:assets) { create_list :asset, rand(2..4), validation_status_for_aapb: [Asset::VALIDATION_STATUSES[:valid]] }
+  # Use a real memoized method to generate test asset_resources once.
+  let!(:asset_resources) { create_list :asset_resource, rand(2..4), validation_status_for_aapb: [AssetResource::VALIDATION_STATUSES[:valid]] }
 
   # Ensure user is signed in before each test.
   before { sign_in(user) }
@@ -26,7 +26,7 @@ RSpec.describe PushesController, type: :controller do
 
   describe 'GET /pushes/:id' do
     render_views
-    let(:push) { create(:push, user: user, pushed_id_csv: assets.first.id) }
+    let(:push) { create(:push, user: user, pushed_id_csv: asset_resources.first.id) }
 
     before { get :show, params: { id: push.id } }
     it 'assign @push to the Push instance for the ID given' do
@@ -57,7 +57,7 @@ RSpec.describe PushesController, type: :controller do
 
       it 'performs the search to get the IDs, and renders the "new" view with' \
         'the IDs in the id_field' do
-        expect(Set.new(actual_ids)).to eq Set.new(assets.map(&:id))
+          expect(Set.new(actual_ids)).to eq Set.new(asset_resources.map { |v| v.id.to_s })
       end
     end
   end
@@ -67,23 +67,23 @@ RSpec.describe PushesController, type: :controller do
     let(:json_response) { JSON.parse(response.body) }
 
     context 'with some invalid IDs' do
-      let(:asset_ids) { assets.map(&:id) }
+      let(:asset_resource_ids) { asset_resources.map(&:id) }
       let(:missing_ids) { ["cpb-aacip-xxxxxxxxxxx", "cpb-aacip-xxxxxxxxxxx", "cpb-aacip-yyyyyyyyyyy"] }
-      let(:id_field) { (asset_ids + missing_ids).shuffle.join("\n") }
+      let(:id_field) { (asset_resource_ids + missing_ids).shuffle.join("\n") }
       it 'returns error message that includes the invalid IDs but not any valid
           IDs' do
         missing_ids.each do |missing_id|
           expect(json_response['error']).to include missing_id
         end
 
-        asset_ids.each do |asset_id|
-          expect(json_response['error']).not_to include asset_id
+        asset_resource_ids.each do |asset_resource_id|
+          expect(json_response['error']).not_to include asset_resource_id
         end
       end
     end
 
     context 'with valid ids' do
-      let(:id_field) { assets.map(&:id).join("\n") }
+      let(:id_field) { asset_resources.map(&:id).join("\n") }
       it 'returns no error' do
         expect(json_response).not_to have_key('error')
       end
@@ -91,12 +91,12 @@ RSpec.describe PushesController, type: :controller do
   end
 
   describe 'POST /pushes/create' do
-    let(:asset_ids) { assets.map(&:id) }
+    let(:asset_resource_ids) { asset_resources.map(&:id) }
     # Simulate a list of IDs passed into the id_field param.
-    let(:params) { { id_field: asset_ids.join("\n") } }
+    let(:params) { { id_field: asset_resource_ids.join("\n") } }
 
     # The params with which we expect to run the PushToAAPBJob
-    let(:expected_job_params) { { user: user, ids: asset_ids } }
+    let(:expected_job_params) { { user: user, ids: asset_resource_ids } }
 
     # Hook up the mocks
     before do

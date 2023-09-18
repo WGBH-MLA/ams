@@ -39,9 +39,9 @@ class SolrDocument
   end
 
   # Define boolean predicates for determining record type.
-  def is_asset?; has_model == "Asset"; end
-  def is_physical_instantiation?; has_model == "PhysicalInstantiation"; end
-  def is_digital_instantiation?; has_model == "DigitalInstantiation"; end
+  def is_asset?; has_model.match(/^Asset/); end
+  def is_physical_instantiation?; has_model.match(/^PhysicalInstantiation/); end
+  def is_digital_instantiation?; has_model.match(/^DigitalInstantiation/); end
   def is_instantiation?; is_digital_instantiations || is_physical_instantiation; end
 
   # Specific ID accessors based on record type.

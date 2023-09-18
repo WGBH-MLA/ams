@@ -4,7 +4,7 @@ module AMS
       class PhysicalInstantiationsSearch < InstantiationsSearch
         private
           def model_class_name
-            "PhysicalInstantiation"
+            "PhysicalInstantiationResource"
           end
       end
     end

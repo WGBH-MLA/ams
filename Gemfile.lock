@@ -41,7 +41,7 @@ GIT
 
 GIT
   remote: https://github.com/samvera/hyrax.git
-  revision: ec8fea9bee215d9e8de8346084b68c04fcf820c0
+  revision: 2950f4edd76429077327267d273bf507e832b3aa
   branch: double_combo
   specs:
     hyrax (5.0.0.rc1)
@@ -83,7 +83,7 @@ GIT
       openseadragon
       posix-spawn
       qa (~> 5.5, >= 5.5.1)
-      rails (~> 6.0)
+      rails (~> 6.1)
       rails_autolink (~> 1.1)
       rdf-rdfxml
       rdf-vocab (~> 3.0)

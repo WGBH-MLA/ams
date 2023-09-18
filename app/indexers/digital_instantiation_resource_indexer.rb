@@ -14,11 +14,12 @@ class DigitalInstantiationResourceIndexer < Hyrax::ValkyrieWorkIndexer
       index_document['bulkrax_identifier_sim'] = resource.bulkrax_identifier
       if resource.instantiation_admin_data
         #Indexing as english text so we can use it on asset show page
-        index_document['instantiation_admin_data_tesim'] = resource.instantiation_admin_data.gid if !resource.instantiation_admin_data.gid.blank?
-        index_document['aapb_preservation_lto_ssim'] = index_document['aapb_preservation_lto_tesim'] = resource.instantiation_admin_data.aapb_preservation_lto if !resource.instantiation_admin_data.aapb_preservation_lto.blank?
-        index_document['aapb_preservation_disk_ssim'] = index_document['aapb_preservation_disk_tesim'] = resource.instantiation_admin_data.aapb_preservation_disk if !resource.instantiation_admin_data.aapb_preservation_disk.blank?
-        index_document['md5_ssim'] = resource.instantiation_admin_data.md5 if !resource.instantiation_admin_data.md5.blank?
+        index_document['instantiation_admin_data_tesim'] = resource.instantiation_admin_data.gid if resource.instantiation_admin_data.gid.present?
+        index_document['aapb_preservation_lto_ssim'] = index_document['aapb_preservation_lto_tesim'] = resource.instantiation_admin_data.aapb_preservation_lto if resource.instantiation_admin_data.aapb_preservation_lto.present?
+        index_document['aapb_preservation_disk_ssim'] = index_document['aapb_preservation_disk_tesim'] = resource.instantiation_admin_data.aapb_preservation_disk if resource.instantiation_admin_data.aapb_preservation_disk.present?
+        index_document['md5_ssim'] = resource.instantiation_admin_data.md5 if resource.instantiation_admin_data.md5.present?
       end
+      index_document
     end
   end
 end

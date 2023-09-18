@@ -203,7 +203,7 @@ module AAPB
 
         def lock_manager
           @lock_manager ||= Redlock::Client.new(
-            [ Redis.current ], {
+            [ Hyrax.config.redis_connection ], {
             retry_count:   120,
             retry_delay:   5000, # every 5 seconds
             retry_jitter:  500,  # half a second
