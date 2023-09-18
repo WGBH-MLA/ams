@@ -4,6 +4,7 @@ class AdminData < ApplicationRecord
   belongs_to  :hyrax_batch_ingest_batch, optional: true
   belongs_to  :bulkrax_importer, optional: true, class_name: 'Bulkrax::Importer'
   has_many    :annotations, dependent: :destroy
+  accepts_nested_attributes_for :annotations, allow_destroy: true
 
   self.table_name = "admin_data"
   include ::EmptyDetection

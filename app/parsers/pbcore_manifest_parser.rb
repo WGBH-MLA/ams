@@ -180,7 +180,7 @@ class PbcoreManifestParser < Bulkrax::XmlParser
   end
 
   def build_digital_instantiations(file, csv_row, digital_instantiation, index, asset)
-    current_object = [AAPB::BatchIngest::PBCoreXMLMapper.new(file[:data]).digital_instantiation_attributes.merge!(
+    current_object = [AAPB::BatchIngest::PBCoreXMLMapper.new(file[:data]).digital_instantiation_resource_attributes.merge!(
       {
         filename: file[:filename],
         pbcore_xml: file[:data],
