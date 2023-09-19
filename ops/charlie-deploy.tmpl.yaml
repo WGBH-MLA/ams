@@ -76,6 +76,12 @@ extraEnvVars: &envVars
     value: /fcrepo-webapp-4.7.5/rest
   - name: FCREPO_URL
     value: http://10.0.4.190:8080/fcrepo-webapp-4.7.5/rest
+  - name: HYRAX_VALKYRIE
+    value: "true"
+  - name: VALKYRIE_ID_TYPE
+    value: string
+  - name: NODE_OPTIONS
+    value: "--openssl-legacy-provider"
   - name: IN_DOCKER
     value: "true"
   - name: LD_LIBRARY_PATH
