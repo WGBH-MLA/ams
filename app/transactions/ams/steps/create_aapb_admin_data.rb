@@ -193,7 +193,7 @@ module Ams
 
 
       def save_instantiation_aapb_admin_data(change_set)
-        change_set.instantiation_admin_data = find_or_create_instantiation_admin_data(change_set)
+        change_set.model.instantiation_admin_data = change_set.instantiation_admin_data = find_or_create_instantiation_admin_data(change_set)
         set_instantiation_admin_data_attributes(change_set)
         change_set.model.instantiation_admin_data.save!
         remove_instantiation_admin_data_from_env_attributes(change_set)

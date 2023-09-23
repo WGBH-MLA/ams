@@ -9,6 +9,7 @@ class DigitalInstantiationResourceForm < Hyrax::Forms::ResourceForm(DigitalInsta
   include Hyrax::FormFields(:basic_metadata)
   include Hyrax::FormFields(:digital_instantiation_resource)
   include DisabledFields
+  include ChildCreateButton
   include InheritParentTitle
 
   attr_accessor :controller, :current_ability

@@ -221,7 +221,6 @@ module AAPB
 
         def add_asset_objects_attributes(model_object, attributes)
           new_attributes = attributes
-debugger
           new_attributes.keys.each do |k|
             # If it is an annotations array, add existing annotations for the env
             # Skip @options.attributes check

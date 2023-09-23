@@ -10,7 +10,7 @@ module InheritParentTitle
                         # TODO: Bulkrax imports don't seem to have a controller so we're guarding for now
                         return nil unless @controller.present?
                         action = @controller.params[:action]
-                        if action == "new"
+                        if action == "new" || action == "create"
                           # find parent title
                           return nil unless (@controller.params[:parent_id] ||find_parent_object_hash)
 
