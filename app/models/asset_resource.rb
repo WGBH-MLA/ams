@@ -32,7 +32,7 @@ class AssetResource < Hyrax::Work
       @admin_data = AdminData.find_by_gid(admin_data_gid)
     end
 
-    @admin_data
+    @admin_data ||= nil
   end
 
   def admin_data=(new_admin_data)
@@ -157,5 +157,4 @@ class AssetResource < Hyrax::Work
        [Asset::VALIDATION_STATUSES[:valid]]
     end
   end
-
 end

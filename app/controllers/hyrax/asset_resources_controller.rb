@@ -16,5 +16,14 @@ module Hyrax
     # forms.
     self.work_form_service = Hyrax::FormFactory.new
     self.show_presenter = AssetResourcePresenter
+
+    private
+    # This extends functionality from
+    # Hyrax::WorksControllerBehavior#additional_response_formats, adding a
+    # response for a ".xml" extension, returning the PBCore XML.
+    def additional_response_formats(format)
+      format.xml { render(plain: presenter.solr_document.export_as_pbcore) }
+      super
+    end
   end
 end

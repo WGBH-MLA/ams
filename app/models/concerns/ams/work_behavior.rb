@@ -19,5 +19,9 @@ module AMS
         Hyrax.query_service.find_by(id: id)
       end
     end
+
+    def to_solr
+      Hyrax::ValkyrieIndexer.for(resource: self).to_solr
+    end
   end
 end

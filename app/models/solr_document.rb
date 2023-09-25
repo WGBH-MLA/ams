@@ -541,11 +541,11 @@ class SolrDocument
 
   def admin_data_gid
     return unless is_asset?
-    self['admin_data_gid_ssim'].first
+    self['admin_data_gid_ssim']&.first
   end
 
   def admin_data
-    return unless is_asset?
+    return unless is_asset? && admin_data_gid
     @admin_data ||= AdminData.find_by_gid(admin_data_gid)
   end
 
