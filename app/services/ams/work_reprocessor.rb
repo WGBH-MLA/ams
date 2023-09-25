@@ -2,6 +2,8 @@
 require 'ruby-progressbar'
 
 # Generic class to create a resumable run through of all the model ids
+# TODO user activelogger instead of direct file IO for better performance
+# TODO make use of a generic background job and optionally perform now or later
 module AMS
   class WorkReprocessor
 

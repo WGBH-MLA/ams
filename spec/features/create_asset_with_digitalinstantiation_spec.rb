@@ -5,9 +5,7 @@ RSpec.feature 'Create and Validate AssetResource,Digital Instantiation, EssenseT
   context 'Create adminset, create asset_resource, import pbcore xml for digital instantiation and essensetrack' do
     let(:admin_user) { create :admin_user }
     let!(:user_with_role) { create :user, role_names: ['ingester'] }
-    let(:admin_set_id) { Hyrax::AdminSetCreateService.find_or_create_default_admin_set.id.to_s }
-    let(:permission_template) { Hyrax::PermissionTemplate.find_or_create_by!(source_id: admin_set_id) }
-    let!(:workflow) { Sipity::Workflow.create!(active: true, name: 'test-workflow', permission_template: permission_template) }
+    let(:admin_set) { Hyrax::AdminSetCreateService.find_or_create_default_admin_set }
 
     let(:input_date_format) { '%m/%d/%Y' }
     let(:output_date_format) { '%F' }
@@ -62,13 +60,8 @@ RSpec.feature 'Create and Validate AssetResource,Digital Instantiation, EssenseT
     scenario 'Create and Validate AssetResource, Search asset_resource' do
       skip 'TODO fix feature specs'
 
-      Sipity::WorkflowAction.create!(name: 'submit', workflow: workflow)
-      Hyrax::PermissionTemplateAccess.create!(
-        permission_template_id: permission_template.id,
-        agent_type: 'user',
-        agent_id: user_with_role.email,
-        access: 'manage'
-      )
+      admin_set.permission_manager.edit_users = [user_with_role.user_key]
+      admin_set.permission_manager.acl.save
       # Login role user to create asset_resource
       login_as(user_with_role)
 
