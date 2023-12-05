@@ -1,5 +1,10 @@
 Rails.application.routes.draw do
 
+  ['asset', 'physical_instantiation', 'digital_instantiation', 'essence_track', 'contribution'].each do |resource|
+    get "/concern/#{resource}s/:id/edit", to: redirect("/concern/#{resource}_resources/%{id}/edit")
+    get "/concern/#{resource}s/:id", to: redirect("/concern/#{resource}_resources/%{id}")
+  end
+
   if ENV['SETTINGS__BULKRAX__ENABLED'] == 'true'
     mount Bulkrax::Engine, at: '/'
   end
@@ -83,7 +88,5 @@ Rails.application.routes.draw do
   namespace :api do
     resources :assets, only: [:show], defaults: { format: :json }
   end
-
-
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
 end

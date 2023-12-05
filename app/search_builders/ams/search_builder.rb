@@ -7,7 +7,7 @@ module AMS
 
     # Overrides Hyrax::FilterModels.
     def models
-      [Asset]
+      [AssetResource]
     end
 
     # Adds date filters to the :fq of the solr params.

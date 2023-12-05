@@ -15,6 +15,20 @@ module AAPB
 
       private
 
+      def object_list
+        @object_list ||= {
+          'Asset' => AssetResource,
+          'PhysicalInstantiation' => PhysicalInstantiationResource,
+          'DigitalInstantiation' => DigitalInstantiationResource,
+          'EssenceTrack' => EssenceTrackResource,
+          'Contribution' => ContributionResource
+        }
+      end
+
+      def object_class_for(name)
+        object_list[name]
+      end
+
         # Removes a work without raising an exception
         def clean_failed_batch_item_work(work)
           work.destroy!
@@ -22,9 +36,36 @@ module AAPB
           # if it's already gone, continue without error.
         end
 
+        def transaction
+          Hyrax::Transactions::Container["work_resource.create_with_bulk_behavior"]
+        end
+
+        def transaction_create(model_object, user, ability, attributes)
+          cx = Hyrax::Forms::ResourceForm.for(model_object).prepopulate!
+          cx.validate(attributes)
+
+          result = transaction
+            .with_step_args(
+              # "work_resource.add_to_parent" => {parent_id: @related_parents_parsed_mapping, user: user},
+              "work_resource.add_bulkrax_files" => {files: [], user: user},
+              "change_set.set_user_as_depositor" => {user: user},
+              "work_resource.change_depositor" => {user: user},
+              'work_resource.save_acl' => { permissions_params: [attributes.try('visibility') || 'open'].compact }
+            )
+            .call(cx)
+
+          if result.failure?
+            msg = result.failure[0].to_s
+            msg += " - #{result.failure[1].full_messages.join(',')}" if result.failure[1].respond_to?(:full_messages)
+            raise StandardError, msg, result.trace
+          end
+
+          result
+        end
         def ingest_object_at(node, with_data, with_parent = false)
           actor = ::Hyrax::CurationConcern.actor
-          ability = ::Ability.new(User.find_by_email(@batch_item.submitter_email))
+          user = User.find_by_email(@batch_item.submitter_email)
+          ability = ::Ability.new(user)
           ingest_type = node.ingest_type
 
           attributes = if !with_parent
@@ -37,34 +78,34 @@ module AAPB
           attributes["admin_set_id"] = @batch_item.batch.admin_set_id
 
           if ingest_type == "new"
-            model_object = node.object_class.constantize.new
+            model_object = object_class_for(node.object_class).new
 
             attributes = set_attributes_for_new_ingest_type(model_object, attributes, ability)
 
-            actor_stack_status = actor.create(::Hyrax::Actors::Environment.new(model_object, ability, attributes))
+            actor_stack_status = transaction_create(model_object, user, ability, attributes)
           elsif ingest_type == "update"
             object_id = attributes.delete("id")
 
-            unless model_object = node.object_class.constantize.find(object_id)
+            unless model_object = object_class_for(node.object_class).find(object_id)
               raise("Unable to find object for `id` #{object_id}")
             end
 
-            if model_object.is_a?(Asset)
+            if model_object.is_a?(AssetResource)
               attributes = set_asset_objects_attributes(model_object, attributes, ingest_type)
             end
 
-            actor_stack_status = actor.update(::Hyrax::Actors::Environment.new(model_object, ability, attributes))
+            actor_stack_status = transaction_create(model_object, user, ability, attributes)
           elsif ingest_type == "add"
             object_id = attributes.delete("id")
-            unless model_object = node.object_class.constantize.find(object_id)
+            unless model_object = object_class_for(node.object_class).find(object_id)
               raise("Unable to find object  for `id` #{object_id}")
             end
 
-            if model_object.is_a?(Asset)
+            if model_object.is_a?(AssetResource)
               attributes = set_asset_objects_attributes(model_object, attributes, ingest_type)
             end
 
-            actor_stack_status = actor.update(::Hyrax::Actors::Environment.new(model_object, ability, attributes))
+            actor_stack_status = transaction_create(model_object, user, ability, attributes)
           end
 
           # catch sub-Asset ingest failures here, where we have attributes, cleanup, then re-raise to enable rescue_from to properly update failed batch item etc
@@ -98,7 +139,7 @@ module AAPB
             work_id ||= model_object&.in_works_ids&.first if model_object
 
             if work_id
-              work = Asset.find(work_id)
+              work = Hyrax.query_service.find_by(id: work_id)
               asset_batch_id = work.admin_data.hyrax_batch_ingest_batch_id if work.admin_data
               child_batch_id = model_object.admin_data.hyrax_batch_ingest_batch_id if model_object.admin_data
 
@@ -126,7 +167,7 @@ module AAPB
         def set_attributes_for_new_ingest_type(model_object, attributes, ability)
           new_attributes = attributes
 
-          if model_object.is_a?(Asset)
+          if model_object.is_a?(AssetResource)
             new_attributes["hyrax_batch_ingest_batch_id"] = batch_id
           end
 
@@ -147,9 +188,10 @@ module AAPB
           when 'update'
             # the AssetActor expects the env to include the admin_data values in order to keep them.
             # the AssetActor does not expect the existing Annotions unless Annotations are in the env.
-            new_attributes = set_admin_data_attributes(admin_data, attributes)
+            set_admin_data_attributes(admin_data, attributes)
             # annotations work the same for both update and add
-            new_attributes = set_annotations_attributes(admin_data, attributes)
+            admin_data.annotations_attributes = attributes.delete('annotations')
+            admin_data.save!
           when 'add'
             # serialized fields need to preserve exising data in an add ingest
             # handles asset, admin_data, and annotations
@@ -160,7 +202,7 @@ module AAPB
         end
 
         def set_batch_ingest_id_on_related_asset(work_id, ability)
-          unless asset = Asset.find(work_id)
+          unless asset = Hyrax.query_service.find_by(id: work_id)
             raise 'Cannot find Asset with ID: #{work_id}.'
           end
           asset_actor = ::Hyrax::CurationConcern.actor
@@ -170,21 +212,15 @@ module AAPB
         end
 
         def set_admin_data_attributes(admin_data, attributes)
-          new_attributes = attributes
-
           # add existing admin_data values so they're preserved in the AssetActor
           AdminData.attributes_for_update.each do |admin_attr|
-            # let it overwrite existing data if there are new values in the attributes
-            next if new_attributes.keys.include?(admin_attr.to_s)
-            # add existing data to the attributes if they don't have new values in the attributes
-            new_attributes[admin_attr.to_s] = admin_data.send(admin_attr)
+            next unless attributes.keys.include?(admin_attr.to_s)
+            admin_data.send("#{admin_attr}=", attributes[admin_attr.to_s])
           end
-          new_attributes
         end
 
         def add_asset_objects_attributes(model_object, attributes)
           new_attributes = attributes
-
           new_attributes.keys.each do |k|
             # If it is an annotations array, add existing annotations for the env
             # Skip @options.attributes check
@@ -197,19 +233,6 @@ module AAPB
             end
           end
 
-          new_attributes
-        end
-
-        def set_annotations_attributes(admin_data, attributes)
-          new_attributes = attributes
-
-          # add existing annotations if present in the env so they're preserved in the AssetActor
-          if new_attributes.keys.include?("annotations")
-            new_annotation_types = new_attributes["annotations"].map{ |ann| ann["annotation_type"] }
-            annotations_to_keep = admin_data.annotations.select{ |ann| !new_annotation_types.include?(ann.annotation_type) }
-
-            annotations_to_keep.map{ |ann| new_attributes["annotations"] << { "id" => ann.id, "annotation_type" => ann.annotation_type, "ref" => ann.ref, "source" => ann.source, "annotation" => ann.annotation, "version" => ann.version, "value" => ann.value } }
-          end
           new_attributes
         end
     end

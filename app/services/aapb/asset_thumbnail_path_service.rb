@@ -8,11 +8,16 @@ module AAPB
 
       def call(object)
         @object_type = object.class.name.underscore
-        @sonyci_id = object.admin_data.sonyci_id || []
+        @sonyci_id = object.admin_data&.sonyci_id || []
         @id = object.id
-        @digital_instantiations = object.digital_instantiations
-        @aapb_digital_instantiation = object.digital_instantiations.find { |inst| inst.holding_organization&.include?( "American Archive of Public Broadcasting") } || nil
-
+        case object
+        when ActiveFedora::Base
+          @digital_instantiations = object.digital_instantiations
+          @aapb_digital_instantiation = object.digital_instantiations.find { |inst| inst.holding_organization&.include?( "American Archive of Public Broadcasting") } || nil
+        when Valkyrie::Resource
+          @digital_instantiations = object.digital_instantiation_resources
+          @aapb_digital_instantiation = object.digital_instantiation_resources.find { |inst| inst.holding_organization&.include?( "American Archive of Public Broadcasting") } || nil
+        end
         super
       end
 

@@ -1,13 +1,13 @@
 module AAPB
   module AttributeIndexedToParentPresenter
     def attribute_indexed_to_parent?(field, work_class)
-      return true unless attributes_indexed_to_parent(work_class)[field.to_s].nil?
-      false
+      attributes = attributes_indexed_to_parent(work_class)
+      attributes && attributes.key?(field.to_s)
     end
 
     def attribute_facetable?(field, work_class)
-      return true unless facetable_attributes(work_class)[field.to_s].nil?
-      false
+      attributes = facetable_attributes(work_class)
+      attributes && attributes.key?(field.to_s)
     end
 
     private

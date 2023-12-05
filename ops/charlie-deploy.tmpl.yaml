@@ -59,15 +59,15 @@ extraEnvVars: &envVars
   - name: CONFDIR
     value: "/app/samvera/hyrax-webapp/solr/config"
   - name: DB_ADAPTER
-    value: mysql2
-  - name: DEPENDENCIES_NEXT
-    value: "1"
-  - name: MYSQL_HOST
-    value: ams-demo-rails-db.cmrjt7rckp5r.us-east-1.rds.amazonaws.com
-  - name: MYSQL_DATABASE
+    value: postgresql
+  - name: DB_HOST
+    value: "10.0.4.190"
+  - name: DB_NAME
     value: hyrax
-  - name: MYSQL_USER
-    value: hyrax
+  - name: DB_PORT
+    value: "5432"
+  - name: DB_USERNAME
+    value: ams_user
   - name: FCREPO_BASE_PATH
     value: /prod
   - name: FCREPO_HOST
@@ -76,6 +76,12 @@ extraEnvVars: &envVars
     value: /fcrepo-webapp-4.7.5/rest
   - name: FCREPO_URL
     value: http://10.0.4.190:8080/fcrepo-webapp-4.7.5/rest
+  - name: HYRAX_VALKYRIE
+    value: "true"
+  - name: VALKYRIE_ID_TYPE
+    value: string
+  - name: NODE_OPTIONS
+    value: "--openssl-legacy-provider"
   - name: IN_DOCKER
     value: "true"
   - name: LD_LIBRARY_PATH
@@ -97,7 +103,7 @@ extraEnvVars: &envVars
   - name: REDIS_SERVER
     value: redis://:demo@ams-demo-redis-master.ams-demo.svc.cluster.local:6379
   - name: SENTRY_DSN
-    value: https://6f6e6b5f54234b5bb2218786c3493a37@o1008683.ingest.sentry.io/6745030 
+    value: https://6f6e6b5f54234b5bb2218786c3493a37@o1008683.ingest.sentry.io/6745030
   - name: SENTRY_ENVIRONMENT
     value: "charlie"
   - name: SENTRY_TRACES_SAMPLE_RATE

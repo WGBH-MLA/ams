@@ -8,9 +8,6 @@ metadata:
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
 data:
-  DB_HOST: {{ template "hyrax.mariadb.host" . }}
-  DB_PORT: "3306"
-  DB_USERNAME: {{ template "hyrax.mariadb.database" . }}
   {{- if .Values.memcached.enabled }}
   MEMCACHED_HOST: {{ template "hyrax.memcached.fullname" . }}
   {{- end }}
