@@ -105,6 +105,8 @@ gem 'react-rails'
 gem 'database_cleaner'
 gem 'redlock', '~> 1.0'
 gem 'httparty', '~> 0.21'
+# The maintainers yanked 0.3.2 version (see https://github.com/dryruby/json-canonicalization/issues/2)
+gem 'json-canonicalization', "0.3.3"
 
 # Sentry-ruby for error handling
 gem "sentry-ruby"
