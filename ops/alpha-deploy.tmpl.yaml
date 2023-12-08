@@ -103,6 +103,8 @@ extraEnvVars: &envVars
     value: "true"
   - name: REDIS_HOST
     value: ams-prod-redis-master.ams-prod.svc.cluster.local
+  - name: REDIS_PASSWORD
+    value: prod
   - name: REDIS_PREFIX
     value: ams-prod
   - name: REDIS_SERVER
@@ -121,6 +123,8 @@ extraEnvVars: &envVars
     value: "true"
   - name: SIDEKIQ_CONCURRENCY
     value: "10"
+  - name: SIDEKIQ_REDIS_URL
+    value: "redis://:prod@ams-prod-redis-master:6379/0"
   - name: SMTP_ADDRESS
     value: "email-smtp.us-east-1.amazonaws.com"
   - name: SMTP_AUTHENTICATION
