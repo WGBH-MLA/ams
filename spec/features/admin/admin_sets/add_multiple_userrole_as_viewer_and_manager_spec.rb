@@ -3,8 +3,8 @@ require 'rails_helper'
 RSpec.feature 'Add "manage" permissions to test role', js: true, clean:true do
   let!(:admin_user) { create :admin_user }
   let!(:user) { create :user, role_names: ['test_role'] }
-  let!(:admin_set) { create(:admin_set, with_permission_template: true ) }
-  let!(:asset) { create(:asset, :public, user: user, admin_set: admin_set) }
+  let!(:admin_set) { create(:hyrax_admin_set, with_permission_template: true ) }
+  let!(:asset_resource) { create(:asset_resource, :public, user: user, admin_set: admin_set) }
 
   scenario 'Assigning Permissions to AdminSets' do
     login_as(admin_user)
@@ -34,16 +34,16 @@ RSpec.feature 'Add "manage" permissions to test role', js: true, clean:true do
     click_on('Edit')
     expect(page).to have_content 'Edit Administrative Set'
 
-    # Now ensure that the Asset we created as part of the custom admin set is
+    # Now ensure that the AssetResource we created as part of the custom admin set is
     # returned in search results.
     visit '/'
 
     find("#search-submit-header").click
 
-    expect(page).to have_content asset.title[0]
+    expect(page).to have_content asset_resource.title[0]
 
     # open record in search result check it dont have other records edit permissions
-    click_on(asset.title[0])
+    click_on(asset_resource.title[0])
     expect(page).not_to have_content 'Edit'
   end
 end

@@ -24,7 +24,7 @@ module Hyrax
     end
 
     def new_works_models
-      [Asset]
+      [AssetResource]
     end
 
     # Return or yield the first model in the list. This is used when the list

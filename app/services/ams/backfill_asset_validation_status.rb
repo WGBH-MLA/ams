@@ -2,98 +2,13 @@
 require 'ruby-progressbar'
 
 module AMS
-  class BackfillAssetValidationStatus
-    WORKING_DIR = Rails.root.join('tmp', 'imports', 'backfill_asset_validation_status').freeze
-    LOGGER_PATH = WORKING_DIR.join('backfill_asset_validation_status.log').freeze
-    ALL_IDS_PATH = WORKING_DIR.join('all_ids.txt').freeze
-    PROCESSED_IDS_PATH = WORKING_DIR.join('processed_ids.txt').freeze
-    REMAINING_IDS_PATH = WORKING_DIR.join('remaining_ids.txt').freeze
-    FAILED_IDS_PATH = WORKING_DIR.join('failed_ids.txt').freeze
-
-    attr_accessor :ids, :logger
-
+  class BackfillAssetValidationStatus < AMS::WorkReprocessor
     def initialize
-      setup_working_directory
-      # TODO: replace with tagged logger
-      @logger = ActiveSupport::Logger.new(LOGGER_PATH)
+      super(dir_name: 'backfill_asset_validation_status')
+      @query = 'has_model_ssim:Asset -intended_children_count_isi:[* TO *]'
     end
 
-    def fresh_run
-      write_asset_ids_to_file
-      [PROCESSED_IDS_PATH, FAILED_IDS_PATH].each do |file|
-        FileUtils.rm(file) if File.exist?(file)
-      end
-
-      run(ids_file: ALL_IDS_PATH)
-    end
-
-    def resume
-      msg = 'Run #fresh_run before attempting to resume'
-      raise StandardError, msg unless File.exist?(ALL_IDS_PATH) && File.exist?(PROCESSED_IDS_PATH)
-
-      setup_remaining_ids_file
-
-      run(ids_file: REMAINING_IDS_PATH)
-    end
-
-    ## NOTE:
-    # Running this method will result in duplicate IDs being added to the PROCESSED_IDS_PATH
-    # file. However, while this means that the line count of that file won't match one-to-one
-    # with the number of IDs processed, the line count of the FAILED_IDS_PATH already isn't
-    # one-to-one and, more importantly, it won't break the logic in the #setup_remaining_ids_file
-    # method, which is the primary purpose of the PROCESSED_IDS_PATH file.
-    def run_failed
-      raise StandardError, 'No failed IDs found' unless File.exist?(FAILED_IDS_PATH)
-
-      ## NOTE:
-      # Since some processing will happen within the BackfillAssetValidationStatusJob,
-      # and since failed jobs retry automatically, it is very likely that IDs within
-      # the FAILED_IDS_PATH file will be duplicated several times. Because of this,
-      # to avoid duplicate processing, we use Set#uniq and don't fall back on the
-      # FAILED_IDS_PATH file when calling #run.
-      failed_ids = Set.new(File.read(FAILED_IDS_PATH).split("\n"))
-      @ids = failed_ids.uniq
-      run(ids_file: nil)
-    end
-
-    def run(ids_file:)
-      msg = 'To avoid duplicate processing, use #run_failed to reprocess failed IDs'
-      raise StandardError, msg if ids_file == FAILED_IDS_PATH
-
-      @ids ||= File.read(ids_file).split("\n")
-      progressbar = ProgressBar.create(total: ids.size, format: '%a %e %P% Processed: %c from %C')
-
-      # Use #begin here to avoid the need to repeatedly open and close the processed_file each time
-      # we need to write to it. The #ensure makes sure the file closes properly even if an error arises,
-      # preventing any data loss. In addition, it conserves IO processing resources by not continuously
-      # opening and closing the file.
-      begin
-        # Suppress most ActiveRecord logging to be able to clearly see the ProgressBar's progress
-        original_log_level = ActiveRecord::Base.logger.level
-        ActiveRecord::Base.logger.level = Logger::ERROR
-
-        processed_file = File.open(PROCESSED_IDS_PATH, 'a')
-        ids.each do |id|
-          # This nested #begin lets us log the `id` currently being processed if an error is thrown
-          begin # rubocop:disable Style/RedundantBegin
-            logger.info("Starting ID: #{id}")
-            processed_file.puts(id)
-            backfill_validation_status(id)
-            progressbar.increment
-          rescue => e
-            logger.error("#{e.class} | #{e.message} | #{id} | Continuing...")
-            File.open(FAILED_IDS_PATH, 'a') { |file| file.puts(id) }
-          end
-        end
-      ensure
-        ActiveRecord::Base.logger.level = original_log_level
-        processed_file&.close
-      end
-    end
-
-    private
-
-    def backfill_validation_status(id)
+    def run_on_id(id)
       solr_response = ActiveFedora::SolrService.get("id:#{id}", fl: [:admin_data_gid_ssim], rows: 1)
       asset_admin_data_gid = solr_response.dig('response', 'docs', 0, 'admin_data_gid_ssim', 0)
       admin_data = AdminData.find_by_gid!(asset_admin_data_gid)
@@ -142,39 +57,6 @@ module AMS
 
       batch_item = batch.batch_items.find_by(repo_object_id: asset_id)
       File.read(batch_item.source_location)
-    end
-
-    def write_asset_ids_to_file
-      query = 'has_model_ssim:Asset -intended_children_count_isi:[* TO *]'
-      max_rows = 2_147_483_647
-      resp = ActiveFedora::SolrService.get(query, fl: [:id], rows: max_rows)
-      raise StandardError, 'No Assets found in Solr' if resp.dig('response', 'docs').blank?
-
-      @ids = resp.dig('response', 'docs').map { |doc| doc['id'] }
-      write_ids_to(ALL_IDS_PATH)
-    end
-
-    def setup_remaining_ids_file
-      all_ids = Set.new(File.read(ALL_IDS_PATH).split("\n"))
-      processed_ids = Set.new(File.read(PROCESSED_IDS_PATH).split("\n"))
-      remaining_ids = all_ids.subtract(processed_ids)
-      @ids = remaining_ids.to_a
-
-      write_ids_to(REMAINING_IDS_PATH)
-    end
-
-    def write_ids_to(path)
-      FileUtils.rm(path) if File.exist?(path)
-
-      File.open(path, 'a') do |file|
-        ids.each do |id|
-          file.puts(id)
-        end
-      end
-    end
-
-    def setup_working_directory
-      FileUtils.mkdir_p(WORKING_DIR)
     end
   end
 end

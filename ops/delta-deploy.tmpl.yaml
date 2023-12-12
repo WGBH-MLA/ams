@@ -75,6 +75,12 @@ extraEnvVars: &envVars
     value: /fcrepo-webapp-4.7.5/rest
   - name: FCREPO_URL
     value: http://10.0.4.190:8080/fcrepo-webapp-4.7.5/rest
+  - name: HYRAX_VALKYRIE
+    value: "true"
+  - name: VALKYRIE_ID_TYPE
+    value: string
+  - name: NODE_OPTIONS
+    value: "--openssl-legacy-provider"
   - name: IN_DOCKER
     value: "true"
   - name: LD_LIBRARY_PATH
@@ -96,7 +102,7 @@ extraEnvVars: &envVars
   - name: REDIS_SERVER
     value: redis://:demo@ams-demo-redis-master:6379
   - name: SENTRY_DSN
-    value: https://6f6e6b5f54234b5bb2218786c3493a37@o1008683.ingest.sentry.io/6745030 
+    value: https://6f6e6b5f54234b5bb2218786c3493a37@o1008683.ingest.sentry.io/6745030
   - name: SENTRY_ENVIRONMENT
     value: "delta"
   - name: SENTRY_TRACES_SAMPLE_RATE

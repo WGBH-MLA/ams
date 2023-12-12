@@ -5,4 +5,8 @@
 class ContributionResource < Hyrax::Work
   include Hyrax::Schema(:basic_metadata)
   include Hyrax::Schema(:contribution_resource)
+  include Hyrax::ArResource
+  include AMS::WorkBehavior
+
+  self.valid_child_concerns = []
 end

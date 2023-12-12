@@ -30,25 +30,25 @@ class Push < ApplicationRecord
 
     def validate_status
       invalid_docs = export_search.solr_documents.reject do |doc|
-        doc.validation_status_for_aapb == [Asset::VALIDATION_STATUSES[:valid]]
+        doc.validation_status_for_aapb == [AssetResource::VALIDATION_STATUSES[:valid]]
       end
       return if invalid_docs.blank?
 
-      Asset::VALIDATION_STATUSES.each_pair do |status_key, status_value|
+      AssetResource::VALIDATION_STATUSES.each_pair do |status_key, status_value|
         next if status_key == :valid
         add_status_error(invalid_docs, status_value)
       end
     end
 
     def add_status_error(invalid_docs, status)
-      ids_matching_status = if status == Asset::VALIDATION_STATUSES[:empty]
+      ids_matching_status = if status == AssetResource::VALIDATION_STATUSES[:empty]
                               invalid_docs.select { |doc| doc.validation_status_for_aapb.blank? }.map(&:id)
                             else
                               invalid_docs.select { |doc| doc.validation_status_for_aapb.include?(status) }.map(&:id)
                             end
 
       # Prevents adding errors to docs that don't have a value
-      # in :validation_status_for_aapb, including all non-Assets.
+      # in :validation_status_for_aapb, including all non-AssetResources.
       return if ids_matching_status.blank?
 
       errors.add(:pushed_id_csv, "The following IDs are #{status}: #{ids_matching_status.join(', ')}")

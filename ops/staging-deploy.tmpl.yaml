@@ -62,6 +62,12 @@ extraEnvVars: &envVars
     value: /rest
   - name: FCREPO_URL
     value: http://fcrepo.staging-fcrepo.svc.cluster.local:8080/rest
+  - name: HYRAX_VALKYRIE
+    value: "true"
+  - name: VALKYRIE_ID_TYPE
+    value: string
+  - name: NODE_OPTIONS
+    value: "--openssl-legacy-provider"
   - name: IN_DOCKER
     value: "true"
   - name: LD_LIBRARY_PATH
@@ -85,7 +91,7 @@ extraEnvVars: &envVars
   - name: REDIS_SERVER
     value: redis://:staging@gbh-staging-redis-master:6379
   - name: SENTRY_DSN
-    value: https://6f6e6b5f54234b5bb2218786c3493a37@o1008683.ingest.sentry.io/6745030 
+    value: https://6f6e6b5f54234b5bb2218786c3493a37@o1008683.ingest.sentry.io/6745030
   - name: SENTRY_ENVIRONMENT
     value: "staging"
   - name: SENTRY_TRACES_SAMPLE_RATE

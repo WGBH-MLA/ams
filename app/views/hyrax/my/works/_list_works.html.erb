@@ -32,8 +32,8 @@
   <td class="text-center"><%= document.id %></td>
   <td class="date text-center"><%= document.date_modified %></td>
   <td class='text-center'>
-    <span class="fa <%= current_user.trophies.where(work_id: document.id).exists? ? 'fa-star highlighted-work' : 'fa-star-o trophy-off' %>" aria-hidden="true"></span></td>
-  <td class='text-center'><%= render_visibility_link document %></td>
+    <span class="fa <%= current_user.trophies.where(work_id: document.id).present? ? 'fa-star highlighted-work' : 'fa-star-o trophy-off' %>" aria-hidden="true"></span></td>
+  <td><%= render_visibility_link document %></td>
 
   <td class='text-center'>
     <%= render 'work_action_menu', document: document %>

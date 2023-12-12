@@ -24,6 +24,11 @@ require 'webdrivers'
 Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each { |f| require f }
 require_relative 'support/controller_macros'
 
+require 'hyrax/specs/shared_specs/factories/strategies/json_strategy'
+require 'hyrax/specs/shared_specs/factories/strategies/valkyrie_resource'
+FactoryBot.register_strategy(:valkyrie_create, ValkyrieCreateStrategy)
+FactoryBot.register_strategy(:json, JsonStrategy)
+
 ActiveRecord::Migration.maintain_test_schema!
 
 # See https://github.com/thoughtbot/shoulda-matchers#rspec

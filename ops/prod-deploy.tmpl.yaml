@@ -51,22 +51,26 @@ extraEnvVars: &envVars
     value: "americanarchive.org"
   - name: AAPB_SSH_KEY
     value: "/app/aapb/id_rsa"
+  - name: AWS_ACCESS_KEY
+    value: "AKIAIWFN3WW3WBIMKNCQ"
   - name: CI_CLIENT_ID
     value: "044dbd5644f640fb856a6131fd37e5cb"
-  - name: CI_WORKSPACE_ID
-    value: "051303c1c1d24da7988128e6d2f56aa9"
   - name: CI_USERNAME
     value: "aapb_notifications@wgbh.org"
+  - name: CI_WORKSPACE_ID
+    value: "051303c1c1d24da7988128e6d2f56aa9"
   - name: CONFDIR
     value: "/app/samvera/hyrax-webapp/solr/config"
   - name: DB_ADAPTER
-    value: mysql2
-  - name: MYSQL_HOST
-    value: ams-prod-rails-db.cmrjt7rckp5r.us-east-1.rds.amazonaws.com
-  - name: MYSQL_DATABASE
+    value: postgresql
+  - name: DB_HOST
+    value: "10.0.4.93"
+  - name: DB_NAME
     value: hyrax
-  - name: MYSQL_USER
-    value: hyrax
+  - name: DB_PORT
+    value: "5432"
+  - name: DB_USERNAME
+    value: ams_user
   - name: FCREPO_BASE_PATH
     value: /prod
   - name: FCREPO_HOST
@@ -75,10 +79,18 @@ extraEnvVars: &envVars
     value: /fcrepo-webapp-4.7.5/rest
   - name: FCREPO_URL
     value: http://10.0.4.93:8080/fcrepo-webapp-4.7.5/rest
+  - name: HYRAX_VALKYRIE
+    value: "true"
   - name: IN_DOCKER
     value: "true"
   - name: LD_LIBRARY_PATH
     value: /app/fits/tools/mediainfo/linux
+  - name: MAIL_DELIVERY_METHOD
+    value: "smtp"
+  - name: NODE_OPTIONS
+    value: "--openssl-legacy-provider"
+  - name: PRODUCTION_HOST
+    value: "ams2.wgbh-mla.org"
   - name: RAILS_CACHE_STORE_URL
     value: redis://:prod@ams-prod-redis-master:6379/ams-prod
   - name: RAILS_ENV
@@ -91,36 +103,28 @@ extraEnvVars: &envVars
     value: "true"
   - name: REDIS_HOST
     value: ams-prod-redis-master
+  - name: REDIS_PASSWORD
+    value: prod
   - name: REDIS_PREFIX
     value: ams-prod
   - name: REDIS_SERVER
     value: redis://:prod@ams-prod-redis-master:6379
+  - name: S3_EXPORT_BUCKET
+    value: "ams-edge.wgbh-mla.org"
+  - name: S3_EXPORT_DIR
+    value: "ip-10-10-1-77"
   - name: SENTRY_DSN
-    value: https://6f6e6b5f54234b5bb2218786c3493a37@o1008683.ingest.sentry.io/6745030 
+    value: https://6f6e6b5f54234b5bb2218786c3493a37@o1008683.ingest.sentry.io/6745030
   - name: SENTRY_ENVIRONMENT
     value: "production"
   - name: SENTRY_TRACES_SAMPLE_RATE
     value: "0.1"
   - name: SETTINGS__BULKRAX__ENABLED
     value: "false"
-  - name: SOLR_HOST
-    value: 10.0.4.93
-  - name: SOLR_PORT
-    value: "8983"
-  - name: SOLR_URL
-    value: http://10.0.4.93:8983/solr/ams
   - name: SIDEKIQ_CONCURRENCY
     value: "1"
-  - name: AWS_ACCESS_KEY
-    value: "AKIAIWFN3WW3WBIMKNCQ"
-  - name: MAIL_DELIVERY_METHOD
-    value: "smtp"
-  - name: PRODUCTION_HOST
-    value: "ams2.wgbh-mla.org"
-  - name: S3_EXPORT_BUCKET
-    value: "ams-edge.wgbh-mla.org"
-  - name: S3_EXPORT_DIR
-    value: "ip-10-10-1-77"
+  - name: SIDEKIQ_REDIS_URL
+    value: "redis://:prod@ams-prod-redis-master:6379/0"
   - name: SMTP_ADDRESS
     value: "email-smtp.us-east-1.amazonaws.com"
   - name: SMTP_AUTHENTICATION
@@ -131,6 +135,14 @@ extraEnvVars: &envVars
     value: "587"
   - name: SMTP_USERNAME
     value: "AKIAINCFFPY4ILW2LNJQ"
+  - name: SOLR_HOST
+    value: 10.0.4.93
+  - name: SOLR_PORT
+    value: "8983"
+  - name: SOLR_URL
+    value: http://10.0.4.93:8983/solr/ams
+  - name: VALKYRIE_ID_TYPE
+    value: string
 
 worker:
   replicaCount: 1

@@ -7,19 +7,19 @@ RSpec.describe AMS::Export::Search::DigitalInstantiationsSearch do
 
     # Create 1..3 assets each with a searchable title and having both digital
     # and physical instantiations.
-    let!(:assets) do
+    let!(:asset_resources) do
       rand(1..3).times.map do
-        ordered_members = [
-          create_list(:digital_instantiation, rand(1..2)),
-          create_list(:physical_instantiation, rand(1..2))
+        members = [
+          create_list(:digital_instantiation_resource, rand(1..2)),
+          create_list(:physical_instantiation_resource, rand(1..2))
         ].flatten
-        create(:asset, title: [ searchable_title], ordered_members: ordered_members)
+        create(:asset_resource, title: [ searchable_title], members: members)
       end
     end
 
     # Grab all the DigitalInstantiation IDs that were created.
-    let(:digital_instantiation_ids) do
-      Set.new(assets.map(&:digital_instantiations).flatten.map(&:id))
+    let(:digital_instantiation_resource_ids) do
+      Set.new(asset_resources.map(&:digital_instantiation_resources).flatten.map(&:id))
     end
 
     # Create a user, required for searching.
@@ -34,7 +34,7 @@ RSpec.describe AMS::Export::Search::DigitalInstantiationsSearch do
     end
 
     let(:expected_solr_doc_ids) do
-      assets.map(&:digital_instantiations).flatten.map(&:id)
+      asset_resources.map(&:digital_instantiation_resources).flatten.map(&:id)
     end
 
     # And finally, after all that setup, run the spec.

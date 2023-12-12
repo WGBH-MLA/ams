@@ -2,6 +2,10 @@
 if ENV['SETTINGS__BULKRAX__ENABLED'] == 'true'
   # rubocop:disable Metrics/BlockLength
   Bulkrax.setup do |config|
+
+    # Factory Class to use when generating and saving objects
+    config.object_factory = Bulkrax::ValkyrieObjectFactory
+
     # Add local parsers
     config.parsers = [
       {
@@ -219,9 +223,3 @@ if ENV['SETTINGS__BULKRAX__ENABLED'] == 'true'
   end
 end
 # rubocop:enable Metrics/BlockLength
-
-# # Sidebar for hyrax 3+ support
-  # if Object.const_defined?(:Hyrax) && ::Hyrax::DashboardController&.respond_to?(:sidebar_partials)
-  #   path = "hyrax/dashboard/sidebar/bulkrax_sidebar_additions"
-  #   Hyrax::DashboardController.sidebar_partials[:repository_content] << path
-  # end

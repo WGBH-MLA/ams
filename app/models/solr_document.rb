@@ -39,9 +39,9 @@ class SolrDocument
   end
 
   # Define boolean predicates for determining record type.
-  def is_asset?; has_model == "Asset"; end
-  def is_physical_instantiation?; has_model == "PhysicalInstantiation"; end
-  def is_digital_instantiation?; has_model == "DigitalInstantiation"; end
+  def is_asset?; has_model.match(/^Asset/); end
+  def is_physical_instantiation?; has_model.match(/^PhysicalInstantiation/); end
+  def is_digital_instantiation?; has_model.match(/^DigitalInstantiation/); end
   def is_instantiation?; is_digital_instantiations || is_physical_instantiation; end
 
   # Specific ID accessors based on record type.
@@ -81,11 +81,11 @@ class SolrDocument
   end
 
   def physical_instantiations
-    members only: PhysicalInstantiation
+    members only: [PhysicalInstantiation, PhysicalInstantiationResource]
   end
 
   def digital_instantiations
-    members only: DigitalInstantiation
+    members only: [DigitalInstantiation, DigitalInstantiationResource]
   end
 
   def asset_types
@@ -541,11 +541,11 @@ class SolrDocument
 
   def admin_data_gid
     return unless is_asset?
-    self['admin_data_gid_ssim'].first
+    self['admin_data_gid_ssim']&.first
   end
 
   def admin_data
-    return unless is_asset?
+    return unless is_asset? && admin_data_gid
     @admin_data ||= AdminData.find_by_gid(admin_data_gid)
   end
 

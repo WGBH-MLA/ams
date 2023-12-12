@@ -72,13 +72,13 @@ module Hyrax
     end
 
     def list_of_instantiation_ids_to_display
-      query = "(has_model_ssim:DigitalInstantiation OR has_model_ssim:PhysicalInstantiation) "
+      query = "(has_model_ssim:DigitalInstantiationResource OR has_model_ssim:PhysicalInstantiationResource OR has_model_ssim:DigitalInstantiation OR has_model_ssim:PhysicalInstantiation) "
       authorized_instantiation_ids = filter_item_ids_to_display(query)
       paginated_item_list(page_array: authorized_instantiation_ids)
     end
 
     def list_of_contribution_ids_to_display
-      query = "(has_model_ssim:Contribution) "
+      query = "(has_model_ssim:Contribution OR has_model_ssim:ContributionResource) "
       authorized_contribution_ids = filter_item_ids_to_display(query)
       paginated_item_list(page_array: authorized_contribution_ids)
     end

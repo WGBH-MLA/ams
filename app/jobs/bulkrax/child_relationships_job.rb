@@ -5,6 +5,7 @@
 #     - overrides method work_membership
 module Bulkrax
   class ChildWorksError < RuntimeError; end
+  class ParentWorkError < RuntimeError; end
   class ChildRelationshipsJob < ApplicationJob
     queue_as :import
 
@@ -16,12 +17,11 @@ module Bulkrax
         work_membership
       end
 
-    rescue Bulkrax::ChildWorksError
+    rescue Bulkrax::ChildWorksError, Bulkrax::ParentWorkError
       # Not all of the Works/Collections exist yet; reschedule
       # In case the work hasn't been created, don't endlessly reschedule the job
       attempts = (args[3] || 0) + 1
       child_ids = @missing_entry_ids.presence || args[1]
-
       reschedule(args[0], child_ids, args[2], attempts) unless attempts > 5
     end
 
@@ -38,15 +38,18 @@ module Bulkrax
     end
 
     def work_membership
+      raise ParentWorkError unless parent_record
       seen_count = 0
       child_entries.each do |child_entry|
         child_record = child_entry.factory.find
         next if child_record.blank? or child_record.is_a?(Collection)
-        next if parent_record.ordered_members&.to_a&.include?(child_record)
-        parent_record.ordered_members << child_record
+        next if parent_record.blank?
+        parent_record.member_ids << child_record.id unless parent_record.member_ids&.to_a&.include?(child_record.id)
         seen_count += 1
       end
-      parent_record.save!
+      Hyrax.persister.save(resource: parent_record)
+      user ||= ::User.find_by_user_key(parent_record.depositor)
+      Hyrax.publisher.publish('object.metadata.updated', object: parent_record, user: user)
       raise ChildWorksError if seen_count < child_entries.count
     end
 
@@ -101,25 +104,6 @@ module Bulkrax
     # Collection-Collection membership is added to the as member_ids
     def collection_parent_collection_child(member_ids)
       attrs = { id: entry&.factory&.find&.id, children: member_ids }
-      Bulkrax::ObjectFactory.new(attributes: attrs,
-                                 source_identifier_value: entry.identifier,
-                                 work_identifier: entry.parser.work_identifier,
-                                 replace_files: false,
-                                 user: user,
-                                 klass: entry.factory_class).run
-      ImporterRun.find(importer_run_id).increment!(:processed_relationships)
-    rescue StandardError => e
-      entry.status_info(e)
-      ImporterRun.find(importer_run_id).increment!(:failed_relationships)
-    end
-
-    # Work-Work membership is added to the parent as member_ids
-    def work_parent_work_child(member_ids)
-      # build work_members_attributes
-      attrs = { id: entry&.factory&.find&.id,
-                work_members_attributes: member_ids.each.with_index.each_with_object({}) do |(member, index), ids|
-                  ids[index] = { id: member }
-                end }
       Bulkrax::ObjectFactory.new(attributes: attrs,
                                  source_identifier_value: entry.identifier,
                                  work_identifier: entry.parser.work_identifier,

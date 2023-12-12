@@ -30,7 +30,7 @@ Bulkrax::Importer.all.each do |importer|
   total_objects_in_all_importers += total_objects_imported
   total_time_for_all_importers += duration_in_seconds
 
-  report = CSV.read(file, :headers => true) if File.exists?(file)
+  report = CSV.read(file, :headers => true) if File.exist?(file)
   if ARGV[0] && ARGV[0].include?('--generate')
     headers = ["Importer ID", "Importer Type", "Total Objects Imported", "Duration in seconds", "Average", "Last Concurrency Value", "Last Run Date"]
 

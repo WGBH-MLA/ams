@@ -17,7 +17,7 @@ module ApplicationHelper
   end
 
   # Instance method delegates to ApplicationHelper.display_date.
-  def display_date(*args); ApplicationHelper.display_date(*args); end
+  def display_date(*args, **kwargs); ApplicationHelper.display_date(*args, **kwargs); end
 
   def render_thumbnail(document, options)
     # send(blacklight_config.view_config(document_index_view_type).thumbnail_method, document, image_options)

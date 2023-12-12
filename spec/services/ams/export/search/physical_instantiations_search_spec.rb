@@ -5,15 +5,15 @@ RSpec.describe AMS::Export::Search::PhysicalInstantiationsSearch do
     # Create a random, but searchable title.
     let(:searchable_title) { Faker::Lorem.sentence }
 
-    # Create 1..3 assets each with a searchable title and having both digital
-    # and physical instantiations.
-    let!(:assets) do
+    # Create 1..3 asset_resources each with a searchable title and having both digital
+    # and physical instantiation_resources.
+    let!(:asset_resources) do
       rand(1..3).times.map do
-        ordered_members = [
-          create_list(:digital_instantiation, rand(1..2)),
-          create_list(:physical_instantiation, rand(1..2))
+        members = [
+          create_list(:digital_instantiation_resource, rand(1..2)),
+          create_list(:physical_instantiation_resource, rand(1..2))
         ].flatten
-        create(:asset, title: [ searchable_title], ordered_members: ordered_members)
+        create(:asset_resource, title: [ searchable_title], members: members)
       end
     end
 
@@ -29,12 +29,12 @@ RSpec.describe AMS::Export::Search::PhysicalInstantiationsSearch do
     end
 
     let(:expected_solr_doc_ids) do
-      assets.map(&:physical_instantiations).flatten.map(&:id)
+      asset_resources.map(&:physical_instantiation_resources).flatten.map(&:id)
     end
 
     # And finally, after all that setup, run the spec.
     it 'returns all of the PhysicalInstantiation Solr documents that are ' \
-       'members of the the Assets records returned by the search params' do
+       'members of the the Asset_Resources records returned by the search params' do
       # Grab all the SolrDocument IDs returned from the search.
       expect(solr_documents).not_to be_empty
       solr_doc_ids = solr_documents.map(&:id)
