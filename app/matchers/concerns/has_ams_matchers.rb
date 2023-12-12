@@ -13,6 +13,7 @@ module HasAmsMatchers
     return true if field == "title"
     return true if field == "description"
     return true if field == "subject"
+    return true if field == "contributors"
 
     property_defined = factory_class.singleton_methods.include?(:properties) && factory_class.properties[field].present?
 
