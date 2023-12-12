@@ -54,11 +54,13 @@ module Bulkrax
         bulkrax_importer_id = importer.id
         admin_data_gid = update_or_create_admin_data_gid(bulkrax_importer_id)
 
+        self.parsed_metadata["contributors"] = self.raw_metadata["contributors"]
         self.parsed_metadata['bulkrax_importer_id'] = bulkrax_importer_id
         self.parsed_metadata['admin_data_gid'] = admin_data_gid
         build_annotations(self.raw_metadata['annotations'], admin_data_gid) if self.raw_metadata['annotations'].present?
       end
 
+      self.parsed_metadata['label'] = nil if self.parsed_metadata['label'] == "[]"
       add_visibility
       add_rights_statement
       add_admin_set_id

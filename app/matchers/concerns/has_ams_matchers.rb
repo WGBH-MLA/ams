@@ -13,7 +13,6 @@ module HasAmsMatchers
     return true if field == "title"
     return true if field == "description"
     return true if field == "subject"
-    return true if field == "contributors"
 
     property_defined = factory_class.singleton_methods.include?(:properties) && factory_class.properties[field].present?
 
@@ -39,12 +38,11 @@ module HasAmsMatchers
     return true if field == "description"
     return true if field == "subject"
 
-    field_supported?(field) && (multiple_field?(field) || factory_class.singleton_methods.include?(:properties) && factory_class&.properties&.[](field)&.[]("multiple"))
-  end
-
-  def multiple_field?(field)
-    form_definition = schema_form_definitions[field.to_sym]
-    form_definition.nil? ? false : form_definition[:multiple]
+    if factory_class.respond_to?(:schema)
+      field_supported?(field) && valkyrie_multiple?(field)
+    else
+      field_supported?(field) && ar_multiple?(field)
+    end
   end
 
   def add_metadata(node_name, node_content, index = nil)
@@ -53,7 +51,6 @@ module HasAmsMatchers
       object_name = get_object_name(name) || false # the "key" of an object property. e.g. { object_name: { alpha: 'beta' } }
       multiple = multiple?(name) # the property has multiple values. e.g. 'letters': ['a', 'b', 'c']
       object_multiple = object_name && multiple?(object_name) # the property's value is an array of object(s)
-
       next unless field_supported?(name) || (object_name && field_supported?(object_name))
 
       if object_name
@@ -119,7 +116,4 @@ module HasAmsMatchers
   #   end
   # end
 
-  def schema_form_definitions
-    @schema_form_definitions ||= Hyrax::SimpleSchemaLoader.new.form_definitions_for(schema: factory_class.name.underscore.to_sym)
-  end
 end

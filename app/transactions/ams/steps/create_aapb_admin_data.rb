@@ -10,7 +10,6 @@ module Ams
       def call(change_set)
         case change_set.model
         when AssetResource
-          contributions = extract_contributions(change_set)
           add_title_types(change_set)
           add_description_types(change_set)
           add_date_types(change_set)
@@ -197,13 +196,6 @@ module Ams
         set_instantiation_admin_data_attributes(change_set)
         change_set.model.instantiation_admin_data.save!
         remove_instantiation_admin_data_from_env_attributes(change_set)
-      end
-
-      def extract_contributions(change_set)
-        return [] unless change_set.fields.has_key?(:contributors)
-
-        contributors = change_set.fields.delete(:contributors) || []
-        contributors.select { |contributor| contributor unless contributor[:contributor].first.blank? }
       end
 
       def find_or_create_instantiation_admin_data(change_set)
