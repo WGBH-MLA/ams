@@ -11,6 +11,10 @@ module AMS
       def _hyrax_default_name_class
         Hyrax::Name
       end
+
+      def to_rdf_representation
+        name.gsub("Resource", "")
+      end
     end
 
     def members
