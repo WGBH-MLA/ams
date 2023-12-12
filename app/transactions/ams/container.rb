@@ -5,6 +5,10 @@ module Ams
     extend Dry::Container::Mixin
 
     namespace 'change_set' do |ops|
+      ops.register "handle_contributors" do
+        Ams::Steps::HandleContributors.new
+      end
+
       ops.register "create_aapb_admin_data" do
         Ams::Steps::CreateAapbAdminData.new
       end
