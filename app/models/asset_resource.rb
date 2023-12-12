@@ -5,6 +5,7 @@
 class AssetResource < Hyrax::Work
   include Hyrax::Schema(:basic_metadata)
   include Hyrax::Schema(:asset_resource)
+  include Hyrax::ArResource
   include AMS::WorkBehavior
   include AMS::CreateMemberMethods
 

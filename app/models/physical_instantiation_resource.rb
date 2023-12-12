@@ -5,6 +5,7 @@
 class PhysicalInstantiationResource < Hyrax::Work
   include Hyrax::Schema(:basic_metadata)
   include Hyrax::Schema(:physical_instantiation_resource)
+  include Hyrax::ArResource
   include AMS::WorkBehavior
   include ::AMS::CreateMemberMethods
 
