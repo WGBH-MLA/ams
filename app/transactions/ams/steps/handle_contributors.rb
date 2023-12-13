@@ -69,7 +69,7 @@ module Ams
 
       def update_members(change_set, inserts, destroys)
         return if inserts.empty? && destroys.empty?
-        current_member_ids = change_set.member_ids.map(&:id)
+        current_member_ids = change_set.member_ids.map(&:to_s)
         inserts = inserts - current_member_ids
         destroys = destroys & current_member_ids
         change_set.member_ids += inserts.map  { |id| Valkyrie::ID.new(id) }

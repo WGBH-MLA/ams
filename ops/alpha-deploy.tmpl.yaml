@@ -145,7 +145,7 @@ extraEnvVars: &envVars
     value: string
 
 worker:
-  replicaCount: 1
+  replicaCount: 0
   importReplicaCount: 0
   podSecurityContext:
     runAsUser: 1001
