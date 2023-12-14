@@ -10,7 +10,7 @@ module Ams
       attr_accessor :change_set, :user
       def call(change_set, user: nil)
         @change_set = change_set
-        @user = user
+        @user = user || User.find_by_user_key(change_set.depositor)
         case change_set.model
         when AssetResource
           contributions = extract_contributions(change_set)
@@ -52,7 +52,7 @@ module Ams
               param_contributor.delete(:id)
               contributor.attributes.merge!(param_contributor)
               contributor_resource = Hyrax.persister.save(resource: contributor)
-              Hyrax.publisher.publish('object.metadata.updated', object: contributor_resource, user: change_set.user)
+              Hyrax.publisher.publish('object.metadata.updated', object: contributor_resource, user: user)
               inserts << contributor_resource.id
               next
             end
