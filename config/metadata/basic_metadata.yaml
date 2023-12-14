@@ -30,6 +30,8 @@ attributes:
     multiple: true
     form:
       primary: false
+    index_keys:
+      - "contributor_tesim"
   creator:
     type: string
     multiple: true

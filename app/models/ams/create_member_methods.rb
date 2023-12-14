@@ -12,8 +12,7 @@ module AMS
               condition = { has_model_ssim: child_class.to_s, id: self.members.map(&:id) }
               ActiveFedora::Base.search_with_conditions(condition).collect { |v| SolrDocument.new(v) }
             when Valkyrie::Resource
-              child_works = Hyrax.custom_queries.find_child_works(resource: self).to_a
-              child_works_of_type = child_works.select { |work| work.is_a?(child_class) }
+              child_works_of_type = members.select { |work| work.is_a?(child_class) }
               child_works_of_type.map { |work| resource_to_solr(work) }
             end
           end

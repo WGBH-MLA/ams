@@ -10,7 +10,7 @@ module Ams
       attr_accessor :change_set, :user
       def call(change_set, user: nil)
         @change_set = change_set
-        @user = user
+        @user = user || User.find_by_user_key(change_set.depositor)
         case change_set.model
         when AssetResource
           contributions = extract_contributions(change_set)
@@ -52,7 +52,7 @@ module Ams
               param_contributor.delete(:id)
               contributor.attributes.merge!(param_contributor)
               contributor_resource = Hyrax.persister.save(resource: contributor)
-              Hyrax.publisher.publish('object.metadata.updated', object: contributor_resource, user: change_set.user)
+              Hyrax.publisher.publish('object.metadata.updated', object: contributor_resource, user: user)
               inserts << contributor_resource.id
               next
             end
@@ -69,7 +69,7 @@ module Ams
 
       def update_members(change_set, inserts, destroys)
         return if inserts.empty? && destroys.empty?
-        current_member_ids = change_set.member_ids.map(&:id)
+        current_member_ids = change_set.member_ids.map(&:to_s)
         inserts = inserts - current_member_ids
         destroys = destroys & current_member_ids
         change_set.member_ids += inserts.map  { |id| Valkyrie::ID.new(id) }
