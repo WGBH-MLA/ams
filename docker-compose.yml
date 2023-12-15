@@ -185,7 +185,17 @@ services:
     # we need to do seed seperate because activerecord doesn't reload properly otherwise
     command:
       - >
-        true
+        if [ -v DEPENDENCIES_NEXT ]; then
+          export BUNDLE_GEMFILE=Gemfile_next;
+          export BUNDLER_VERSION=2.0.1
+        else
+          export BUNDLE_GEMFILE=Gemfile;
+        fi;
+        solrcloud-upload-configset.sh /app/samvera/hyrax-webapp/solr/config &&
+        solrcloud-assign-configset.sh &&
+        SOLR_COLLECTION_NAME=hydra-test solrcloud-assign-configset.sh &&
+        rails db:create db:schema:load db:migrate &&
+        rails db:seed
     depends_on:
       postgres:
         condition: service_started
@@ -203,8 +213,7 @@ services:
     environment:
       - VIRTUAL_PORT=3000
       - VIRTUAL_HOST=.ams.test
-    command: sh -l -c "sleep infinity"
-    # command: sh -l -c "bundle && bundle exec puma -v -b tcp://0.0.0.0:3000"
+    # command: sh -l -c "sleep infinity"
     cap_add:
       - SYS_PTRACE
     depends_on:
@@ -230,8 +239,6 @@ services:
         condition: service_completed_successfully
     expose:
       - 3000
-    ports:
-      - "3005:3000"
 
   worker:
     <<: *app
