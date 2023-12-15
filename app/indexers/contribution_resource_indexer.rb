@@ -2,7 +2,7 @@
 
 # Generated via
 #  `rails generate hyrax:work_resource ContributionResource`
-class ContributionResourceIndexer < Hyrax::ValkyrieWorkIndexer
+class ContributionResourceIndexer < AMS::ValkyrieWorkIndexer
   include Hyrax::Indexer(:basic_metadata)
   include Hyrax::Indexer(:contribution_resource)
 

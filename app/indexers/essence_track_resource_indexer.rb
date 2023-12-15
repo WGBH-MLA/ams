@@ -2,7 +2,7 @@
 
 # Generated via
 #  `rails generate hyrax:work_resource EssenceTrackResource`
-class EssenceTrackResourceIndexer < Hyrax::ValkyrieWorkIndexer
+class EssenceTrackResourceIndexer < AMS::ValkyrieWorkIndexer
   include Hyrax::Indexer(:basic_metadata)
   include Hyrax::Indexer(:essence_track_resource)
 

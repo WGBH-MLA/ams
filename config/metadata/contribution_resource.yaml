@@ -38,6 +38,7 @@ attributes:
   portrayal:
     type: string
     multiple: false
+    index_to_parent: true
     index_keys:
       - "portrayal_tesim"
     form:
@@ -47,6 +48,7 @@ attributes:
   affiliation:
     type: string
     multiple: false
+    index_to_parent: true
     index_keys:
       - "affiliation_tesim"
     form:

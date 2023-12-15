@@ -2,7 +2,7 @@
 
 # Generated via
 #  `rails generate hyrax:work_resource DigitalInstantiationResource`
-class DigitalInstantiationResourceIndexer < Hyrax::ValkyrieWorkIndexer
+class DigitalInstantiationResourceIndexer < AMS::ValkyrieWorkIndexer
   include Hyrax::Indexer(:basic_metadata)
   include Hyrax::Indexer(:digital_instantiation_resource)
 
