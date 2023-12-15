@@ -216,6 +216,7 @@ Hyrax.config do |config|
   # end
   # end Original Version
   config.translate_id_to_uri = lambda do |id|
+    id = id.to_s
     return "#{ActiveFedora.fedora.host}#{ActiveFedora.fedora.base_path}/#{::Noid::Rails.treeify(id)}" unless id.match(/^cpb-aacip/)
     split_id = id.split('/')
     id = split_id[0]
