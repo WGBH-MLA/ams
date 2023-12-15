@@ -33,6 +33,7 @@ attributes:
   date:
     type: string
     multiple: true
+    index_to_parent: true
     index_keys:
       - "date_sim"
       - "date_tesim"
@@ -61,6 +62,7 @@ attributes:
   format:
     type: string
     multiple: false
+    index_to_parent: true
     index_keys:
       - "format_tesim"
     form:
@@ -88,6 +90,7 @@ attributes:
   media_type:
     type: string
     multiple: false
+    index_to_parent: true
     index_keys:
       - "media_type_sim"
       - "media_type_tesim"
@@ -162,6 +165,7 @@ attributes:
   local_instantiation_identifier:
     type: string
     multiple: true
+    index_to_parent: true
     index_keys:
       - "local_instantiation_identifier_tesim"
     form:

@@ -2,7 +2,7 @@
 
 # Generated via
 #  `rails generate hyrax:work_resource PhysicalInstantiationResource`
-class PhysicalInstantiationResourceIndexer < Hyrax::ValkyrieWorkIndexer
+class PhysicalInstantiationResourceIndexer < AMS::ValkyrieWorkIndexer
   include Hyrax::Indexer(:basic_metadata)
   include Hyrax::Indexer(:physical_instantiation_resource)
 

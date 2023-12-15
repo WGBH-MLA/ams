@@ -2,7 +2,7 @@
 
 # Generated via
 #  `rails generate hyrax:work_resource AssetResource`
-class AssetResourceIndexer < Hyrax::ValkyrieWorkIndexer
+class AssetResourceIndexer < AMS::ValkyrieWorkIndexer
   include Hyrax::Indexer(:basic_metadata)
   include Hyrax::Indexer(:asset_resource)
 

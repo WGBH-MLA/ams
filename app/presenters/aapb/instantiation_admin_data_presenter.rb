@@ -15,9 +15,9 @@ module AAPB
         options.merge!({:html_dl=> true})
 
         solr_document = ::SolrDocument.find(id)
-        old_models = ['Asset', 'PhysicalInstantiation', 'DigitalInstantiation', 'Contribution']
-        work_class = old_models.include?(solr_document['has_model_ssim'].first) ? "#{solr_document['has_model_ssim'].first}Resource" : solr_document['has_model_ssim'].first
+        work_class = solr_document['has_model_ssim'].first
         work_class = work_class.constantize
+        work_class =  Wings::ModelRegistry.reverse_lookup(work_class) || work_class
 
         if attribute_indexed_to_parent?(field, work_class) && attribute_facetable?(field, work_class)
           # Use :symbol for field_name since all attributes indexed to parent are indexed as symbols.
