@@ -54,6 +54,7 @@ module Bulkrax
         self.parsed_metadata["contributors"] = self.raw_metadata["contributors"]
         self.parsed_metadata['bulkrax_importer_id'] = importer.id
         self.parsed_metadata['admin_data_gid'] = admin_data_gid
+        self.parsed_metadata['sonyci_id'] = self.raw_metadata['sonyci_id']
         build_annotations(self.raw_metadata['annotations']) if self.raw_metadata['annotations'].present?
       end
 
@@ -79,6 +80,7 @@ module Bulkrax
       end
 
       @admin_data = work.admin_data if work.present?
+      @admin_data ||= AdminData.find_by_gid(self.raw_metadata['admin_data_gid']) if self.raw_metadata['admin_data_gid'].present?
       @admin_data ||= AdminData.new
       @admin_data.bulkrax_importer_id = importer.id
       @admin_data.save
