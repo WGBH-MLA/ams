@@ -147,7 +147,7 @@ class AssetResource < Hyrax::Work
   end
 
   def set_validation_status
-    current_children_count = SolrDocument.get_members(self).reject { |child| child.is_a?(Contribution) || child.id == self.id }.size
+    current_children_count = SolrDocument.get_members(self).reject { |child| child.is_a?(Contribution) || child.is_a?(ContributionResource) || child.id == self.id }.size
     intended_children_count = self.intended_children_count.to_i
 
     self.validation_status_for_aapb = if intended_children_count.blank? && self.validation_status_for_aapb.blank?
