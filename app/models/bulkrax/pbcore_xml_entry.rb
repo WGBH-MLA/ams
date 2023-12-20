@@ -51,13 +51,10 @@ module Bulkrax
       end
 
       if self.raw_metadata['model'] == 'AssetResource'
-        bulkrax_importer_id = importer.id
-        admin_data_gid = update_or_create_admin_data_gid(bulkrax_importer_id)
-
         self.parsed_metadata["contributors"] = self.raw_metadata["contributors"]
-        self.parsed_metadata['bulkrax_importer_id'] = bulkrax_importer_id
+        self.parsed_metadata['bulkrax_importer_id'] = importer.id
         self.parsed_metadata['admin_data_gid'] = admin_data_gid
-        build_annotations(self.raw_metadata['annotations'], admin_data_gid) if self.raw_metadata['annotations'].present?
+        build_annotations(self.raw_metadata['annotations']) if self.raw_metadata['annotations'].present?
       end
 
       self.parsed_metadata['label'] = nil if self.parsed_metadata['label'] == "[]"
@@ -71,23 +68,28 @@ module Bulkrax
       self.parsed_metadata
     end
 
-    def update_or_create_admin_data_gid(bulkrax_importer_id)
+    def admin_data
+      return @admin_data if @admin_data.present?
       asset_resource_id = self.raw_metadata['Asset.id'].strip if self.raw_metadata.keys.include?('Asset.id')
       asset_resource_id ||= self.raw_metadata['id']
-      work = Hyrax.query_service.find_by(id: asset_resource_id) if asset_resource_id
-      admin_data_gid =  if work.present? && work.admin_data.present?
-                          work.admin_data.update!(bulkrax_importer_id: bulkrax_importer_id)
-                          work.admin_data_gid
-                        else
-                          AdminData.create(bulkrax_importer_id: bulkrax_importer_id).gid
-                        end
+      begin
+        work = Hyrax.query_service.find_by(id: asset_resource_id) if asset_resource_id
+      rescue Valkyrie::Persistence::ObjectNotFoundError
+        work = nil
+      end
 
-      admin_data_gid
-    rescue Valkyrie::Persistence::ObjectNotFoundError
-      AdminData.create(bulkrax_importer_id: bulkrax_importer_id).gid
+      @admin_data = work.admin_data if work.present?
+      @admin_data ||= AdminData.new
+      @admin_data.bulkrax_importer_id = importer.id
+      @admin_data.save
+      @admin_data
     end
 
-    def build_annotations(annotations, admin_data_gid)
+    def admin_data_gid
+      admin_data.gid
+    end
+
+    def build_annotations(annotations)
       annotations.each do |annotation|
         if annotation['annotation_type'].nil?
           raise "annotation_type not registered with the AnnotationTypesService: #{annotation['annotation_type']}."
@@ -99,7 +101,7 @@ module Bulkrax
           value: annotation['value'],
           annotation: annotation['annotation'],
           version: annotation['version'],
-          admin_data_id: admin_data_gid.split('/').last
+          admin_data_id: admin_data.id
         )
       end
     end
