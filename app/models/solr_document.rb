@@ -545,7 +545,7 @@ class SolrDocument
 
   def admin_data_gid
     return unless is_asset?
-    self['admin_data_gid_ssim']&.first
+    self['admin_data_gid_ssim']&.first || self['admin_data_tesim']&.first
   end
 
   def admin_data

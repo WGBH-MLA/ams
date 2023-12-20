@@ -21,6 +21,7 @@ class AssetResourceIndexer < AMS::ValkyrieWorkIndexer
       if resource.admin_data
         # Index the admin_data_gid
         index_document['admin_data_tesim'] = resource.admin_data.gid if !resource.admin_data.gid.blank?
+        index_document['admin_data_gid_ssim'] = resource.admin_data.gid if !resource.admin_data.gid.blank?
         index_document['sonyci_id_ssim'] = resource.admin_data.sonyci_id if !resource.admin_data.sonyci_id.blank?
 
         # Programmatically assign annotations by type from controlled vocab
