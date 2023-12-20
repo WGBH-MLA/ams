@@ -6,9 +6,9 @@ RSpec.feature 'AssignMultipleRolesAsViewer.', js: true do
     let!(:user) { create :user }
     let!(:user_with_role) { create :user, role_names: ['test-role'] }
     let!(:admin_set_1) { create :hyrax_admin_set }
-    let!(:asset_resource_1) { create :asset_resource, :public, user: user, admin_set_id: admin_set_1.id}
+    let!(:asset_resource_1) { create :asset_resource, :public, depositor: user.user_key, admin_set_id: admin_set_1.id}
     let!(:admin_set_2) { create :hyrax_admin_set }
-    let!(:asset_resource_2) { create :asset_resource, :public, user: user, admin_set_id: admin_set_2.id}
+    let!(:asset_resource_2) { create :asset_resource, :public, depositor: user.user_key, admin_set_id: admin_set_2.id}
 
     before do
       admin_set_1.permission_manager.read_users = [user_with_role]
