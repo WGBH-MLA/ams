@@ -11,7 +11,7 @@ if ENV['DEPENDENCIES_NEXT'] && !ENV['DEPENDENCIES_NEXT'].empty?
 
 else
   gem 'rails', '~> 6.0'
-  gem 'hyrax-batch_ingest', git: 'https://github.com/samvera-labs/hyrax-batch_ingest', branch: 'dependency-upgrades'
+  gem 'hyrax-batch_ingest', git: 'https://github.com/samvera-labs/hyrax-batch_ingest', branch: 'valkyrie_update'
   gem 'hyrax', github: 'samvera/hyrax', branch: 'double_combo' # , tag: 'hyrax-v5.0.0.rc1'
   # Use SCSS for stylesheets
   gem 'sass-rails', '~> 6.0'

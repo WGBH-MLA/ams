@@ -11,6 +11,11 @@ class AssetResourceForm < Hyrax::Forms::ResourceForm(AssetResource)
   include ChildCreateButton
   include DisabledFields
 
+  validates :created_date, date: { allow_blank: true }
+  validates :date, date: { allow_blank: true }
+  validates :broadcast_date, date: { allow_blank: true }
+  validates :copyright_date, date: { allow_blank: true }
+
   attr_accessor :controller, :current_ability
 
   class_attribute :field_groups

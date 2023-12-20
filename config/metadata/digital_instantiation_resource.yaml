@@ -216,7 +216,7 @@ attributes:
       - "holding_organization_sim"
       - "holding_organization_tesim"
     form:
-      required: true
+      required: false
       primary: false
       multiple: false
   instantiation_admin_data_gid:

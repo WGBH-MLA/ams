@@ -29,7 +29,7 @@ RSpec.describe AMS::Export::Search::PhysicalInstantiationsSearch do
     end
 
     let(:expected_solr_doc_ids) do
-      asset_resources.map(&:physical_instantiation_resources).flatten.map(&:id)
+      asset_resources.map(&:physical_instantiations).flatten.map(&:id)
     end
 
     # And finally, after all that setup, run the spec.

@@ -123,8 +123,8 @@ RSpec.describe CatalogController, controller: true do
           let(:expected_csv_rows) {
             Set.new.tap do |csv_rows|
               asset_resources.map do |asset_resource|
-                asset_resource.physical_instantiation_resources.each do |physical_instantiation_resource|
-                  csv_rows << physical_instantiation_resource.csv_row_for('physical_instantiation')
+                asset_resource.physical_instantiations.each do |physical_instantiation_solr|
+                  csv_rows << physical_instantiation_solr.csv_row_for('physical_instantiation')
                 end
               end
             end

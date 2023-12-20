@@ -128,7 +128,7 @@ module AAPB
 
         intended_children_count = 0
         intended_children_count += pbcore.instantiations.size
-        intended_children_count += pbcore.instantiations.map(&:essence_tracks).flatten.size
+        intended_children_count += pbcore.instantiations.map(&:essence_track).flatten.size
         attrs[:intended_children_count]     = intended_children_count
       end
     end

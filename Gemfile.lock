@@ -10,7 +10,7 @@ GIT
 
 GIT
   remote: https://github.com/samvera-labs/bulkrax.git
-  revision: ba7a071799b97fc3585448c93ad8ec246cc5de5e
+  revision: c2ee9bc372cb7e6eb348f4f2e41e75f6fec8adcc
   branch: hyrax-4-valkyrie-support
   specs:
     bulkrax (5.3.0)
@@ -31,17 +31,17 @@ GIT
 
 GIT
   remote: https://github.com/samvera-labs/hyrax-batch_ingest
-  revision: cab14d5db9f5b54ab7ee076c5b056bd49088a7c2
-  branch: dependency-upgrades
+  revision: 137775262520b9de4f4f84fb65fb93d1499a1a86
+  branch: valkyrie_update
   specs:
-    hyrax-batch_ingest (0.2.0)
+    hyrax-batch_ingest (0.2.0b)
       hyrax (>= 4.0, < 6.0)
       rails (~> 6.0)
-      roo (~> 2.7.0)
+      roo (~> 2.7)
 
 GIT
   remote: https://github.com/samvera/hyrax.git
-  revision: b7891b758411c59f71ff54212e0d250fcc47e35f
+  revision: 5db4e83393bb510ce1d9e0ece4bf393926460b11
   branch: double_combo
   specs:
     hyrax (5.0.0.rc2)
@@ -887,9 +887,9 @@ GEM
       railties (>= 5.2)
     retriable (3.1.2)
     rexml (3.2.6)
-    roo (2.7.1)
+    roo (2.10.0)
       nokogiri (~> 1)
-      rubyzip (~> 1.1, < 2.0.0)
+      rubyzip (>= 1.3.0, < 3.0.0)
     rsolr (2.5.0)
       builder (>= 2.1.2)
       faraday (>= 0.9, < 3, != 2.0.0)

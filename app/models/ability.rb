@@ -31,6 +31,12 @@ class Ability
                    DigitalInstantiation,
                    Collection,
                    Contribution,
+                   AssetResource,
+                   EssenceTrackResource,
+                   PhysicalInstantiationResource,
+                   DigitalInstantiationResource,
+                   Hyrax::PcdmCollection,
+                   ContributionResource,
                    Annotation ]
 
     # Explicitly forbid these actions.
@@ -42,6 +48,12 @@ class Ability
                                   DigitalInstantiation,
                                   Collection,
                                   Contribution,
+                                  AssetResource,
+                                  EssenceTrackResource,
+                                  PhysicalInstantiationResource,
+                                  DigitalInstantiationResource,
+                                  Hyrax::PcdmCollection,
+                                  ContributionResource,
                                   Annotation ]
   end
 
@@ -62,6 +74,12 @@ class Ability
                               Contribution,
                               AdminData,
                               InstantiationAdminData,
+                              AssetResource,
+                              EssenceTrackResource,
+                              PhysicalInstantiationResource,
+                              DigitalInstantiationResource,
+                              Hyrax::PcdmCollection,
+                              ContributionResource,
                               Annotation ]
 
     # Field-level permissions for Admin Data
@@ -80,6 +98,12 @@ class Ability
                                         DigitalInstantiation,
                                         Collection,
                                         Contribution,
+                                        AssetResource,
+                                        EssenceTrackResource,
+                                        PhysicalInstantiationResource,
+                                        DigitalInstantiationResource,
+                                        Hyrax::PcdmCollection,
+                                        ContributionResource,
                                         Annotation ]
   end
 

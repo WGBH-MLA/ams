@@ -24,7 +24,6 @@ RSpec.describe AAPB::BatchIngest::CSVItemIngester do
 
   let(:new_batch) { build(:batch, ingest_type: 'aapb_csv_reader_1', submitter_email: user.email) }
   let(:new_batch_item) { build(:batch_item, batch: new_batch, source_data: new_source_data, source_location: nil, status: 'initialized') }
-  let(:new_asset_resource) { described_class.new(new_batch_item).ingest }
 
   let(:physical_instantiation_resource_batch) { build(:batch, ingest_type: 'aapb_csv_reader_2', submitter_email: user.email) }
   let(:new_pi_batch_item) { build(:batch_item, batch: physical_instantiation_resource_batch, source_data: physical_instantiation_resource_source_data, source_location: nil, status: 'initialized') }
@@ -40,18 +39,18 @@ RSpec.describe AAPB::BatchIngest::CSVItemIngester do
 
   let(:multivalue_attribute_batch) { build(:batch, ingest_type: 'aapb_csv_reader_4', submitter_email: user.email) }
   let(:multivalue_attribute_batch_item) { build(:batch_item, batch: multivalue_attribute_batch, source_data: multivalue_add_source_data, source_location: nil, status: 'initialized') }
-  let(:multivalue_attribute_update_asset) { described_class.new(multivalue_attribute_batch_item).ingest }
+  let(:multivalue_attribute_update_asset_resource) { described_class.new(multivalue_attribute_batch_item).ingest }
 
   let(:invalid_batch) { build(:batch, ingest_type: 'aapb_csv_reader_1', submitter_email: user.email) }
   let(:invalid_batch_item) { build(:batch_item, batch: invalid_batch, source_data: invalid_source_data, source_location: nil, status: 'initialized') }
-  let(:invalid_asset) { described_class.new(invalid_batch_item).ingest }
+  let(:invalid_asset_resource) { described_class.new(invalid_batch_item).ingest }
 
 
   describe '#ingest new AssetResources' do
     context 'using aapb_csv_reader_1' do
       it 'creates a new AssetResource' do
-        skip 'TODO fix batch ingest'
-        new_asset_resource.reload
+        new_asset_resource = described_class.new(new_batch_item).ingest
+        new_asset_resource = AssetResource.find(new_asset_resource.id)
         expect(new_asset_resource).to be_instance_of(AssetResource)
         expect(new_asset_resource.members.select { |member| member.is_a? ContributionResource }.length).to eq(1)
         expect(new_asset_resource.members.select { |member| member.is_a? PhysicalInstantiationResource }.length).to eq(1)
@@ -63,12 +62,12 @@ RSpec.describe AAPB::BatchIngest::CSVItemIngester do
   describe '#ingest new PhysicalInstantiationResource' do
     context 'using aapb_csv_reader_2' do
       let(:admin_data) { create(:admin_data) }
-      let(:asset_resource) { create(:asset_resource, id: 'cpb-aacip_600-4746q1sh21', with_admin_data: admin_data.gid, user: user) }
       it 'creates and associates a new PhysicalInstantiationResource' do
-        skip 'TODO fix batch ingest'
+        asset_resource = create(:asset_resource, id: 'cpb-aacip_600-4746q1sh21', with_admin_data: admin_data.gid, depositor: user.user_key)
+
         expect(asset_resource.members.select { |member| member.is_a? PhysicalInstantiationResource }.length).to eq(0)
         new_physical_instantiation_resource
-        asset_resource.reload
+        asset_resource = AssetResource.find(asset_resource.id)
         expect(asset_resource.members.select { |member| member.is_a? PhysicalInstantiationResource }.length).to eq(1)
         physical_instantiation_resource = asset_resource.members.select { |member| member.is_a? PhysicalInstantiationResource }.first
         expect(physical_instantiation_resource.format).to eq('1 inch videotape')
@@ -81,16 +80,14 @@ RSpec.describe AAPB::BatchIngest::CSVItemIngester do
   describe '#ingest and overwrite AssetResource, AdminData, and Annotation attributes' do
     context 'using aapb_csv_reader_3' do
       let(:admin_data) { create(:admin_data, :with_special_collections_annotation) }
-      let(:asset_resource) { create(:asset_resource, id: 'cpb-aacip_600-4746q1sh21', with_admin_data: admin_data.gid, user: user) }
       it 'updates an existing AssetResource' do
-        skip 'TODO fix batch ingest'
+        asset_resource = create(:asset_resource, id: 'cpb-aacip_600-4746q1sh21', with_admin_data: admin_data.gid, depositor: user.user_key)
         expect(asset_resource.asset_types).to eq(['Clip','Promo'])
         expect(asset_resource.local_identifier).to eq(['WGBH-11'])
         expect(asset_resource.sonyci_id).to eq(['Sony-1', 'Sony-2'])
         expect(asset_resource.admin_data.annotations.map(&:value) ).to eq(['Collection1'])
         update_asset_resource
-        asset_resource.reload
-        asset_resource.admin_data.reload
+        asset_resource = AssetResource.find(asset_resource.id)
         expect(asset_resource.asset_types).to eq(['Album'])
         expect(asset_resource.local_identifier).to eq(['wfreu5'])
         expect(asset_resource.sonyci_id).to eq(['wfreu6'])
@@ -102,16 +99,15 @@ RSpec.describe AAPB::BatchIngest::CSVItemIngester do
   describe '#ingest and preserve existing AssetResource, AdminData, and Annotation attributes' do
     context 'using aapb_csv_reader_3' do
       let(:admin_data) { create(:admin_data, :with_special_collections_annotation) }
-      let(:asset_resource) { create(:asset_resource, id: 'cpb-aacip_600-4746q1sh21', with_admin_data: admin_data.gid, user: user) }
       it 'updates an existing AssetResource, AdminData, and Annotations and preserves the existing data' do
-        skip 'TODO fix batch ingest'
+        asset_resource = create(:asset_resource, id: 'cpb-aacip_600-4746q1sh21', with_admin_data: admin_data.gid, depositor: user.user_key)
+
         expect(asset_resource.asset_types).to eq(['Clip','Promo'])
         expect(asset_resource.local_identifier).to eq(['WGBH-11'])
         expect(asset_resource.sonyci_id).to eq(['Sony-1', 'Sony-2'])
         expect(asset_resource.admin_data.annotations.map(&:value) ).to eq(['Collection1'])
         preserve_asset_resource
-        asset_resource.reload
-        asset_resource.admin_data.reload
+        asset_resource = AssetResource.find(asset_resource.id)
         expect(asset_resource.asset_types).to eq(['Album'])
         expect(asset_resource.local_identifier).to eq(['WGBH-11'])
         expect(asset_resource.sonyci_id).to eq(['Sony-1', 'Sony-2'])
@@ -123,17 +119,15 @@ RSpec.describe AAPB::BatchIngest::CSVItemIngester do
   describe '#ingest and add to AssetResource multivalue attributes' do
     context 'using aapb_csv_reader_4' do
       let(:admin_data) { create(:admin_data, :with_special_collections_annotation) }
-      let(:asset_resource) { create(:asset_resource, id: 'cpb-aacip_600-4746q1sh22', with_admin_data: admin_data.gid, user: user) }
       it 'updates an existing AssetResource with new multivalue attributes' do
-        skip 'TODO fix batch ingest'
+        asset_resource = create(:asset_resource, id: 'cpb-aacip_600-4746q1sh22', with_admin_data: admin_data.gid, depositor: user.user_key)
         expect(asset_resource.asset_types).to eq(['Clip','Promo'])
         expect(asset_resource.genre).to eq(['Drama','Debate'])
         expect(asset_resource.spatial_coverage).to eq(['TEST spatial_coverage'])
         expect(asset_resource.admin_data.sonyci_id).to eq(['Sony-1','Sony-2'])
         expect(asset_resource.admin_data.annotations.map(&:value) ).to eq(['Collection1'])
         multivalue_attribute_update_asset_resource
-        asset_resource.reload
-        asset_resource.admin_data.reload
+        asset_resource = AssetResource.find(asset_resource.id)
         expect(asset_resource.asset_types.sort).to eq(['Clip', 'Promo', 'Segment'])
         expect(asset_resource.genre.sort).to eq(['Debate', 'Drama', 'Interview'])
         expect(asset_resource.spatial_coverage.sort).to eq(['Mars', 'TEST spatial_coverage'])
@@ -146,8 +140,7 @@ RSpec.describe AAPB::BatchIngest::CSVItemIngester do
   describe '#ingest invalid AssetResources' do
     context 'using aapb_csv_reader_1' do
       it 'raises a date validation error' do
-        skip 'TODO fix batch ingest'
-        expect{ invalid_asset_resource.reload }.to raise_error(RuntimeError, "Batch item contained invalid data.\n\n{:created_date=>[\"invalid date format: 1/1/10\"]}")
+        expect{ invalid_asset_resource }.to raise_error(RuntimeError, "Batch item contained invalid data.\n\n{:created_date=>[\"invalid date format: 1/1/10\"]}")
       end
     end
   end

@@ -4,8 +4,8 @@ class CsvBuilder
 
   attr_reader :path, :rows, :headers
 
-  def initialize(path:, rows: [], headers: [])
-    @path, @rows, @headers = path, rows, headers
+  def initialize(attributes)
+    @path, @rows, @headers = attributes[:path], attributes[:rows], attributes[:headers]
   end
 
   def save!

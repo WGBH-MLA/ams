@@ -40,11 +40,10 @@ RSpec.feature "Ingest: AAPB PBCore - Zipped" do
       # We rescue from any ObjectNotFound error to mystery errors in the before
       # hook; we would rather have failed tests.
       @ingested_objects = @batch.batch_items.map do |batch_item|
-        ActiveFedora::Base.find(batch_item.repo_object_id.to_s)
-      rescue ActiveFedora::ObjectNotFoundError
+        Hyrax.query_service.find_by(id: batch_item.repo_object_id.to_s)
+      rescue Valkyrie::Persistence::ObjectNotFoundError
         nil
       end.compact
-
     end
 
     let(:expected_batch_item_count) do

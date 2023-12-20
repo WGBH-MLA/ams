@@ -17,18 +17,14 @@ module AAPB
 
           batch_item_object = ingest_asset!
 
-          # Raise validation errors as exceptions to be handled by the batch
-          # item processing job in the hyrax-batch_ingest gem
-          raise "Batch item contained invalid data.\n\n#{batch_item_object.errors.to_a.join("\n")}" if batch_item_object.errors.count > 0
-
           pbcore_digital_instantiations.each do |pbcore_digital_instantiation|
             di_batch_item = Hyrax::BatchIngest::BatchItem.create!(batch: batch_item.batch, status: 'initialized', id_within_batch: batch_item.id_within_batch)
-            CoolDigitalJob.perform_later(parent_id: batch_item_object.id, xml: pbcore_digital_instantiation.to_xml, batch_item: di_batch_item)
+            CoolDigitalJob.perform_later(parent_id: batch_item_object.id.to_s, xml: pbcore_digital_instantiation.to_xml, batch_item: di_batch_item)
           end
 
           pbcore_physical_instantiations.each do |pbcore_physical_instantiation|
             pi_batch_item = Hyrax::BatchIngest::BatchItem.create!(batch: batch_item.batch, status: 'initialized', id_within_batch: batch_item.id_within_batch)
-            CoolPhysicalJob.perform_later(parent_id: batch_item_object.id, xml: pbcore_physical_instantiation.to_xml, batch_item: pi_batch_item)
+            CoolPhysicalJob.perform_later(parent_id: batch_item_object.id.to_s, xml: pbcore_physical_instantiation.to_xml, batch_item: pi_batch_item)
           end
         elsif batch_item_is_digital_instantiation?
           batch_item_object = ingest_digital_instiation_and_manifest!
@@ -71,71 +67,66 @@ module AAPB
           raise msg
         end
 
+        def ingest_klass(klass, attrs)
+          cx = Hyrax::Forms::ResourceForm.for(klass.new).prepopulate!
+          cx.validate(attrs)
+
+          result = Hyrax::Transactions::Container["work_resource.create_with_bulk_behavior"]
+            .with_step_args(
+              "work_resource.add_bulkrax_files" => {files: [], user: submitter},
+
+              "change_set.set_user_as_depositor" => {user: submitter},
+              "work_resource.change_depositor" => {user: submitter},
+              'work_resource.save_acl' => { permissions_params: [attrs.try('visibility') || 'open'].compact }
+            )
+            .call(cx)
+
+          if result.failure?
+            msg = result.failure[0].to_s
+            msg += " - #{result.failure[1].full_messages.join(',')}" if result.failure[1].respond_to?(:full_messages)
+            raise StandardError, msg, result.trace
+          end
+
+          result.value!
+        end
+
         def ingest_asset!
           attrs = AAPB::BatchIngest::PBCoreXMLMapper.new(pbcore_xml).asset_attributes
 
           validate_record_does_not_exist! attrs[:id]
           attrs[:hyrax_batch_ingest_batch_id] = batch_id
-
-          # Create an actor environment with a new Asset object and the
-          # attributes mapped from PBCore.
-          asset = Asset.new
-          env = Hyrax::Actors::Environment.new(asset, current_ability, attrs)
-
-          # Get the actor and call #create with teh actor environment.
-          # If #create fails, raise any exception that was set on the Asset
-          # object.
-          actor = Hyrax::CurationConcern.actor
-          raise_ingest_errors(asset) unless actor.create(env)
-
-          # Return the completed asset that has been populaged with attributes
-          # and saved (all within the actor stack).
-          asset
+          ingest_klass(AssetResource, attrs)
         end
 
         def ingest_digital_instiation_and_manifest!
-          digital_instantiation = DigitalInstantiation.new
-          digital_instantiation.skip_file_upload_validation = true
-          actor = Hyrax::CurationConcern.actor
           mapper = AAPB::BatchIngest::ZippedPBCoreDigitalInstantiationMapper.new(@batch_item)
           attrs = mapper.digital_instantiation_attributes
           parent = mapper.parent_asset
-          env = Hyrax::Actors::Environment.new(digital_instantiation, current_ability, attrs)
-          raise_ingest_errors(digital_instantiation) unless actor.create(env)
+          digital_instantiation = ingest_klass(DigitalInstantiationResource, attrs)
           atomically_adopt parent, digital_instantiation
           digital_instantiation
         end
 
         def ingest_digital_instantiation!(parent:, xml:)
-          digital_instantiation = DigitalInstantiation.new
-          digital_instantiation.skip_file_upload_validation = true
-          actor = Hyrax::CurationConcern.actor
           attrs = { pbcore_xml: xml }
-          env = Hyrax::Actors::Environment.new(digital_instantiation, current_ability, attrs)
-          env.attributes[:title] = ::SolrDocument.new(parent.to_solr).title
-          raise_ingest_errors(digital_instantiation) unless actor.create(env)
+          attrs[:title] = ::SolrDocument.new(parent.to_solr).title
+          digital_instantiation = ingest_klass(DigitalInstantiationResource, attrs)
           atomically_adopt parent, digital_instantiation
           digital_instantiation
         end
 
         def ingest_physical_instantiation!(parent:, xml:)
-          physical_instantiation = PhysicalInstantiation.new
-          actor = Hyrax::CurationConcern.actor
-          attrs = AAPB::BatchIngest::PBCoreXMLMapper.new(xml).physical_instantiation_attributes
-          env = Hyrax::Actors::Environment.new(physical_instantiation, current_ability, attrs)
-          env.attributes[:title] = ::SolrDocument.new(parent.to_solr).title
-          raise_ingest_errors(physical_instantiation) unless actor.create(env)
+          attrs = AAPB::BatchIngest::PBCoreXMLMapper.new(xml).physical_instantiation_resource_attributes
+          attrs[:title] = ::SolrDocument.new(parent.to_solr).title
+          physical_instantiation = ingest_klass(PhysicalInstantiationResource, attrs)
           atomically_adopt parent, physical_instantiation
           physical_instantiation
         end
 
         def ingest_essence_track!(parent:, xml:)
-          essence_track = EssenceTrack.new
-          actor = Hyrax::CurationConcern.actor
           attrs = AAPB::BatchIngest::PBCoreXMLMapper.new(xml).essence_track_attributes
-          env = Hyrax::Actors::Environment.new(essence_track, current_ability, attrs)
-          env.attributes[:title] = ::SolrDocument.new(parent.to_solr).title
-          raise_ingest_errors(essence_track) unless actor.create(env)
+          attrs[:title] = ::SolrDocument.new(parent.to_solr).title
+          essence_track = ingest_klass(EssenceTrackResource, attrs)
           atomically_adopt parent, essence_track
           essence_track
         end
@@ -190,7 +181,7 @@ module AAPB
         def atomically_adopt(parent, child)
           # Get the lock for 10 seconds
           lock_manager.lock!("add_ordered_member_to:#{parent.id}", 120000) do |locked|
-            parent.ordered_members << child
+            parent.member_ids += [child.id.to_s]
             parent.save!
           end
         rescue Redlock::LockError
@@ -225,13 +216,13 @@ module AAPB
 
         def submitter_can_create_records?
           [
-            Asset,
-            DigitalInstantiation,
-            PhysicalInstantiation,
-            EssenceTrack,
-            Contribution,
+            AssetResource,
+            DigitalInstantiationResource,
+            PhysicalInstantiationResource,
+            EssenceTrackResource,
+            ContributionResource,
             AdminData,
-            Collection
+            Hyrax::PcdmCollection
           ].all? do |klass|
             ability.can? :create, klass
           end

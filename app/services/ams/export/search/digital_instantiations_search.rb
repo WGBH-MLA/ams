@@ -4,7 +4,7 @@ module AMS
       class DigitalInstantiationsSearch < InstantiationsSearch
         private
           def model_class_name
-            "DigitalInstantiationResource"
+            "DigitalInstantiation"
           end
       end
     end

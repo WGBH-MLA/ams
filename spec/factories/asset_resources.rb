@@ -38,7 +38,6 @@ FactoryBot.define do
     visibility { Hydra::AccessControls::AccessRight::VISIBILITY_TEXT_VALUE_PUBLIC }
 
     transient do
-      user { create(:user) }
       # Pass in AdminData.gid or it will create one for you!
       with_admin_data { false }
       # Pass in an AdminSet instance, or an admin set id, for example
@@ -125,6 +124,8 @@ FactoryBot.define do
     end
 
     after(:build) do |work, evaluator|
+      work.depositor = create(:user)&.user_key if !work.depositor.present?
+
       if evaluator.with_admin_data
         attributes = {}
         work.admin_data_gid = evaluator.with_admin_data if !work.admin_data_gid.present?
@@ -143,7 +144,6 @@ FactoryBot.define do
           .new(resource: work)
           .assign_access_for(visibility: evaluator.visibility_setting)
       end
-
       work.permission_manager.edit_groups = evaluator.edit_groups
       work.permission_manager.edit_users  = evaluator.edit_users
       work.permission_manager.read_users  = evaluator.read_users
