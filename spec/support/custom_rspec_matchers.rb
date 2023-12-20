@@ -37,12 +37,22 @@ RSpec.configure { |c| c.include HyraxCapybaraMatchers }
 
 RSpec::Matchers.define :exist_in_repository do
   match do |obj_id|
-    ActiveFedora::Base.exists? obj_id
+    begin
+      Hyrax.query_service.find_by(id: obj_id)
+      true
+    rescue Valkyrie::Persistence::ObjectNotFoundError
+      false
+    end
   end
 end
 
 RSpec::Matchers.define :not_exist_in_repository do
   match do |obj_id|
-    !ActiveFedora::Base.exists? obj_id
+    begin
+      Hyrax.query_service.find_by(id: obj_id)
+      false
+    rescue Valkyrie::Persistence::ObjectNotFoundError
+      true
+    end
   end
 end

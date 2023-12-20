@@ -7,8 +7,8 @@ RSpec.describe AMS::BatchIngestUtility do
   let!(:batch) { create(:batch) }
   # Create 2 sets of objects, one that we will mark as needing re-ingest, and
   # another that will not need re-ingest.
-  let!(:objects_needing_reingest)  { 3.times.map { AssetResource.create } }
-  let!(:objects_not_needing_reingest) { 3.times.map { AssetResource.create } }
+  let!(:objects_needing_reingest)  { 3.times.map { AssetResource.new.save} }
+  let!(:objects_not_needing_reingest) { 3.times.map { AssetResource.new.save } }
 
   let!(:batch_items) do
     # For all the repo objects, create a completed batch item. Use 2 different

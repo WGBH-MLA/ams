@@ -151,7 +151,7 @@ RSpec.describe CatalogController, controller: true do
           let(:expected_csv_rows) {
             Set.new.tap do |csv_rows|
               asset_resources.map do |asset_resource|
-                asset_resource.digital_instantiation_resources.each do |digital_instantiation_resource|
+                asset_resource.digital_instantiations.each do |digital_instantiation_resource|
                   csv_rows << digital_instantiation_resource.csv_row_for('digital_instantiation')
                 end
               end
