@@ -29,12 +29,13 @@ module Ams
 
       def find_or_create_admin_data(change_set)
         if change_set.model.admin_data_gid.present?
-          change_set['admin_data_gid'] = change_set.model.admin_data_gid
+          change_set.admin_data_gid = change_set.model.admin_data_gid
         else
-          change_set.model.admin_data_gid = change_set['admin_data_gid']
+          change_set.model.admin_data_gid = change_set.admin_data_gid
         end
 
-        change_set.model.admin_data || change_set.model.create_admin_data
+        change_set.model.admin_data ||= AdminData.create
+        change_set.admin_data_gid ||= change_set.model.admin_data.gid
       end
 
       def save_aapb_admin_data(change_set)
@@ -70,8 +71,8 @@ module Ams
 
       def delete_removed_annotations(admin_data, change_set)
         return if admin_data.annotations.empty?
-        return if change_set.fields["annotations"].nil?
-        ids_in_env = change_set.fields["annotations"].select{ |ann| ann["id"].present? }.map{ |ann| ann["id"].to_i }
+        return if change_set.annotations.blank?
+        ids_in_env = change_set.annotations.map(&:id)
         admin_data.annotations.each do |annotation|
           annotation.destroy unless ids_in_env.include?(annotation.id)
         end
@@ -80,8 +81,7 @@ module Ams
       def set_annotations_attributes(admin_data, change_set)
         return if change_set.fields["annotations"].nil?
         change_set.fields["annotations"].each do |annotation|
-          permitted_annotation = annotation.permit(annotation_attributes)
-
+          permitted_annotation = annotation.with_indifferent_access.extract!(*annotation_attributes)
           # Fixes an issue where manually deleting annotations sent an
           # empty annotation to the env
           next if annotation_empty?(permitted_annotation)

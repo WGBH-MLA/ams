@@ -18,12 +18,12 @@ RSpec.describe AAPB::BatchIngest::ZippedPBCoreDigitalInstantiationMapper, :pbcor
       let(:asset_id) { '123456' }
 
       before(:each) do
-        create(:asset, id: asset_id)
+        create(:asset_resource, id: asset_id)
       end
 
       it 'maps attributes from Manifest' do
         expect(attrs[:pbcore_xml]).to eq(pbcore_xml)
-        expect(attrs[:title]).to eq(Asset.find(asset_id).title)
+        expect(attrs[:title]).to eq(AssetResource.find(asset_id).title)
         expect(attrs[:generations]).to eq(["Proxy", "Master"])
         expect(attrs[:holding_organization]).to eq("American Archive of Public Broadcasting")
         expect(attrs[:aapb_preservation_lto]).to eq("fhqwhgads")

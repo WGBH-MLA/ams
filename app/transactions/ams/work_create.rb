@@ -6,6 +6,7 @@ module Ams
       'change_set.ensure_admin_set',
       'change_set.set_user_as_depositor',
       'change_set.create_aapb_admin_data',
+      'change_set.add_data_from_pbcore',
       'change_set.handle_contributors',
       'change_set.apply',
       'work_resource.apply_permission_template',

@@ -13,7 +13,7 @@ module AAPB
           attr.each do |attr|
             # Look for admin_data accessors from assets or physical_nstantiations.
             # If one of them is there, add their attribute names to the whitelisted properties.
-            whitelisted_properties = klass.properties.keys
+            whitelisted_properties = klass.respond_to?(:schema) ? klass.fields : klass.properties.keys
 
             if klass.instance_methods.include?(:admin_data)
               whitelisted_properties += AdminData.attribute_names
@@ -44,7 +44,7 @@ module AAPB
                  attributes.deep_dup
                else
                  extra_attr=[]
-                 if object_class == "Asset"
+                 if object_class.include?("Asset")
                    extra_attr=(AdminData.attribute_names.dup - ['id', 'created_at', 'updated_at'] + Annotation.ingestable_attributes).uniq
                  elsif object_class.include?("Instantiation")
                    extra_attr=(InstantiationAdminData.attribute_names.dup - ['id', 'created_at', 'updated_at'])

@@ -5,7 +5,14 @@ module AMS
     included do
       def create_child_methods
         self.valid_child_concerns.each do |child_class|
+          # name with _resources gives us valkyrie or af record - digital_instantation_resouces
           method_name = child_class.to_s.underscore.pluralize
+          self.class.send(:define_method, method_name) do
+            self.members.select { |work| work.is_a?(child_class) }
+          end
+
+          # name with out _resources gives us solr record - digital_instantation
+          method_name = child_class.to_s.underscore.gsub(/_resour.*/, '').pluralize
           self.class.send(:define_method, method_name) do
             case self
             when ActiveFedora::Base

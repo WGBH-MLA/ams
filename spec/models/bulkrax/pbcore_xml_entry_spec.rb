@@ -184,6 +184,7 @@ module Bulkrax
                 "promo_description"=>[],
                 "raw_footage_description"=>[],
                 "date"=>[],
+                "contributors" => [],
                 "broadcast_date"=>[],
                 "copyright_date"=>[],
                 "created_date"=>["1996-05-11"],

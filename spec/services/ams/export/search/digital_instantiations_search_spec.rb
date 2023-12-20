@@ -19,7 +19,7 @@ RSpec.describe AMS::Export::Search::DigitalInstantiationsSearch do
 
     # Grab all the DigitalInstantiation IDs that were created.
     let(:digital_instantiation_resource_ids) do
-      Set.new(asset_resources.map(&:digital_instantiation_resources).flatten.map(&:id))
+      Set.new(asset_resources.map(&:digital_instantiations).flatten.map(&:id))
     end
 
     # Create a user, required for searching.
@@ -34,7 +34,7 @@ RSpec.describe AMS::Export::Search::DigitalInstantiationsSearch do
     end
 
     let(:expected_solr_doc_ids) do
-      asset_resources.map(&:digital_instantiation_resources).flatten.map(&:id)
+      asset_resources.map(&:digital_instantiations).flatten.map(&:id)
     end
 
     # And finally, after all that setup, run the spec.

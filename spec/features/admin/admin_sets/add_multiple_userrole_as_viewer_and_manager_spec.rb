@@ -4,7 +4,7 @@ RSpec.feature 'Add "manage" permissions to test role', js: true, clean:true do
   let!(:admin_user) { create :admin_user }
   let!(:user) { create :user, role_names: ['test_role'] }
   let!(:admin_set) { create(:hyrax_admin_set, with_permission_template: true ) }
-  let!(:asset_resource) { create(:asset_resource, :public, user: user, admin_set: admin_set) }
+  let!(:asset_resource) { create(:asset_resource, :public, depositor: user.user_key, admin_set: admin_set) }
 
   scenario 'Assigning Permissions to AdminSets' do
     login_as(admin_user)

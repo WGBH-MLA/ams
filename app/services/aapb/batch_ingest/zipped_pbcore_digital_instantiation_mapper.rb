@@ -41,7 +41,7 @@ module AAPB
       end
 
       def parent_asset
-        @asset ||= Asset.find(row_data[:id]).first
+        @asset ||= Hyrax.query_service.find_by(id: row_data[:id].first)
       end
 
       private

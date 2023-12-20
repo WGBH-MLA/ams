@@ -7,7 +7,7 @@ module AAPB
         @works_ingested = []
         set_options
         @source_data = JSON.parse(@batch_item.source_data)
-        ingest_object_at options, @source_data
+        result = ingest_object_at options, @source_data
 
         raise "Batch item contained invalid data.\n\n#{@batch_item.error}" unless @batch_item.error.nil?
         @works_ingested.first
@@ -55,15 +55,15 @@ module AAPB
             .call(cx)
 
           if result.failure?
-            msg = result.failure[0].to_s
-            msg += " - #{result.failure[1].full_messages.join(',')}" if result.failure[1].respond_to?(:full_messages)
-            raise StandardError, msg, result.trace
+            msg = "Batch item contained invalid data.\n\n"
+            msg += "#{result.failure[1].messages}" if result.failure[1].respond_to?(:messages)
+            raise RuntimeError, msg, result.trace
           end
 
           result
         end
+
         def ingest_object_at(node, with_data, with_parent = false)
-          actor = ::Hyrax::CurationConcern.actor
           user = User.find_by_email(@batch_item.submitter_email)
           ability = ::Ability.new(user)
           ingest_type = node.ingest_type
@@ -72,7 +72,7 @@ module AAPB
                          with_data[node.object_class]
                        else
                          solr_doc = SolrDocument.new(with_parent.to_solr)
-                         with_data.merge(in_works_ids: [with_parent.id], title: solr_doc.title)
+                         with_data.merge(title: solr_doc.title)
                        end
 
           attributes["admin_set_id"] = @batch_item.batch.admin_set_id
@@ -110,10 +110,10 @@ module AAPB
 
           # catch sub-Asset ingest failures here, where we have attributes, cleanup, then re-raise to enable rescue_from to properly update failed batch item etc
           begin
-            if actor_stack_status
+            if actor_stack_status.success?
               @batch_item.repo_object_id = model_object.id unless !with_parent
+              model_object = actor_stack_status.value!
               @works_ingested << model_object.dup
-
               parent_node = if !with_parent
                               @works_ingested.last
                             else
@@ -125,23 +125,23 @@ module AAPB
                 # We won't always have data from the CSV for the children, so don't
                 # fail if it is not included with the with_data
                 with_data[c_node.object_class].each do |c_data|
-                  ingest_object_at(c_node,c_data,parent_node)
+                  result = ingest_object_at(c_node,c_data,parent_node)
+                  parent_node.member_ids += [result.id.to_s] if result
                 end unless with_data[c_node.object_class].nil?
               end
-            end
-            if model_object.errors.any?
-              @batch_item.error = model_object.errors.messages.to_s
+              parent_node.save if parent_node.member_ids.present?
+            else
+              @batch_item.error = actor_stack_status.failure[0].to_s
             end
           rescue => e
             # If there was an exception during ingest, ensure the related work
             # is destroyed.
-            work_id = attributes.fetch(:in_works_ids, []).first
-            work_id ||= model_object&.in_works_ids&.first if model_object
+            work_id = parent_node.id
 
             if work_id
               work = Hyrax.query_service.find_by(id: work_id)
               asset_batch_id = work.admin_data.hyrax_batch_ingest_batch_id if work.admin_data
-              child_batch_id = model_object.admin_data.hyrax_batch_ingest_batch_id if model_object.admin_data
+              child_batch_id = model_object.admin_data.hyrax_batch_ingest_batch_id if model_object.respond_to?(:admin_data) && model_object.admin_data
 
               # make sure failed child object is from the same batch as parent
               if work && asset_batch_id == child_batch_id
@@ -154,6 +154,7 @@ module AAPB
             # BatchItemIngestJob from hyrax-batch_ingest gem
             raise e
           end
+          model_object
         end
 
         def set_options
@@ -171,12 +172,6 @@ module AAPB
             new_attributes["hyrax_batch_ingest_batch_id"] = batch_id
           end
 
-          if new_attributes[:in_works_ids].present?
-            new_attributes[:in_works_ids].each do |work_id|
-              set_batch_ingest_id_on_related_asset(work_id, ability)
-            end
-          end
-
           new_attributes
         end
 
@@ -190,8 +185,14 @@ module AAPB
             # the AssetActor does not expect the existing Annotions unless Annotations are in the env.
             set_admin_data_attributes(admin_data, attributes)
             # annotations work the same for both update and add
-            admin_data.annotations_attributes = attributes.delete('annotations')
-            admin_data.save!
+            new_annotations = attributes.delete('annotations')
+            if new_annotations.present?
+              annotation_types = new_annotations.map {|a| a['annotation_type']}
+              to_remove = admin_data.annotations.select { |a| a.annotation_type.in?(annotation_types) }
+              admin_data.annotations.destroy(to_remove)
+              admin_data.annotations_attributes = new_annotations
+              admin_data.save!
+            end
           when 'add'
             # serialized fields need to preserve exising data in an add ingest
             # handles asset, admin_data, and annotations
@@ -205,10 +206,8 @@ module AAPB
           unless asset = Hyrax.query_service.find_by(id: work_id)
             raise 'Cannot find Asset with ID: #{work_id}.'
           end
-          asset_actor = ::Hyrax::CurationConcern.actor
-          asset_attrs = { hyrax_batch_ingest_batch_id: batch_id }
-          asset_env = Hyrax::Actors::Environment.new(asset, ability, asset_attrs)
-          asset_actor.update(asset_env)
+          asset.admin_data.hyrax_batch_ingest_batch_id = batch_id
+          asset.save
         end
 
         def set_admin_data_attributes(admin_data, attributes)

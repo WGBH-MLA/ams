@@ -9,6 +9,10 @@ module Ams
         Ams::Steps::HandleContributors.new
       end
 
+      ops.register "add_data_from_pbcore" do
+        Ams::Steps::AddDataFromPbcore.new
+      end
+
       ops.register "create_aapb_admin_data" do
         Ams::Steps::CreateAapbAdminData.new
       end
