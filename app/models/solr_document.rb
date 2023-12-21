@@ -35,7 +35,7 @@ class SolrDocument
 
   # Determine which type of Fedora record this SolrDocument instance represents.
   def has_model
-    self['has_model_ssim'].first
+    Array.wrap(self['has_model_ssim']).first
   end
 
   # Define boolean predicates for determining record type.
@@ -545,7 +545,7 @@ class SolrDocument
 
   def admin_data_gid
     return unless is_asset?
-    self['admin_data_gid_ssim']&.first
+    Array.wrap(self['admin_data_gid_ssim'] || self['admin_data_tesim']).first
   end
 
   def admin_data

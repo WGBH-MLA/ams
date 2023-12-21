@@ -23,6 +23,7 @@ class AssetIndexer < AMS::WorkIndexer
       if object.admin_data
         # Index the admin_data_gid
         solr_doc['admin_data_tesim'] = object.admin_data.gid if !object.admin_data.gid.blank?
+        solr_doc['admin_data_gid_ssim'] = object.admin_data.gid if !object.admin_data.gid.blank?
         solr_doc['sonyci_id_ssim'] = object.admin_data.sonyci_id if !object.admin_data.sonyci_id.blank?
 
         # Programmatically assign annotations by type from controlled vocab

@@ -29,7 +29,7 @@ module AMS
           #   for the database ID here, which is not ideal.
           def update_last_pushed
             admin_data_ids = export_results.solr_documents.map do |solr_doc|
-              solr_doc['admin_data_gid_ssim'].first.sub('gid://ams/admindata/', '')
+              Array.wrap(solr_doc['admin_data_gid_ssim']).first.sub('gid://ams/admindata/', '')
             end
             AdminData.where(id: admin_data_ids).update(last_pushed: Time.now)
           end

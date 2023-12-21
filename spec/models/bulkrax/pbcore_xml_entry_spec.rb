@@ -174,6 +174,7 @@ module Bulkrax
                 "model"=>"AssetResource",
                 "id"=>"cpb-aacip-20-000000hr",
                 "series_title"=>["Houston Symphony"],
+                "sonyci_id" => ["d74384e6424246088871415afe6230f5"],
                 "description"=>["5/11/96"],
                 "episode_description"=>[],
                 "series_description"=>
