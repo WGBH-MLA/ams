@@ -11,7 +11,7 @@ RSpec.describe AMS::Export::Delivery::AAPBDelivery do
   #   end
   # end
 
-  let(:assets) { create_list(:asset, rand(2..4)) }
+  let(:assets) { create_list(:asset_resource, rand(2..4)) }
 
   let(:solr_documents) do
     assets.map { |asset| SolrDocument.new(asset.to_solr) }
@@ -57,7 +57,6 @@ RSpec.describe AMS::Export::Delivery::AAPBDelivery do
       # Grab a timestamp just before delivering, so we can test to make sure
       # the last_pushed date for the records is updated to something afterward.
       @just_before_delivery = Time.now.to_i
-
       # call the method under test
       subject.deliver
     end
