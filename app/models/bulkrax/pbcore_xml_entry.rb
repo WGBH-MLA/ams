@@ -39,7 +39,11 @@ module Bulkrax
 
       self.parsed_metadata = {}
       self.parsed_metadata[work_identifier] = self.raw_metadata[source_identifier]
-      self.parsed_metadata['model'] = self.raw_metadata['model']
+      self.parsed_metadata['model'] = if self.raw_metadata['model'].match(/Resource/)
+                                        self.raw_metadata['model']
+                                      else
+                                        "#{self.raw_metadata['model']}Resource"
+                                      end
       if self.raw_metadata['model'] == 'DigitalInstantiationResource'
         self.parsed_metadata['pbcore_xml'] = self.raw_metadata['pbcore_xml'] if self.raw_metadata['pbcore_xml'].present?
         self.parsed_metadata['format'] = self.raw_metadata['format']

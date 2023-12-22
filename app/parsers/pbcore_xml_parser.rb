@@ -24,7 +24,7 @@ class PbcoreXmlParser < Bulkrax::XmlParser
           begin
             data = entry_class.read_data(md).xpath("//#{record_element}").first # Take only the first record
             entry_class.data_for_entry(data, source_identifier)
-          rescue Nokogiri::XML::SyntaxError => e
+          rescue => e
             invalid_files << { message: e, filepath: md }
           end
         end.compact # No need to flatten because we take only the first record
@@ -72,7 +72,7 @@ class PbcoreXmlParser < Bulkrax::XmlParser
   ##
   # This method is useful for updating existing entries with out reimporting the works themselves
   # used in scripts and on the console
-  def recreate_entries
+  def recreate_entries(progress = nil)
     self.record_objects = []
     records.each_with_index do |file, index|
       set_objects(file, index).each do |record|
@@ -82,8 +82,8 @@ class PbcoreXmlParser < Bulkrax::XmlParser
         new_entry = find_or_create_entry(entry_class, record[work_identifier], 'Bulkrax::Importer', record.compact)
       end
       increment_counters(index)
+      progress.increment if progress
     end
-    importer.record_status
   rescue StandardError => e
     status_info(e)
   end
