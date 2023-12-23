@@ -28,7 +28,8 @@ module Ams
         return [] unless change_set.input_params.has_key?(:contributors)
 
         contributors = change_set.input_params.delete(:contributors) || []
-        contributors.map(&:with_indifferent_access).select { |contributor| contributor&.[]('contributor')&.first }
+        contrib = contributors.map { |c| c.respond_to?(:to_unsafe_h) ? c.to_unsafe_h.with_indifferent_access : c.with_indifferent_access }
+        contrib.select { |contributor| contributor&.[]('contributor')&.first }
       end
 
       def create_or_update_contributions(change_set, contributions)
