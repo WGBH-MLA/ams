@@ -28,7 +28,7 @@ module Ams
         return [] unless change_set.input_params.has_key?(:contributors)
 
         contributors = change_set.input_params.delete(:contributors) || []
-        contrib = contributors.map { |c| c.respond_to?(:to_unsafe_h) ? c.to_unsafe_h.with_indifferent_access : c.with_indifferent_access }
+        contrib = contributors.dup.map { |c| c.respond_to?(:to_unsafe_h) ? c.to_unsafe_h.with_indifferent_access : c.dup.with_indifferent_access }
         contrib.select { |contributor| contributor&.[]('contributor')&.first }
       end
 

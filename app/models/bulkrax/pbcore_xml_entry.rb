@@ -36,12 +36,11 @@ module Bulkrax
 
     def build_metadata
       raise StandardError, 'Record not found' if record.nil?
-
       self.parsed_metadata = {}
       self.parsed_metadata[work_identifier] = self.raw_metadata[source_identifier]
-      self.parsed_metadata['model'] = if self.raw_metadata['model'].match(/Resource/)
+      self.parsed_metadata['model'] = if self.raw_metadata['model']&.match(/Resource/)
                                         self.raw_metadata['model']
-                                      else
+                                      elsif self.raw_metadata['model'].present?
                                         "#{self.raw_metadata['model']}Resource"
                                       end
       if self.raw_metadata['model'] == 'DigitalInstantiationResource'

@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 Rails.application.config.after_initialize do
+  # converts from new class (v) to old class (af)
   [
     Asset,
     PhysicalInstantiation,
@@ -15,6 +16,34 @@ Rails.application.config.after_initialize do
   Wings::ModelRegistry.register(Hyrax::PcdmCollection, Collection)
   Wings::ModelRegistry.register(Hyrax::AdministrativeSet, AdminSet)
   Wings::ModelRegistry.register(AdminSet, AdminSet)
+  Wings::ModelRegistry.register(Hydra::AccessControls::Embargo, Hyrax::Embargo)
+  Wings::ModelRegistry.register(Hydra::AccessControls::Embargo, Hydra::AccessControls::Embargo)
+  Wings::ModelRegistry.register(Hydra::AccessControls::Lease, Hyrax::Lease)
+  Wings::ModelRegistry.register(Hydra::AccessControls::Lease, Hydra::AccessControls::Lease)
+
+  # converts from old class (af) to new class (v)
+  Valkyrie.config.resource_class_resolver = lambda do |resource_klass_name|
+    klass_name = resource_klass_name.gsub(/Resource$/, '')
+    if %w[
+      Asset
+      PhysicalInstantiation
+      DigitalInstantiation
+      EssenceTrack
+      Contribution
+    ].include?(klass_name)
+      "#{klass_name}Resource".constantize
+    elsif 'Collection' == klass_name
+      Hyrax::PcdmCollection
+    elsif 'AdminSet' == klass_name
+      Hyrax::AdministrativeSet
+    elsif 'Hydra::AccessControls::Embargo' == klass_name
+      Hyrax::Embargo
+    elsif 'Hydra::AccessControls::Lease' == klass_name
+      Hyrax::Lease
+    else
+      klass_name.constantize
+    end
+  end
 
   Valkyrie::MetadataAdapter.register(
     Freyja::MetadataAdapter.new,
@@ -60,12 +89,6 @@ Rails.application.config.after_initialize do
     Hyrax.query_service.services[1].custom_queries.register_query_handler(handler)
   end
 
-  Wings::ModelRegistry.register(AssetResource, Asset)
-  Wings::ModelRegistry.register(PhysicalInstantiationResource, PhysicalInstantiation)
-  Wings::ModelRegistry.register(DigitalInstantiationResource, DigitalInstantiation)
-  Wings::ModelRegistry.register(EssenceTrackResource, EssenceTrack)
-  Wings::ModelRegistry.register(ContributionResource, Contribution)
-
   Hyrax::Transactions::Container.merge(Ams::Container)
   Hyrax::Transactions::Container.merge(Bulkrax::Container)
 end
@@ -82,24 +105,5 @@ Rails.application.config.to_prepare do
 
   Hyrax::FileSet.class_eval do
     attribute :internal_resource, Valkyrie::Types::Any.default("FileSet".freeze), internal: true
-  end
-
-  Valkyrie.config.resource_class_resolver = lambda do |resource_klass_name|
-    klass_name = resource_klass_name.gsub(/Resource$/, '')
-    if %w[
-      Asset
-      PhysicalInstantiation
-      DigitalInstantiation
-      EssenceTrack
-      Contribution
-    ].include?(klass_name)
-      "#{klass_name}Resource".constantize
-    elsif 'Collection' == klass_name
-      Hyrax::PcdmCollection
-    elsif 'AdminSet' == klass_name
-      Hyrax::AdministrativeSet
-    else
-      klass_name.constantize
-    end
   end
 end
