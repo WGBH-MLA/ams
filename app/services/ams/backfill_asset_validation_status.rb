@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 require 'ruby-progressbar'
 
+# TODO convert to new reprocessor style
 module AMS
-  class BackfillAssetValidationStatus < AMS::WorkReprocessor
+  class BackfillAssetValidationStatus # < AMS::WorkReprocessor
     def initialize
       super(dir_name: 'backfill_asset_validation_status')
       @query = 'has_model_ssim:Asset -intended_children_count_isi:[* TO *]'
