@@ -79,7 +79,7 @@ class Reprocessor
         id_log.error(i['id'])
       end
       progress.progress = [self.current_location, count].min
-      WorkProcessor.save if incremental_save
+      Reprocessor.save if incremental_save
     end
   end
 
@@ -94,7 +94,7 @@ class Reprocessor
       progress.increment
       i += 1
       self.current_location += 1
-      WorkProcessor.save if incremental_save
+      Reprocessor.save if incremental_save
      end
   end
 
@@ -116,7 +116,7 @@ class Reprocessor
         end
         self.current_location += 1
         progress.increment
-        WorkProcessor.save if incremental_save
+        Reprocessor.save if incremental_save
       end
       # double break to get out of the lazy loop
       break if limit && current_location >= limit
