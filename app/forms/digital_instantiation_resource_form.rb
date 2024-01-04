@@ -14,7 +14,6 @@ class DigitalInstantiationResourceForm < Hyrax::Forms::ResourceForm(DigitalInsta
 
   attr_accessor :controller, :current_ability
 
-  self.required_fields -= [:creator, :keyword, :rights_statement]
   self.required_fields += [:title, :location, :holding_organization]
 
   class_attribute :field_groups

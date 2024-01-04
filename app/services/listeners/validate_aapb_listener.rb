@@ -8,11 +8,15 @@ module Listeners
       resource = event.to_h.fetch(:object) { Hyrax.query_service.find_by(id: event[:object_id]) }
       return unless resource?(resource)
 
+      invalid_messages = []
       case resource
-        when EssenceTrackResource
+      when EssenceTrackResource
+        invalid_messages << resource.aapb_invalid_message unless resource.aapb_valid?
         instantiation_resource = Hyrax.query_service.custom_queries.find_parent_work(resource: resource)
+        invalid_messages << instantiation_resource.aapb_invalid_message if instantiation_resource && !instantiation_resource.aapb_valid?
         parent_resource = Hyrax.query_service.custom_queries.find_parent_work(resource: instantiation_resource) if instantiation_resource
       when PhysicalInstantiationResource, DigitalInstantiationResource
+        invalid_messages << resource.aapb_invalid_message unless resource.aapb_valid?
         parent_resource = Hyrax.query_service.custom_queries.find_parent_work(resource: resource)
       when AssetResource
         parent_resource = resource
@@ -21,7 +25,7 @@ module Listeners
       end
 
       return unless parent_resource.present?
-      parent_resource.set_validation_status
+      parent_resource.set_validation_status(invalid_messages)
       # we save and index the parent here and do not publish an event so as not to create a loop
       # or save the same asset_resource multiple times per save
       Hyrax.persister.save(resource: parent_resource)
