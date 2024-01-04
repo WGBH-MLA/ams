@@ -17,7 +17,7 @@ module Ams
 
     ##
     # @see Hyrax::Transactions::Transaction
-    def initialize(container: Container, steps: DEFAULT_STEPS)
+    def initialize(container: ::Ams::Container, steps: DEFAULT_STEPS)
       super(steps: steps)
     end
   end

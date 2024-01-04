@@ -1,5 +1,3 @@
-require 'dry/container'
-
 module Bulkrax
   class Container
     extend Dry::Container::Mixin
