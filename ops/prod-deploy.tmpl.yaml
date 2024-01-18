@@ -54,7 +54,7 @@ extraEnvVars: &envVars
   - name: AWS_ACCESS_KEY
     value: "AKIAIWFN3WW3WBIMKNCQ"
   - name: CI_CLIENT_ID
-    value: "044dbd5644f640fb856a6131fd37e5cb"
+    value: "2b0816f2cec3428289b5d5479070296b"
   - name: CI_USERNAME
     value: "aapb_notifications@wgbh.org"
   - name: CI_WORKSPACE_ID
