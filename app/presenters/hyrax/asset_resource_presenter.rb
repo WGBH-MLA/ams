@@ -35,15 +35,15 @@ module Hyrax
 
     def bulkrax_import
       raise 'No Bulkrax Import ID associated with this Asset' unless bulkrax_importer_id.present?
-      @bulkrax_import ||= Bulkrax::Importer.find(bulkrax_importer_id.first)
+      @bulkrax_import ||= Bulkrax::Importer.find_by(id: bulkrax_importer_id.first)
     end
 
     def bulkrax_import_url
-      @bulkrax_import_url ||= "/importers/#{bulkrax_import.id}"
+      @bulkrax_import_url ||= "/importers/#{bulkrax_import.id}" if bulkrax_import&.id
     end
 
     def bulkrax_import_label
-      @bulkrax_import_ingest_label ||= bulkrax_import.parser_klass
+      @bulkrax_import_ingest_label ||= bulkrax_import&.parser_klass
     end
 
     def bulkrax_import_date
