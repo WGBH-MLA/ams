@@ -34,7 +34,7 @@ module Hyrax
     end
 
     def bulkrax_import
-      raise 'No Bulkrax Import ID associated with this Asset' unless bulkrax_importer_id.present?
+      return nil unless bulkrax_importer_id.present?
       @bulkrax_import ||= Bulkrax::Importer.find_by(id: bulkrax_importer_id.first)
     end
 
