@@ -66,7 +66,7 @@ attributes:
     index_keys:
       - "format_tesim"
     form:
-      required: true
+      required: false
       primary: false
       multiple: false
   standard:
@@ -84,7 +84,7 @@ attributes:
     index_keys:
       - "location_tesim"
     form:
-      required: true
+      required: false
       primary: false
       multiple: false
   media_type:
@@ -95,7 +95,7 @@ attributes:
       - "media_type_sim"
       - "media_type_tesim"
     form:
-      required: true
+      required: false
       primary: false
       multiple: false
   generations:

@@ -5,22 +5,18 @@ module AMS
         # Include Blacklight modules that provide methods for configurating and
         # performing searches.
 
-        # this is required - advanced_search will crash without it
-        copy_blacklight_config_from(CatalogController)
-        configure_blacklight do |config|
-          # This is necessary to prevent Blacklight's default value of 100 for
-          # config.max_per_page from capping the number of results.
-          config.max_per_page = MAX_LIMIT
-        end
-
         private
           # Overwrite Base#response to use Blacklight::SearchHelper#search_results.
-          def response
+        def response
+          blacklight_config = CatalogController.blacklight_config.dup
+          blacklight_config.default_solr_params = { rows: 2_000_000 }
+          blacklight_config.max_per_page = 2_000_000
             @response ||= Hyrax::SearchService.new(
-                            config: CatalogController.blacklight_config,
+                            config: blacklight_config,
                             user_params: search_params,
                             scope: self,
-                            current_ability: user.ability
+                            current_ability: user.ability,
+                            rows: 2_000_000
                           ).search_results[0]
           end
 

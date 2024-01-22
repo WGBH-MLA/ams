@@ -8,6 +8,18 @@ class EssenceTrackResource < Hyrax::Work
   include Hyrax::ArResource
   include AMS::WorkBehavior
 
+  VALIDATION_STATUSES = {
+    valid: 'valid',
+    track_missing: 'track id or track type is missing',
+  }.freeze
+
   self.valid_child_concerns = []
 
+  def aapb_valid?
+    track_id.present? && track_type.present?
+  end
+
+  def aapb_invalid_message
+    "#{self.id} track id or track type is missing" unless aapb_valid?
+  end
 end

@@ -14,6 +14,7 @@ class AssetResource < Hyrax::Work
   VALIDATION_STATUSES = {
     valid: 'valid',
     missing_children: 'missing child record(s)',
+    invalid_children: 'invalid child record(s)',
     status_not_validated: 'not yet validated',
     empty: 'missing a validation status'
   }.freeze
@@ -146,7 +147,8 @@ class AssetResource < Hyrax::Work
     end
   end
 
-  def set_validation_status
+  def set_validation_status(child_statuses = [])
+    return [([Asset::VALIDATION_STATUSES[:invalid_children]] + child_statuses).to_sentence] if child_statuses.present?
     current_children_count = SolrDocument.get_members(self).reject { |child| child.is_a?(Contribution) || child.is_a?(ContributionResource) || child.id == self.id }.size
     intended_children_count = self.intended_children_count.to_i
 

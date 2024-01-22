@@ -560,7 +560,7 @@ class SolrDocument
 
   def instantiation_admin_data_gid
     return unless is_instantiation?
-    @instantiation_admin_data_gid ||= self['admin_data_gid_ssim'].first
+    @instantiation_admin_data_gid ||= Array.wrap(self['admin_data_gid_ssim']).first
   end
 
   def instantiation_admin_data

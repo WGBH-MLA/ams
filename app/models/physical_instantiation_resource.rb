@@ -33,4 +33,17 @@ class PhysicalInstantiationResource < Hyrax::Work
     self.instantiation_admin_data_gid = new_admin_data.gid
     @instantiation_admin_data = new_admin_data
   end
+
+  def aapb_valid?
+    aapb_invalid_message.blank?
+  end
+
+  def aapb_invalid_message
+    msg = []
+    msg << "#{self.id} format is required" unless format.present?
+    msg << "#{self.id} location is required" unless location.present?
+    msg << "#{self.id} media_type is required" unless media_type.present?
+    msg << "#{self.id} holding_organization is required" unless holding_organization.present?
+    msg.to_sentence if msg.present?
+  end
 end

@@ -1,4 +1,5 @@
 name: "Ruby on Rails CI"
+run-name: Build of ${{ github.ref_name }} by @${{ github.actor }}
 on:
   pull_request:
     branches:
