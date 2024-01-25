@@ -6,7 +6,7 @@ module Bulkrax::HasLocalProcessing
   # to add a custom property from outside of the import data
   def add_local
     case self.parsed_metadata['model']
-    when 'DigitalInstantiationResource',
+    when 'DigitalInstantiationResource'
         add_digital_metadata
     when 'PhysicalInstantiationResource'
 
