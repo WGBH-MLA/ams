@@ -157,10 +157,9 @@ class Reprocessor
       id = line.strip
       e = Bulkrax::Entry.find(id)
       ::SEEN ||= []
-      if ::SEEN.include?(e.importer.id)
-        e.parser.create_parent_child_relationships
-      else
+      unless ::SEEN.include?(e.importer.id)
         ::SEEN << e.importer.id
+        e.parser.create_parent_child_relationships 
       end
     }
   end
