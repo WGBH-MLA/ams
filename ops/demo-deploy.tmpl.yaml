@@ -150,6 +150,11 @@ worker:
   extraVolumeMounts: *volMounts
   extraEnvVars: *envVars
 
+importWorker:
+  extraEnvVars:
+    - name: SIDEKIQ_CONCURRENCY
+      value: "10"
+
 podSecurityContext:
   runAsUser: 1001
   runAsGroup: 101
