@@ -97,7 +97,6 @@ module Bulkrax
               "children"=>[],
               "delete"=>nil,
               "file"=>nil,
-              "format" => nil,
               "model"=>nil,
               "rights_statement"=>[nil],
               "visibility"=>"open"
@@ -136,6 +135,7 @@ module Bulkrax
            "id"=>"cpb-aacip-20-000000hr",
            "series_title"=>["Houston Symphony"],
            "description"=>["5/11/96"],
+           "format"=>"test",
            "episode_description"=>[],
            "series_description"=>
             ["Houston Symphony is a series of live recordings of the Houston Symphony orchestral performances."],
@@ -193,7 +193,6 @@ module Bulkrax
                 "audience_level"=>[],
                 "audience_rating"=>[],
                 "asset_types"=>[],
-                "format" => nil,
                 "genre"=>["Performance for a Live Audience"],
                 "topics"=>["Music"],
                 "rights_summary"=>[],

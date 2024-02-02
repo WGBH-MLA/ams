@@ -42,13 +42,12 @@ module Bulkrax
                                         self.raw_metadata['model']
                                       elsif self.raw_metadata['model'].present?
                                         "#{self.raw_metadata['model']}Resource"
-
                                       end
 
 
       self.raw_metadata.each do |key, value|
         # skip the ones we've already added
-        next if key == 'model' || key == 'pbcore_xml' || key == 'format' || key == 'skip_file_upload_validation'
+        next if key == 'model' || key == 'pbcore_xml' || key == 'skip_file_upload_validation'
         add_metadata(key_without_numbers(key), value)
       end
 
