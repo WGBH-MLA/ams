@@ -12,7 +12,7 @@ if ENV['DEPENDENCIES_NEXT'] && !ENV['DEPENDENCIES_NEXT'].empty?
 else
   gem 'rails', '~> 6.0'
   gem 'hyrax-batch_ingest', git: 'https://github.com/samvera-labs/hyrax-batch_ingest', branch: 'valkyrie_update'
-  gem 'hyrax', github: 'samvera/hyrax', branch: 'double_combo' # , tag: 'hyrax-v5.0.0.rc1'
+  gem 'hyrax', github: 'samvera/hyrax', branch: 'double_combo_gbh_version' # , tag: 'hyrax-v5.0.0.rc1'
   # Use SCSS for stylesheets
   gem 'sass-rails', '~> 6.0'
   gem 'bootstrap', '~> 4.0'
@@ -25,6 +25,9 @@ else
   gem 'bulkrax', git: 'https://github.com/samvera-labs/bulkrax.git', branch: 'hyrax-4-valkyrie-support'
   gem 'sidekiq', '~> 6.5.10'
 end
+
+# ebnf 2.5 causes rdf and linkeddata to get very old versions'
+gem 'ebnf', '2.4.0'
 
 gem 'dotenv-rails'
 # Use Puma as the app server
@@ -87,7 +90,7 @@ gem 'rsolr', '>= 1.0'
 gem 'jquery-rails'
 gem 'devise'
 gem 'devise-guests', '~> 0.6'
-gem 'simple_form', '5.0.0'
+gem 'simple_form', '~> 5.1.0'
 gem 'aws-sdk-s3'
 gem 'aws-sdk-codedeploy'
 gem 'carrierwave', '~> 1.3'

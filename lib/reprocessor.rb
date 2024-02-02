@@ -152,6 +152,19 @@ class Reprocessor
     end
   end
 
+  def lambda_create_relationships
+    @lambda_create_relationships ||= lambda { |line, progress|
+      id = line.strip
+      e = Bulkrax::Entry.find(id)
+      ::SEEN ||= []
+      if ::SEEN.include?(e.importer.id)
+        e.parser.create_parent_child_relationships
+      else
+        ::SEEN << e.importer.id
+      end
+    }
+  end
+
   def lambda_save
     @lambda_save ||= lambda { |line, progress|
       id = line.strip
