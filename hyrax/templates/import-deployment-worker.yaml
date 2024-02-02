@@ -78,6 +78,7 @@ spec:
             {{- end }}
           env:
             {{- toYaml .Values.worker.extraEnvVars | nindent 12 }}
+            {{- toYaml .Values.importWorker.extraEnvVars | nindent 12 }}
           {{- if .Values.worker.readinessProbe.enabled }}
           readinessProbe:
             exec:
