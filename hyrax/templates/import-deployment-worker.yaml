@@ -87,14 +87,18 @@ spec:
               {{- toYaml . | nindent 12 }}
             {{- end }}
           env:
-            # Include all environment variables from worker.extraEnvVars
+             # Include env vars from worker.extraEnvVars except SIDEKIQ_CONCURRENCY
             {{- range .Values.worker.extraEnvVars }}
-            - name: {{ .name }}
-              value: {{ .value | quote }}
+              {{- if ne .name "SIDEKIQ_CONCURRENCY" }}
+              - name: {{ .name }}
+                value: {{ .value | quote }}
+              {{- end }}
             {{- end }}
-            # Override or add specific environment variables for the import worker
-            - name: "SIDEKIQ_CONCURRENCY"
-              value: {{ .Values.importWorker.extraEnvVars.SIDEKIQ_CONCURRENCY | quote }}
+            # Set SIDEKIQ_CONCURRENCY for import worker
+            {{- range .Values.importWorker.extraEnvVars }}
+              - name: {{ .name }}
+                value: {{ .value | quote }}
+            {{- end }}
           {{- if .Values.worker.readinessProbe.enabled }}
           readinessProbe:
             exec:
