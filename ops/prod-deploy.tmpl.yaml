@@ -156,9 +156,7 @@ worker:
   extraEnvVars: *envVars
 
 importWorker:
-  extraEnvVars:
-    - name: SIDEKIQ_CONCURRENCY
-      value: "10"
+  SIDEKIQ_CONCURRENCY: "20"
 
 podSecurityContext:
   runAsUser: 1001
