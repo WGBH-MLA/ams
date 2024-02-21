@@ -33,10 +33,12 @@ spec:
                 name: app-secrets
             {{- end }}
           env:
-            {{- range .worker.extraEnvVars }}
+            # Include all environment variables from worker.extraEnvVars
+            {{- range .Values.worker.extraEnvVars }}
             - name: {{ .name }}
               value: {{ .value | quote }}
             {{- end }}
+            # Override or add specific environment variables for the import worker
             {{- range .Values.importWorker.extraEnvVars }}
             - name: {{ .name }}
               value: {{ .value | quote }}
@@ -83,10 +85,12 @@ spec:
               {{- toYaml . | nindent 12 }}
             {{- end }}
           env:
-            {{- range .worker.extraEnvVars }}
+            # Include all environment variables from worker.extraEnvVars
+            {{- range .Values.worker.extraEnvVars }}
             - name: {{ .name }}
               value: {{ .value | quote }}
             {{- end }}
+            # Override or add specific environment variables for the import worker
             {{- range .Values.importWorker.extraEnvVars }}
             - name: {{ .name }}
               value: {{ .value | quote }}
