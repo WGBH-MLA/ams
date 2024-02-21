@@ -33,18 +33,15 @@ spec:
                 name: app-secrets
             {{- end }}
           env:
-                      # Include env vars from worker.extraEnvVars except SIDEKIQ_CONCURRENCY
-          {{- range .Values.worker.extraEnvVars }}
-            {{- if ne .name "SIDEKIQ_CONCURRENCY" }}
-            - name: {{ .name }}
-              value: {{ .value | quote }}
+            # Include env vars from worker.extraEnvVars except SIDEKIQ_CONCURRENCY
+            {{- range .Values.worker.extraEnvVars }}
+              {{- if ne .name "SIDEKIQ_CONCURRENCY" }}
+              - name: {{ .name }}
+                value: {{ .value | quote }}
+              {{- end }}
             {{- end }}
-          {{- end }}
-          # Set SIDEKIQ_CONCURRENCY for import worker
-          {{- range .Values.importWorker.extraEnvVars }}
-            - name: {{ .name }}
-              value: {{ .value | quote }}
-          {{- end }}
+            - name: "SIDEKIQ_CONCURRENCY"
+              value: {{ .Values.importWorker.SIDEKIQ_CONCURRENCY }}
           command:
             - sh
             - -c
@@ -87,18 +84,15 @@ spec:
               {{- toYaml . | nindent 12 }}
             {{- end }}
           env:
-             # Include env vars from worker.extraEnvVars except SIDEKIQ_CONCURRENCY
+            # Include env vars from worker.extraEnvVars except SIDEKIQ_CONCURRENCY
             {{- range .Values.worker.extraEnvVars }}
               {{- if ne .name "SIDEKIQ_CONCURRENCY" }}
               - name: {{ .name }}
                 value: {{ .value | quote }}
               {{- end }}
             {{- end }}
-            # Set SIDEKIQ_CONCURRENCY for import worker
-            {{- range .Values.importWorker.extraEnvVars }}
-              - name: {{ .name }}
-                value: {{ .value | quote }}
-            {{- end }}
+            - name: "SIDEKIQ_CONCURRENCY"
+              value: {{ .Values.importWorker.SIDEKIQ_CONCURRENCY }}
           {{- if .Values.worker.readinessProbe.enabled }}
           readinessProbe:
             exec:
