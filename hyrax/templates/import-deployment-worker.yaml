@@ -33,14 +33,18 @@ spec:
                 name: app-secrets
             {{- end }}
           env:
-            # Include all environment variables from worker.extraEnvVars
-            {{- range .Values.worker.extraEnvVars }}
+                      # Include env vars from worker.extraEnvVars except SIDEKIQ_CONCURRENCY
+          {{- range .Values.worker.extraEnvVars }}
+            {{- if ne .name "SIDEKIQ_CONCURRENCY" }}
             - name: {{ .name }}
               value: {{ .value | quote }}
             {{- end }}
-            # Override or add specific environment variables for the import worker
-            - name: "SIDEKIQ_CONCURRENCY"
-              value: {{ .Values.importWorker.extraEnvVars.SIDEKIQ_CONCURRENCY | quote }}
+          {{- end }}
+          # Set SIDEKIQ_CONCURRENCY for import worker
+          {{- range .Values.importWorker.extraEnvVars }}
+            - name: {{ .name }}
+              value: {{ .value | quote }}
+          {{- end }}
           command:
             - sh
             - -c
