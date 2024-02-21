@@ -117,7 +117,7 @@ extraEnvVars: &envVars
   - name: SOLR_URL
     value: http://10.0.4.190:8983/solr/ams
   - name: SIDEKIQ_CONCURRENCY
-    value: "10"
+    value: "1"
   - name: AWS_ACCESS_KEY
     value: "AKIAIWFN3WW3WBIMKNCQ"
   - name: MAIL_DELIVERY_METHOD
