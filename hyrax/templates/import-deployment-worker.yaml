@@ -33,8 +33,14 @@ spec:
                 name: app-secrets
             {{- end }}
           env:
-            {{- toYaml .Values.worker.extraEnvVars | nindent 12 }}
-            {{- toYaml .Values.importWorker.extraEnvVars | nindent 12 }}
+            {{- range .worker.extraEnvVars }}
+            - name: {{ .name }}
+              value: {{ .value | quote }}
+            {{- end }}
+            {{- range .Values.importWorker.extraEnvVars }}
+            - name: {{ .name }}
+              value: {{ .value | quote }}
+            {{- end }}
           command:
             - sh
             - -c
@@ -77,8 +83,14 @@ spec:
               {{- toYaml . | nindent 12 }}
             {{- end }}
           env:
-            {{- toYaml .Values.worker.extraEnvVars | nindent 12 }}
-            {{- toYaml .Values.importWorker.extraEnvVars | nindent 12 }}
+            {{- range .worker.extraEnvVars }}
+            - name: {{ .name }}
+              value: {{ .value | quote }}
+            {{- end }}
+            {{- range .Values.importWorker.extraEnvVars }}
+            - name: {{ .name }}
+              value: {{ .value | quote }}
+            {{- end }}
           {{- if .Values.worker.readinessProbe.enabled }}
           readinessProbe:
             exec:
