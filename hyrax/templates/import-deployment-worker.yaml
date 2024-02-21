@@ -89,10 +89,8 @@ spec:
               value: {{ .value | quote }}
             {{- end }}
             # Override or add specific environment variables for the import worker
-            {{- range .Values.importWorker.extraEnvVars }}
-            - name: {{ .name }}
-              value: {{ .value | quote }}
-            {{- end }}
+            - name: "SIDEKIQ_CONCURRENCY"
+              value: {{ .Values.importWorker.extraEnvVars.SIDEKIQ_CONCURRENCY | quote }}
           {{- if .Values.worker.readinessProbe.enabled }}
           readinessProbe:
             exec:
