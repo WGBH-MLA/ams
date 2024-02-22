@@ -33,15 +33,10 @@ spec:
                 name: app-secrets
             {{- end }}
           env:
-            # Include env vars from worker.extraEnvVars except SIDEKIQ_CONCURRENCY
-            {{- range .Values.worker.extraEnvVars }}
-              {{- if ne .name "SIDEKIQ_CONCURRENCY" }}
-              - name: {{ .name }}
-                value: {{ .value | quote }}
-              {{- end }}
-            {{- end }}
-              - name: "SIDEKIQ_CONCURRENCY"
-                value: {{ .Values.importWorker.SIDEKIQ_CONCURRENCY }}
+            {{- $defaultEnv := .Values.worker.extraEnvVars }}
+            {{- $overrideEnv := .Values.importWorker.extraEnvVars }}
+            {{- $mergedEnv := merge $overrideEnv $defaultEnv }}
+            {{- toYaml $mergedEnv | nindent 12 }}
           command:
             - sh
             - -c
@@ -84,16 +79,10 @@ spec:
               {{- toYaml . | nindent 12 }}
             {{- end }}
           env:
-            # Include env vars from worker.extraEnvVars except SIDEKIQ_CONCURRENCY
-            {{- range .Values.worker.extraEnvVars }}
-              {{- if ne .name "SIDEKIQ_CONCURRENCY" }}
-              - name: {{ .name }}
-                value: {{ .value | quote }}
-              {{- end }}
-            {{- end }}
-              - name: "SIDEKIQ_CONCURRENCY"
-                value: {{ .Values.importWorker.SIDEKIQ_CONCURRENCY }}
-          {{- if .Values.worker.readinessProbe.enabled }}
+            {{- $defaultEnv := .Values.worker.extraEnvVars }}
+            {{- $overrideEnv := .Values.importWorker.extraEnvVars }}
+            {{- $mergedEnv := merge $overrideEnv $defaultEnv }}
+            {{- toYaml $mergedEnv | nindent 12 }}
           readinessProbe:
             exec:
               command:
