@@ -156,8 +156,11 @@ worker:
   extraEnvVars: *envVars
 
 importWorker:
+  enabled: true
+  # extraEnvVars will not handle overriden values
+  # only additional to the original workerEnvVars list
   extraEnvVars:
-    - name: SIDEKIQ_CONCURRENCY
+    - name: IMPORT_WORKER_SIDEKIQ_CONCURRENCY
       value: "20"
 
 podSecurityContext:
