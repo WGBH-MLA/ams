@@ -151,7 +151,7 @@ worker:
   extraEnvVars: *envVars
 
 importWorker:
-  extraEnvVars::
+  extraEnvVars:
     - name: SIDEKIQ_CONCURRENCY
       value: "10"
 
