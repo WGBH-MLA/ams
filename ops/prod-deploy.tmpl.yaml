@@ -146,7 +146,6 @@ extraEnvVars: &envVars
 
 worker:
   replicaCount: 1
-  importReplicaCount: 3
   podSecurityContext:
     runAsUser: 1001
     runAsGroup: 101
@@ -156,9 +155,13 @@ worker:
   extraEnvVars: *envVars
 
 importWorker:
+  enabled: true
+  replicaCount: 3
+  # extraEnvVars will not handle overriden values
+  # only additional to the original workerEnvVars list
   extraEnvVars:
-    - name: SIDEKIQ_CONCURRENCY
-      value: "10"
+    - name: IMPORT_WORKER_SIDEKIQ_CONCURRENCY
+      value: "20"
 
 podSecurityContext:
   runAsUser: 1001
