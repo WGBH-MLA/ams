@@ -146,7 +146,6 @@ extraEnvVars: &envVars
 
 worker:
   replicaCount: 1
-  importReplicaCount: 3
   podSecurityContext:
     runAsUser: 1001
     runAsGroup: 101
@@ -157,6 +156,7 @@ worker:
 
 importWorker:
   enabled: true
+  replicaCount: 3
   # extraEnvVars will not handle overriden values
   # only additional to the original workerEnvVars list
   extraEnvVars:
