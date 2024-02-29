@@ -89,7 +89,7 @@ class FindSonyCiMediaBehavior
 # load; reverting to $(document).ready, which seems to work more consistently.
 $(document).ready ->
   # This regex matches the 3rd URL segment which should be the GUID.
-  guid_query_str = window.location.href.match(/concern\/assets\/(.*)\//)[1]
+  guid_query_str = window.location.href.match(/concern\/asset_resources\/(.*)\//)[1]
 
   # Create the behavior object, passing in the GUID as the query string.
   # NOTE: Sony Ci API has a 20 character limit on it's search terms, so let's
