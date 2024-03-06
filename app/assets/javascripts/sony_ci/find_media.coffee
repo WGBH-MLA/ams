@@ -4,9 +4,9 @@ class FindSonyCiMediaBehavior
   # Selector for the div that displays the feedback messages.
   feedbackSelector: '#find_sony_ci_media #feedback'
   # Selector for the text inputs that have the Sony Ci IDs.
-  sonyCiIdInputSelector: 'input.asset_sonyci_id'
+  sonyCiIdInputSelector: 'input.asset_resource_sonyci_id'
   # Selector for the button to add new Sony Ci IDs
-  addNewSonyCiIdButtonSelector: '.form-group.asset_sonyci_id button.add'
+  addNewSonyCiIdButtonSelector: '.form-group.asset_resource_sonyci_id button.add'
 
   constructor: (@query) ->
 
