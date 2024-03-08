@@ -39,3 +39,5 @@ terms:
     term: Transcript Source
   - id: proxy_start_time
     term: Proxy Start Time
+  - id: note
+    term: Note
