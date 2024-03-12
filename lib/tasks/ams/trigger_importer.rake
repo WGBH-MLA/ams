@@ -26,7 +26,7 @@ namespace :ams do
       .where(entries: { id: nil })
       .order(:id)
 
-    imp_without_errors = remaining_importers.reject { |imp| !imp.statuses.empty? }
+    imp_without_errors = remaining_importers.reject { |imp| imp.status == 'Failed' }
     id_to_run = imp_without_errors.first&.id
     if id_to_run.blank?
       log.puts "#{Time.now.getlocal('-07:00').strftime('%Y-%m-%d %H:%M:%S')} - No IDs to run"
