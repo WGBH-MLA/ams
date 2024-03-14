@@ -121,8 +121,6 @@ extraEnvVars: &envVars
     value: "0.1"
   - name: SETTINGS__BULKRAX__ENABLED
     value: "false"
-  - name: SIDEKIQ_CONCURRENCY
-    value: "1"
   - name: SIDEKIQ_REDIS_URL
     value: "redis://:prod@ams-prod-redis-master:6379/0"
   - name: SMTP_ADDRESS
@@ -152,15 +150,21 @@ worker:
     fsGroup: 101
     fsGroupChangePolicy: "OnRootMismatch"
   extraVolumeMounts: *volMounts
-  extraEnvVars: *envVars
+  extraEnvVars: |
+    {{- if .Values.extraEnvVars }}
+    {{- include "common.tplvalues.render" (dict "value" .Values.extraEnvVars "context" $) }}
+    {{- end }}
+    - name: SIDEKIQ_CONCURRENCY
+      value: "1"
 
 importWorker:
   enabled: true
   replicaCount: 3
-  # extraEnvVars will not handle overriden values
-  # only additional to the original workerEnvVars list
-  extraEnvVars:
-    - name: IMPORT_WORKER_SIDEKIQ_CONCURRENCY
+  extraEnvVars: |
+    {{- if .Values.extraEnvVars }}
+    {{- include "common.tplvalues.render" (dict "value" .Values.extraEnvVars "context" $) }}
+    {{- end }}
+    - name: SIDEKIQ_CONCURRENCY
       value: "20"
 
 podSecurityContext:
