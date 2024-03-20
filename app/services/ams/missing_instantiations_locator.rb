@@ -42,8 +42,9 @@ module AMS
         end
         next unless broken
 
+        truncated_search_dir = search_dir.to_s.split('/').last
         results[inst_id] ||= []
-        results[inst_id] |= Array.wrap(asset_id)
+        results[inst_id] |= Array.wrap("#{truncated_search_dir}/#{asset_id}")
       end
     end
 
