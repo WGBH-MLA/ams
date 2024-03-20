@@ -2,6 +2,7 @@
 require 'ruby-progressbar'
 
 module AMS
+  # @see https://github.com/scientist-softserv/ams/issues/16
   class MissingInstantiationsLocator
     WORKING_DIR = Rails.root.join('tmp', 'imports')
 
@@ -15,8 +16,7 @@ module AMS
       )
     end
 
-    # TODO: better method name
-    def locate_within_dirs
+    def map_all_instantiation_identifiers
       search_dirs.each do |current_dir|
         @current_dir = current_dir
         @truncated_dir_name = truncate_path(current_dir)
@@ -29,7 +29,7 @@ module AMS
         logger.info("Starting #{truncated_dir_name}")
 
         xml_files.each do |f|
-          locate(f)
+          map_asset_id_to_inst_ids(f)
           progressbar.increment
         end
 
@@ -39,8 +39,9 @@ module AMS
       end
     end
 
-    # TODO: better method name
-    def locate(xml_file)
+    private
+
+    def map_asset_id_to_inst_ids(xml_file)
       xml = File.read(xml_file)
       current_file_path = "#{truncated_dir_name}/#{truncate_path(xml_file)}"
 
