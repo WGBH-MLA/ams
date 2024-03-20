@@ -5,7 +5,7 @@ module AMS
   class MissingInstantiationsLocator
     WORKING_DIR = Rails.root.join('tmp', 'imports')
 
-    attr_reader :search_dirs, :current_dir, :results_path, :results, :progressbar
+    attr_reader :search_dirs, :current_dir, :truncated_dir_name, :results_path, :results, :progressbar
 
     # @param [Array<String>] search_dirs
     def initialize(search_dirs)
@@ -16,10 +16,11 @@ module AMS
     def locate_within_dirs
       search_dirs.each do |current_dir|
         @current_dir = current_dir
-        @results_path = WORKING_DIR.join("i16-#{truncated_dir_name(current_dir)}.json")
+        @truncated_dir_name = current_dir.to_s.split('/').last
+        @results_path = WORKING_DIR.join("i16-#{truncated_dir_name}.json")
         @results = initialize_results
         xml_files = Dir.glob(current_dir.join('*.xml'))
-        progressbar_format = "#{truncated_dir_name(current_dir)} -- %a %e %P% Processed: %c from %C"
+        progressbar_format = "#{truncated_dir_name} -- %a %e %P% Processed: %c from %C"
         @progressbar = ProgressBar.create(total: xml_files.size, format: progressbar_format)
 
         xml_files.each do |f|
@@ -49,16 +50,12 @@ module AMS
         next unless broken
 
         results[inst_id] ||= []
-        results[inst_id] |= Array.wrap("#{truncated_dir_name(current_dir)}/#{asset_id}")
+        results[inst_id] |= Array.wrap("#{truncated_dir_name}/#{asset_id}")
       end
     end
 
     def normalize_date(date)
       date.to_datetime.strftime('%Y-%m-%d %H:%M')
-    end
-
-    def truncated_dir_name(dir)
-      dir.to_s.split('/').last
     end
 
     def initialize_results
