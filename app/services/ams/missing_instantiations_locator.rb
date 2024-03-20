@@ -5,24 +5,27 @@ module AMS
   class MissingInstantiationsLocator
     WORKING_DIR = Rails.root.join('tmp', 'imports')
 
-    attr_reader :search_dir, :results_path, :results
+    attr_reader :search_dirs, :current_dir, :results_path, :results
 
-    # TODO: take array of directory paths?
-    def initialize(search_dir:)
-      @search_dir = WORKING_DIR.join(search_dir)
-      @results_path = WORKING_DIR.join("i16-#{search_dir}.json")
-      @results = initialize_results
+    # @param [Array<String>] search_dirs
+    def initialize(search_dirs)
+      @search_dirs = search_dirs.map { |dir| WORKING_DIR.join(dir) }
     end
 
     # TODO: better method name
-    def locate_within_dir
-      xml_files = Dir.glob(search_dir.join('*.xml'))
+    def locate_within_dirs
+      search_dirs.each do |current_dir|
+        @current_dir = current_dir
+        @results_path = WORKING_DIR.join("i16-#{truncated_dir_name(current_dir)}.json")
+        @results = initialize_results
+        xml_files = Dir.glob(current_dir.join('*.xml'))
 
-      xml_files.each do |f|
-        locate(f)
+        xml_files.each do |f|
+          locate(f)
+        end
+
+        write_results
       end
-
-      write_results
     end
 
     # TODO: better method name
@@ -42,14 +45,17 @@ module AMS
         end
         next unless broken
 
-        truncated_search_dir = search_dir.to_s.split('/').last
         results[inst_id] ||= []
-        results[inst_id] |= Array.wrap("#{truncated_search_dir}/#{asset_id}")
+        results[inst_id] |= Array.wrap("#{truncated_dir_name(current_dir)}/#{asset_id}")
       end
     end
 
     def normalize_date(date)
       date.to_datetime.strftime('%Y-%m-%d %H:%M')
+    end
+
+    def truncated_dir_name(dir)
+      dir.to_s.split('/').last
     end
 
     def initialize_results
