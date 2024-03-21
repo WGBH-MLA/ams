@@ -19,7 +19,7 @@ module AMS
     def map_all_instantiation_identifiers
       search_dirs.each do |current_dir|
         @current_dir = current_dir
-        @truncated_dir_name = truncate_path(current_dir)
+        @truncated_dir_name = File.basename(current_dir)
         @results_path = WORKING_DIR.join("i16-#{truncated_dir_name}.json")
         @results = initialize_results
         xml_files = Dir.glob(current_dir.join('*.xml'))
@@ -43,7 +43,7 @@ module AMS
 
     def map_asset_id_to_inst_ids(xml_file)
       xml = File.read(xml_file)
-      current_file_path = "#{truncated_dir_name}/#{truncate_path(xml_file)}"
+      current_file_path = "#{truncated_dir_name}/#{File.basename(xml_file)}"
 
       pbcore_id = xml.scan(/(cpb-aacip\/.+?)<\//).flatten.first
       if pbcore_id.blank?
@@ -77,10 +77,6 @@ module AMS
 
     def normalize_date(date)
       date.to_datetime.strftime('%Y-%m-%d %H:%M')
-    end
-
-    def truncate_path(path)
-      path.to_s.split('/').last
     end
 
     def initialize_results
