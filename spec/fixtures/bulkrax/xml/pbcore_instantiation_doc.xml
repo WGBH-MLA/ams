@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pbcoreInstantiationDocument xsi:schemaLocation="http://www.pbcore.org/PBCore/PBCoreNamespace.html http://pbcore.org/xsd/pbcore-2.0.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.pbcore.org/PBCore/PBCoreNamespace.html">
+<!-- Generated at 2020-08-18T16:37:43Z by MediaInfoLib - v0.7.92.1 -->
+	<instantiationIdentifier source="File Name">cpb-aacip-528-0c4sj1bp2v.mp3</instantiationIdentifier>
+	<instantiationDate dateType="issued">T2019-07- 1Z</instantiationDate>
+	<instantiationDate dateType="file modification">2019-08-21T19:56:19Z</instantiationDate>
+	<instantiationDigital>audio/mpeg</instantiationDigital>
+	<instantiationLocation>/Volumes/ABDISK0004/RC0002/cpb-aacip-528-0c4sj1bp2v.mp3</instantiationLocation>
+	<instantiationMediaType>Sound</instantiationMediaType>
+	<instantiationFileSize unitsOfMeasure="bytes">70523487</instantiationFileSize>
+	<instantiationDuration>00:48:58.440</instantiationDuration>
+	<instantiationDataRate unitsOfMeasure="bits/second" annotation="CBR">192000</instantiationDataRate>
+	<instantiationTracks>1</instantiationTracks>
+	<instantiationEssenceTrack>
+		<essenceTrackType>Audio</essenceTrackType>
+		<essenceTrackIdentifier source="StreamKindID (Mediainfo)">0</essenceTrackIdentifier>
+		<essenceTrackEncoding version="Version 1" annotation="profile:Layer 3">MPEG Audio</essenceTrackEncoding>
+		<essenceTrackDataRate unitsOfMeasure="bits/second" annotation="CBR">192000</essenceTrackDataRate>
+		<essenceTrackSamplingRate unitsOfMeasure="Hz">48000</essenceTrackSamplingRate>
+		<essenceTrackDuration>00:48:58.440</essenceTrackDuration>
+		<essenceTrackAnnotation annotationType="Format_Settings">Joint stereo / MS Stereo</essenceTrackAnnotation>
+		<essenceTrackAnnotation annotationType="Format_Settings_Mode">Joint stereo</essenceTrackAnnotation>
+		<essenceTrackAnnotation annotationType="Format_Settings_ModeExtension">MS Stereo</essenceTrackAnnotation>
+		<essenceTrackAnnotation annotationType="Channel(s)">2</essenceTrackAnnotation>
+		<essenceTrackAnnotation annotationType="SamplingCount">141045120</essenceTrackAnnotation>
+		<essenceTrackAnnotation annotationType="FrameCount">122435</essenceTrackAnnotation>
+		<essenceTrackAnnotation annotationType="Compression_Mode">Lossy</essenceTrackAnnotation>
+		<essenceTrackAnnotation annotationType="StreamSize">70522560</essenceTrackAnnotation>
+	</instantiationEssenceTrack>
+	<instantiationAnnotation annotationType="Format">MPEG Audio</instantiationAnnotation>
+	<instantiationAnnotation annotationType="EncodedBy">Cubase LE AI Elements</instantiationAnnotation>
+	<instantiationAnnotation annotationType="Recorded_Date">UTC 2019-07- 1</instantiationAnnotation>
+	<instantiationAnnotation annotationType="Encoded_Library">LAME</instantiationAnnotation>
+	<instantiationAnnotation annotationType="comment">Cubase LE AI Elements</instantiationAnnotation>
+	<instantiationAnnotation annotationType="originator_reference">CCOOONNNNNNNNNNNN125349RRRRRRRRR</instantiationAnnotation>
+	<instantiationAnnotation annotationType="time_reference">62374368</instantiationAnnotation>
+	<instantiationAnnotation annotationType="umid">0xFF4F7890D73041CBBEB8505C8B815AF400000000000000000000000000000000</instantiationAnnotation>
+</pbcoreInstantiationDocument>
+

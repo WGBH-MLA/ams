@@ -14,7 +14,10 @@ require "sprockets/railtie"
 
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
-Bundler.require(*Rails.groups)
+groups = Rails.groups
+groups += ['bulkrax']
+Bundler.require(*groups)
+
 
 Dotenv::Railtie.load
 
@@ -37,5 +40,24 @@ module AMS
 
     # Don't generate system test files.
     config.generators.system_tests = nil
+
+    config.to_prepare do
+      # Allows us to use decorator files, which change methods or behavior on upstream classes
+      # with minimal overrides or fuss. Pattern adapted from Spree and Refinery projects
+      Dir.glob(File.join(File.dirname(__FILE__), "../app/**/*_decorator*.rb")).sort.each do |c|
+        Rails.configuration.cache_classes ? require(c) : load(c)
+      end
+
+      Dir.glob(File.join(File.dirname(__FILE__), "../lib/**/*_decorator*.rb")).sort.each do |c|
+        Rails.configuration.cache_classes ? require(c) : load(c)
+      end
+    end
+  end
+end
+
+module App
+  # Returns true if the current Rails version is 6.0.x
+  def self.rails_5_1?
+    Rails.version.start_with? '5.1'
   end
 end

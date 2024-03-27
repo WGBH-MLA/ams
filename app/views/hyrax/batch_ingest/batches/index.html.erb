@@ -13,13 +13,13 @@
   }
 </style>
 
-<h1><span class="fa fa-copy"></span>Batches</h1>
+<h1><span class="fa fa-copy"></span> Batches</h1>
 
-<a href="/batches/new" title="Upload New Batch">Upload New Batch</a>
-
+<a href="/batches/new" title="Upload New Batch" class="btn btn-primary btn-sm">Upload New Batch</a>
+<br /><br />
 <% if @presenters.count > 0 %>
   <div class='table-responsive'>
-    <table class='table table-condensed'>
+    <table class='table table-sm'>
       <thead>
         <th scope='col'><%= sort_link_to('ID', 'id') %></th>
         <th scope='col'><%= sort_link_to('Status', 'status') %></th>

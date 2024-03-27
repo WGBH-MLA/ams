@@ -33,7 +33,7 @@ module Hyrax
       annotations: [:child_annotations]
     }
 
-    self.hidden_fields += [ :hyrax_batch_ingest_batch_id, :last_pushed, :last_updated, :needs_update ]
+    self.hidden_fields += [ :hyrax_batch_ingest_batch_id, :last_pushed, :last_updated, :needs_update, :bulkrax_importer_id ]
 
     self.terms += (self.required_fields + field_groups.values.map(&:to_a).flatten).uniq
 
@@ -169,6 +169,14 @@ module Hyrax
         Array(model.admin_data.annotations)
       else
         []
+      end
+    end
+
+    def bulkrax_importer_id 
+      if model.admin_data
+        model.admin_data.bulkrax_importer_id
+      else
+        ""
       end
     end
 

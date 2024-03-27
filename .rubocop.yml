@@ -1,2 +1,124 @@
 inherit_gem:
   bixby: bixby_default.yml
+
+# Turn on RSpec cops
+require: rubocop-rspec
+
+# With the rubocop 0.47.0 and rubocop-rspec 1.8.0 the following stderr message was sent:
+#   An error occurred while RSpec/DescribedClass cop was inspecting path/to/file
+RSpec/DescribedClass:
+  Enabled: false
+
+AllCops:
+  DisplayCopNames: true
+  TargetRubyVersion: 2.5
+  Exclude:
+    - 'bin/**/*'
+    - 'db/**/*'
+    - 'config/**/*'
+    - 'vendor/**/*'
+    - '.internal_test_app/**/*'
+    - 'spec/fixtures/**/*'
+    - 'spec/internal/**/*'
+    - 'spec/test_app_templates/**/*'
+    - 'Rakefile'
+    - 'lib/tasks/rubocop.rake'
+    # disabling collections controller as most of the rubocop errors are in hyrax
+    - 'app/controllers/hyrax/dashboard/collections_controller.rb'
+
+Rails:
+  Enabled: true
+
+Rails/DynamicFindBy:
+  Whitelist:
+    - find_by_user_key
+  Exclude:
+    - 'lib/importer/factory/object_factory.rb'
+
+Metrics/LineLength:
+  Max: 120
+  Exclude:
+    - 'app/controllers/catalog_controller.rb'
+    - 'spec/controllers/curation_concerns/generic_works_controller_spec.rb'
+    - 'spec/services/iiif_collection_thumbnail_path_service_spec.rb'
+    - 'spec/services/iiif_work_thumbnail_path_service_spec.rb'
+    - 'spec/routing/proprietor/accounts_routing_spec.rb'
+
+Layout/IndentationConsistency:
+  EnforcedStyle: indented_internal_methods
+
+Layout/DotPosition:
+  EnforcedStyle: leading
+
+Style/Documentation:
+  Enabled: false
+
+Style/StringLiterals:
+  Enabled: false
+
+Style/WordArray:
+  Enabled: false
+
+Metrics/ClassLength:
+  Exclude:
+    - 'app/controllers/catalog_controller.rb'
+
+Metrics/ModuleLength:
+  Max: 200
+
+Rails/HasAndBelongsToMany:
+  Exclude:
+    - 'app/models/role.rb'
+
+RSpec/AnyInstance:
+  Enabled: false
+
+RSpec/InstanceVariable:
+  Exclude:
+    - 'spec/controllers/hyku/registrations_controller_spec.rb'
+
+RSpec/NamedSubject:
+  Enabled: false
+
+RSpec/DescribeClass:
+  Exclude:
+    - 'spec/requests/**/*'
+    - 'spec/features/**/*'
+    - 'spec/views/**/*'
+    - 'spec/routing/**/*'
+    - 'spec/tasks/**/*'
+
+Rails/FilePath:
+  Exclude:
+    - 'spec/routing/**/*'
+
+RSpec/ExpectActual:
+  Exclude:
+    - 'spec/routing/**/*'
+
+RSpec/VerifiedDoubles:
+  Enabled: false
+
+RSpec/MessageExpectation:
+  Enabled: false
+
+# By default RSpec/MessageSpies has the following:
+#   Prefer have_received for setting message expectations. Setup form as a spy using allow or instance_spy.
+RSpec/MessageSpies:
+  Enabled: true
+  EnforcedStyle: receive
+
+RSpec/ExampleLength:
+  Max: 16
+
+RSpec/NestedGroups:
+  Max: 4
+
+RSpec/MultipleExpectations:
+  Enabled: false
+
+Metrics/BlockLength:
+  Exclude:
+    - 'spec/**/*.rb'
+    - 'lib/tasks/*.rake'
+    - 'app/controllers/catalog_controller.rb'

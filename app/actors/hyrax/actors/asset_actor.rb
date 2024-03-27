@@ -12,6 +12,7 @@ module Hyrax
         add_title_types(env)
         add_description_types(env)
         add_date_types(env)
+        set_validation_status(env)
 
         save_aapb_admin_data(env) && super && create_or_update_contributions(env, contributions)
       end
@@ -21,6 +22,8 @@ module Hyrax
         add_title_types(env)
         add_description_types(env)
         add_date_types(env)
+        set_validation_status(env)
+
         save_aapb_admin_data(env) && super && create_or_update_contributions(env, contributions)
       end
 
@@ -46,16 +49,19 @@ module Hyrax
         def set_admin_data_attributes(admin_data, env)
           AdminData.attributes_for_update.each do |k|
             # Some attributes are serialized on AdminData, so always send an array
-            if should_empty_admin_data_value?(k, admin_data, env)
-              AdminData::SERIALIZED_FIELDS.include?(k) ? admin_data.send("#{k}=", Array.new) : admin_data.send("#{k}=", "")
+            if should_empty_admin_data_value?(k, env)
+              AdminData::SERIALIZED_FIELDS.include?(k) ? admin_data.send("#{k}=", Array.new) : admin_data.send("#{k}=", nil)
             elsif env.attributes[k].present?
               AdminData::SERIALIZED_FIELDS.include?(k) ? admin_data.send("#{k}=", Array(env.attributes[k])) : admin_data.send("#{k}=", env.attributes[k].to_s)
             end
           end
         end
 
-        def should_empty_admin_data_value?(key, admin_data, env)
-          admin_data.send(key).present? && !env.attributes[key].present?
+        def should_empty_admin_data_value?(key, env)
+          return false if %i[bulkrax_importer_id hyrax_batch_ingest_batch_id].include?(key)
+
+          # The presence of the key with a "blank" value indicates we're intentionally emptying the value
+          env.attributes.key?(key) && env.attributes[key].blank?
         end
 
         def delete_removed_annotations(admin_data, env)
@@ -111,13 +117,15 @@ module Hyrax
         end
 
         def find_or_create_admin_data(env)
-          admin_data = ::AdminData.create unless env.curation_concern.admin_data_gid.present?
-          if admin_data
-            Rails.logger.debug "Create AdminData at #{admin_data.gid}"
-            return admin_data
-          else
-            return env.curation_concern.admin_data
-          end
+          # Don't use present? here. It is broken for some ActiveRecord objects. Maybe due to overriding getter
+          # See: https://stackoverflow.com/questions/35410668/what-determines-the-return-value-of-present
+          return env.curation_concern.admin_data if env.curation_concern.admin_data.is_a?(AdminData)
+
+          admin_data = AdminData.find_by_gid(env.attributes['admin_data_gid']) if env.attributes['bulkrax_identifier'].present?
+          admin_data ||= ::AdminData.create
+
+          Rails.logger.debug "Create AdminData at #{admin_data.gid}"
+          return admin_data
         end
 
         def destroy_admin_data(env)
@@ -211,6 +219,26 @@ module Hyrax
 
         def get_typed_value(type, typed_values)
           typed_values.map { |v| v[:value] if v[:type] == type } .compact
+        end
+
+        def set_validation_status(env)
+          # Filter out Contributions from child count since they don't get included in the :intended_children_count
+          # at time of import.
+          # @see AAPB::BatchIngest::PBCoreXMLMapper#asset_attributes
+          #
+          # This is ultimately because there is a possibility that the creation of all of an Asset's
+          # Contributions could be skipped, which would significantly throw off the count for comparison.
+          # @see #create_or_update_contributions
+          current_children_count = env.curation_concern.all_members.reject { |child| child.is_a?(Contribution) }.size
+          intended_children_count = env.curation_concern.intended_children_count.to_i
+
+          if env.curation_concern.intended_children_count.blank? && env.curation_concern.validation_status_for_aapb.blank?
+            env.curation_concern.validation_status_for_aapb = [Asset::VALIDATION_STATUSES[:status_not_validated]]
+          elsif current_children_count < intended_children_count
+            env.curation_concern.validation_status_for_aapb = [Asset::VALIDATION_STATUSES[:missing_children]]
+          else
+            env.curation_concern.validation_status_for_aapb = [Asset::VALIDATION_STATUSES[:valid]]
+          end
         end
     end
   end

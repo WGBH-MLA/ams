@@ -58,6 +58,7 @@ RSpec.describe AMS::Migrations::Audit::AuditingService do
       end
 
       it 'adds the comparison report to the report\'s matches data' do
+        skip "ams.americanarchive.org is down"
         expect(report["matches"].count).to eq(1)
       end
     end
@@ -80,6 +81,7 @@ RSpec.describe AMS::Migrations::Audit::AuditingService do
       end
 
       it 'adds the comparison report to the report\'s mismatches data' do
+        skip "ams.americanarchive.org is down"
         expect(report["mismatches"].count).to eq(1)
       end
     end

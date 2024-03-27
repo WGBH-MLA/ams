@@ -8,7 +8,7 @@ FactoryBot.define do
     duration { '1:23:45' }
     file_size { '12354435234' }
     local_instantiation_identifier { ["1234"] }
-    digital_instantiation_pbcore_xml { Rack::Test::UploadedFile.new(Rails.root.join('spec/fixtures/sample_instantiation_valid.xml'), 'text/xml') }
+    digital_instantiation_pbcore_xml { File.open(Rails.root.join('spec/fixtures/sample_instantiation_valid.xml')) }
     trait :aapb_moving_image do
       holding_organization { "American Archive of Public Broadcasting" }
       media_type { "Moving Image" }

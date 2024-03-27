@@ -19,6 +19,7 @@ module Hyrax
         config.add_facet_field IndexesWorkflow.suppressed_field, helper_method: :suppressed_to_status
         config.add_facet_field solr_name("resource_type", :facetable), limit: 5
         config.add_facet_field solr_name("hyrax_batch_ingest_batch_id", :stored_searchable)
+        config.add_facet_field solr_name("bulkrax_importer_id", :stored_searchable)
       end
     end
 
@@ -65,7 +66,10 @@ module Hyrax
       end
 
       def query_solr
-        search_results(params)
+        Hyrax::SearchService.new(config: blacklight_config,
+                                  scope: self,
+                                  user_params: params,
+                                  search_builder_class: blacklight_config.search_builder_class).search_results
       end
   end
 end

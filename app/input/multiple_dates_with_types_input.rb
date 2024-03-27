@@ -1,7 +1,7 @@
 class MultipleDatesWithTypesInput < AMS::MultiTypedInput
 
   def text_input_html_options(value, index)
-    super.merge( { pattern: AMS::NonExactDateService.regex.to_s } )
+    super.merge( { pattern: AMS::NonExactDateService.regex_string } )
   end
 
   def type_choices

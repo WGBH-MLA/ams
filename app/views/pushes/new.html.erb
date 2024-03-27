@@ -47,7 +47,8 @@
   function validate(id_field_val){
     $.post('/pushes/validate_ids', { id_field: id_field_val }, function(resp) {
       $('#loader').hide();
-      
+      $('#valid-box').empty();
+
       var message;
       if(resp.error) {
         message = resp.error;
@@ -57,7 +58,10 @@
         $('#valid-box').addClass("green").removeClass("red");
       }
 
-      $('#valid-box').text(message);
+      messages_array = message.split("\n\n")
+      messages_array.forEach(msg => {
+        $('#valid-box').append('<p>' + msg + '</p>')
+      });
     });
   }
 </script>

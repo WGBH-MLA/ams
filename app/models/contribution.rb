@@ -8,7 +8,10 @@ class Contribution < ActiveFedora::Base
   # Change this to restrict which works can be added as a child.
   # self.valid_child_concerns = []
 
-
+  property :bulkrax_identifier, predicate: ::RDF::URI("http://ams2.wgbh-mla.org/resource#bulkraxIdentifier"), multiple: false do |index|
+    index.as :stored_searchable, :facetable
+  end
+  
   property :contributor, predicate: ::RDF::URI.new("http://www.w3.org/2006/vcard/ns#hasName"), multiple: false do |index|
     index.as :stored_searchable
   end

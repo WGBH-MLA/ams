@@ -5,6 +5,7 @@ fr:
       fields:
         facet:
           based_near_label_sim: Emplacement
+          bulkrax_importer_id_tesim: ID de l'importateur Bulkrax
           creator_sim: Créateur
           file_format_sim: Format
           generic_type_sim: Type

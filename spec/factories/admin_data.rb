@@ -12,6 +12,7 @@ FactoryBot.define do
 
     trait :empty do
       hyrax_batch_ingest_batch_id { nil }
+      bulkrax_importer_id { nil }
       last_pushed { nil }
       last_updated { nil }
       needs_update { nil }

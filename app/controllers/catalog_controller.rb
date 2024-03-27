@@ -5,8 +5,6 @@ class CatalogController < ApplicationController
   # This filter applies the hydra access controls
   before_action :enforce_show_permissions, only: :show
 
-  add_results_collection_tool :export_search_results
-
   configure_blacklight do |config|
     # default advanced config values
     config.advanced_search ||= Blacklight::OpenStructWithHashAccess.new
@@ -15,9 +13,9 @@ class CatalogController < ApplicationController
     config.advanced_search[:query_parser] ||= 'dismax'
     config.advanced_search[:form_solr_parameters] ||= {}
 
-    config.view.gallery.partials = [:index_header, :index]
-    config.view.masonry.partials = [:index]
-    config.view.slideshow.partials = [:index]
+    config.view.gallery(document_component: Blacklight::Gallery::DocumentComponent)
+    config.view.masonry(document_component: Blacklight::Gallery::DocumentComponent)
+    config.view.slideshow(document_component: Blacklight::Gallery::SlideshowComponent)
 
     config.show.tile_source_field = :content_metadata_image_iiif_info_ssm
     config.show.partials.insert(1, :openseadragon)
@@ -44,6 +42,18 @@ class CatalogController < ApplicationController
     # override default thumbnail method to handle 'cpb-aacip-' id vs 'cpb-aacip_' in S3 filename
     config.index.thumbnail_method = :render_thumbnail
 
+    config.add_results_document_tool(:bookmark, partial: 'bookmark_control', if: :render_bookmarks_control?)
+    config.add_results_collection_tool(:sort_widget)
+    config.add_results_collection_tool(:per_page_widget)
+    config.add_results_collection_tool(:view_type_group)
+    config.add_show_tools_partial(:bookmark, partial: 'bookmark_control', if: :render_bookmarks_control?)
+    config.add_show_tools_partial(:email, callback: :email_action, validator: :validate_email_params)
+    config.add_show_tools_partial(:sms, if: :render_sms_action?, callback: :sms_action, validator: :validate_sms_params)
+    config.add_show_tools_partial(:citation)
+    config.add_nav_action(:bookmark, partial: 'blacklight/nav/bookmark', if: :render_bookmarks_control?)
+    config.add_nav_action(:search_history, partial: 'blacklight/nav/search_history')
+
+    config.add_results_collection_tool :export_search_results
 
     # solr fields that will be treated as facets by the blacklight application
     #   The ordering of the field names is the order of the display
@@ -57,6 +67,7 @@ class CatalogController < ApplicationController
     config.add_facet_field "language_ssim", label: "Language", limit: 5, collapse: true
     config.add_facet_field "level_of_user_access_ssim", label: "Level of user access", limit: 5, collapse: true
     config.add_facet_field "transcript_status_ssim", label: "Transcript Status", limit: 5, collapse: true
+    config.add_facet_field "hyrax_batch_ingest_batch_id_tesim"
 
     config.add_facet_field 'cataloging_status_ssim', query: {
         yes: { label: 'Yes', fq: 'cataloging_status_ssim:Yes' },
@@ -454,17 +465,17 @@ class CatalogController < ApplicationController
     config.add_sort_field "#{solr_name('system_create', :stored_sortable, type: :date)} asc", label: "date uploaded \u25B2"
     config.add_sort_field "#{solr_name('system_modified', :stored_sortable, type: :date)} desc", label: "date modified \u25BC"
     config.add_sort_field "#{solr_name('system_modified', :stored_sortable, type: :date)} asc", label: "date modified \u25B2"
-    config.add_sort_field "#{solr_name('broadcast', :stored_sortable)} dsc", label: "broadcast \u25BC"
+    config.add_sort_field "#{solr_name('broadcast', :stored_sortable)} desc", label: "broadcast \u25BC"
     config.add_sort_field "#{solr_name('broadcast', :stored_sortable)} asc", label: "broadcast \u25B2"
-    config.add_sort_field "#{solr_name('created', :stored_sortable, type: :date)} dsc", label: "created  \u25BC"
+    config.add_sort_field "#{solr_name('created', :stored_sortable, type: :date)} desc", label: "created  \u25BC"
     config.add_sort_field "#{solr_name('created', :stored_sortable, type: :date)} asc", label: "created  \u25B2"
-    config.add_sort_field "#{solr_name('copyright_date', :stored_sortable, type: :date)} dsc", label: "copyright date  \u25BC"
+    config.add_sort_field "#{solr_name('copyright_date', :stored_sortable, type: :date)} desc", label: "copyright date  \u25BC"
     config.add_sort_field "#{solr_name('copyright_date', :stored_sortable, type: :date)} asc", label: "copyright date  \u25B2"
-    config.add_sort_field "#{solr_name('date', :stored_sortable, type: :date)} dsc", label: "date  \u25BC"
+    config.add_sort_field "#{solr_name('date', :stored_sortable, type: :date)} desc", label: "date  \u25BC"
     config.add_sort_field "#{solr_name('date', :stored_sortable, type: :date)} asc", label: "date  \u25B2"
-    config.add_sort_field "#{solr_name('title', :stored_sortable)} dsc", label: "title  \u25BC"
+    config.add_sort_field "#{solr_name('title', :stored_sortable)} desc", label: "title  \u25BC"
     config.add_sort_field "#{solr_name('title', :stored_sortable)} asc", label: "title  \u25B2"
-    config.add_sort_field "#{solr_name('episode_number', :stored_sortable)} dsc", label: "Episode Number  \u25BC"
+    config.add_sort_field "#{solr_name('episode_number', :stored_sortable)} desc", label: "Episode Number  \u25BC"
     config.add_sort_field "#{solr_name('episode_number', :stored_sortable)} asc", label: "Episode Number  \u25B2"
 
     # If there are more than this many search results, no spelling ("did you

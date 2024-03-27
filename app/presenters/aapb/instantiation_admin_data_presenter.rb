@@ -1,6 +1,8 @@
 module AAPB
   module InstantiationAdminDataPresenter
     extend ActiveSupport::Concern
+    include SolrHelper
+
     included do
       def display_admin_data?
         !(aapb_preservation_lto.blank? &&
@@ -13,15 +15,18 @@ module AAPB
         options.merge!({:html_dl=> true})
 
         solr_document = ::SolrDocument.find(id)
-        work_class = solr_document["has_model_ssim"].first.constantize
+        work_class = solr_document['has_model_ssim'].first
+        work_class = work_class.constantize
+        work_class =  Wings::ModelRegistry.reverse_lookup(work_class) || work_class
 
         if attribute_indexed_to_parent?(field, work_class) && attribute_facetable?(field, work_class)
           # Use :symbol for field_name since all attributes indexed to parent are indexed as symbols.
-          field_name = Solrizer.solr_name(field, :symbol)
+          field_name = solr_name(field, :symbol)
 
           # Use parent SolrDocument to get value
-          solr_document = ::SolrDocument.find(work_class.find(id).member_of.first.id)
+          solr_document = ::SolrDocument.find(work_class.find(id).member_of.first.id) if work_class&.find(id)&.member_of&.present?
 
+          return unless solr_document
           # Get values from sol_doc, should always be an Array since Assets can always have mutiple Instantiations
           values = solr_document[field_name] || Array.new
           return Hyrax::Renderers::IndexedToParentRenderer.new(field, values, options).render

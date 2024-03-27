@@ -2,6 +2,9 @@ require 'sony_ci_api'
 
 module SonyCi
   class APIController < ::APIController
+
+    respond_to :json
+
     # Specify error handlers for different kinds of errors. NOTE: for *all*
     # endpoints, we *always* want to respond with JSON and an appropriate HTTP
     # error, regardless of success or error. We *never* want to accidentally

@@ -34,7 +34,7 @@ FactoryBot.define do
     error { [true, false].sample ? "FakeError" : nil }
 
     # Almost always, there is only 1 GUID, but need to allow for multiple.
-    guids { [ "cpb-aacip-#{Faker::Number.hexadecimal(11)}" ] }
+    guids { [ "cpb-aacip-#{Faker::Number.hexadecimal(digits: 11)}" ] }
 
     after(:build) do |webhook_log|
       if webhook_log.error?

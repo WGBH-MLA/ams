@@ -1,0 +1,282 @@
+version: '3.8'
+
+x-app: &app
+  build:
+    context: .
+    target: ams-base
+    args:
+      - SETTINGS__BULKRAX__ENABLED=true
+  # command: sh -l -c "bundle && bundle exec puma -v -b tcp://0.0.0.0:3000"
+  env_file:
+    - .env
+    - .env.development
+  # NOTE: all common env variables moved to .env
+  image: ghcr.io/wgbh-mla/ams:${TAG:-latest}
+  volumes:
+    - uploads:/app/samvera/hyrax-webapp/public/uploads:cached
+    - assets:/app/samvera/hyrax-webapp/public/assets:cached
+    - cache:/app/samvera/hyrax-webapp/tmp/cache:cached
+    - .:/app/samvera/hyrax-webapp
+  networks:
+    internal:
+
+volumes:
+  assets:
+  cache:
+  fcrepo:
+  mysql:
+  redis:
+  postgres:
+  solr:
+  uploads:
+  zk:
+  zoo:
+
+networks:
+  internal:
+
+services:
+  postgres:
+    image: postgres:latest
+    env_file:
+      - .env
+      - .env.development
+    ports:
+      - "5432"
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    networks:
+      internal:
+
+  db:
+    image: mariadb:10.11.2
+    environment:
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=${MYSQL_DATABASE}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_HOST=${MYSQL_HOST}
+    env_file:
+      - .env
+      - .env.development
+    ports:
+      - '3306'
+    volumes:
+      - 'mysql:/var/lib/mysql'
+    networks:
+      internal:
+    command: ['mysqld', '--character-set-server=utf8', '--collation-server=utf8_unicode_ci', '--max-allowed-packet=1073741824']
+
+
+  pgloader:
+    image: alpine
+    command: sh -c "
+      if [ -z ${MIGRATE_DB} ]; then exit 1;
+      else
+        apk add pgloader;
+        pgloader mysql://root:DatabaseFTW@db/gbh postgresql://ams_user:ams_password@postgres/ams;
+      fi"
+    networks:
+      internal:
+    tty: true
+    stdin_open: true
+    depends_on:
+      db:
+        condition: service_started
+      postgres:
+        condition: service_started
+
+  zoo:
+    image: zookeeper:3.6.2
+    ports:
+      - 2181:2181
+      - 7001:7000
+    environment:
+      - ZOO_MY_ID=1
+      - ZOO_SERVERS=server.1=zoo:2888:3888;2181
+      - ZOO_4LW_COMMANDS_WHITELIST=mntr,srvr,ruok,conf
+    volumes:
+      - zoo:/data
+      - zk:/datalog
+    networks:
+      internal:
+    healthcheck:
+      test: ["CMD-SHELL", "echo 'ruok' | nc -w 2 -q 2 localhost 2181 | grep imok || exit 1"]
+      interval: "10s"
+      timeout: "8s"
+
+  solr:
+    image: ams/solr:8
+    build:
+      context: solr
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    environment:
+      - OOM=script
+      - VIRTUAL_PORT=8983
+      - VIRTUAL_HOST=solr.ams.test
+    user: root
+    command: bash -c "
+      chown -R 8983:8983 /var/solr
+      && ./bin/solr zk cp file:/var/solr/data/security.json zk:/security.json
+      && runuser -u solr -- solr-foreground"
+    expose:
+      - 8983
+    volumes:
+      - solr:/var/solr
+    networks:
+      internal:
+    healthcheck:
+      test: curl -sf http://$$SOLR_ADMIN_USER:$$SOLR_ADMIN_PASSWORD@localhost:8983/solr/admin/cores?action=STATUS || exit 1
+      start_period: 10s
+      interval: 20s
+      timeout: 5s
+      retries: 3
+    depends_on:
+      zoo:
+        condition: service_healthy
+
+  redis:
+    image: redis:5
+    command: redis-server
+    volumes:
+      - redis:/data
+    networks:
+      internal:
+
+  fcrepo:
+    image: ghcr.io/samvera/fcrepo4:4.7.5
+    volumes:
+      - fcrepo:/data:cached
+    env_file:
+      - .env
+    expose:
+      - 8080
+    environment:
+      - VIRTUAL_PORT=8080
+      - VIRTUAL_HOST=fcrepo.ams.test
+      - JAVA_OPTIONS=-Dfcrepo.object.directory="/data/objects" -Dfcrepo.binary.directory="/data/binaries" -Dfcrepo.mysql.host=db -Dfcrepo.mysql.username=root -Dfcrepo.mysql.password=DatabaseFTW
+      - MODESHAPE_CONFIG=classpath:/config/jdbc-mysql/repository.json
+      - DATABASE_PASSWORD=${DATABASE_PASSWORD}
+    networks:
+      internal:
+    depends_on:
+      db:
+        condition: service_started
+
+  # Do not recurse through all of tmp. derivitives will make booting
+  # very slow and eventually just time out as data grows
+  check_volumes:
+    <<: *app
+    user: root
+    entrypoint: ["sh", "-x", "-c"]
+    command:
+      - >
+        chown -R app:app /app/samvera/hyrax-webapp/public/uploads &&
+        chown -R app:app /app/samvera/hyrax-webapp/public/assets &&
+        chown -R app:app /app/samvera/hyrax-webapp/tmp/cache
+
+  initialize_app:
+    <<: *app
+    environment:
+      - CONFDIR=/app/samvera/hyrax-webapp/solr/config
+    entrypoint: ["sh", "-c"]
+    # we need to do seed seperate because activerecord doesn't reload properly otherwise
+    command:
+      - >
+        if [ -v DEPENDENCIES_NEXT ]; then
+          export BUNDLE_GEMFILE=Gemfile_next;
+          export BUNDLER_VERSION=2.0.1
+        else
+          export BUNDLE_GEMFILE=Gemfile;
+        fi;
+        solrcloud-upload-configset.sh /app/samvera/hyrax-webapp/solr/config &&
+        solrcloud-assign-configset.sh &&
+        SOLR_COLLECTION_NAME=hydra-test solrcloud-assign-configset.sh &&
+        rails db:create db:schema:load db:migrate &&
+        rails db:seed
+    depends_on:
+      postgres:
+        condition: service_started
+      db:
+        condition: service_started
+      solr:
+        condition: service_healthy
+      fcrepo:
+        condition: service_started
+      redis:
+        condition: service_started
+
+  web:
+    <<: *app
+    environment:
+      - VIRTUAL_PORT=3000
+      - VIRTUAL_HOST=.ams.test
+    # command: sh -l -c "sleep infinity"
+    cap_add:
+      - SYS_PTRACE
+    depends_on:
+      postgres:
+        condition: service_started
+      db:
+        condition: service_started
+      solr:
+        condition: service_started
+      fcrepo:
+        condition: service_started
+      redis:
+        condition: service_started
+      zoo:
+        condition: service_started
+      check_volumes:
+        condition: service_started
+      chrome:
+        condition: service_started
+      worker:
+        condition: service_started
+      initialize_app:
+        condition: service_completed_successfully
+    expose:
+      - 3000
+
+  worker:
+    <<: *app
+    build:
+      context: .
+      target: ams-worker
+      args:
+        - SETTINGS__BULKRAX__ENABLED=true
+    image: ghcr.io/wgbh-mla/ams/worker:${TAG:-latest}
+    depends_on:
+      check_volumes:
+        condition: service_completed_successfully
+      postgres:
+        condition: service_started
+      db:
+        condition: service_started
+      solr:
+        condition: service_started
+      fcrepo:
+        condition: service_started
+      redis:
+        condition: service_started
+      zoo:
+        condition: service_started
+      initialize_app:
+        condition: service_completed_successfully
+
+  chrome:
+    # password is 'secret'
+    image: seleniarm/standalone-chromium:latest
+    logging:
+      driver: none
+    volumes:
+      - /dev/shm:/dev/shm
+    shm_size: 3G
+    networks:
+      internal:
+    environment:
+      - JAVA_OPTS=-Dwebdriver.chrome.whitelistedIps=
+      - VIRTUAL_PORT=7900
+      - VIRTUAL_HOST=chrome.hyku.test

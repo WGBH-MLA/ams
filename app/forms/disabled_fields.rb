@@ -5,7 +5,6 @@ module DisabledFields
     self.disabled_fields = []
     self.readonly_fields = []
     self.hidden_fields   = []
-    delegate :errors, to: :model
 
     base.extend FieldState
   end
@@ -22,4 +21,3 @@ module DisabledFields
     end
   end
 end
-

@@ -1,0 +1,10 @@
+<%
+# Override Blacklight 7.33.1 to remove d-md-flex class and add d-flex and flex-column classes.
+# Also added ml-auto to move the search-widgets to the right and flex-wrap so it looks better
+# on smaller screens.
+%>
+
+<div id="sortAndPerPage" class="sort-pagination justify-content-between d-flex flex-column" role="navigation" aria-label="<%= t('blacklight.search.per_page.aria_label')%>">
+  <%= render partial: "paginate_compact", object: @response if show_pagination? %>
+  <%= render_results_collection_tools wrapping_class: "search-widgets ml-auto flex-wrap" %>
+</div>

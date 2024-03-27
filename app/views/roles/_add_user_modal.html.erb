@@ -1,25 +1,25 @@
-<div class="modal fade" id="newRoleModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
+<div class="modal fade" id="newRoleModal" tabindex="-1" role="dialog" aria-labelledby="newRoleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
-        <h2 id="extraFieldsModal_<%= %>_Label"><%= t('hyrax.dashboard.manage_role.add_user') %></h2>
+        <h2 id="newRoleModalLabel"><%= t('hyrax.dashboard.manage_role.add_user') %></h2>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
       </div>
-      <%= bootstrap_form_tag :url=> role_management.role_users_path(@role), :html=> { style: "display:inline;" } do |f| %>
+      <%= bootstrap_form_tag :url => role_management.role_users_path(@role), :html => { style: "display:inline;" } do |f| %>
         <div class="modal-body">
-          <div class="modal-body">
-            <ul class="errors"></ul>
-            <div class="form-Role">
-              <%= f.select :user_key,
-                           options_from_collection_for_select(@users, 'email', lambda { |user| "#{user.email} (#{user.deleted == false ? t('admin.users.index.active') : t('admin.users.index.not_active')})"}),
-                           { prompt: "#{t('hyrax.admin.dashboard.manage_role.select_user')}" },
-                           class: 'form-control' %>
-            </div>
+          <ul class="errors"></ul>
+          <div class="form-group">
+            <%= f.select :user_key,
+                         options_from_collection_for_select(@users, 'email', lambda { |user| "#{user.email} (#{user.deleted == false ? t('admin.users.index.active') : t('admin.users.index.not_active')})"}),
+                         { prompt: "#{t('hyrax.admin.dashboard.manage_role.select_user')}" },
+                         { class: 'form-control' } %>
           </div>
-          <div class="modal-footer">
-            <%= f.submit t('role-management.edit.add'), class: "btn btn-primary" %>
-            <%= link_to t('role-management.edit.cancel'), "#", class: "btn", data: {dismiss: "modal"} %>
-          </div>
+        </div>
+        <div class="modal-footer">
+          <%= f.submit t('role-management.edit.add'), class: "btn btn-primary" %>
+          <%= link_to t('role-management.edit.cancel'), "#", class: "btn btn-secondary", data: { dismiss: "modal" } %>
         </div>
       <% end %>
     </div>

@@ -2,38 +2,39 @@ FactoryBot.define do
   factory :asset do
     sequence(:title)         { |n| ["Test Asset #{n}"] }
     sequence(:description)   { |n| ["This is a description of Test Asset #{n}"] }
+    sequence(:bulkrax_identifier) { |n| "1-Assets-#{n}-#{n}"}
+    annotation  { ['Sample Annotation'] }
     asset_types  { ['Clip','Promo'] }
-    genre  { ['Drama','Debate'] }
-    broadcast_date  { ["2010","2015-01","1987-10-31"] }
-    created_date  { ["2010","2015-01","1987-10-31"] }
-    copyright_date  { ["2010","2015-01","1987-10-31"] }
-    date  { ["2010","2015-01","1987-10-31"] }
-    episode_number  { ['S01E2'] }
-    spatial_coverage  { ['TEST spatial_coverage'] }
-    temporal_coverage  { ['Test temporal_coverage'] }
     audience_level  {  ['PG14'] }
     audience_rating  { ['4.3'] }
-    annotation  { ['Sample Annotation'] }
-    rights_summary  { ['Sample rights_summary'] }
-    rights_link  { ['http://www.google.com'] }
+    broadcast_date  { ["2010","2015-01","1987-10-31"] }
+    clip_description  { ['Test clip_description'] }
+    clip_title  { ['Test clip_title'] }
+    copyright_date  { ["2010","2015-01","1987-10-31"] }
+    created_date  { ["2010","2015-01","1987-10-31"] }
+    date  { ["2010","2015-01","1987-10-31"] }
+    eidr_id  { ['eidr_id-001'] }
+    episode_description  { ['Test episode_description'] }
+    episode_number  { ['S01E2'] }
+    episode_title  { ['Test episode_title'] }
+    genre  { ['Drama','Debate'] }
     local_identifier  { ['WGBH-11'] }
     pbs_nola_code  { ['PBS-WGBH-11'] }
-    eidr_id  { ['eidr_id-001'] }
-    topics  { ['Animals','Business'] }
-    subject  { ['Test subject'] }
-    program_title  { ['Test program_title'] }
-    episode_title  { ['Test episode_title'] }
-    segment_title  { ['Test segment_title'] }
-    raw_footage_title  { ['Test raw_footage_title'] }
-    promo_title  { ['Test promo_title'] }
-    clip_title  { ['Test clip_title'] }
-    program_description  { ['Test program_description'] }
-    episode_description  { ['Test episode_description'] }
-    segment_description  { ['Test segment_description'] }
-    raw_footage_description  { ['Test raw_footage_description'] }
-    promo_description  { ['Test promo_description'] }
-    clip_description  { ['Test clip_description'] }
     producing_organization  { ['Test producing_organization'] }
+    program_description  { ['Test program_description'] }
+    program_title  { ['Test program_title'] }
+    promo_description  { ['Test promo_description'] }
+    promo_title  { ['Test promo_title'] }
+    raw_footage_description  { ['Test raw_footage_description'] }
+    raw_footage_title  { ['Test raw_footage_title'] }
+    rights_link  { ['http://www.google.com'] }
+    rights_summary  { ['Sample rights_summary'] }
+    segment_description  { ['Test segment_description'] }
+    segment_title  { ['Test segment_title'] }
+    spatial_coverage  { ['TEST spatial_coverage'] }
+    subject  { ['Test subject'] }
+    temporal_coverage  { ['Test temporal_coverage'] }
+    topics  { ['Animals','Business'] }
     visibility { Hydra::AccessControls::AccessRight::VISIBILITY_TEXT_VALUE_PUBLIC }
 
     transient do
@@ -56,6 +57,13 @@ FactoryBot.define do
 
     trait :with_physical_instantiation do
       ordered_members { [ create(:physical_instantiation) ] }
+    end
+
+    trait :with_two_physical_instantiations do
+      ordered_members { [
+        create(:physical_instantiation),
+        create(:minimal_physical_instantiation)
+      ] }
     end
 
     trait :with_digital_instantiation do

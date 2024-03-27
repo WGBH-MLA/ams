@@ -1,0 +1,357 @@
+# Simple yaml config-driven schema which is used to define model attributes,
+# index key names, and form properties.
+#
+# Attributes must have a type but all other configuration options are optional.
+#
+# attributes:
+#   attribute_name:
+#     type: string
+#     multiple: false
+#     index_keys:
+#       - "attribute_name_sim"
+#     form:
+#       required: true
+#       primary: true
+#       multiple: false
+#
+# @see config/metadata/basic_metadata.yaml for an example configuration
+#
+# Generated via
+#  `rails generate hyrax:work_resource AssetResource`
+
+attributes:
+  bulkrax_identifier:
+    type: string
+    multiple: false
+    index_keys:
+      - "bulkrax_identifier_sim"
+      - "bulkrax_identifier_tesim"
+    form:
+      required: false
+      primary: false
+      multiple: false
+  asset_types:
+    type: string
+    multiple: true
+    index_keys:
+      - "asset_types_sim"
+      - "asset_types_tesim"
+    form:
+      required: false
+      primary: false
+      multiple: true
+  genre:
+    type: string
+    multiple: true
+    index_keys:
+      - "genre_sim"
+      - "genre_tesim"
+    form:
+      required: false
+      primary: false
+      multiple: true
+  date:
+    type: string
+    multiple: true
+    index_keys:
+      - "date_sim"
+      - "date_tesim"
+    form:
+      required: false
+      primary: false
+      multiple: true
+  broadcast_date:
+    type: string
+    multiple: true
+    index_keys:
+      - "broadcast_date_tesim"
+    form:
+      required: false
+      primary: false
+      multiple: true
+  created_date:
+    type: string
+    multiple: true
+    index_keys:
+      - "created_date_tesim"
+    form:
+      required: false
+      primary: false
+      multiple: true
+  copyright_date:
+    type: string
+    multiple: true
+    index_keys:
+      - "copyright_date_tesim"
+    form:
+      required: false
+      primary: false
+      multiple: true
+  episode_number:
+    type: string
+    multiple: true
+    index_keys:
+      - "episode_number_tesim"
+    form:
+      required: false
+      primary: false
+      multiple: true
+  spatial_coverage:
+    type: string
+    multiple: true
+    index_keys:
+      - "spatial_coverage_tesim"
+    form:
+      required: false
+      primary: false
+      multiple: true
+  temporal_coverage:
+    type: string
+    multiple: true
+    index_keys:
+      - "temporal_coverage_tesim"
+    form:
+      required: false
+      primary: false
+      multiple: true
+  audience_level:
+    type: string
+    multiple: true
+    index_keys:
+      - "audience_level_tesim"
+    form:
+      required: false
+      primary: false
+      multiple: true
+  audience_rating:
+    type: string
+    multiple: true
+    index_keys:
+      - "audience_rating_tesim"
+    form:
+      required: false
+      primary: false
+      multiple: true
+  annotation:
+    type: string
+    multiple: true
+    index_keys:
+      - "annotation_tesim"
+    form:
+      required: false
+      primary: false
+      multiple: true
+  rights_summary:
+    type: string
+    multiple: true
+    index_keys:
+      - "rights_summary_tesim"
+    form:
+      required: false
+      primary: false
+      multiple: true
+  rights_link:
+    type: string
+    multiple: true
+    index_keys:
+      - "rights_link_tesim"
+    form:
+      required: false
+      primary: false
+      multiple: true
+  local_identifier:
+    type: string
+    multiple: true
+    index_keys:
+      - "local_identifier_tesim"
+    form:
+      required: false
+      primary: false
+      multiple: true
+  pbs_nola_code:
+    type: string
+    multiple: true
+    index_keys:
+      - "pbs_nola_code_tesim"
+    form:
+      required: false
+      primary: false
+      multiple: true
+  eidr_id:
+    type: string
+    multiple: true
+    index_keys:
+      - "eidr_id_tesim"
+    form:
+      required: false
+      primary: false
+      multiple: true
+  topics:
+    type: string
+    multiple: true
+    index_keys:
+      - "topics_sim"
+      - "topics_tesim"
+    form:
+      required: false
+      primary: false
+      multiple: true
+  program_title:
+    type: string
+    multiple: true
+    index_keys:
+      - "program_title_tesim"
+    form:
+      required: false
+      primary: false
+      multiple: true
+  episode_title:
+    type: string
+    multiple: true
+    index_keys:
+      - "episode_title_tesim"
+    form:
+      required: false
+      primary: false
+      multiple: true
+  segment_title:
+    type: string
+    multiple: true
+    index_keys:
+      - "segment_title_tesim"
+    form:
+      required: false
+      primary: false
+      multiple: true
+  raw_footage_title:
+    type: string
+    multiple: true
+    index_keys:
+      - "raw_footage_title_tesim"
+    form:
+      required: false
+      primary: false
+      multiple: true
+  promo_title:
+    type: string
+    multiple: true
+    index_keys:
+      - "promo_title_tesim"
+    form:
+      required: false
+      primary: false
+      multiple: true
+  clip_title:
+    type: string
+    multiple: true
+    index_keys:
+      - "clip_title_tesim"
+    form:
+      required: false
+      primary: false
+      multiple: true
+  program_description:
+    type: string
+    multiple: true
+    index_keys:
+      - "program_description_tesim"
+    form:
+      required: false
+      primary: false
+      multiple: true
+  episode_description:
+    type: string
+    multiple: true
+    index_keys:
+      - "episode_description_tesim"
+    form:
+      required: false
+      primary: false
+      multiple: true
+  segment_description:
+    type: string
+    multiple: true
+    index_keys:
+      - "segment_description_tesim"
+    form:
+      required: false
+      primary: false
+      multiple: true
+  raw_footage_description:
+    type: string
+    multiple: true
+    index_keys:
+      - "raw_footage_description_tesim"
+    form:
+      required: false
+      primary: false
+      multiple: true
+  promo_description:
+    type: string
+    multiple: true
+    index_keys:
+      - "promo_description_tesim"
+    form:
+      required: false
+      primary: false
+      multiple: true
+  clip_description:
+    type: string
+    multiple: true
+    index_keys:
+      - "clip_description_tesim"
+    form:
+      required: false
+      primary: false
+      multiple: true
+  producing_organization:
+    type: string
+    multiple: true
+    index_keys:
+      - "producing_organization_sim"
+      - "producing_organization_tesim"
+    form:
+      required: false
+      primary: false
+      multiple: true
+  admin_data_gid:
+    type: string
+    multiple: false
+    form:
+      required: false
+      primary: false
+      multiple: false
+  series_title:
+    type: string
+    multiple: true
+    index_keys:
+      - "series_title_tesim"
+    form:
+      required: false
+      primary: false
+      multiple: true
+  series_description:
+    type: string
+    multiple: true
+    index_keys:
+      - "series_description_tesim"
+    form:
+      required: false
+      primary: false
+      multiple: true
+  intended_children_count:
+    type: string
+    multiple: false
+    form:
+      required: false
+      primary: false
+      multiple: false
+  validation_status_for_aapb:
+    type: string
+    multiple: true
+    index_keys:
+      - "validation_status_for_aapb_tesim"
+    form:
+      required: false
+      primary: false
+      multiple: true

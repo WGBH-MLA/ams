@@ -1,0 +1,68 @@
+#cloud-config
+bootcmd:
+  - mkdir -p /mnt/sdf
+
+runcmd:
+  - echo "n" | mkfs.ext4 /dev/sdf
+  - echo "/dev/sdf    /mnt/sdf    auto   defaults,nofail 0  0" >> /etc/fstab
+  - mount -a
+  - echo ${base64encode(var.keypair)} | base64 -d >> /home/ec2-user/.ssh/${var.key_name}.pem
+  - chmod 400 /home/ec2-user/.ssh/${var.key_name}.pem
+  - chown ec2-user:ec2-user /home/ec2-user/.ssh/${var.key_name}.pem
+  - hostnamectl set-hostname ${var.hostname}
+  - echo 'Install Java 8 and Mariadb'
+  - yum -y remove java-1.7.0-openjdk
+  - yum -y install java-1.8.0
+  - echo 'Instal Mariadb'
+  - test ! -f /mnt/sdf/complete && mkdir -p /mnt/sdf/mysql-data
+  - ln -sf /mnt/sdf/mysql-data /var/lib/mysql
+  - yum -y install mysql-devel mariadb-server
+  - curl https://gist.githubusercontent.com/orangewolf/617751b1581e5a42fde3ffccd80a2a32/raw/5d563e0bb2a9ee51b89b98019bea2813a1d0660d/mysql.server.cnf > /etc/my.cnf.d/server.cnf
+  - service mariadb restart
+  - test ! -f /mnt/sdf/complete && mysql -e "CREATE USER '${var.fcrepo_db_username}'@'localhost' IDENTIFIED BY '${var.fcrepo_db_password}';"
+  - test ! -f /mnt/sdf/complete && mysql -e "GRANT ALL PRIVILEGES ON *.* TO '${var.fcrepo_db_username}'@'localhost';"
+  - echo 'Install Fedora'
+  - yum -y install tomcat
+  - echo 'JAVA_OPTS=\"$${JAVA_OPTS} -Dfcrepo.home=/mnt/sdf/fedora-data\"' >> /etc/sysconfig/tomcat7
+  - test ! -f /mnt/sdf/complete && mkdir -p /mnt/sdf/fedora-data
+  - test ! -f /mnt/sdf/complete && chown tomcat:tomcat /mnt/sdf/fedora-data/
+  - echo 'JAVA_OPTS="-Xmx12288M -Xms5632M"' >> /etc/sysconfig/tomcat
+  - cd /tmp
+  - wget https://github.com/fcrepo4/fcrepo4/releases/download/fcrepo-4.7.5/fcrepo-webapp-4.7.5.war
+  - cp fcrepo-webapp-4.7.5.war /var/lib/tomcat/webapps/
+  - echo 'fcrepo.home=/mnt/sdf/fedora-data' >> /etc/tomcat/catalina.properties
+  - echo 'fcrepo.mysql.host=${var.fcrepo_db_hostname}' >> /etc/tomcat/catalina.properties
+  - echo 'fcrepo.mysql.username=${var.fcrepo_db_username}' >> /etc/tomcat/catalina.properties
+  - echo 'fcrepo.mysql.password=${var.fcrepo_db_password}' >> /etc/tomcat/catalina.properties
+  - echo 'fcrepo.modeshape.configuration=file:/var/lib/tomcat/webapps/fcrepo-webapp-4.7.5/WEB-INF/classes/config/jdbc-mysql/repository.json' >> /etc/tomcat/catalina.properties
+  - echo 'spring.datasource.hikari.connection-timeout=600000' >> /etc/tomcat/catalina.properties
+  - echo 'spring.datasource.hikari.maximum-pool-size=400' >> /etc/tomcat/catalina.properties
+  - echo 'spring.datasource.hikari.max-lifetime=1800000' >> /etc/tomcat/catalina.properties
+  - echo 'spring.datasource.hikari.minimum-idle=20' >> /etc/tomcat/catalina.properties
+  - echo 'spring.datasource.hikari.validation-timeout=3000' >> /etc/tomcat/catalina.properties
+  - echo 'spring.datasource.hikari.idle-timeout=60000' >> /etc/tomcat/catalina.properties
+  - service tomcat restart
+  - echo 'Install Solr'
+  - cd /tmp
+  - wget http://archive.apache.org/dist/lucene/solr/7.7.3/solr-7.7.3.tgz
+  - tar xzf solr-7.7.3.tgz solr-7.7.3/bin/install_solr_service.sh --strip-components=2
+  - ./install_solr_service.sh solr-7.7.3.tgz -d /mnt/sdf/solr-data
+  - mkdir -p /tmp/hyrax-config/
+  - aws s3 sync s3://hyrax-install-assets/solr-config/ /tmp/hyrax-config/
+  - test ! -f /mnt/sdf/complete && sudo -u solr /opt/solr/bin/solr create -c ${var.solr_collection} -d /tmp/hyrax-config
+  - echo 'SOLR_JAVA_MEM="-Xms4096m -Xmx4096m"' >> /etc/default/solr.in.sh
+  - chown -R solr:solr /opt/solr
+  - /opt/solr/bin/init.d/solr restart
+  - chkconfig mariadb on
+  - chkconfig tomcat on
+  - chkconfig solr on
+  - echo 'Install glances'
+  - pip3 install glances
+  - echo 'Install site24x7'
+  - wget https://staticdownloads.site24x7.com/server/Site24x7InstallScript.sh
+  - bash Site24x7InstallScript.sh -i -key=${var.site24x7_key} -gn=${var.site24x7_group} -tp="Default Threshold - SERVER" -np="Main"
+  - echo 'complete' >> /status
+  - touch /mnt/sdf/complete
+
+# debug logging
+output : { all : '| tee -a /var/log/cloud-init-output.log' }

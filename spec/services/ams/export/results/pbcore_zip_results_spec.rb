@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe AMS::Export::Results::PBCoreZipResults do
   describe '#filepath' do
     let(:solr_docs) do
-      create_list(:asset, rand(2..4)).map { |asset| SolrDocument.new(asset.to_solr) }
+      create_list(:asset_resource, rand(2..4)).map { |asset| SolrDocument.new(asset.to_solr) }
     end
 
     subject { described_class.new(solr_documents: solr_docs) }

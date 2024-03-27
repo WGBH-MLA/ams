@@ -1,21 +1,23 @@
 {
-  "name": "AMS",
+  "name": "eventlite",
   "private": true,
-  "engines": {
-    "node": "12.9.0"
-  },
   "dependencies": {
-    "@rails/webpacker": "3.5",
-    "babel-preset-react": "^6.24.1",
-    "prop-types": "^15.6.2",
-    "react": "^16.5.2",
-    "react-dom": "^16.5.2",
-    "react_ujs": "^2.4.4"
+    "@babel/core": "^7.0.0-0",
+    "@babel/preset-react": "^7.22.5",
+    "@rails/actioncable": "^6.0.0",
+    "@rails/activestorage": "^6.0.0",
+    "@rails/ujs": "^6.0.0",
+    "@rails/webpacker": "5.4.4",
+    "babel-plugin-transform-react-remove-prop-types": "^0.4.24",
+    "prop-types": "^15.8.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "turbolinks": "^5.2.0",
+    "webpack": "^4.46.0",
+    "webpack-cli": "^3.3.12"
   },
+  "version": "0.1.0",
   "devDependencies": {
-    "webpack": "4.0.0",
-    "webpack-cli": "^4.1.0",
-    "webpack-dev-server": "3.10.0"
-  },
-  "version": "0.0.0"
+    "webpack-dev-server": "^3"
+  }
 }

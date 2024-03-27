@@ -1,0 +1,11 @@
+.bundle
+.convox
+.env
+.env.*
+.ruby-*
+db/*.sqlite3
+db/*.sqlite3-journal
+log/*
+node_modules
+tmp
+ops/provision

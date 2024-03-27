@@ -4,9 +4,6 @@ table.contributions {
 .work-panel button {
     margin: 0 0 5px 0;
 }
-.show-actions {
-    padding: 15px 10px;
-}
 .work-panel .dropdown-menu{
     margin: -5px 0 0 0;
 }
@@ -179,9 +176,6 @@ table.contributions {
     border: none;
     margin: 0;
     background: transparent;
-}
-.show-actions a {
-    margin: 0 0 5px !important;
 }
 ul.tabular {
     padding: 0 !important;

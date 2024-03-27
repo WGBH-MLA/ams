@@ -17,10 +17,7 @@ module SonyCi
 
     def save_sony_ci_id
       asset.admin_data.update!( sonyci_id: [ sony_ci_id ] )
-      # Re-save the Asset to re-index it.
-      # TODO: Is there a faster way to save the Sony Ci ID to the AdminData and
-      # re-index the Asset?
-      asset.save!
+      Hyrax.index_adapter.save(resource: asset)
       render status: 200,
              json: {
                message: "success",
@@ -32,7 +29,7 @@ module SonyCi
     private
 
       def asset
-        @asset ||= Asset.find(guid_from_sony_ci_filename)
+        @asset ||= AssetResource.find(guid_from_sony_ci_filename)
       end
 
       # Returns the assumed GUID from the Sony Ci Filename.

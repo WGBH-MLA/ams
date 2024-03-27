@@ -44,8 +44,16 @@ module AAPB
 
       def find_annotation_type_id(type)
         type_id = Annotation.find_annotation_type_id(type)
-        return type_id if type_id.present?
-        raise "annotation_type not registered with the AnnotationTypesService: #{type}."
+
+        if ENV['SETTINGS__BULKRAX__ENABLED'] == 'true'
+          type_id
+        else
+          if type_id.present?
+            type_id
+          else
+            raise "annotation_type not registered with the AnnotationTypesService: #{type}."
+          end
+        end
       end
 
       def asset_attributes
@@ -117,6 +125,11 @@ module AAPB
           all_people = pbcore.contributors + pbcore.publishers + creator_people
           attrs[:contributors]                = people_attributes(all_people)
           attrs[:producing_organization]      = creator_orgs.map {|co| co.creator.value}
+
+          intended_children_count = 0
+          intended_children_count += pbcore.instantiations.size
+          intended_children_count += pbcore.instantiations.map(&:essence_tracks).flatten.size
+          attrs[:intended_children_count]     = intended_children_count
         end
       end
 
@@ -156,13 +169,13 @@ module AAPB
 
       end
 
-      def physical_instantiation_attributes
-        @physical_instantiation_attributes ||= instantiation_attributes.tap do |attrs|
+      def physical_instantiation_resource_attributes
+        @physical_instantiation_resource_attributes ||= instantiation_attributes.tap do |attrs|
           attrs[:format] = pbcore.physical.value || nil
         end
       end
 
-      def digital_instantiation_attributes
+      def digital_instantiation_resource_attributes
         @digital_instantiation_attributes ||= instantiation_attributes.tap do |attrs|
           attrs[:format] = pbcore.digital.value || nil
         end

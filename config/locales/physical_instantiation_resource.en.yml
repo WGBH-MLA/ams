@@ -1,0 +1,30 @@
+en:
+  hyrax:
+    icons:
+      physical_instantiation_resource:     'physical-instantiation-icon'
+    select_type:
+      physical_instantiation_resource:
+        name:               "Physical Instantiation"
+        description:        "Physical instantiation works"
+  simple_form:
+    hints:
+      physical_instantiation_resource:
+        holding_organization: 'The organization that manages this copy of the asset.'
+        local_instantiation_identifier: 'An identifier used locally for this copy of the asset.'
+        media_type: 'The high-level nature of the content of this copy of the asset.'
+        format: 'The physical media on which the content is stored.'
+        location: 'A description of where the item is located.'
+        generations: 'The version of this copy of the asset.'
+        digitization_date: 'The date on which this copy of the asset was digitized. Not relevant for all instantiations.'
+        date: 'The date on which this copy of the asset was created. Valid Date formats are (YYYY-MM-DD, YYYY-MM, YYYY e.g. 2009-01-30, 2009-01, 2009).'
+        annotation: 'Any supplementary information or notes about this copy of the asset.'
+        rights_summary: 'Any information about copyright, usage, or access rights to this specific copy of the asset.'
+        rights_link: 'A URI pointing to a standardized declaration of rights, such as those from <a href="http://rightsstatements.org" target="_blank">RightsStatements.org</a>.'
+        dimensions: 'Measurement associated with the physical format, such as a 7 inch audio reel.'
+        standard: 'Identifies the broadcast standard video signal (e.g. NTSC, PAL) or the audio encoding (e.g. Dolby A, vertical cut).'
+        duration: 'Identifies the length of the recording, preferably in a timestamp format like HH:MM:SS.SSS or HH:MM:SS;FF.'
+        time_start: 'Identifies the timecode at which the content begins in this recording, preferably in a timestamp format like HH:MM:SS or HH:MM:SS;FF.'
+        tracks: 'The number and types of tracks found in this copy of the asset.'
+        channel_configuration: 'The arrangement or configuration of specific channels or layers of information in this copy of the asset, ex. 2-track mono, 8-track stereo, or video track with alpha channel.'
+        alternative_modes: 'List of any equivalent alternatives to the primary visual or sound information that exists in this copy of the asset, ex. ClosedCaptions, Subtitles, Language Dubs.'
+        colors: 'The colors used in the presentation of content in this copy of the asset.'

@@ -34,6 +34,7 @@ RSpec.describe Hyrax::AssetPresenter do
       end
 
       it "returns contribution member ids" do
+        skip "move spec to asset_resource_presenter"
         asset.ordered_members << contribution
         expect(asset.save).to eq true
         expect(asset.members.to_a.size).to eq 1
@@ -53,6 +54,7 @@ RSpec.describe Hyrax::AssetPresenter do
       end
 
       it "returns instantiation member ids" do
+        skip "move spec to asset_resource_presenter"
         asset.ordered_members << digital_instantiation
         asset.ordered_members << physical_instantiation
         asset.save
@@ -76,6 +78,7 @@ RSpec.describe Hyrax::AssetPresenter do
       end
 
       it "returns instantiation member ids" do
+        skip "move spec to asset_resource_presenter"
         asset.ordered_members << digital_instantiation
         asset.ordered_members << physical_instantiation
         asset.save

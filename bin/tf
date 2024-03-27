@@ -1,0 +1,23 @@
+#!/usr/bin/env ruby
+
+# require 'byebug'
+
+dir = File.expand_path(File.join(__FILE__, '../../ops/provision'))
+env_file = File.expand_path("#{dir}/.env.#{ARGV[0]}")
+workspace = "#{ARGV[0]}"
+
+# workspace commands can not have TF_WORKSPACE set
+cmd = if(ARGV[0].match(/workspace/) && ARGV[1].match(/new/))
+        %Q{cd #{dir} && unset TF_WORKSPACE && terraform workspace #{ARGV[1..-1].join(' ')}}
+      elsif ARGV[0].match(/workspace/)
+        %Q{cd #{dir} && TF_WORKSPACE=default terraform workspace #{ARGV[1..-1].join(' ')}}
+      else
+        %Q{cd #{dir} && TF_WORKSPACE=#{workspace} dotenv -f #{env_file} "terraform #{ARGV[1..-1].join(' ')}"}
+      end
+
+if ARGV[1].match(/init/)
+ cmd[0..-2] += " -backend-config=./.backend "
+end
+
+puts cmd
+exec cmd

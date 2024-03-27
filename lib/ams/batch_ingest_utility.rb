@@ -14,11 +14,12 @@ module AMS
     def delete_objects_of_batch_items_needing_reingest
       batch_items_needing_reingest.each do |batch_item|
         repo_object = begin
-                        ActiveFedora::Base.find batch_item.repo_object_id
+                        Hyrax.query_service.find_by(id: batch_item.repo_object_id)
                       rescue
                         nil
                       end
-        repo_object&.destroy!
+        Hyrax.persister.delete(resource: repo_object) if repo_object
+        Hyrax.index_adapter.delete(resource: repo_object) if repo_object
         batch_item.repo_object_id = nil
         batch_item.save!
       end
@@ -50,7 +51,7 @@ module AMS
       def repo_object_for(batch_item)
         # if batch_item is an ID, look up the BatchItem instance.
         batch_item = Hyrax::BatchIngest::BatchItem.find(batch_item) unless batch_item.is_a? Hyrax::BatchIngest::BatchItem
-        ActiveFedora::Base.find batch_item.repo_object_id
+        Hyrax.query_service.find_by(id: batch_item.repo_object_id)
       rescue
         nil
       end

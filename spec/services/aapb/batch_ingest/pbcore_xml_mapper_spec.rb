@@ -54,17 +54,31 @@ RSpec.describe AAPB::BatchIngest::PBCoreXMLMapper, :pbcore_xpath_helper do
       expect(attrs[:sonyci_id]).not_to be_nil
     end
 
-    it 'correctly maps annotation data' do
-      expect(attrs).to have_key :annotations
-      expect(attrs[:annotations].length).to eq (11)
+    RSpec.shared_examples 'annotation data' do |bulkrax_setting|
+      it 'correctly maps annotation data' do
+        ENV['SETTINGS__BULKRAX__ENABLED'] = bulkrax_setting
 
-      # Every Annotation in the attrs should have a value from the PBCore
-      attrs[:annotations].each do |anno|
-        expect(pbcore_values_from_xpath(pbcore_xml, anno["annotation_type"].to_sym)).to include(anno["value"])
+        expect(attrs).to have_key :annotations
+        expect(attrs[:annotations].length).to eq (11)
+
+        # Every Annotation in the attrs should have a value from the PBCore
+        attrs[:annotations].each do |anno|
+          expect(pbcore_values_from_xpath(pbcore_xml, anno["annotation_type"].to_sym)).to include(anno["value"])
+        end
+        # Every Annotation in the attrs should have a type registered with the AnnotationTypesService
+        pbcore_annotation_types.each do |type|
+          expect(AnnotationTypesService.new.select_all_options.to_h.values).to include(type)
+        end
       end
-      # Every Annotation in the attrs should have a type registered with the AnnotationTypesService
-      pbcore_annotation_types.each do |type|
-        expect(AnnotationTypesService.new.select_all_options.to_h.values).to include(type)
+    end
+
+    context 'annotation data' do
+      context 'when bulkrax is enabled' do
+        it_behaves_like 'annotation data', 'true'
+      end
+
+      context 'when bulkrax is not enabled' do
+        it_behaves_like 'annotation data', 'false'
       end
     end
 
@@ -85,9 +99,17 @@ RSpec.describe AAPB::BatchIngest::PBCoreXMLMapper, :pbcore_xpath_helper do
         expect(attrs[:date]).to eq ['2001', '2002-02', '2003-03-03']
       end
     end
+
+    describe 'counting the intended number of child records' do
+      let(:pbcore_xml) { File.read('./spec/fixtures/bulkrax/xml/pbcore_doc.xml') }
+
+      it 'sets :intended_children_count to the sum of all child records in the XML' do
+        expect(attrs[:intended_children_count]).to eq(5)
+      end
+    end
   end
 
-  describe '#physical_instantiation_attributes' do
+  describe '#physical_instantiation_resource_attributes' do
     let(:pbcore_instantiation_xml) { build(:pbcore_instantiation_document).to_xml }
     subject { described_class.new(pbcore_instantiation_xml) }
 
@@ -105,7 +127,7 @@ RSpec.describe AAPB::BatchIngest::PBCoreXMLMapper, :pbcore_xpath_helper do
     end
 
     it 'maps all attributes from PBCore XML' do
-      attrs = subject.physical_instantiation_attributes
+      attrs = subject.physical_instantiation_resource_attributes
       # For each attribute in attr_names, make sure it has a value that comes from
       # the PBCore XML factory.
       attr_names.each do |attr|
@@ -113,8 +135,8 @@ RSpec.describe AAPB::BatchIngest::PBCoreXMLMapper, :pbcore_xpath_helper do
       end
     end
 
-    it 'maps the correct PBCore XML values to the physical_instantiation_attributes' do
-      attrs = subject.physical_instantiation_attributes
+    it 'maps the correct PBCore XML values to the physical_instantiation_resource_attributes' do
+      attrs = subject.physical_instantiation_resource_attributes
 
       # For each attribute in attr_names, make sure it has the correct value
       # from the PBCore XML.

@@ -1,0 +1,24 @@
+dependencies:
+- name: fcrepo
+  repository: oci://ghcr.io/samvera
+  version: 0.8.0
+- name: memcached
+  repository: https://raw.githubusercontent.com/bitnami/charts/archive-full-index/bitnami
+  version: 4.2.21
+- name: minio
+  repository: https://raw.githubusercontent.com/bitnami/charts/archive-full-index/bitnami
+  version: 6.7.2
+- name: mariadb
+  repository: https://raw.githubusercontent.com/bitnami/charts/archive-full-index/bitnami
+  version: 9.5.1
+- name: redis
+  repository: https://raw.githubusercontent.com/bitnami/charts/archive-full-index/bitnami
+  version: 10.7.16
+- name: solr
+  repository: https://raw.githubusercontent.com/bitnami/charts/archive-full-index/bitnami
+  version: 1.0.1
+- name: nginx
+  repository: https://raw.githubusercontent.com/bitnami/charts/archive-full-index/bitnami
+  version: 9.8.0
+digest: sha256:c99a3bc46d0b988f40b576c8adebb4896ce355b249bfe5ffbddf170ee1f4a9e7
+generated: "2022-11-01T00:02:54.954597-07:00"

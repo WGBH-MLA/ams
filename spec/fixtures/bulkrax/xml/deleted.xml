@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pbcoreDescriptionDocument xmlns="http://www.pbcore.org/PBCore/PBCoreNamespace.html" xmlns:xsi="xsi" xsi:schemaLocation="http://www.pbcore.org/PBCore/PBCoreNamespace.html http://www.pbcore.org/xsd/pbcore-2.0.xsd" xsi:xmlns="http://www.w3.org/2001/XMLSchema-instance">
+  <pbcoreAssetDate dateType="created">1996-05-11</pbcoreAssetDate>
+  <pbcoreIdentifier source="http://americanarchiveinventory.org">cpb-aacip/20-000000hr</pbcoreIdentifier>
+  <delete>true</delete>
+</pbcoreDescriptionDocument>

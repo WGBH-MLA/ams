@@ -2,14 +2,11 @@ development:
   archivist:
     - archivist1@example.com
   admin:
-    - adeel@weareavp.com
-    - jason_corum@wgbh.org
     - andrew_myers@wgbh.org
     - wgbh_admin@wgbh-mla.org
 test:
   admin:
     - wgbh_admin@wgbh-mla.org
-    - adeel@weareavp.com
   archivist:
     - archivist1@example.com
     - archivist2@example.com
@@ -29,7 +26,6 @@ test:
 production:
   admin:
     - wgbh_admin@wgbh-mla.org
-    - adeel@weareavp.com
   archivist:
     - archivist1@example.com
     - archivist2@example.com
