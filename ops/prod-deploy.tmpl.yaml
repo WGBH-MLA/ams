@@ -191,6 +191,8 @@ redis:
   cluster:
     enabled: false
   password: prod
+  healthCheck:
+    initialDelay: 120
 
 solr:
   enabled: false
