@@ -39,6 +39,24 @@ module AMS
       end
     end
 
+    def merge_all_results
+      results_files = Dir.glob(WORKING_DIR.join('i16-AMS1Importer*.json'))
+      base_hash = JSON.parse(File.read(results_files.shift))
+      progressbar = ProgressBar.create(total: results_files.size, format: '%a %e %P% Processed: %c from %C')
+
+      results_files.each do |file|
+        merging_hash = JSON.parse(File.read(file))
+        base_hash.merge!(merging_hash) do |_inst_id, base_asset_ids, merging_asset_ids|
+          base_asset_ids | merging_asset_ids
+        end
+        progressbar.increment
+      end
+
+      File.open(WORKING_DIR.join('i16-combined-results.json'), 'w') do |file|
+        file.puts base_hash.to_json
+      end
+    end
+
     private
 
     def map_asset_id_to_inst_ids(xml_file)
@@ -90,24 +108,6 @@ module AMS
     def write_results
       File.open(results_path, 'w') do |f|
         f.puts results.to_json
-      end
-    end
-
-    def merge_all_results
-      results_files = Dir.glob(WORKING_DIR.join('i16-AMS1Importer*.json'))
-      base_hash = JSON.parse(File.read(results_files.shift))
-      progressbar = ProgressBar.create(total: results_files.size, format: '%a %e %P% Processed: %c from %C')
-
-      results_files.each do |file|
-        merging_hash = JSON.parse(File.read(file))
-        base_hash.merge!(merging_hash) do |_inst_id, base_asset_id, merging_asset_id|
-          base_asset_id | merging_asset_id
-        end
-        progressbar.increment
-      end
-
-      File.open(WORKING_DIR.join('i16-combined-results.json', 'w')) do |file|
-        file.puts base_hash.to_json
       end
     end
   end
