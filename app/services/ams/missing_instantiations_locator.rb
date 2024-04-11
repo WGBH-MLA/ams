@@ -39,6 +39,45 @@ module AMS
       end
     end
 
+    def merge_all_instantiation_maps
+      results_files = Dir.glob(WORKING_DIR.join('i16-AMS1Importer*.json'))
+      base_hash = JSON.parse(File.read(results_files.shift))
+      progressbar = ProgressBar.create(total: results_files.size, format: '%a %e %P% Processed: %c from %C')
+
+      results_files.each do |file|
+        merging_hash = JSON.parse(File.read(file))
+        base_hash.merge!(merging_hash) do |_inst_id, base_asset_ids, merging_asset_ids|
+          base_asset_ids | merging_asset_ids
+        end
+        progressbar.increment
+      end
+
+      File.open(WORKING_DIR.join('i16-combined-results.json'), 'w') do |file|
+        file.puts base_hash.to_json
+      end
+    end
+
+    def create_subsets_from_merged_map
+      results = JSON.parse(File.read(WORKING_DIR.join('i16-combined-results.json')))
+      uniq_assset_paths = results.values.flatten.uniq
+      subsets = uniq_assset_paths.each_slice(10_000).to_a
+
+      subsets.each_with_index do |set, i|
+        set_path = WORKING_DIR.join("i16-subset-#{i}")
+        FileUtils.mkdir_p(set_path)
+        pb_format = "Copying XML files to #{File.basename(set_path)}: %c/%C %P%"
+        progressbar = ProgressBar.create(total: set.size, format: pb_format)
+
+        set.each do |asset_path|
+          importer_dir, asset_id = asset_path.split('/')
+          xml_filename = "#{asset_id.sub('cpb-aacip-', '')}.xml"
+
+          FileUtils.cp(WORKING_DIR.join(importer_dir, xml_filename), WORKING_DIR.join(set_path, xml_filename))
+          progressbar.increment
+        end
+      end
+    end
+
     private
 
     def map_asset_id_to_inst_ids(xml_file)
