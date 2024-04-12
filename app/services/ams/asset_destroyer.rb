@@ -32,6 +32,13 @@ module AMS
     private
 
       def destroy_asset_by_id(asset_id)
+        # Order is important! When looking up a record, if it is found in Fedora but not Postgres,
+        # the record in Fedora is copied over to Postgres.
+        destroy_in_fedora(asset_id)
+        destroy_in_postgres(asset_id)
+      end
+
+      def destroy_in_fedora(asset_id)
         asset = Asset.find asset_id
 
         # Get IDs required to delete associated Tombstones and Sipity::Entities
@@ -48,6 +55,15 @@ module AMS
         end
       rescue => e
         error_rescue(e, "Asset", asset_id)
+      end
+
+      def destroy_in_postgres(asset_id)
+        asset_resource = AssetResource.find(asset_id)
+
+        Hyrax::Transactions::Container['work_resource.destroy']
+          .with_step_args('work_resource.delete' => { user: user },
+                          'work_resource.delete_all_file_sets' => { user: user })
+          .call(asset_resource).value!
       end
 
       def actor
