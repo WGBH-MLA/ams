@@ -64,6 +64,8 @@ module AMS
           .with_step_args('work_resource.delete' => { user: user },
                           'work_resource.delete_all_file_sets' => { user: user })
           .call(asset_resource).value!
+      rescue Valkyrie::Persistence::ObjectNotFoundError
+        puts "No AssetResource found with ID #{asset_id}"
       end
 
       def actor
