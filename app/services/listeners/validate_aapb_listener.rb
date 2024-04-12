@@ -41,6 +41,9 @@ module Listeners
     end
 
     def on_object_deleted(event)
+      # Not concerned with validation status if the Asset itself is being deleted
+      return if event[:object].is_a?(AssetResource)
+
       on_object_membership_updated(event)
     end
 
