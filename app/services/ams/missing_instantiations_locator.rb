@@ -1,22 +1,21 @@
 # frozen_string_literal: true
 require 'ruby-progressbar'
+require 'parallel'
 
 module AMS
   # @see https://github.com/scientist-softserv/ams/issues/16
-  class MissingInstantiationsLocator
+  class MissingInstantiationsLocator # rubocop:disable Metrics/ClassLength
     WORKING_DIR = Rails.root.join('tmp', 'imports')
 
-    attr_reader :search_dirs, :current_dir, :truncated_dir_name, :results_path, :results, :progressbar, :logger
+    attr_reader :current_dir, :truncated_dir_name, :results_path, :results, :progressbar, :logger
 
-    # @param [Array<String>] search_dirs
-    def initialize(search_dirs)
-      @search_dirs = search_dirs.map { |dir| WORKING_DIR.join(dir) }
-      @logger = ActiveSupport::Logger.new(
-        WORKING_DIR.join('i16-missing-instantiations-locator.log')
-      )
+    def initialize
+      @logger = Logger.new(WORKING_DIR.join('i16-missing-instantiations-locator.log'))
     end
 
-    def map_all_instantiation_identifiers
+    # @param [Array<String>] search_dirs
+    def map_all_instantiation_identifiers(search_dirnames)
+      search_dirs = search_dirnames.map { |dir| WORKING_DIR.join(dir) }
       search_dirs.each do |current_dir|
         @current_dir = current_dir
         @truncated_dir_name = File.basename(current_dir)
@@ -57,12 +56,13 @@ module AMS
       end
     end
 
-    def create_subsets_from_merged_map
+    # @param [Integer] num_processes
+    def create_subsets_from_merged_map(num_processes: 4)
       results = JSON.parse(File.read(WORKING_DIR.join('i16-combined-results.json')))
       uniq_assset_paths = results.values.flatten.uniq
       subsets = uniq_assset_paths.each_slice(10_000).to_a
 
-      subsets.each_with_index do |set, i|
+      Parallel.each_with_index(subsets, in_processes: num_processes) do |set, i|
         set_path = WORKING_DIR.join("i16-subset-#{i}")
         FileUtils.mkdir_p(set_path)
         pb_format = "Copying XML files to #{File.basename(set_path)}: %c/%C %P%"
@@ -72,7 +72,9 @@ module AMS
           importer_dir, asset_id = asset_path.split('/')
           xml_filename = "#{asset_id.sub('cpb-aacip-', '')}.xml"
 
-          FileUtils.cp(WORKING_DIR.join(importer_dir, xml_filename), WORKING_DIR.join(set_path, xml_filename))
+          unless File.exist?(WORKING_DIR.join(set_path, xml_filename))
+            FileUtils.cp(WORKING_DIR.join(importer_dir, xml_filename), WORKING_DIR.join(set_path, xml_filename))
+          end
           progressbar.increment
         end
       end
