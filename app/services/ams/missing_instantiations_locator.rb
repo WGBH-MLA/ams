@@ -65,14 +65,16 @@ module AMS
       Parallel.each_with_index(subsets, in_processes: num_processes) do |set, i|
         set_path = WORKING_DIR.join("i16-subset-#{i}")
         FileUtils.mkdir_p(set_path)
-        pb_format = "Copying XML files to #{File.basename(set_path)}: %c/%C %P%"
+        pb_format = "Copying XML files to #{File.basename(set_path)}: %a %e %c/%C %P%"
         progressbar = ProgressBar.create(total: set.size, format: pb_format)
 
         set.each do |asset_path|
           importer_dir, asset_id = asset_path.split('/')
           xml_filename = "#{asset_id.sub('cpb-aacip-', '')}.xml"
 
-          unless File.exist?(WORKING_DIR.join(set_path, xml_filename))
+          if File.exist?(WORKING_DIR.join(set_path, xml_filename))
+            logger.debug "#{xml_filename} already exists in #{File.basename(set_path)}"
+          else
             FileUtils.cp(WORKING_DIR.join(importer_dir, xml_filename), WORKING_DIR.join(set_path, xml_filename))
           end
           progressbar.increment
