@@ -82,6 +82,32 @@ module AMS
       end
     end
 
+    def audit_duplicate_xml_files
+      results = JSON.parse(File.read(WORKING_DIR.join('i16-combined-results.json')))
+      asset_paths = results.values.flatten.uniq
+      filename_map = {}
+
+      asset_paths.each do |path|
+        path, asset_id = path.split('/')
+        filename = "#{asset_id.sub('cpb-aacip-', '')}.xml"
+
+        filename_map[filename] ||= {}
+        filename_map[filename][:paths] ||= []
+        filename_map[filename][:paths] << path
+      end
+
+      duplicate_files = filename_map.select { |_filename, attrs| attrs[:paths].size > 1 }
+
+      duplicate_files.each do |filename, attrs|
+        file_contents = attrs[:paths].map { |path| File.read(WORKING_DIR.join(path, filename)) }
+        duplicate_files[filename][:content_differs] = file_contents.uniq.size > 1
+      end
+
+      File.open(WORKING_DIR.join('i16-duplicate-xml-files-audit.json'), 'w') do |file|
+        file.puts JSON.pretty_generate(duplicate_files)
+      end
+    end
+
     private
 
     def map_asset_id_to_inst_ids(xml_file)
