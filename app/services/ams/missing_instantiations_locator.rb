@@ -59,8 +59,8 @@ module AMS
     # @param [Integer] num_processes
     def create_subsets_from_merged_map(num_processes: 4)
       results = JSON.parse(File.read(WORKING_DIR.join('i16-combined-results.json')))
-      uniq_assset_paths = results.values.flatten.uniq
-      subsets = uniq_assset_paths.each_slice(10_000).to_a
+      uniq_asset_paths = results.values.flatten.uniq
+      subsets = uniq_asset_paths.each_slice(10_000).to_a
 
       Parallel.each_with_index(subsets, in_processes: num_processes) do |set, i|
         set_path = WORKING_DIR.join("i16-subset-#{i}")
