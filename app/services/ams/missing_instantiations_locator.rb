@@ -75,7 +75,11 @@ module AMS
           if File.exist?(WORKING_DIR.join(set_path, xml_filename))
             logger.debug "#{xml_filename} already exists in #{File.basename(set_path)}"
           else
-            FileUtils.cp(WORKING_DIR.join(importer_dir, xml_filename), WORKING_DIR.join(set_path, xml_filename))
+            begin
+              FileUtils.cp(WORKING_DIR.join(importer_dir, xml_filename), WORKING_DIR.join(set_path, xml_filename))
+            rescue => e
+              logger.error "#{e.class} - (#{File.basename(set_path)}/#{xml_filename}) - #{e.message}"
+            end
           end
           progressbar.increment
         end
