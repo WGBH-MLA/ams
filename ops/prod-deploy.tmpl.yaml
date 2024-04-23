@@ -191,8 +191,11 @@ redis:
   cluster:
     enabled: false
   password: prod
-  healthCheck:
-    initialDelay: 120
+  master:
+    livenessProbe:
+      initialDelaySeconds: 120
+    readinessProbe:
+      initialDelaySeconds: 120
 
 solr:
   enabled: false
