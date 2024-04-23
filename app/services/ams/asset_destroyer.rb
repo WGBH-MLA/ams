@@ -1,21 +1,22 @@
 module AMS
   class AssetDestroyer
-    attr_accessor :asset_ids, :user_email
+    attr_accessor :asset_ids, :user_email, :logger
 
     def initialize(asset_ids: [], user_email: nil)
       @asset_ids = Array(asset_ids)
       @user_email = user_email
+      @logger = Logger.new(Rails.root.join('tmp', 'imports', 'asset_destroyer.log'))
     end
 
     def destroy(asset_ids)
-      puts "Initiating destruction sequence for #{asset_ids.count} Assets..."
+      logger.info "Initiating destruction sequence for #{asset_ids.count} Assets..."
       Array(asset_ids).each do |asset_id|
         destroy_asset_by_id asset_id
       end
     end
 
     def eradicate_asset_tombstones(asset_ids)
-      puts "Initiating eradication sequence for #{asset_ids.count} Asset Tombstones..."
+      logger.info "Initiating eradication sequence for #{asset_ids.count} Asset Tombstones..."
       Array(asset_ids).each do |asset_id|
         begin
           Asset.find asset_id
@@ -24,7 +25,7 @@ module AMS
           # May as well try the Sipity::Entity too
           delete_sipity_entity_by_id(asset_id)
         else
-          puts "Lookup of Asset with ID '#{asset_id}' did not return a Tombstone. Skipping..."
+          logger.warn "Lookup of Asset with ID '#{asset_id}' did not return a Tombstone. Skipping..."
         end
       end
     end
@@ -46,7 +47,7 @@ module AMS
 
         # Use ActorStack to destroy front-end Asset and Associated Objects
         actor.destroy(actor_env(asset))
-        puts "Asset '#{asset_id}' destroyed."
+        logger.debug "Asset '#{asset_id}' destroyed."
 
         # Also delete the Tombstone in Fedora and Sipity::Entity
         all_member_ids.each do |id|
@@ -96,7 +97,7 @@ module AMS
 
       def eradicate_tombstone_by_id(id)
         ActiveFedora::Base.eradicate id
-        puts "Tombstone '#{id}' destroyed."
+        logger.debug "Tombstone '#{id}' destroyed."
       rescue => e
         error_rescue(e, "Tombstone", id)
       end
@@ -106,7 +107,7 @@ module AMS
         raise "Returned multiple Sipity::Entities for ID '#{id}" if entity.length > 1
         entity.first.destroy
 
-        puts "Sipity::Entity '#{id}' destroyed."
+        logger.debug "Sipity::Entity '#{id}' destroyed."
       rescue => e
         error_rescue(e, "Sipity::Entity", id)
       end
@@ -114,7 +115,7 @@ module AMS
       def error_rescue(error, object_type, id)
         msg = error.class.to_s
         msg += ": #{error.message}" unless error.message.empty?
-        puts "Error destroying '#{object_type}' for '#{id}'. #{msg}"
+        logger.error "Error destroying '#{object_type}' for '#{id}'. #{msg}"
       end
   end
 end
