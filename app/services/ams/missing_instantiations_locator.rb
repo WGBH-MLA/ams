@@ -125,6 +125,7 @@ module AMS
 
     def create_subset_importers
       subset_paths = Dir.glob(Rails.root.join('tmp', 'imports', 'i16-subset*'))
+      base_imp = Bulkrax::Importer.find_by(name: 'AMS1Importer_0-10000')
       desired_parser_field_attrs = %w[
         record_element
         import_type
@@ -132,16 +133,14 @@ module AMS
         rights_statement
         override_rights_statement
         file_style
-        import_file_path
       ]
 
       subset_paths.each do |path|
-        base_imp = Bulkrax::Importer.find_by(name: 'AMS1Importer_0-10000')
         imp = base_imp.dup
 
         imp.name = File.basename(path)
         imp.parser_fields = base_imp.parser_fields.slice(*desired_parser_field_attrs)
-        imp.parser_fields['import_file_path'] = path.to_s
+        imp.parser_fields['import_file_path'] = path
 
         imp.save!
       end
