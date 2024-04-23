@@ -5,7 +5,7 @@ module AMS
     def initialize(asset_ids: [], user_email: nil)
       @asset_ids = Array(asset_ids)
       @user_email = user_email
-      @logger = Logger.new(Rails.root.join('tmp', 'imports', 'asset_destroyer.log'))
+      @logger = setup_logger
     end
 
     def destroy(asset_ids)
@@ -116,6 +116,13 @@ module AMS
         msg = error.class.to_s
         msg += ": #{error.message}" unless error.message.empty?
         logger.error "Error destroying '#{object_type}' for '#{id}'. #{msg}"
+      end
+
+      def setup_logger
+        logger_path = Rails.root.join('tmp', 'imports', 'asset_destroyer.log')
+        FileUtils.mkdir_p(logger_path.dirname)
+
+        Logger.new(logger_path)
       end
   end
 end
