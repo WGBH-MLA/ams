@@ -7,8 +7,10 @@ module Listeners
       resource = event.to_h.fetch(:object) { Hyrax.query_service.find_by(id: event[:object_id]) }
       return unless resource.is_a?(AssetResource) || resource.is_a?(PhysicalInstantiationResource) || resource.is_a?(DigitalInstantiationResource)
       resource.members.each do |member|
-        Hyrax.index_adapter.delete(resource: member)
-        Hyrax.persister.delete(resource: member)
+        Hyrax::Transactions::Container['work_resource.destroy']
+          .with_step_args('work_resource.delete' => { user: event[:user] },
+                          'work_resource.delete_all_file_sets' => { user: event[:user] })
+          .call(member).value!
       end
     end
   end
