@@ -112,6 +112,41 @@ module AMS
       end
     end
 
+    def destroy_assets(subset_path)
+      xml_files = Dir.glob(subset_path.join('*.xml'))
+      asset_ids = xml_files.map { |f| "cpb-aacip-#{File.basename(f).sub('.xml', '')}" }
+
+      begin
+        AMS::AssetDestroyer.new(asset_ids: asset_ids, user_email: 'wgbh_admin@wgbh-mla.org').destroy
+      rescue => e
+        logger.error "Error destroying Assets. See asset_destroyer.log (#{e.class} - #{e.message})"
+      end
+    end
+
+    def create_subset_importers
+      subset_paths = Dir.glob(Rails.root.join('tmp', 'imports', 'i16-subset*'))
+      desired_parser_field_attrs = %w[
+        record_element
+        import_type
+        visibility
+        rights_statement
+        override_rights_statement
+        file_style
+        import_file_path
+      ]
+
+      subset_paths.each do |path|
+        base_imp = Bulkrax::Importer.find_by(name: 'AMS1Importer_0-10000')
+        imp = base_imp.dup
+
+        imp.name = File.basename(path)
+        imp.parser_fields = base_imp.parser_fields.slice(*desired_parser_field_attrs)
+        imp.parser_fields['import_file_path'] = path.to_s
+
+        imp.save!
+      end
+    end
+
     private
 
     def map_asset_id_to_inst_ids(xml_file)
