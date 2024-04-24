@@ -16,6 +16,7 @@ module SonyCi
     end
 
     def save_sony_ci_id
+      raise "Asset not playable media" unless is_media?
       asset.admin_data.update!( sonyci_id: [ sony_ci_id ] )
       Hyrax.index_adapter.save(resource: asset)
       render status: 200,
@@ -46,6 +47,10 @@ module SonyCi
 
       def sony_ci_id
         params['assets'].first['id']
+      end
+
+      def is_media?
+        sony_ci_filename.end_with?('.mp4') || sony_ci_filename.end_with?('.mp3')
       end
 
       # Creates a WebhookLog record for the webhook request and ensures
