@@ -1,3 +1,5 @@
+require 'ruby-progressbar'
+
 module AMS
   class AssetDestroyer
     attr_accessor :asset_ids, :user_email, :logger
@@ -10,8 +12,10 @@ module AMS
 
     def destroy(asset_ids)
       logger.info "Initiating destruction sequence for #{asset_ids.count} Assets..."
+      progressbar = ProgressBar.create(total: asset_ids.size, format: "Destroying Assets: %a %e %c/%C %P%")
       Array(asset_ids).each do |asset_id|
         destroy_asset_by_id asset_id
+        progressbar.increment
       end
     end
 
@@ -65,8 +69,9 @@ module AMS
           .with_step_args('work_resource.delete' => { user: user },
                           'work_resource.delete_all_file_sets' => { user: user })
           .call(asset_resource).value!
-      rescue Valkyrie::Persistence::ObjectNotFoundError
-        puts "No AssetResource found with ID #{asset_id}"
+        logger.debug "AssetResource '#{asset_id}' (and children) destroyed."
+      rescue => e
+        error_rescue(e, 'AssetResource', asset_id)
       end
 
       def actor
