@@ -117,7 +117,9 @@ module AMS
       asset_ids = xml_files.map { |f| "cpb-aacip-#{File.basename(f).sub('.xml', '')}" }
 
       begin
-        AMS::AssetDestroyer.new(asset_ids: asset_ids, user_email: 'wgbh_admin@wgbh-mla.org').destroy
+        logger.info "Destroying #{asset_ids.size} Assets via the AssetDestroyer. See asset_destroyer.log"
+        ad = AMS::AssetDestroyer.new(asset_ids: asset_ids, user_email: 'wgbh_admin@wgbh-mla.org')
+        ad.destroy(ad.asset_ids)
       rescue => e
         logger.error "Error destroying Assets. See asset_destroyer.log (#{e.class} - #{e.message})"
       end
