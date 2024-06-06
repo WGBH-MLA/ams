@@ -51,22 +51,26 @@ module Ams
       end
 
       def set_admin_data_attributes(admin_data, change_set)
-        AdminData.attributes_for_update.each do |k|
-          # Some attributes are serialized on AdminData, so always send an array
-          k_string = k.to_s
-          if should_empty_admin_data_value?(k, change_set)
-            AdminData::SERIALIZED_FIELDS.include?(k) ? admin_data.send("#{k}=", Array.new) : admin_data.send("#{k}=", nil)
-          elsif change_set.fields[k_string].present?
-            AdminData::SERIALIZED_FIELDS.include?(k) ? admin_data.send("#{k}=", Array(change_set.fields[k_string])) : admin_data.send("#{k}=", change_set.fields[k_string].to_s)
+        AdminData.attributes_for_update.each do |field|
+          field = field.to_s
+          # Convert emtpy strings to nil, whether the value is a scalar or an array
+          new_admin_data_value = if change_set.fields[field].respond_to?(:select)
+            change_set.fields[field].reject {|v| v.blank? }
+          elsif change_set.fields[field].blank?
+            nil
+          end
+
+          if can_empty_field?(field) || new_admin_data_value.present?
+            admin_data.write_attribute(field, new_admin_data_value)
           end
         end
       end
 
-      def should_empty_admin_data_value?(key, change_set)
-        return false if %i[bulkrax_importer_id hyrax_batch_ingest_batch_id].include?(key)
-
-        # The presence of the key with a "blank" value indicates we're intentionally emptying the value
-        change_set.fields.key?(key) && change_set.fields[key].blank?
+      def can_empty_field?(field)
+        %w(
+          bulkrax_importer_id
+          hyrax_batch_ingest_batch_id
+        ).exclude?(field.to_s)
       end
 
       def delete_removed_annotations(admin_data, change_set)
