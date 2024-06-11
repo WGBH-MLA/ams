@@ -58,6 +58,8 @@ module Ams
             change_set.fields[field].reject {|v| v.blank? }
           elsif change_set.fields[field].blank?
             nil
+          else # non-multiple with value present
+            change_set.fields[field]
           end
 
           if can_empty_field?(field) || new_admin_data_value.present?
