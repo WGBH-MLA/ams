@@ -53,15 +53,20 @@ module Ams
       def set_admin_data_attributes(admin_data, change_set)
         AdminData.attributes_for_update.each do |field|
           field = field.to_s
-          # Convert emtpy strings to nil, whether the value is a scalar or an array
-          new_admin_data_value = if change_set.fields[field].respond_to?(:select)
+          
+          # Conditionally set new value for admin data field
+          new_admin_data_value = if AdminData::SERIALIZED_FIELDS.include?(field.to_sym)
+            # Filter out blanks if the field is a serialized field, e.g. sonyci_id.
             change_set.fields[field].reject {|v| v.blank? }
           elsif change_set.fields[field].blank?
+            # If not serialized and blank, convert to nil
             nil
-          else # non-multiple with value present
+          else
+            # Otherwise keep value as is.
             change_set.fields[field]
           end
 
+          # If the AdminData field can be emptied OR if we have a non-blank value, then update the AdminData field.
           if can_empty_field?(field) || new_admin_data_value.present?
             admin_data.write_attribute(field, new_admin_data_value)
           else
