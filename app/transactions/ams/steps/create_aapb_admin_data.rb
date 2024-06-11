@@ -64,6 +64,8 @@ module Ams
 
           if can_empty_field?(field) || new_admin_data_value.present?
             admin_data.write_attribute(field, new_admin_data_value)
+          else
+            Rails.logger.debug("Chose not to update AdminData #{admin_data.id}'s field #{field} with value(s): #{change_set.fields[field]}")
           end
         end
       end
