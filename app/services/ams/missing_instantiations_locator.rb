@@ -142,9 +142,30 @@ module AMS
 
         imp.name = File.basename(path)
         imp.parser_fields = base_imp.parser_fields.slice(*desired_parser_field_attrs)
-        imp.parser_fields['import_file_path'] = path
+        imp.parser_fields['import_file_path'] = path.to_s
 
         imp.save!
+      end
+    end
+
+    def export_assets
+      results = JSON.parse(File.read(WORKING_DIR.join('i16-combined-results.json')))
+      uniq_asset_paths = results.values.flatten.uniq
+      ids = uniq_asset_paths.map { |path| path.split('/')[1] }
+
+      query = 'has_model_ssim:Asset'
+      fq = ids.join(' OR ')
+      df = 'id'
+      rows = 375_000
+      solr_docs = Hyrax::SolrService.query(query, fq: fq, df: df, rows: rows)
+
+      hash = {}
+      solr_docs.each do |doc|
+        hash[doc['id']] = doc
+      end
+
+      File.open(WORKING_DIR.join('i16-asset-data-export.json'), 'w') do |f|
+        f.puts hash.to_json
       end
     end
 
