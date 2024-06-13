@@ -213,8 +213,8 @@ module AAPB
         def set_admin_data_attributes(admin_data, attributes)
           # add existing admin_data values so they're preserved in the AssetActor
           AdminData.attributes_for_update.each do |admin_attr|
-            next unless attributes.keys.include?(admin_attr.to_s)
-            admin_data.send("#{admin_attr}=", attributes[admin_attr.to_s])
+            next unless attributes.keys.include?(admin_attr)
+            admin_data.send("#{admin_attr}=", attributes[admin_attr])
           end
         end
 
