@@ -59,12 +59,14 @@ ingest_types:
           - eidr_id
           - topics
           - subject
+          - title
           - program_title
           - episode_title
           - segment_title
           - raw_footage_title
           - promo_title
           - clip_title
+          - description
           - program_description
           - episode_description
           - segment_description
@@ -113,12 +115,14 @@ ingest_types:
           - eidr_id
           - topics
           - subject
+          - title
           - program_title
           - episode_title
           - segment_title
           - raw_footage_title
           - promo_title
           - clip_title
+          - description
           - program_description
           - episode_description
           - segment_description
