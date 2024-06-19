@@ -56,7 +56,7 @@ module Ams
         if admin_data_values.key?('sonyci_id')
           admin_data_values['sonyci_id'] = Array(admin_data_values['sonyci_id']).reject(&:blank?)
         end
-        admin_data.update!(admin_data_values)
+        admin_data.assign_attributes(admin_data_values)
       end
 
       def delete_removed_annotations(admin_data, change_set)
