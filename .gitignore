@@ -46,6 +46,12 @@ fits.log
 # Drew's demo stuff. Remove this ignore if necessary.
 /demo*
 
+# Default locaiton of Sony Ci API credentials
+ci.yml
+
+# Default naming convention of kubeconfig files
+*kubeconfig.yml
+
 # This file is generated on deployment
 public/deployment.html
 
