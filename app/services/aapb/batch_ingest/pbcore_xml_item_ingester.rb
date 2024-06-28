@@ -84,7 +84,7 @@ module AAPB
                       end
 
           result = Hyrax::Transactions::Container["work_resource.create_with_bulk_behavior"]
-            .with_step_args(step_args)
+            .with_step_args(**step_args)
             .call(cx)
 
           if result.failure?
