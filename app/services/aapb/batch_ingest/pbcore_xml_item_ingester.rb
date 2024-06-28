@@ -77,6 +77,7 @@ module AAPB
             'work_resource.save_acl' => { permissions_params: [attrs.try('visibility') || 'open'].compact }
           }
 
+<<<<<<< HEAD
           result = if ActiveModel::Type::Boolean.new.cast(ENV.fetch('SETTINGS__BULKRAX__ENABLED', false))
             bulkrax_step_arg = { 'work_resource.add_bulkrax_files' => { files: [], user: submitter } }
             Hyrax::Transactions::Container["work_resource.create_with_bulk_behavior"]
@@ -89,6 +90,11 @@ module AAPB
               .with_step_args(**base_step_args)
               .call(cx)
           end
+=======
+          result = Hyrax::Transactions::Container["work_resource.create_with_bulk_behavior"]
+            .with_step_args(**step_args)
+            .call(cx)
+>>>>>>> 89942724 (updates instantiation reset ingester with code from Kiah PR to conditionally add Bulkrax-related steps.)
 
           if result.failure?
             msg = result.failure[0].to_s
