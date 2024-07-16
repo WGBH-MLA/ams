@@ -51,22 +51,12 @@ module Ams
       end
 
       def set_admin_data_attributes(admin_data, change_set)
-        AdminData.attributes_for_update.each do |k|
-          # Some attributes are serialized on AdminData, so always send an array
-          k_string = k.to_s
-          if should_empty_admin_data_value?(k, change_set)
-            AdminData::SERIALIZED_FIELDS.include?(k) ? admin_data.send("#{k}=", Array.new) : admin_data.send("#{k}=", nil)
-          elsif change_set.fields[k_string].present?
-            AdminData::SERIALIZED_FIELDS.include?(k) ? admin_data.send("#{k}=", Array(change_set.fields[k_string])) : admin_data.send("#{k}=", change_set.fields[k_string].to_s)
-          end
+        admin_data_values = change_set.fields.slice(*AdminData.attributes_for_update).compact
+        # If Sony Ci IDs are present, ensure there are no blank ones, such as empty strings.
+        if admin_data_values.key?('sonyci_id')
+          admin_data_values['sonyci_id'] = Array(admin_data_values['sonyci_id']).reject(&:blank?)
         end
-      end
-
-      def should_empty_admin_data_value?(key, change_set)
-        return false if %i[bulkrax_importer_id hyrax_batch_ingest_batch_id].include?(key)
-
-        # The presence of the key with a "blank" value indicates we're intentionally emptying the value
-        change_set.fields.key?(key) && change_set.fields[key].blank?
+        admin_data.assign_attributes(admin_data_values)
       end
 
       def delete_removed_annotations(admin_data, change_set)
