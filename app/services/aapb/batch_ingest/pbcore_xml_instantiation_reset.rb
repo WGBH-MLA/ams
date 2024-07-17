@@ -37,6 +37,7 @@ module AAPB
         end
 
         def asset_resource_id
+          require 'pry-byebug'; binding.pry
           pbcore.identifiers.detect{|id| id.source == 'http://americanarchiveinventory.org' }&.value
         end
 
@@ -66,24 +67,19 @@ module AAPB
           cx = Hyrax::Forms::ResourceForm.for(klass.new).prepopulate!
           cx.validate(attrs)
 
-          step_args = {
-            'change_set.set_user_as_depositor' => { user: submitter },
-            'work_resource.change_depositor' => { user: submitter },
-            'work_resource.save_acl' => { permissions_params: [attrs.try('visibility') || 'open'].compact }
-          }
-
-          if ENV.fetch('SETTINGS__BULKRAX__ENABLED', false)
-            
-          bulkrax_step_arg = { 'work_resource.add_bulkrax_files' => { files: [], user: submitter } }
-          step_args = if ActiveModel::Type::Boolean.new.cast()
-                        bulkrax_step_arg.merge(base_step_args) # Bulkrax step should come first
-                      else
-                        base_step_args
-                      end
-
           result = Hyrax::Transactions::Container["work_resource.create_with_bulk_behavior"]
-            .with_step_args(**step_args)
+            .with_step_args(
+              "work_resource.add_bulkrax_files" => {files: [], user: submitter},
+
+              "change_set.set_user_as_depositor" => {user: submitter},
+              "work_resource.change_depositor" => {user: submitter},
+              'work_resource.save_acl' => { permissions_params: [attrs.try('visibility') || 'open'].compact }
+            )
             .call(cx)
+
+          require 'pry'; binding.pry
+          Hyrax::Transactions::Container["work_resource.create_with_bulk_behavior"]
+
 
           if result.failure?
             msg = result.failure[0].to_s
