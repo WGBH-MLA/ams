@@ -10,10 +10,6 @@ if ENV['AAPB_HOST']
   %x{mkdir ~/.ssh && ssh-keyscan $AAPB_HOST >> ~/.ssh/known_hosts}
 end
 
-if ENV['IMPORT_WORKER_SIDEKIQ_CONCURRENCY']
-  ENV['SIDEKIQ_CONCURRENCY'] = ENV.fetch('IMPORT_WORKER_SIDEKIQ_CONCURRENCY', '10')
-end
-
 queues = if !ARGV.empty?
            ' -q ' + ARGV.join(' -q ')
          else
