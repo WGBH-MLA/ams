@@ -1,4 +1,5 @@
 require 'pbcore'
+require 'ams/identifier_service'
 
 FactoryBot.define do
   factory :pbcore_instantiation_identifier, class: PBCore::Instantiation::Identifier, parent: :pbcore_element do
