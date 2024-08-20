@@ -211,13 +211,13 @@ module AMS::PbcoreXmlExportExtension
       end
 
       instantiation.rights_summary&.to_a&.each do |rights_summary|
-        instantiation.instantiationRights do |instrights_node|
+        instantiation_node.instantiationRights do |instrights_node|
           instrights_node.rightsSummary { instantiation_node.cdata(rights_summary) }
         end
       end
 
       instantiation.rights_link&.to_a&.each do |rights_link|
-        instantiation.instantiationRights do |instrights_node|
+        instantiation_node.instantiationRights do |instrights_node|
           instrights_node.rightsLink { instantiation_node.cdata(rights_link) }
         end
       end
