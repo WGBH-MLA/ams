@@ -3,45 +3,60 @@ require 'hyrax/batch_ingest/spec/shared_specs'
 require 'aapb/batch_ingest/pbcore_xml_item_ingester'
 require 'aapb/batch_ingest/pbcore_xml_instantiation_reset'
 require 'tempfile'
+require 'sidekiq/testing'
 
 RSpec.describe AAPB::BatchIngest::PBCoreXMLInstantiationReset, reset_data: false do
+  # Temporarily set ActiveJob queue adapter to :sidekiq for this test, since
+  # it's an integration test that involves running ingest jobs.
+  before(:all) do
+    ActiveJob::Base.queue_adapter = :sidekiq
+    Sidekiq::Testing.inline!
+  end
+  after(:all) { ActiveJob::Base.queue_adapter = :sidekiq }
 
   # An array of a single pbcoreIdentifier that is the AAPB ID, aka AssetResource ID.
   let(:pbcore_identifier) { build(:pbcore_identifier, :aapb) }
 
   # Create 2 PBCore XML docs with the same AAPB ID, ingesting the first one with
-  # PBCoreXMLItemIngester (normal ingest), and then ingesting the 2nd with the
-  # class under test: PBCoreXMLInstantiationResetIngester.
+  # PBCoreXMLItemIngester (normal ingest), and then ingesting the 2nd with
+  # PBCoreXMLInstantiationResetIngester (the class we are testing).
+  # Our goal for happy path testing is to ensure that instantiations can be
+  # reset to something new without affecting the AssetResource's other attributes
+  # or related Contribution models.
   let(:pbcore_docs) do
-    build_list(
-      :pbcore_description_document,
-      2,
-      :full_aapb,
-      identifiers: [ pbcore_identifier ],
-      instantiations: [
-        build_list(
-          :pbcore_instantiation,
-          # Random number of DIGITAL instantiations
-          rand(1..3),
-          :digital,
-          # Because we are ingesting we should not have an AAPB ID identifier,
-          # which means we have to explicitly specify our identifiers because an
-          # AAPB ID in in factory-generated instantiations added by default.
-          identifiers: [ build(:pbcore_instantiation_identifier) ]
-        ),
-        build_list(
-          :pbcore_instantiation,
-          # Random number of PHYSICAL instantiations
-          rand(1..3),
-          :physical,
-          # Because we are ingesting we should not have an AAPB ID identifier,
-          # which means we have to explicitly specify our identifiers because an
-          # AAPB ID in in factory-generated instantiations added by default.
-          identifiers: [ build(:pbcore_instantiation_identifier) ]
-        )        
-        # Flatten the 2 lists of instantiations into a single list.
-      ].flatten
-    )
+    Array.new(2) do
+      build(
+        :pbcore_description_document,
+        :full_aapb,
+        identifiers: [ pbcore_identifier ],
+        instantiations: [
+          # Random number (1-3) of digital instantiations
+          Array.new(rand(1..3)) do
+            build(
+              :pbcore_instantiation,
+              :digital,
+              # Because we are ingesting we should not have an AAPB ID identifier,
+              # which means we have to explicitly specify our identifiers because an
+              # AAPB ID in in factory-generated instantiations added by default.
+              identifiers: [ build(:pbcore_instantiation_identifier) ]
+            )
+          end,
+
+          # Random number (1-3) of physical instantiations
+          Array.new(rand(1..3)) do
+            build(
+              :pbcore_instantiation,
+              :physical,
+              # Because we are ingesting we should not have an AAPB ID identifier,
+              # which means we have to explicitly specify our identifiers because an
+              # AAPB ID in in factory-generated instantiations added by default.
+              identifiers: [ build(:pbcore_instantiation_identifier) ]
+            )
+          end
+          # Flatten the 2 lists of instantiations into a single list.
+        ].flatten
+      )
+    end
   end
 
   # Build 2 BatchItems from the 2 tempfiles containing the factory-generated PBCore
@@ -76,13 +91,16 @@ RSpec.describe AAPB::BatchIngest::PBCoreXMLInstantiationReset, reset_data: false
       .select { |i| i.digital }
   end
 
-  # fetched_asset_pbcore_instantitaions - PBCore XML of the new instantiations
+  # actual_instantiations - PBCore XML of the new instantiations
   # after ingestion (i.e. the actual result when comparing for correctness)
   # NOTE: depends on `before` block below running successfully, which it should
   # do automatically prior to each example within the same context, including
   # nested contexts.
   let(:actual_instantiations) do
-    x = PBCore::DescriptionDocument.parse(
+
+    require 'pry'; binding.pry
+
+    PBCore::DescriptionDocument.parse(
       SolrDocument.find(pbcore_identifier.value).export_as_pbcore
     ).instantiations
       .select { |i| i.digital }
@@ -101,16 +119,23 @@ RSpec.describe AAPB::BatchIngest::PBCoreXMLInstantiationReset, reset_data: false
   # 1. ingest batch_item_1 with PBCoreXMLItemIngester
   # 2. ingest batch_item_2 with PBCoreXMLInstantiationResetIngester
   before do
+    AAPB::BatchIngest::PBCoreXMLItemIngester.new(batch_items.first).ingest
 
+    # check for Asset instantiations here
     require 'pry'; binding.pry
 
-    AAPB::BatchIngest::PBCoreXMLItemIngester.new(batch_items.first).ingest
+    # Fetch the AssetResource as it was first ingested. This represents an
+    # "original" state of an AssetResource prior to running the
+    # PBCoreXMLInstantiationReset ingester, which we can use for comparison
     @orig_asset_resource = AssetResource.find(pbcore_identifier.value).dup
     AAPB::BatchIngest::PBCoreXMLInstantiationReset.new(batch_items.last).ingest
+
+    # check for Asset instantiations here
+    require 'pry'; binding.pry
+
   end
 
   describe '#ingest' do
-
     subject { described_class.new(batch_items.last).ingest }
 
     context 'when the Asset is not in AMS' do
@@ -175,7 +200,6 @@ RSpec.describe AAPB::BatchIngest::PBCoreXMLInstantiationReset, reset_data: false
         end
 
         it 'sets the instantiations to the new values', :focus do
-          require 'pry'; binding.pry
           expect(actual_instantiations).to eq expected_instantiations
         end
 

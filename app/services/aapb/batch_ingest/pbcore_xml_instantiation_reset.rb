@@ -17,27 +17,62 @@ module AAPB
         # the stack if the user cannot be converted to a Sipity::Entity.
         raise "Could not find or create Sipity Agent for user #{submitter}" unless sipity_agent
 
+        puts "\n\n\nbegore remove_all_instantiations!...\n\n\n"
+        require 'pry'; binding.pry
+
+        remove_all_instantiations!
+
+        puts "\n\n\nafter remove_all_instantiations!...\n\n\n"
+        require 'pry'; binding.pry
+
         pbcore_digital_instantiations.each do |pbcore_digital_instantiation|
           di_batch_item = Hyrax::BatchIngest::BatchItem.create!(batch: batch_item.batch, status: 'initialized', id_within_batch: batch_item.id_within_batch)
+          puts "\n\n\ncalling CoolDigitalJob.perform_later...\n\n\n"
           CoolDigitalJob.perform_later(parent_id: asset_resource.id.to_s, xml: pbcore_digital_instantiation.to_xml, batch_item: di_batch_item)
         end
 
+
         pbcore_physical_instantiations.each do |pbcore_physical_instantiation|
           pi_batch_item = Hyrax::BatchIngest::BatchItem.create!(batch: batch_item.batch, status: 'initialized', id_within_batch: batch_item.id_within_batch)
+          puts "\n\n\ncalling CoolDigitalJob.perform_later...\n\n\n"
           CoolPhysicalJob.perform_later(parent_id: asset_resource.id.to_s, xml: pbcore_physical_instantiation.to_xml, batch_item: pi_batch_item)
         end
+
+        require 'pry'; binding.pry
 
         asset_resource
       end
 
       private
 
+        def remove_all_instantiations!
+          instantiations = asset_resource.digital_instantiation_resources + asset_resource.physical_instantiation_resources
+          instantiations.each do |inst|
+            begin
+              Hyrax.persister.delete(resource: inst)
+              Hyrax.index_adapter.delete(resource: inst)
+            rescue => e
+              log.error("#{e.class}: #{e.message}")
+              log.debug(e.backtrace.join("\n"))
+            end
+          end
+          Hyrax.index_adapter.save(resource: asset_resource)
+        end
+
+        def log
+          @log ||= Logger.new(STDOUT)
+        end
+
+        def destroy_work(work)
+          Hyrax::Transactions::WorkDestroy.new
+        end
+
+
         def asset_resource
           @asset_resource ||= AssetResource.find(asset_resource_id)
         end
 
         def asset_resource_id
-          require 'pry-byebug'; binding.pry
           pbcore.identifiers.detect{|id| id.source == 'http://americanarchiveinventory.org' }&.value
         end
 
@@ -77,7 +112,6 @@ module AAPB
             )
             .call(cx)
 
-          require 'pry'; binding.pry
           Hyrax::Transactions::Container["work_resource.create_with_bulk_behavior"]
 
 

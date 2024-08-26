@@ -117,6 +117,7 @@ module AAPB
         end
 
         def ingest_digital_instantiation!(parent:, xml:)
+          puts "\n\n\nin ingest_digital_instantiations\n\n\n"
           attrs = { pbcore_xml: xml }
           attrs[:title] = ::SolrDocument.new(parent.to_solr).title
           digital_instantiation = ingest_klass(DigitalInstantiationResource, attrs)
@@ -125,6 +126,7 @@ module AAPB
         end
 
         def ingest_physical_instantiation!(parent:, xml:)
+          puts "\n\n\nin ingest_physical_instantiations\n\n\n"
           attrs = AAPB::BatchIngest::PBCoreXMLMapper.new(xml).physical_instantiation_resource_attributes
           attrs[:title] = ::SolrDocument.new(parent.to_solr).title
           physical_instantiation = ingest_klass(PhysicalInstantiationResource, attrs)
@@ -188,12 +190,26 @@ module AAPB
         # @param <ActiveFedora::Base> parent the parent object
         # @param <ActiveFedora::Base> child the child object
         def atomically_adopt(parent, child)
+
+          puts "\n\n\nin atomically_adopt...\n\n\n"
+
           # Get the lock for 10 seconds
           lock_manager.lock!("add_ordered_member_to:#{parent.id}", 120000) do |locked|
+
+            puts "\n\n\nin lock block....\n\n\n"
+
             parent.member_ids += [child.id.to_s]
-            parent.save!
+            Hyrax.persister.save(resource: parent)
+            Hyrax.index_adapter.save(resource: parent)
           end
+
+          puts "After attempting to atomically adopt... check parent and children...."
+          require 'pry'; binding.pry
+
         rescue Redlock::LockError
+
+          puts "\n\n\nRedlock error\n\n\n"
+
           # redlock will automatically retry to acquire the lock according to
           # params passed to Redlock::Client.new (see #lock_manager). If all of
           # those retries fail, then we land here. Raise an exception that
