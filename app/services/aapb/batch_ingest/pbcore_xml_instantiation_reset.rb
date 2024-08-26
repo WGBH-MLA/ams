@@ -37,7 +37,6 @@ module AAPB
         end
 
         def asset_resource_id
-          require 'pry-byebug'; binding.pry
           pbcore.identifiers.detect{|id| id.source == 'http://americanarchiveinventory.org' }&.value
         end
 
@@ -77,7 +76,6 @@ module AAPB
             )
             .call(cx)
 
-          require 'pry'; binding.pry
           Hyrax::Transactions::Container["work_resource.create_with_bulk_behavior"]
 
 

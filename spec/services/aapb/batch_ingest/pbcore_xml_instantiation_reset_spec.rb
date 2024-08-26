@@ -13,35 +13,39 @@ RSpec.describe AAPB::BatchIngest::PBCoreXMLInstantiationReset, reset_data: false
   # PBCoreXMLItemIngester (normal ingest), and then ingesting the 2nd with the
   # class under test: PBCoreXMLInstantiationResetIngester.
   let(:pbcore_docs) do
-    build_list(
-      :pbcore_description_document,
-      2,
-      :full_aapb,
-      identifiers: [ pbcore_identifier ],
-      instantiations: [
-        build_list(
-          :pbcore_instantiation,
-          # Random number of DIGITAL instantiations
-          rand(1..3),
-          :digital,
-          # Because we are ingesting we should not have an AAPB ID identifier,
-          # which means we have to explicitly specify our identifiers because an
-          # AAPB ID in in factory-generated instantiations added by default.
-          identifiers: [ build(:pbcore_instantiation_identifier) ]
-        ),
-        build_list(
-          :pbcore_instantiation,
-          # Random number of PHYSICAL instantiations
-          rand(1..3),
-          :physical,
-          # Because we are ingesting we should not have an AAPB ID identifier,
-          # which means we have to explicitly specify our identifiers because an
-          # AAPB ID in in factory-generated instantiations added by default.
-          identifiers: [ build(:pbcore_instantiation_identifier) ]
-        )        
-        # Flatten the 2 lists of instantiations into a single list.
-      ].flatten
-    )
+    Array.new(2) do
+      build(
+        :pbcore_description_document,
+        :full_aapb,
+        identifiers: [ pbcore_identifier ],
+        instantiations: [
+          # Random number (1-3) of digital instantiations
+          Array.new(rand(1..3)) do
+            build(
+              :pbcore_instantiation,
+              :digital,
+              # Because we are ingesting we should not have an AAPB ID identifier,
+              # which means we have to explicitly specify our identifiers because an
+              # AAPB ID in in factory-generated instantiations added by default.
+              identifiers: [ build(:pbcore_instantiation_identifier) ]
+            )
+          end,
+
+          # Random number (1-3) of physical instantiations
+          Array.new(rand(1..3)) do
+            build(
+              :pbcore_instantiation,
+              :physical,
+              # Because we are ingesting we should not have an AAPB ID identifier,
+              # which means we have to explicitly specify our identifiers because an
+              # AAPB ID in in factory-generated instantiations added by default.
+              identifiers: [ build(:pbcore_instantiation_identifier) ]
+            )
+          end
+          # Flatten the 2 lists of instantiations into a single list.
+        ].flatten
+      )
+    end
   end
 
   # Build 2 BatchItems from the 2 tempfiles containing the factory-generated PBCore
@@ -101,16 +105,15 @@ RSpec.describe AAPB::BatchIngest::PBCoreXMLInstantiationReset, reset_data: false
   # 1. ingest batch_item_1 with PBCoreXMLItemIngester
   # 2. ingest batch_item_2 with PBCoreXMLInstantiationResetIngester
   before do
-
-    require 'pry'; binding.pry
-
     AAPB::BatchIngest::PBCoreXMLItemIngester.new(batch_items.first).ingest
+    # Fetch the AssetResource as it was first ingested. This represents an
+    # "original" state of an AssetResource prior to running the
+    # PBCoreXMLInstantiationReset ingester, which we can use for comparison
     @orig_asset_resource = AssetResource.find(pbcore_identifier.value).dup
     AAPB::BatchIngest::PBCoreXMLInstantiationReset.new(batch_items.last).ingest
   end
 
   describe '#ingest' do
-
     subject { described_class.new(batch_items.last).ingest }
 
     context 'when the Asset is not in AMS' do
