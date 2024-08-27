@@ -69,7 +69,7 @@ jobs:
           push: true
           tags: |
             ${{ env.REGISTRY }}/${{ env.REPO_LOWER }}:${{ env.TAG }}
-            ${{ env.REGISTRY }}/${{ env.REPO_LOWER }}:${{ github.ref_name }}
+            ${{ env.REGISTRY }}/${{ env.REPO_LOWER }}:${{ github.ref_name | replace(/', '') }}
       - name: Build and push worker
         uses: docker/build-push-action@v3
         with:
