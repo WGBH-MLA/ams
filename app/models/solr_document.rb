@@ -528,7 +528,11 @@ class SolrDocument
     # this nonsensical ':symbol' option indicates that I am selecting the _ssim suffix from down in solrizer - default was _tesim, which was wrong for this field
     self[solr_name('md5', :symbol)]
   end
-
+  
+  def ams1_legacy_metadata
+    self[solr_name('ams1_legacy_metadata', :symbol)]
+  end
+  
   def proxy_start_time
     self[solr_name('proxy_start_time', :symbol)]
   end
