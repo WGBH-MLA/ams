@@ -1,4 +1,4 @@
-class ChangeSoundToMovingImage
+class ChangeInstantiationMediaType
   attr_reader :aapb_ids_filename, :aapb_ids, :errors
   def initialize(aapb_ids_filename=DEFAULT_AAPB_IDS_FILENAME)
     @aapb_ids_filename = "#{File.dirname(File.expand_path(__FILE__))}/asset_resource_ids.txt"
@@ -22,9 +22,13 @@ class ChangeSoundToMovingImage
       [ aapb_id, asset_resource ]
     end.to_h
   end
+
+  def run!
+    puts "Running Hotfix #{self.class.name} ..."
+  end
 end
 
 if __FILE__ == $0
-  cstm = ChangeSoundToMovingImage.new
-  puts "cstm.asset_resources: #{cstm.asset_resources}"
+  change_instantiation_media_type = ChangeInstantiationMediaType.new
+  puts "change_instantiation_media_type.asset_resources: #{change_instantiation_media_type.asset_resources}"
 end
