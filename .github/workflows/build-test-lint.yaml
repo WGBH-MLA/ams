@@ -24,6 +24,7 @@ jobs:
       - name: Set env
         run: >-
           echo "TAG=${HEAD_TAG::8}" >> ${GITHUB_ENV};
+          echo "TAG_REF_NAME=\"${GITHUB_REF_NAME//\//-}\"" >> ${GITHUB_ENV};
           echo ${HEAD_TAG::8}
         env:
           HEAD_TAG: ${{ github.event.pull_request.head.sha || github.sha }}
@@ -69,7 +70,8 @@ jobs:
           push: true
           tags: |
             ${{ env.REGISTRY }}/${{ env.REPO_LOWER }}:${{ env.TAG }}
-            ${{ env.REGISTRY }}/${{ env.REPO_LOWER }}:${{ github.ref_name | replace(/', '') }}
+            ${{ env.REGISTRY }}/${{ env.REPO_LOWER }}:${{ env.TAG_REF_NAME }}
+            
       - name: Build and push worker
         uses: docker/build-push-action@v3
         with:
