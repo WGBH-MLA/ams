@@ -69,6 +69,7 @@ jobs:
           push: true
           tags: |
             ${{ env.REGISTRY }}/${{ env.REPO_LOWER }}:${{ env.TAG }}
+            ${{ env.REGISTRY }}/${{ env.REPO_LOWER }}:${{ github.ref_name }}
       - name: Build and push worker
         uses: docker/build-push-action@v3
         with:
