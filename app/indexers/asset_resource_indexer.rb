@@ -28,7 +28,7 @@ class AssetResourceIndexer < AMS::ValkyrieWorkIndexer
         AnnotationTypesService.new.select_all_options.each do |type|
           # Use the ID defined in the AnnotationType service
           type_id = type[1]
-          index_document["#{type_id.underscore}_ssim"] = resource.try(type_id.to_sym) unless resource.try(type_id.to_sym).empty?
+          index_document["#{type_id.underscore}_ssim"] = resource.try(type_id.to_sym) unless resource.try(type_id.to_sym).blank?
         end
 
         #Indexing for search by batch_id

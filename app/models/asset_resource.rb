@@ -129,7 +129,11 @@ class AssetResource < Hyrax::Work
   def proxy_start_time
     proxy_start_time ||= find_annotation_attribute("proxy_start_time")
   end
-
+ 
+  def ams1_legacy_metadata
+    ams1_legacy_metadata ||= find_annotation_attribute("ams1_legacy_metadata")
+  end 
+  
   def find_annotation_attribute(attribute)
     if admin_data.annotations.select { |a| a.annotation_type == attribute }.present?
       return admin_data.annotations.select { |a| a.annotation_type == attribute }.map(&:value)
