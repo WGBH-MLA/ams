@@ -71,15 +71,24 @@ module AAPB
           cx = Hyrax::Forms::ResourceForm.for(klass.new).prepopulate!
           cx.validate(attrs)
 
-          result = Hyrax::Transactions::Container["work_resource.create_with_bulk_behavior"]
-            .with_step_args(
-              "work_resource.add_bulkrax_files" => {files: [], user: submitter},
+          base_step_args = {
+            'change_set.set_user_as_depositor' => { user: submitter },
+            'work_resource.change_depositor' => { user: submitter },
+            'work_resource.save_acl' => { permissions_params: [attrs.try('visibility') || 'open'].compact }
+          }
 
-              "change_set.set_user_as_depositor" => {user: submitter},
-              "work_resource.change_depositor" => {user: submitter},
-              'work_resource.save_acl' => { permissions_params: [attrs.try('visibility') || 'open'].compact }
-            )
-            .call(cx)
+          result = if ActiveModel::Type::Boolean.new.cast(ENV.fetch('SETTINGS__BULKRAX__ENABLED', false))
+            bulkrax_step_arg = { 'work_resource.add_bulkrax_files' => { files: [], user: submitter } }
+            Hyrax::Transactions::Container["work_resource.create_with_bulk_behavior"]
+              .with_step_args(
+                **bulkrax_step_arg.merge(base_step_args)
+              )
+              .call(cx)
+          else
+            Hyrax::Transactions::Container["change_set.create_work"]
+              .with_step_args(**base_step_args)
+              .call(cx)
+          end
 
           if result.failure?
             msg = result.failure[0].to_s
