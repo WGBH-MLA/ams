@@ -186,6 +186,12 @@ redis:
   cluster:
     enabled: false
   password: demo
+  master:
+    livenessProbe:
+      initialDelaySeconds: 180
+    readinessProbe:
+      initialDelaySeconds: 180
+
 solr:
   enabled: false
 
