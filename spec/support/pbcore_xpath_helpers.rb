@@ -191,6 +191,7 @@ module PBCoreXPathHelper
                    values_from_xpath(:outside_url) +
                    values_from_xpath(:special_collections) +
                    values_from_xpath(:transcript_status) +
+                   values_from_xpath(:proxy_start_time) +
                    values_from_xpath(:licensing_info) +
                    values_from_xpath(:playlist_group) +
                    values_from_xpath(:playlist_order) +
