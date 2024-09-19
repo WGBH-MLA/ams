@@ -82,6 +82,7 @@ module PBCoreXPathHelper
         supplemental_material:          '//pbcoreAnnotation[@annotationType="Supplemental Material"]',
         transcript_url:                 '//pbcoreAnnotation[@annotationType="Transcript URL"]',
         transcript_source:              '//pbcoreAnnotation[@annotationType="Transcript Source"]',
+        proxy_start_time:               '//pbcoreAnnotation[@annotationType="Proxy Start Time"]',
         rights_summary:                 '//pbcoreRightsSummary/rightsSummary',
         rights_link:                    '//pbcoreRightsSummary/rightsLink',
         local_identifier:               '//pbcoreIdentifier[@source="Local Identifier"]',
