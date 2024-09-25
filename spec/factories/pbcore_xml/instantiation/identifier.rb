@@ -9,7 +9,7 @@ FactoryBot.define do
 
     trait :ams do
       source { "ams" }
-      value { "cpb-blah-blah-blah" }
+      value { ::AMS::IdentifierService.mint }
     end
 
     initialize_with { new(attributes) }
