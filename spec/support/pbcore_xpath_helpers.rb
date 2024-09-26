@@ -82,6 +82,7 @@ module PBCoreXPathHelper
         supplemental_material:          '//pbcoreAnnotation[@annotationType="Supplemental Material"]',
         transcript_url:                 '//pbcoreAnnotation[@annotationType="Transcript URL"]',
         transcript_source:              '//pbcoreAnnotation[@annotationType="Transcript Source"]',
+        proxy_start_time:               '//pbcoreAnnotation[@annotationType="Proxy Start Time"]',
         rights_summary:                 '//pbcoreRightsSummary/rightsSummary',
         rights_link:                    '//pbcoreRightsSummary/rightsLink',
         local_identifier:               '//pbcoreIdentifier[@source="Local Identifier"]',
@@ -190,6 +191,7 @@ module PBCoreXPathHelper
                    values_from_xpath(:outside_url) +
                    values_from_xpath(:special_collections) +
                    values_from_xpath(:transcript_status) +
+                   values_from_xpath(:proxy_start_time) +
                    values_from_xpath(:licensing_info) +
                    values_from_xpath(:playlist_group) +
                    values_from_xpath(:playlist_order) +
