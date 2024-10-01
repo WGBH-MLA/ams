@@ -24,25 +24,48 @@ module Fix
 
     def run
       asset_resources.each do |ar|
-        pis = ar.physical_instantiation_resources.select { |pi| pi.media_type == media_type }
-        if pis.count == 0
-          log.warn "No physical instantiations with media type '#{media_type}' were found for Asset #{ar.id}, skipping."
-          next
-        end
-
-        pis.each do |pi|
-          begin
-            log.info "Deleting Physical Instantiation #{pi.id} with media type '#{media_type}' from Asset #{ar.id}..."
-            Hyrax.persister.delete(resource: pi)
-            Hyrax.index_adapter.delete(resource: pi)
-            log.info "Deleted physical instantiation #{pi.id} with media type '#{media_type}' from Asset #{ar.id}."
-            Hyrax.index_adapter.save(resource: ar)
-            log.info "Asset Resource #{ar.id} saved."
-          rescue => e
-            log_error(e)
-          end
-        end
+        process_asset_resource(ar)
       end
+    end
+
+    private
+
+    def process_asset_resource(ar)
+      log.info "Processing Asset Resource #{ar.id}..."
+      pis = ar.physical_instantiation_resources.select { |pi| pi.media_type == media_type }
+      if pis.count == 0
+        log.warn "SKIPPING: No physical instantiations with media type '#{media_type}'."
+        return
+      end
+
+      pis.each do |pi|
+        delete_physical_instantiation_resource(pi)
+      end
+
+      Hyrax.index_adapter.save(resource: ar)
+      log.info "SAVED: Asset Resource #{ar.id}."
+    rescue => e
+      log_error(e)
+    end
+
+    def delete_physical_instantiation_resource(pi)
+      Hyrax.persister.delete(resource: pi)
+      delete_from_fedora(pi)
+      Hyrax.index_adapter.delete(resource: pi)
+      log.info "DELETED: Physical Instantiation Resource #{pi.id} with media type '#{media_type}'"
+    rescue => e
+      log_error(e)
+    end
+
+    def delete_from_fedora(pi)
+      log.info "SEARCHING: PhysicalInstantiation #{pi.id} in Fedora..."
+      pi = PhysicalInstantiation.find(pi.id)
+      pi.destroy!
+      log.info "DELETED: PhysicalInstantiation #{pi.id} from Fedora."
+    rescue ActiveFedora::ObjectNotFoundError
+      log.info "NOT FOUND."
+    rescue => e
+      log_error(e)
     end
   end
 end
