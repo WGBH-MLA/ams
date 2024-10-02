@@ -4,9 +4,9 @@ class FindSonyCiMediaBehavior
   # Selector for the div that displays the feedback messages.
   feedbackSelector: '#find_sony_ci_media #feedback'
   # Selector for the text inputs that have the Sony Ci IDs.
-  sonyCiIdInputSelector: 'input.asset_sonyci_id'
+  sonyCiIdInputSelector: 'input.asset_resource_sonyci_id'
   # Selector for the button to add new Sony Ci IDs
-  addNewSonyCiIdButtonSelector: '.form-group.asset_sonyci_id button.add'
+  addNewSonyCiIdButtonSelector: '.form-group.asset_resource_sonyci_id button.add'
 
   constructor: (@query) ->
 
@@ -89,7 +89,7 @@ class FindSonyCiMediaBehavior
 # load; reverting to $(document).ready, which seems to work more consistently.
 $(document).ready ->
   # This regex matches the 3rd URL segment which should be the GUID.
-  guid_query_str = window.location.href.match(/concern\/assets\/(.*)\//)[1]
+  guid_query_str = window.location.href.match(/concern\/asset_resources\/(.*)\//)[1]
 
   # Create the behavior object, passing in the GUID as the query string.
   # NOTE: Sony Ci API has a 20 character limit on it's search terms, so let's

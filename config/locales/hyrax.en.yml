@@ -36,6 +36,7 @@ en:
           copyright_date_sim: Copyright Date
           episode_number_sim: Episode Number
           hyrax_batch_ingest_batch_id_tesim: Batch ID
+          bulkrax_importer_id_tesim: Bulkrax Importer ID
         index:
           broadcast_tesim: Broadcast
           created_tesim: Created

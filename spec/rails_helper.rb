@@ -24,6 +24,11 @@ require 'webdrivers'
 Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each { |f| require f }
 require_relative 'support/controller_macros'
 
+require 'hyrax/specs/shared_specs/factories/strategies/json_strategy'
+require 'hyrax/specs/shared_specs/factories/strategies/valkyrie_resource'
+FactoryBot.register_strategy(:valkyrie_create, ValkyrieCreateStrategy)
+FactoryBot.register_strategy(:json, JsonStrategy)
+
 ActiveRecord::Migration.maintain_test_schema!
 
 # See https://github.com/thoughtbot/shoulda-matchers#rspec
@@ -38,6 +43,47 @@ end
 if [false, 'false', '0', 0].include? ENV['AUTO_SCREENSHOTS'].to_s.downcase
   Capybara::Screenshot.autosave_on_failure = false
 end
+
+ENV['WEB_HOST'] ||= `hostname -s`.strip
+if ENV['CHROME_HOSTNAME'].present?
+  # Uses faster rack_test driver when JavaScript support not needed
+  Capybara.default_max_wait_time = 8
+  # Capybara.default_driver = :rack_test
+
+  chrome_options = Selenium::WebDriver::Chrome::Options.new(
+    args: %w[--disable-gpu --no-sandbox --whitelisted-ips --window-size=1400,1400]
+  )
+
+  Capybara.register_driver :chrome do |app|
+    d = Capybara::Selenium::Driver.new(app,
+                                        browser: :remote,
+                                        options: chrome_options,
+                                        url: "http://#{ENV['CHROME_HOSTNAME']}:4444/wd/hub")
+    # Fix for capybara vs remote files. Selenium handles this for us
+    d.browser.file_detector = lambda do |args|
+      str = args.first.to_s
+      str if File.exist?(str)
+    end
+    d
+  end
+
+  Capybara.server_host = '0.0.0.0'
+  Capybara.server_port = 3001
+  Capybara.app_host = "http://#{ENV['WEB_HOST']}:#{Capybara.server_port}"
+else
+  # Set the capybara JS driver to whatever was passed in to JS_DRIVER,
+  # defaulting to :selenium_chrome_headless
+  Capybara.javascript_driver = ENV.fetch('JS_DRIVER', 'selenium_chrome_headless').to_sym
+
+  Capybara.register_driver :chrome do |app|
+    Capybara::Selenium::Driver.new(
+      app,
+      browser: :chrome,
+    )
+  end
+end
+
+Capybara.javascript_driver = :chrome
 
 RSpec.configure do |config|
   config.fixture_path = "#{::Rails.root}/spec/fixtures"
@@ -67,15 +113,6 @@ RSpec.configure do |config|
   config.before :suite do
     # Reset data before the suite is run.
     AMS.reset_data!
-
-    # Set the capybara JS driver to whatever was passed in to JS_DRIVER,
-    # defaulting to :selenium_chrome_headless
-    Capybara.javascript_driver = ENV.fetch('JS_DRIVER', 'selenium_chrome_headless').to_sym
-
-    Capybara.register_driver :chrome do |app|
-      Capybara::Selenium::Driver.new(app, browser: :chrome)
-    end
-
   end
 
   # Reset data conditionally for each exampld; defaults to true.
@@ -90,6 +127,9 @@ RSpec.configure do |config|
 
   # For Devise >= 4.1.0
   config.extend ControllerMacros, :type => :controller
+
+  # dual boot support
+  config.include SolrHelper
 end
 
 # Uncomment this to specify a version of ChromeDriver, a list of which can be
@@ -104,3 +144,22 @@ end
 # Uncomment this to help debug ChromeDriver (or other web driver) issues on
 # Travis or development.
 # Webdrivers.logger.level = :DEBUG
+
+require 'valkyrie'
+Valkyrie::MetadataAdapter.register(Valkyrie::Persistence::Memory::MetadataAdapter.new, :test_adapter)
+Valkyrie::StorageAdapter.register(Valkyrie::Storage::Memory.new, :memory)
+
+query_registration_target =
+  Valkyrie::MetadataAdapter.find(:test_adapter).query_service.custom_queries
+custom_queries = [Hyrax::CustomQueries::Navigators::CollectionMembers,
+                  Hyrax::CustomQueries::Navigators::ChildFilesetsNavigator,
+                  Hyrax::CustomQueries::Navigators::ChildWorksNavigator,
+                  Hyrax::CustomQueries::FindAccessControl,
+                  Hyrax::CustomQueries::FindCollectionsByType,
+                  Hyrax::CustomQueries::FindManyByAlternateIds,
+                  Hyrax::CustomQueries::FindIdsByModel,
+                  Hyrax::CustomQueries::FindFileMetadata,
+                  Hyrax::CustomQueries::Navigators::FindFiles]
+custom_queries.each do |handler|
+  query_registration_target.register_query_handler(handler)
+end

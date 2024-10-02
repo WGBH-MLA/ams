@@ -2,7 +2,7 @@
 # command line. Run `ps aux | grep sidekiq` to see all running sidekiq
 # processes and which options were passed in.
 :verbose: true
-:concurrency: 1
+:concurrency: <%= ENV.fetch('SIDEKIQ_CONCURRENCY', 10) %>
 # `timeout` is how long a process will wait for its workers to finish after
 # it's been sent a TERM signal, and before it forcibly kills the process. Our
 # jobs can take several minutes, so we set the timout to 5 min here.
@@ -13,3 +13,6 @@
   - [mailers, 10]
   - [exports, 10]
   - [push_to_aapb, 1]
+  - [import, 1]
+  - [backfill_validations, 1]
+  # - [export, 10]

@@ -1,20 +1,37 @@
 source 'https://rubygems.org'
 
-ruby '2.5.3'
-
 git_source(:github) do |repo_name|
   repo_name = "#{repo_name}/#{repo_name}" unless repo_name.include?("/")
   "https://github.com/#{repo_name}.git"
 end
 
-gem 'dotenv-rails'
+plugin 'bootboot', '~> 0.2.1'
 
-# Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '~> 5.1.5'
+if ENV['DEPENDENCIES_NEXT'] && !ENV['DEPENDENCIES_NEXT'].empty?
+
+else
+  gem 'rails', '~> 6.0'
+  gem 'hyrax-batch_ingest', git: 'https://github.com/samvera-labs/hyrax-batch_ingest', branch: 'valkyrie_update'
+  gem 'hyrax', github: 'samvera/hyrax', branch: 'double_combo_gbh_version' # , tag: 'hyrax-v5.0.0.rc1'
+  # Use SCSS for stylesheets
+  gem 'sass-rails', '~> 6.0'
+  gem 'bootstrap', '~> 4.0'
+  gem 'sony_ci_api', github: 'WGBH-MLA/sony_ci_api_rewrite', branch: 'main'
+  gem 'hydra-role-management', '1.1.0'
+  gem 'blacklight', '~> 7.29'
+  gem 'blacklight_advanced_search', '7.0'
+  gem 'twitter-typeahead-rails', '0.11.1.pre.corejavascript'
+  # our custom changes require us to lock in the version of bulkrax
+  gem 'bulkrax', git: 'https://github.com/samvera-labs/bulkrax.git', branch: 'hyrax-4-valkyrie-support'
+  gem 'sidekiq', '~> 6.5.10'
+end
+
+# ebnf 2.5 causes rdf and linkeddata to get very old versions'
+gem 'ebnf', '2.4.0'
+
+gem 'dotenv-rails'
 # Use Puma as the app server
-gem 'puma', '~> 3.12'
-# Use SCSS for stylesheets
-gem 'sass-rails', '~> 5.0'
+gem 'puma', '~> 5.6'
 # Use Uglifier as compressor for JavaScript assets
 gem 'uglifier', '>= 1.3.0'
 # See https://github.com/rails/execjs#readme for more supported runtimes
@@ -29,19 +46,13 @@ gem 'jbuilder', '~> 2.5'
 
 # Use Redis adapter to run Action Cable in production
 gem 'redis', '~> 4.0'
-gem 'sidekiq'
-gem 'hydra-role-management', '~> 1.0'
 
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
 
-group :production do
-  gem 'mysql2', '~> 0.4.10'
-end
-
 group :development, :test do
   # Use sqlite3 as the database for Active Record
-  gem 'sqlite3', '1.3.13'
+  # gem 'sqlite3', '1.3.13'
   gem 'capybara-screenshot'
   gem 'rspec', "~> 3.7"
   gem 'rspec-rails', "~> 3.7"
@@ -57,6 +68,7 @@ group :development, :test do
   gem 'solr_wrapper', '~> 2.1'
   gem 'webmock', '~> 3.7'
   gem 'rails-controller-testing'
+  gem 'rspec_junit_formatter'
 end
 
 group :development do
@@ -70,36 +82,49 @@ group :development do
   # gem 'spring'
   # gem 'spring-watcher-listen', '~> 2.0.0'
   gem "letter_opener"
-  gem 'faker'
-  gem 'xray-rails'
+  gem 'faker', '~> 3.0'
+  # gem 'xray-rails' # should be commented out when actively using sidekiq.
 end
 
-gem 'hyrax', '2.9.0'
-gem 'blacklight_advanced_search', '~> 6.4.0'
 gem 'rsolr', '>= 1.0'
 gem 'jquery-rails'
 gem 'devise'
 gem 'devise-guests', '~> 0.6'
-gem 'simple_form', '5.0.0'
+gem 'simple_form', '~> 5.1.0'
 gem 'aws-sdk-s3'
 gem 'aws-sdk-codedeploy'
 gem 'carrierwave', '~> 1.3'
+gem 'mysql2', '~> 0.5.3'
+gem 'pg'
 gem 'nokogiri'
 gem 'bootstrap-multiselect-rails'
-gem 'hyrax-batch_ingest', git: 'https://github.com/samvera-labs/hyrax-batch_ingest'
-gem 'pbcore', '~> 0.3.0'
+gem 'pbcore', github: 'scientist-softserv/pbcore', branch: 'fake_out'
 gem 'curb'
 # gem 'sony_ci_api', '~> 0.2.1'
-gem 'sony_ci_api', github: 'WGBH-MLA/sony_ci_api_rewrite', branch: 'v0.1'
 # gem 'hyrax-iiif_av', '>= 0.2.0'
 # gem 'hyrax-iiif_av', github: 'samvera-labs/hyrax-iiif_av', branch: 'hyrax_master'
 gem 'webpacker'
 gem 'react-rails'
-gem 'faker'
 gem 'database_cleaner'
 gem 'redlock', '~> 1.0'
-gem 'httparty', '~> 0.18'
+gem 'httparty', '~> 0.21'
+# The maintainers yanked 0.3.2 version (see https://github.com/dryruby/json-canonicalization/issues/2)
+gem 'json-canonicalization', "0.3.3"
+
+# Sentry-ruby for error handling
+gem "sentry-ruby"
+# gem "sentry-rails"
+# gem "sentry-sidekiq"
 
 # Adding pry to all environments, because it's very useful for debugging
 # production environments on demo instances.
 gem 'pry-byebug', platforms: [:mri, :mingw, :x64_mingw]
+gem 'activerecord-nulldb-adapter'
+Plugin.send(:load_plugin, 'bootboot') if Plugin.installed?('bootboot')
+
+if ENV['DEPENDENCIES_NEXT']
+  enable_dual_booting if Plugin.installed?('bootboot')
+
+  # Add any gem you want here, they will be loaded only when running
+  # bundler command prefixed with `DEPENDENCIES_NEXT=1`.
+end

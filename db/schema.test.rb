@@ -2,24 +2,30 @@
 # of editing this file, please use the migrations feature of Active Record to
 # incrementally modify your database, and then regenerate this schema definition.
 #
-# Note that this schema.rb definition is the authoritative source for your
-# database schema. If you need to create the application database on another
-# system, you should be using db:schema:load, not running all the migrations
-# from scratch. The latter is a flawed and unsustainable approach (the more migrations
-# you'll amass, the slower it'll run and the greater likelihood for issues).
+# This file is the source Rails uses to define your schema when running `bin/rails
+# db:schema:load`. When creating a new database, `bin/rails db:schema:load` tends to
+# be faster and is potentially less error prone than running all of your
+# migrations from scratch. Old migrations may fail to apply correctly if those
+# migrations use external dependencies or application code.
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20210917032608) do
+ActiveRecord::Schema.define(version: 2024_03_07_053156) do
+
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "plpgsql"
+  enable_extension "uuid-ossp"
 
   create_table "admin_data", force: :cascade do |t|
     t.text "sonyci_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "hyrax_batch_ingest_batch_id"
+    t.bigint "hyrax_batch_ingest_batch_id"
     t.integer "last_pushed"
     t.integer "last_updated"
     t.boolean "needs_update"
+    t.bigint "bulkrax_importer_id"
+    t.index ["bulkrax_importer_id"], name: "index_admin_data_on_bulkrax_importer_id"
     t.index ["hyrax_batch_ingest_batch_id"], name: "index_admin_data_on_hyrax_batch_ingest_batch_id"
   end
 
@@ -30,13 +36,13 @@ ActiveRecord::Schema.define(version: 20210917032608) do
     t.string "annotation"
     t.string "version"
     t.string "value"
-    t.integer "admin_data_id"
+    t.bigint "admin_data_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["admin_data_id"], name: "index_annotations_on_admin_data_id"
   end
 
-  create_table "bookmarks", force: :cascade do |t|
+  create_table "bookmarks", id: :serial, force: :cascade do |t|
     t.integer "user_id", null: false
     t.string "user_type"
     t.string "document_id"
@@ -46,6 +52,126 @@ ActiveRecord::Schema.define(version: 20210917032608) do
     t.datetime "updated_at", null: false
     t.index ["document_id"], name: "index_bookmarks_on_document_id"
     t.index ["user_id"], name: "index_bookmarks_on_user_id"
+  end
+
+  create_table "bulkrax_entries", force: :cascade do |t|
+    t.string "importerexporter_type", default: "Bulkrax::Importer"
+    t.string "identifier"
+    t.string "collection_ids"
+    t.string "type"
+    t.bigint "importerexporter_id"
+    t.text "raw_metadata"
+    t.text "parsed_metadata"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.datetime "last_error_at"
+    t.datetime "last_succeeded_at"
+    t.integer "import_attempts", default: 0
+    t.index ["identifier"], name: "index_bulkrax_entries_on_identifier"
+    t.index ["importerexporter_id", "importerexporter_type"], name: "bulkrax_entries_importerexporter_idx"
+    t.index ["importerexporter_id"], name: "index_bulkrax_entries_on_importerexporter_id"
+    t.index ["type"], name: "index_bulkrax_entries_on_type"
+  end
+
+  create_table "bulkrax_exporter_runs", force: :cascade do |t|
+    t.bigint "exporter_id"
+    t.integer "total_work_entries", default: 0
+    t.integer "enqueued_records", default: 0
+    t.integer "processed_records", default: 0
+    t.integer "deleted_records", default: 0
+    t.integer "failed_records", default: 0
+    t.index ["exporter_id"], name: "index_bulkrax_exporter_runs_on_exporter_id"
+  end
+
+  create_table "bulkrax_exporters", force: :cascade do |t|
+    t.string "name"
+    t.bigint "user_id"
+    t.string "parser_klass"
+    t.integer "limit"
+    t.text "parser_fields"
+    t.text "field_mapping"
+    t.string "export_source"
+    t.string "export_from"
+    t.string "export_type"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.datetime "last_error_at"
+    t.datetime "last_succeeded_at"
+    t.date "start_date"
+    t.date "finish_date"
+    t.string "work_visibility"
+    t.string "workflow_status"
+    t.boolean "include_thumbnails", default: false
+    t.boolean "generated_metadata", default: false
+    t.index ["user_id"], name: "index_bulkrax_exporters_on_user_id"
+  end
+
+  create_table "bulkrax_importer_runs", force: :cascade do |t|
+    t.bigint "importer_id"
+    t.integer "total_work_entries", default: 0
+    t.integer "enqueued_records", default: 0
+    t.integer "processed_records", default: 0
+    t.integer "deleted_records", default: 0
+    t.integer "failed_records", default: 0
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "processed_collections", default: 0
+    t.integer "failed_collections", default: 0
+    t.integer "total_collection_entries", default: 0
+    t.integer "processed_relationships", default: 0
+    t.integer "failed_relationships", default: 0
+    t.text "invalid_records"
+    t.integer "processed_file_sets", default: 0
+    t.integer "failed_file_sets", default: 0
+    t.integer "total_file_set_entries", default: 0
+    t.integer "processed_works", default: 0
+    t.integer "failed_works", default: 0
+    t.index ["importer_id"], name: "index_bulkrax_importer_runs_on_importer_id"
+  end
+
+  create_table "bulkrax_importers", force: :cascade do |t|
+    t.string "name"
+    t.string "admin_set_id"
+    t.bigint "user_id"
+    t.string "frequency"
+    t.string "parser_klass"
+    t.integer "limit"
+    t.text "parser_fields"
+    t.text "field_mapping"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.boolean "validate_only"
+    t.datetime "last_error_at"
+    t.datetime "last_succeeded_at"
+    t.index ["user_id"], name: "index_bulkrax_importers_on_user_id"
+  end
+
+  create_table "bulkrax_pending_relationships", force: :cascade do |t|
+    t.bigint "importer_run_id", null: false
+    t.string "parent_id", null: false
+    t.string "child_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "order", default: 0
+    t.index ["child_id"], name: "index_bulkrax_pending_relationships_on_child_id"
+    t.index ["importer_run_id"], name: "index_bulkrax_pending_relationships_on_importer_run_id"
+    t.index ["parent_id"], name: "index_bulkrax_pending_relationships_on_parent_id"
+  end
+
+  create_table "bulkrax_statuses", force: :cascade do |t|
+    t.string "status_message"
+    t.string "error_class"
+    t.text "error_message"
+    t.text "error_backtrace"
+    t.integer "statusable_id"
+    t.string "statusable_type"
+    t.integer "runnable_id"
+    t.string "runnable_type"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["error_class"], name: "index_bulkrax_statuses_on_error_class"
+    t.index ["runnable_id", "runnable_type"], name: "bulkrax_statuses_runnable_idx"
+    t.index ["statusable_id", "statusable_type"], name: "bulkrax_statuses_statusable_idx"
   end
 
   create_table "checksum_audit_logs", force: :cascade do |t|
@@ -74,7 +200,7 @@ ActiveRecord::Schema.define(version: 20210917032608) do
   end
 
   create_table "collection_type_participants", force: :cascade do |t|
-    t.integer "hyrax_collection_type_id"
+    t.bigint "hyrax_collection_type_id"
     t.string "agent_type"
     t.string "agent_id"
     t.string "access"
@@ -98,7 +224,7 @@ ActiveRecord::Schema.define(version: 20210917032608) do
     t.string "job_id"
     t.string "type"
     t.text "message"
-    t.integer "user_id"
+    t.bigint "user_id"
     t.integer "parent_id"
     t.integer "lft", null: false
     t.integer "rgt", null: false
@@ -144,7 +270,7 @@ ActiveRecord::Schema.define(version: 20210917032608) do
   end
 
   create_table "hyrax_batch_ingest_batch_items", force: :cascade do |t|
-    t.integer "batch_id"
+    t.bigint "batch_id"
     t.string "id_within_batch"
     t.text "source_data"
     t.string "source_location"
@@ -204,8 +330,8 @@ ActiveRecord::Schema.define(version: 20210917032608) do
   end
 
   create_table "job_io_wrappers", force: :cascade do |t|
-    t.integer "user_id"
-    t.integer "uploaded_file_id"
+    t.bigint "user_id"
+    t.bigint "uploaded_file_id"
     t.string "file_set_id"
     t.string "mime_type"
     t.string "original_name"
@@ -217,7 +343,7 @@ ActiveRecord::Schema.define(version: 20210917032608) do
     t.index ["user_id"], name: "index_job_io_wrappers_on_user_id"
   end
 
-  create_table "mailboxer_conversation_opt_outs", force: :cascade do |t|
+  create_table "mailboxer_conversation_opt_outs", id: :serial, force: :cascade do |t|
     t.string "unsubscriber_type"
     t.integer "unsubscriber_id"
     t.integer "conversation_id"
@@ -225,13 +351,13 @@ ActiveRecord::Schema.define(version: 20210917032608) do
     t.index ["unsubscriber_id", "unsubscriber_type"], name: "index_mailboxer_conversation_opt_outs_on_unsubscriber_id_type"
   end
 
-  create_table "mailboxer_conversations", force: :cascade do |t|
+  create_table "mailboxer_conversations", id: :serial, force: :cascade do |t|
     t.string "subject", default: ""
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
-  create_table "mailboxer_notifications", force: :cascade do |t|
+  create_table "mailboxer_notifications", id: :serial, force: :cascade do |t|
     t.string "type"
     t.text "body"
     t.string "subject", default: ""
@@ -254,7 +380,7 @@ ActiveRecord::Schema.define(version: 20210917032608) do
     t.index ["type"], name: "index_mailboxer_notifications_on_type"
   end
 
-  create_table "mailboxer_receipts", force: :cascade do |t|
+  create_table "mailboxer_receipts", id: :serial, force: :cascade do |t|
     t.string "receiver_type"
     t.integer "receiver_id"
     t.integer "notification_id", null: false
@@ -271,19 +397,32 @@ ActiveRecord::Schema.define(version: 20210917032608) do
     t.index ["receiver_id", "receiver_type"], name: "index_mailboxer_receipts_on_receiver_id_and_receiver_type"
   end
 
-  create_table "minter_states", force: :cascade do |t|
+  create_table "minter_states", id: :serial, force: :cascade do |t|
     t.string "namespace", default: "default", null: false
     t.string "template", null: false
     t.text "counters"
-    t.integer "seq", limit: 8, default: 0
+    t.bigint "seq", default: 0
     t.binary "rand"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["namespace"], name: "index_minter_states_on_namespace", unique: true
   end
 
+  create_table "orm_resources", id: :text, default: -> { "(uuid_generate_v4())::text" }, force: :cascade do |t|
+    t.jsonb "metadata", default: {}, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "internal_resource"
+    t.integer "lock_version"
+    t.index "(((metadata -> 'bulkrax_identifier'::text) ->> 0))", name: "index_on_bulkrax_identifier", where: "((metadata -> 'bulkrax_identifier'::text) IS NOT NULL)"
+    t.index ["internal_resource"], name: "index_orm_resources_on_internal_resource"
+    t.index ["metadata"], name: "index_orm_resources_on_metadata", using: :gin
+    t.index ["metadata"], name: "index_orm_resources_on_metadata_jsonb_path_ops", opclass: :jsonb_path_ops, using: :gin
+    t.index ["updated_at"], name: "index_orm_resources_on_updated_at"
+  end
+
   create_table "permission_template_accesses", force: :cascade do |t|
-    t.integer "permission_template_id"
+    t.bigint "permission_template_id"
     t.string "agent_type"
     t.string "agent_id"
     t.string "access"
@@ -305,8 +444,8 @@ ActiveRecord::Schema.define(version: 20210917032608) do
 
   create_table "proxy_deposit_requests", force: :cascade do |t|
     t.string "work_id", null: false
-    t.integer "sending_user_id", null: false
-    t.integer "receiving_user_id", null: false
+    t.bigint "sending_user_id", null: false
+    t.bigint "receiving_user_id", null: false
     t.datetime "fulfillment_date"
     t.string "status", default: "pending", null: false
     t.text "sender_comment"
@@ -318,8 +457,8 @@ ActiveRecord::Schema.define(version: 20210917032608) do
   end
 
   create_table "proxy_deposit_rights", force: :cascade do |t|
-    t.integer "grantor_id"
-    t.integer "grantee_id"
+    t.bigint "grantor_id"
+    t.bigint "grantee_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["grantee_id"], name: "index_proxy_deposit_rights_on_grantee_id"
@@ -341,7 +480,7 @@ ActiveRecord::Schema.define(version: 20210917032608) do
   end
 
   create_table "qa_local_authority_entries", force: :cascade do |t|
-    t.integer "local_authority_id"
+    t.bigint "local_authority_id"
     t.string "label"
     t.string "uri"
     t.datetime "created_at", null: false
@@ -350,7 +489,7 @@ ActiveRecord::Schema.define(version: 20210917032608) do
     t.index ["uri"], name: "index_qa_local_authority_entries_on_uri", unique: true
   end
 
-  create_table "roles", force: :cascade do |t|
+  create_table "roles", id: :serial, force: :cascade do |t|
     t.string "name"
   end
 
@@ -363,7 +502,7 @@ ActiveRecord::Schema.define(version: 20210917032608) do
     t.index ["user_id"], name: "index_roles_users_on_user_id"
   end
 
-  create_table "searches", force: :cascade do |t|
+  create_table "searches", id: :serial, force: :cascade do |t|
     t.binary "query_params"
     t.integer "user_id"
     t.string "user_type"
@@ -569,7 +708,7 @@ ActiveRecord::Schema.define(version: 20210917032608) do
 
   create_table "uploaded_files", force: :cascade do |t|
     t.string "file"
-    t.integer "user_id"
+    t.bigint "user_id"
     t.string "file_set_uri"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -652,4 +791,19 @@ ActiveRecord::Schema.define(version: 20210917032608) do
     t.index ["work_id"], name: "index_work_view_stats_on_work_id"
   end
 
+  add_foreign_key "admin_data", "bulkrax_importers"
+  add_foreign_key "admin_data", "hyrax_batch_ingest_batches"
+  add_foreign_key "annotations", "admin_data", column: "admin_data_id"
+  add_foreign_key "bulkrax_exporter_runs", "bulkrax_exporters", column: "exporter_id"
+  add_foreign_key "bulkrax_importer_runs", "bulkrax_importers", column: "importer_id"
+  add_foreign_key "bulkrax_pending_relationships", "bulkrax_importer_runs", column: "importer_run_id"
+  add_foreign_key "collection_type_participants", "hyrax_collection_types"
+  add_foreign_key "curation_concerns_operations", "users"
+  add_foreign_key "hyrax_batch_ingest_batch_items", "hyrax_batch_ingest_batches", column: "batch_id"
+  add_foreign_key "mailboxer_conversation_opt_outs", "mailboxer_conversations", column: "conversation_id", name: "mb_opt_outs_on_conversations_id"
+  add_foreign_key "mailboxer_notifications", "mailboxer_conversations", column: "conversation_id", name: "notifications_on_conversation_id"
+  add_foreign_key "mailboxer_receipts", "mailboxer_notifications", column: "notification_id", name: "receipts_on_notification_id"
+  add_foreign_key "permission_template_accesses", "permission_templates"
+  add_foreign_key "qa_local_authority_entries", "qa_local_authorities", column: "local_authority_id"
+  add_foreign_key "uploaded_files", "users"
 end

@@ -17,8 +17,25 @@ module BatchIngestHelpers
                            submitter_email: submitter.email,
                            status: 'received')
     runner = Hyrax::BatchIngest::BatchRunner.new(batch: batch)
+
+    puts "Starting batch ingest."
     runner.run
+
+    # spin for up to 30 seconds while we wait for all items to get processed
+    enqueued = runner.batch.batch_items.select { |bi| bi.status == 'enqueued' }
+    max_time = Time.now.to_i + 30
+    while enqueued.count > 0 && max_time > Time.now.to_i
+      puts "#{enqueued.count} items remaining."
+      sleep 3
+      runner.batch.batch_items.each { |bi| bi.reload if bi.status == 'enqueued' }
+      enqueued = runner.batch.batch_items.select { |bi| bi.status == 'enqueued' }
+    end
+
+    raise "Batch ingest timed out. #{enqueued.count} items still enqueued." if enqueued.count > 0
+    
+    # If we didn't raise, then we're done!
     # Return the batch so we can run expectations on it in tests.
+    puts "Done."
     runner.batch
   end
 

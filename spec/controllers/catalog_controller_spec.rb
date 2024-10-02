@@ -60,11 +60,11 @@ RSpec.describe CatalogController, controller: true do
 
       # Create some test assets with the searchable_title, physical
       # instantiations, and digital instantiations.
-      let!(:assets) do
+      let!(:asset_resources) do
         rand(1..3).times.map do
-          ordered_members = create_list(:digital_instantiation, rand(1..3))
-          ordered_members += create_list(:physical_instantiation, rand(1..3))
-          create(:asset, title: [ searchable_title ], ordered_members: ordered_members )
+          members = create_list(:digital_instantiation_resource, rand(1..3))
+          members += create_list(:physical_instantiation_resource, rand(1..3))
+          create(:asset_resource, title: [ searchable_title ], members: members, visibility_setting: 'open')
         end
       end
 
@@ -72,7 +72,11 @@ RSpec.describe CatalogController, controller: true do
       let(:search_params) { { q: searchable_title } }
 
       # Make the export request
-      before { get :export, params: params, format: format }
+      before do
+        Hyrax::SolrService.commit
+        get :export, params: params, format: format
+      end
+
 
       context 'when the export type is CSV' do
         # Get the actual CSV data rows from the response, i.e. all rows except
@@ -92,8 +96,8 @@ RSpec.describe CatalogController, controller: true do
           # Note: use a Set to compare results without worrying about order.
           let(:expected_csv_rows) {
             Set.new.tap do |csv_rows|
-              assets.each do |asset|
-                csv_rows << SolrDocument.new(asset.to_solr).csv_row_for(object_type)
+              asset_resources.each do |asset_resource|
+                csv_rows << SolrDocument.new(Hyrax::ValkyrieIndexer.for(resource: asset_resource).to_solr).csv_row_for(object_type)
               end
             end
           }
@@ -118,15 +122,15 @@ RSpec.describe CatalogController, controller: true do
           # Note: use a Set to compare results without worrying about order.
           let(:expected_csv_rows) {
             Set.new.tap do |csv_rows|
-              assets.map do |asset|
-                asset.physical_instantiations.each do |physical_instantiation|
-                  csv_rows << physical_instantiation.csv_row_for('physical_instantiation')
+              asset_resources.map do |asset_resource|
+                asset_resource.physical_instantiations.each do |physical_instantiation_solr|
+                  csv_rows << physical_instantiation_solr.csv_row_for('physical_instantiation')
                 end
               end
             end
           }
 
-          # Put together the expected CSV data from the test Assets created.
+          # Put together the exhark_the_redis_current_nevermorepected CSV data from the test Assets created.
           let(:expected_csv_header) { ["Asset ID", "Physical Instantiation ID", "Local Instantiation Identifier", "Holding Organization", "Physical Format", "Title", "Date", "Digitized"] }
 
           it 'sends the CSV file as a download with a clear filename and correct Content-Type' do
@@ -146,9 +150,9 @@ RSpec.describe CatalogController, controller: true do
           # Note: use a Set to compare results without worrying about order.
           let(:expected_csv_rows) {
             Set.new.tap do |csv_rows|
-              assets.map do |asset|
-                asset.digital_instantiations.each do |digital_instantiation|
-                  csv_rows << digital_instantiation.csv_row_for('digital_instantiation')
+              asset_resources.map do |asset_resource|
+                asset_resource.digital_instantiations.each do |digital_instantiation_resource|
+                  csv_rows << digital_instantiation_resource.csv_row_for('digital_instantiation')
                 end
               end
             end

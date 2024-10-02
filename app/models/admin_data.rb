@@ -1,19 +1,29 @@
 class AdminData < ApplicationRecord
+  self.table_name = "admin_data"
+  
+  include ::EmptyDetection
+
   attr_reader :asset_error
 
   belongs_to  :hyrax_batch_ingest_batch, optional: true
+  belongs_to  :bulkrax_importer, optional: true, class_name: 'Bulkrax::Importer'
   has_many    :annotations, dependent: :destroy
-
-  self.table_name = "admin_data"
-  include ::EmptyDetection
-
+  accepts_nested_attributes_for :annotations, allow_destroy: true
   serialize :sonyci_id, Array
+  validate :validate_undeletable_fields
+
+  # TODO: Only used in AssetActor, which is deprecated. One AssetActor is
+  # removed, remove SERIALIZED_FIELD as well.
 
   SERIALIZED_FIELDS = [ :sonyci_id ]
 
+  # Mark fields that should not be deletable once set. These are used in validation.
+  UNDELETABLE_FIELDS = %w(bulkrax_importer_id hyrax_batch_ingest_batch_id)
+
   # Find the admin data associated with the Global Identifier (gid)
   # @param [String] gid - Global Identifier for this admin_data (e.g.gid://ams/admindata/1)
-  # @return [AdminData] if record matching gid is found, an instance of AdminData with id = the model_id portion of the gid (e.g. 1)
+  # @return [AdminData] if record matching gid is found, an instance of
+  #   AdminData with id = the model_id portion of the gid (e.g. 1)
   # @return [False] if record matching gid is not found
   def self.find_by_gid(gid)
     find(GlobalID.new(gid).model_id)
@@ -22,8 +32,10 @@ class AdminData < ApplicationRecord
   end
 
   # Find the admin data associated with the Global Identifier (gid)
-  # @param [String] gid - Global Identifier for this adimindata (e.g. gid://ams/admindata/1)
-  # @return [AdminData] an instance of AdminData with id = the model_id portion of the gid (e.g. 1)
+  # @param [String] gid - Global Identifier for this adimindata\
+  #   (e.g. gid://ams/admindata/1)
+  # @return [AdminData] an instance of AdminData with id = the model_id portion
+  #   of the gid (e.g. 1)
   # @raise [ActiveRecord::RecordNotFound] if record matching gid is not found
   def self.find_by_gid!(gid)
     result = find_by_gid(gid)
@@ -33,11 +45,12 @@ class AdminData < ApplicationRecord
 
   # These are the attributes that could be edited through a form or through ingest.
   def self.attributes_for_update
-    (AdminData.attribute_names.dup - ['id', 'created_at', 'updated_at']).map(&:to_sym)
+    AdminData.attribute_names.dup - ['id', 'created_at', 'updated_at']
   end
 
   # Return the Global Identifier for this admin data.
-  # @return [String] Global Identifier (gid) for this AdminData (e.g.gid://ams/admindata/1)
+  # @return [String] Global Identifier (gid) for this AdminData
+  #   (e.g.gid://ams/admindata/1)
   def gid
     URI::GID.build(app: GlobalID.app, model_name: model_name.name.parameterize.to_sym, model_id: id).to_s if id
   end
@@ -75,5 +88,15 @@ class AdminData < ApplicationRecord
 
   def sony_ci_api
     @sony_ci_api ||= SonyCiApi::Client.new('config/ci.yml')
+  end
+
+  def validate_undeletable_fields
+    UNDELETABLE_FIELDS.each do |field|
+      # NOTE: the {field}_was helper comes from ActiveModel::Dirty
+      new_val, old_val = send(field), send("#{field}_was")
+      if new_val.blank? && old_val.present?
+        errors.add(field, "can't change from #{old_val} to blank")
+      end
+    end
   end
 end

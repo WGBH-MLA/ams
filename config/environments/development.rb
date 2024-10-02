@@ -1,11 +1,18 @@
 Rails.application.configure do
 
+    # In the development environment your application's code is reloaded on
+  # every request. This slows down response time but is perfect for development
+  # since you don't have to restart the web server when you make code changes.
+  config.cache_classes = !!Sidekiq.server?
+
   # Verifies that versions and hashed value of the package contents in the project's package.json
-config.webpacker.check_yarn_integrity = true
+  config.webpacker.check_yarn_integrity = false
   # Method for using environment variables for Booleans
   def truthy_env_var?(val)
     ['yes', 'true', '1'].include? val.to_s.downcase.strip
   end
+
+  config.web_console.whitelisted_ips = ['172.18.0.0/16', '172.27.0.0/16', '0.0.0.0/0']
 
   # Settings specified here will take precedence over those in config/application.rb.
 
@@ -53,6 +60,9 @@ config.webpacker.check_yarn_integrity = true
   # Suppress logger output for asset requests.
   config.assets.quiet = true
 
+  # config.assets.prefix = "/assets"
+  config.analytics_settings = YAML.load_file(Rails.root.join("config/analytics.yml"))
+
   # Config background Jobs to use Sidekiq queue, so we can do production-like
   # testing of concurrent background jobs during batch ingests.
   config.active_job.queue_adapter = :sidekiq
@@ -76,8 +86,14 @@ config.webpacker.check_yarn_integrity = true
 
   # Raises error for missing translations
   # config.action_view.raise_on_missing_translations = true
+  if ENV["RAILS_LOG_TO_STDOUT"].present?
+    logger           = ActiveSupport::Logger.new(STDOUT)
+    logger.formatter = config.log_formatter
+    config.logger = ActiveSupport::TaggedLogging.new(logger)
+  end
 
   # Use an evented file watcher to asynchronously detect changes in source code,
   # routes, locales, etc. This feature depends on the listen gem.
   config.file_watcher = ActiveSupport::EventedFileUpdateChecker
+  config.hosts << "ams.test"
 end

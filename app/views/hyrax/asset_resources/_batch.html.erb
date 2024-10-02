@@ -1,0 +1,29 @@
+<% if presenter.bulkrax_import.present? %>
+  <dt>Importer</dt>
+  <dd>
+    <ul class="tabular">
+      <li class="attribute attribute-batch">
+        <%= link_to "View Importer", presenter.bulkrax_import_url %>
+      </li>
+      <li class="attribute attribute-batch">
+        <%= presenter.bulkrax_import_label %>
+      </li>
+      <li class="attribute attribute-batch">
+        <%= presenter.bulkrax_import_date %>
+      </li>
+    </ul>
+<% elsif presenter.hyrax_batch_ingest_batch_id.present? %>
+  <dt>Batch</dt>
+  <dd>
+    <ul class="tabular">
+      <li class="attribute attribute-batch">
+        <%= link_to "View Batch", presenter.batch_url %>
+      </li>
+      <li class="attribute attribute-batch">
+        <%= presenter.batch_ingest_label %>
+      </li>
+      <li class="attribute attribute-batch">
+        <%= presenter.batch_ingest_date %>
+      </li>
+    </ul>
+<% end %>

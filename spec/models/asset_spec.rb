@@ -8,6 +8,7 @@ RSpec.describe Asset do
   context 'properties' do
     subject { build :asset }
 
+    it { is_expected.to have_property(:bulkrax_identifier).with_predicate("http://ams2.wgbh-mla.org/resource#bulkraxIdentifier") }
     it { is_expected.to have_property(:title).with_predicate(::RDF::Vocab::DC.title) }
     it { is_expected.to have_property(:asset_types).with_predicate(::RDF::Vocab::EBUCore.hasType) }
     it { is_expected.to have_property(:genre).with_predicate(::RDF::Vocab::EBUCore.hasGenre) }
@@ -41,6 +42,8 @@ RSpec.describe Asset do
     it { is_expected.to have_property(:promo_description).with_predicate('http://pbcore.org#hasPromoDescription') }
     it { is_expected.to have_property(:clip_description).with_predicate('http://pbcore.org#hasClipDescription') }
     it { is_expected.to have_property(:producing_organization).with_predicate(::RDF::Vocab::DC11.creator) }
+    it { is_expected.to have_property(:intended_children_count).with_predicate('http://ams2.wgbh-mla.org/resource#intendedChildrenCount') }
+    it { is_expected.to have_property(:validation_status_for_aapb).with_predicate('http://ams2.wgbh-mla.org/resource#validationStatusForAapb') }
   end
 
   context "with AdminData" do

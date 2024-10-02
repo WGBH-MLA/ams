@@ -4,6 +4,15 @@ class Asset < ActiveFedora::Base
   include ::AMS::IdentifierService
   include ::AMS::CascadeDestroyMembers
   include ::AMS::AllMembers
+  include SolrHelper
+
+  # @see Push#add_status_error
+  VALIDATION_STATUSES = {
+    valid: 'valid',
+    missing_children: 'missing child record(s)',
+    status_not_validated: 'not yet validated',
+    empty: 'missing a validation status'
+  }.freeze
 
   self.indexer = AssetIndexer
   before_save :save_admin_data
@@ -60,6 +69,9 @@ class Asset < ActiveFedora::Base
 
   # TODO: Use RDF::Vocab for applicable terms.
   # See https://github.com/ruby-rdf/rdf-vocab/tree/develop/lib/rdf/vocab
+  property :bulkrax_identifier, predicate: ::RDF::URI("http://ams2.wgbh-mla.org/resource#bulkraxIdentifier"), multiple: false do |index|
+    index.as :stored_searchable, :facetable
+  end
 
   property :asset_types, predicate: ::RDF::URI.new("http://www.ebu.ch/metadata/ontologies/ebucore/ebucore#hasType"), multiple: true do |index|
     index.as :stored_searchable, :facetable
@@ -201,6 +213,15 @@ class Asset < ActiveFedora::Base
     index.as :stored_searchable
   end
 
+  # This property is intended to be an Integer, but ActiveFedora stores everything as Strings. We don't declare indexing
+  # rules in a block here because indexing for this property is handled manually.
+  # @see AssetIndexer#generate_solr_document
+  property :intended_children_count, predicate: ::RDF::URI("http://ams2.wgbh-mla.org/resource#intendedChildrenCount"), multiple: false
+
+  property :validation_status_for_aapb, predicate: ::RDF::URI("http://ams2.wgbh-mla.org/resource#validationStatusForAapb"), multiple: true do |index|
+    index.as :stored_searchable
+  end
+
   def admin_data_gid=(new_admin_data_gid)
     raise "Can't modify admin data of this asset" if persisted? && !admin_data_gid_was.nil? && admin_data_gid_was != new_admin_data_gid
     new_admin_data = AdminData.find_by_gid!(new_admin_data_gid)
@@ -212,7 +233,7 @@ class Asset < ActiveFedora::Base
   end
 
   def admin_data_gid_document_field_name
-    Solrizer.solr_name('admin_data_gid', *index_admin_data_gid_as)
+    solr_name('admin_data_gid', *index_admin_data_gid_as)
   end
 
   def sonyci_id
@@ -298,7 +319,11 @@ class Asset < ActiveFedora::Base
   def proxy_start_time
     proxy_start_time ||= find_annotation_attribute("proxy_start_time")
   end
-
+  
+ def ams1_legacy_metadata
+    ams1_legacy_metadata ||= find_annotation_attribute("ams1_legacy_metadata")
+  end
+  
   def find_annotation_attribute(attribute)
     if admin_data.annotations.select { |a| a.annotation_type == attribute }.present?
       return admin_data.annotations.select { |a| a.annotation_type == attribute }.map(&:value)

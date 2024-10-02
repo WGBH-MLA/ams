@@ -13,17 +13,22 @@
 //= require turbolinks
 //
 // Required by Blacklight
-//= require jquery
+//= require jquery3
 //= require 'blacklight_advanced_search'
 
 
-//= require jquery_ujs
+//= require rails-ujs
+//= require popper
+//= require twitter/typeahead
+//= require bootstrap
 //= require jquery-ui
-//= require dataTables/jquery.dataTables
-//= require dataTables/bootstrap/3/jquery.dataTables.bootstrap
+//= require jquery.dataTables
+//= require dataTables.bootstrap4
 //= require blacklight/blacklight
+//= require ./global/blacklight_gallery
 //= require video
 
+//= require bulkrax/application
 //= require_tree ./global
 //= require hyrax
 //= require bootstrap-multiselect

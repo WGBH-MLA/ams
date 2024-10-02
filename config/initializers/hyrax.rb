@@ -10,6 +10,27 @@ Hyrax.config do |config|
   # Injected via `rails g hyrax:work Contribution`
   config.register_curation_concern :contribution
 
+  # Injected via `rails g hyrax:work_resource AssetResource`
+  config.register_curation_concern :asset_resource
+  # Injected via `rails g hyrax:work_resource PhysicalInstantiationResource`
+  config.register_curation_concern :physical_instantiation_resource
+  # Injected via `rails g hyrax:work_resource DigitalInstantiationResource`
+  config.register_curation_concern :digital_instantiation_resource
+  # Injected via `rails g hyrax:work_resource EssenceTrackResource`
+  config.register_curation_concern :essence_track_resource
+  # Injected via `rails g hyrax:work_resource ContributionResource`
+  config.register_curation_concern :contribution_resource
+
+  # Identify the model class name that will be used for Collections in your app
+  # (i.e. ::Collection for ActiveFedora, Hyrax::PcdmCollection for Valkyrie)
+  # config.collection_model = '::Collection'
+  config.collection_model = 'Hyrax::PcdmCollection'
+
+  # Identify the model class name that will be used for Admin Sets in your app
+  # (i.e. AdminSet for ActiveFedora, Hyrax::AdministrativeSet for Valkyrie)
+  # config.admin_set_model = 'AdminSet'
+  config.admin_set_model = 'Hyrax::AdministrativeSet'
+
   # Register roles that are expected by your implementation.
   # @see Hyrax::RoleRegistry for additional details.
   # @note there are magical roles as defined in Hyrax::RoleRegistry::MAGIC_ROLES
@@ -50,9 +71,6 @@ Hyrax.config do |config|
   # Defaults to false
   # Requires a Google Analytics id and OAuth2 keyfile.  See README for more info
   # config.analytics = false
-
-  # Google Analytics tracking ID to gather usage statistics
-  # config.google_analytics_id = 'UA-99999999-1'
 
   # Date you wish to start collecting Google Analytic statistics for
   # Leaving it blank will set the start date to when ever the file was uploaded by
@@ -191,7 +209,40 @@ Hyrax.config do |config|
   # config.lock_time_to_live = 60_000
 
   ## Do not alter unless you understand how ActiveFedora handles URI/ID translation
-  # config.translate_id_to_uri = ActiveFedora::Noid.config.translate_id_to_uri
+  # begin Original Version - restore this once all old id records are moved
+  # config.translate_id_to_uri = lambda do |id|
+  #   uri = "#{ActiveFedora.fedora.host}#{ActiveFedora.fedora.base_path}/#{::Noid::Rails.treeify(id)}"
+  #   return uri
+  # end
+  # end Original Version
+  config.translate_id_to_uri = lambda do |id|
+    id = id.to_s
+    return "#{ActiveFedora.fedora.host}#{ActiveFedora.fedora.base_path}/#{::Noid::Rails.treeify(id)}" unless id.match(/^cpb-aacip/)
+    split_id = id.split('/')
+    id = split_id[0]
+    tail = split_id[1..-1].join('/')
+    url = "#{ActiveFedora.fedora.host}#{ActiveFedora.fedora.base_path}/#{::Noid::Rails.treeify(id)}"
+    begin
+      ActiveFedora::Fedora.instance.connection.head(url)
+    rescue Ldp::NotFound
+      begin
+        old_url = "#{ActiveFedora.fedora.host}#{ActiveFedora.fedora.base_path}/#{::Noid::Rails.treeify(id, false)}"
+        ActiveFedora::Fedora.instance.connection.head(old_url)
+      rescue Ldp::NotFound
+        # Do nothing
+      rescue Ldp::Gone
+        # old id tombstone
+        url = old_url
+      else
+        url = old_url
+      end
+    rescue Ldp::Gone
+      # Do nothing, object was deleted
+    end
+    url += "/#{tail}" if tail.present?
+    url
+  end
+
   # config.translate_uri_to_id = ActiveFedora::Noid.config.translate_uri_to_id
 
   ## Fedora import/export tool
@@ -238,3 +289,11 @@ Date::DATE_FORMATS[:standard] = "%m/%d/%Y"
 Qa::Authorities::Local.register_subauthority('subjects', 'Qa::Authorities::Local::TableBasedAuthority')
 Qa::Authorities::Local.register_subauthority('languages', 'Qa::Authorities::Local::TableBasedAuthority')
 Qa::Authorities::Local.register_subauthority('genres', 'Qa::Authorities::Local::TableBasedAuthority')
+ActiveFedora.init(solr_config_path: Rails.root.join('config', 'solr.yml'))
+
+# set bulkrax default work type to first curation_concern if it isn't already set
+if ENV['SETTINGS__BULKRAX__ENABLED'] == 'true'
+  if Bulkrax.default_work_type.blank?
+    Bulkrax.default_work_type = 'AssetResource'
+  end
+end

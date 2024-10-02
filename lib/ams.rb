@@ -64,7 +64,7 @@ module AMS
       end
 
       def flush_redis_cache!
-        Redis.new(host: ENV.fetch('REDIS_SERVER', 'localhost'), port: '6379').flushall
+        Redis.new(host: ENV.fetch('REDIS_HOST', 'localhost'), port: '6379').flushall
       end
 
 
@@ -98,7 +98,7 @@ module AMS
         end
 
         def admin_set
-          AdminSet.find_or_create_default_admin_set_id
+          Hyrax::AdminSetCreateService.find_or_create_default_admin_set.id.to_s
         end
       end
     end

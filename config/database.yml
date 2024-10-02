@@ -1,28 +1,25 @@
-test:
-  adapter: sqlite3
-  database: db/test.sqlite3
-  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 50 } %>
+# Hi - please dont edit this file directly, instead make changes in your .env file
+
+login: &login
+  adapter: <%= ENV['DB_ADAPTER'] || 'postgresql' %>
+  host: <%= ENV['DB_HOST'] %>
+  username: <%= ENV['DB_USERNAME'] %>
+  password: <%= ENV['DB_PASSWORD'] %>
+  database: <%= ENV['DB_NAME'] || 'ams' %>
+  pool: 50
   timeout: 5000
 
+
 development:
-  adapter: mysql2
-  encoding: utf8
-  database: ams_development
-  username: ams_development
-  password: password
-  host: localhost
-  port: 3306
-  # The time that MySQL2 lib will try to get a db connection.
-  # Default is 5.
-  # checkout_timeout: 10
-  pool: 12
+  <<: *login
+
+test:
+  <<: *login
+  database: <%= ENV['DB_TEST_NAME'] || 'ams_test' %>
+
+staging:
+  <<: *login
+
 
 production:
-  adapter: mysql2
-  encoding: utf8
-  database: <%= ENV['DB_NAME'] %>
-  username: <%= ENV['DB_USER'] %>
-  password: <%= ENV['DB_PWD'] %>
-  host: <%= ENV['DB_HOST'] %>
-  port: 3306
-  pool: 20
+  <<: *login

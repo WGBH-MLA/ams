@@ -6,8 +6,6 @@ $( document ).on('turbolinks:load', function() {
     });
 
     $("select[multiple='multiple']").each(function() {
-        if ($(this).first().val() == "")
-            $(this).first().remove();
         $(this).multiselect();
     });
 });

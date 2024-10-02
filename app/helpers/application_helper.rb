@@ -17,7 +17,7 @@ module ApplicationHelper
   end
 
   # Instance method delegates to ApplicationHelper.display_date.
-  def display_date(*args); ApplicationHelper.display_date(*args); end
+  def display_date(*args, **kwargs); ApplicationHelper.display_date(*args, **kwargs); end
 
   def render_thumbnail(document, options)
     # send(blacklight_config.view_config(document_index_view_type).thumbnail_method, document, image_options)
@@ -41,5 +41,11 @@ module ApplicationHelper
 
   def query_ids(query)
     query_docs(query).map(&:id)
+  end
+
+  # passing in just a field_name has been deprecated in Blacklight 7.0
+  # we need to pass in a Blacklight::Configuration::Field object instead
+  def field_value_for(doc_presenter, field_name)
+    doc_presenter.field_value(Blacklight::Configuration::Field.new(field: field_name))
   end
 end

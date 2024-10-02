@@ -6,9 +6,11 @@ RSpec.describe Admin::UsersController, type: :controller do
   before { sign_in admin_user }
 
   describe "GET #new" do
+    render_views
+    before { get :new }
+
     it "returns a success response" do
-      get :new
-      expect(response).to be_success
+      expect(response).to be_successful
     end
   end
 

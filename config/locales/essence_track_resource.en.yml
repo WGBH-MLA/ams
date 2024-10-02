@@ -1,0 +1,37 @@
+en:
+  hyrax:
+    icons:
+      essence_track_resource:     'essence-track-icon'
+    select_type:
+      essence_track_resource:
+        name:               "Essence Track"
+        description:        "Essence track works"
+  simple_form:
+    labels:
+      essence_track_resource:
+        track_id: 'Track ID'
+        data_rate: 'Data rate (in bytes/second)'
+        frame_rate: 'Frame rate (in frames/second)'
+        playback_speed: 'Playback speed'
+        playback_speed_units: 'Playback speed unit of measure'
+        sample_rate: 'Sampling rate (in kHz)'
+        frame_width: 'Frame width (in pixels)'
+        frame_height: 'Frame height (in pixels)'
+    hints:
+      essence_track_resource:
+        track_type: 'The nature of the media of this specific track, ex. video, audio, caption, etc.'
+        track_id: 'A number or other identifier used to differentiate this track from the other tracks.'
+        data_rate: 'Only relevant to digital instantiations.'
+        frame_rate: 'Only relevant to video tracks in digital instantiations.'
+        playback_speed: 'The rate at which a media track should be rendered for human consumption.'
+        playback_speed_units: 'The unit of measure for the playback speed (e.g. "rpm" = revolutions per minute, "ips" = inches per second)'
+        sample_rate: 'Only relevant to audio tracks in digital instantiations.'
+        bit_depth: 'Only relevant to media tracks in digital instantiations.'
+        frame_width: 'Only relevant for video or image tracks in digital instantiations.'
+        frame_height: 'Only relevant for video or image tracks in digital instantiations.'
+        duration: 'Identifies the length of the track, preferably in a timestamp format like HH:MM:SS or HH:MM:SS;FF.'
+        time_start: 'Identifies the timecode at which the content begins in the track, preferably in a timestamp format like HH:MM:SS or HH:MM:SS;FF.'
+        annotation: 'Any supplementary information or notes about the track.'
+        standard: 'Describes the broadcast standard of the video signal. Typically not used for physical instantiations.'
+        encoding: 'Identifies how the actual information in an instantiation is compressed, interpreted, or formulated. Typically not used for physical instantiations.'
+        aspect_ratio: 'The ratio of horizontal to vertical proportions in the display of moving or static images.'

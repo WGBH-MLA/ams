@@ -37,13 +37,29 @@ dump.rdb
 /public/packs
 /public/packs-test
 /node_modules
+/ops/*-deploy.yaml
 yarn-debug.log*
 .yarn-integrity
 fits.log
 .DS_Store
 
 # Drew's demo stuff. Remove this ignore if necessary.
-demo*
+/demo*
+
+# Default locaiton of Sony Ci API credentials
+ci.yml
+
+# Default naming convention of kubeconfig files
+*kubeconfig.yml
 
 # This file is generated on deployment
 public/deployment.html
+
+# Ignore vendor files
+/vendor/*
+
+# Docker compose based dev
+docker-compose.override.yml
+
+# Ignore spacemacs files
+*~undo-tree~

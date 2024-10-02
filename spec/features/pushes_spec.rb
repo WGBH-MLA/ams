@@ -6,9 +6,9 @@ RSpec.describe "Pushes features", type: :controller, js: true do
 
   # let it bang
   let!(:user) { create :admin_user }
-  let!(:asset) { create(:asset, user: user, program_title: ['foo']) }
-  let!(:asset2) { create(:asset, user: user, program_title: ['foo bar']) }
-  let!(:asset3) { create(:asset, user: user, needs_update: true) }
+  let!(:asset_resource) { create(:asset_resource, depositor: user.user_key, program_title: ['foo'], validation_status_for_aapb: [AssetResource::VALIDATION_STATUSES[:valid]]) }
+  let!(:asset_resource2) { create(:asset_resource, depositor: user.user_key, program_title: ['foo bar'], validation_status_for_aapb: [AssetResource::VALIDATION_STATUSES[:valid]]) }
+  let!(:asset_resource3) { create(:asset_resource, depositor: user.user_key, needs_update: true, validation_status_for_aapb: [AssetResource::VALIDATION_STATUSES[:valid]]) }
 
   # Login/logout before/after each test.
   before { login_as(user) }
@@ -28,7 +28,7 @@ RSpec.describe "Pushes features", type: :controller, js: true do
 
     it 'gives all clear for valid GUID input data' do
       visit '/pushes/new'
-      fill_in(id: 'id_field', with: asset.id )
+      fill_in(id: 'id_field', with: asset_resource.id )
       expect(page).to have_text('All GUIDs are valid!')
     end
 
@@ -36,25 +36,25 @@ RSpec.describe "Pushes features", type: :controller, js: true do
       # this i do
       # just for u
       visit '/pushes/needs_updating'
-      expect(page.find('textarea')).to have_text(asset3.id)
+      expect(page.find('textarea')).to have_text(asset_resource3.id)
     end
 
     it 'gets the correct record set when navigating from a catalog search' do
       # uri = %(/catalog?q=foo)
       # visit uri
       visit '/catalog'
-      fill_in(id: 'q', with: 'foo')
+      fill_in(name: 'q', with: 'foo')
       click_button(id: 'search-submit-header')
-      click_link('Push To AAPB', class: 'aapb-push-button')
+      find('.aapb-push-button').click
 
-      expect(page.find('textarea')).to have_text(asset.id)
-      expect(page.find('textarea')).to have_text(asset2.id)
+      expect(page.find('textarea')).to have_text(asset_resource.id)
+      expect(page.find('textarea')).to have_text(asset_resource2.id)
     end
 
     it 'can submit a push successfully' do
       allow(PushToAAPBJob).to receive(:perform_later)
       visit '/pushes/new'
-      fill_in('id_field', with: asset.id )
+      fill_in('id_field', with: asset_resource.id )
       click_button(id: 'push-submit')
 
       # this will have the output mail
@@ -62,7 +62,7 @@ RSpec.describe "Pushes features", type: :controller, js: true do
       expect(PushToAAPBJob).to have_received(:perform_later)
       push = Push.last
       expect(push.user_id).to eq(user.id)
-      expect(push.pushed_id_csv).to eq(asset.id)
+      expect(push.pushed_id_csv).to eq(asset_resource.id)
     end
   end
 end

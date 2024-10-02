@@ -9,13 +9,16 @@ class EssenceTrack < ActiveFedora::Base
   self.valid_child_concerns = []
 
   validates :track_type, presence: true
-  validates :track_id, presence: true
 
   validates_each :duration, :time_start, allow_blank: true do |record, attr, value|
     if value !~ AMS::TimeCodeService.regex
       record.errors.add(:base, "Invalid format for #{attr.to_s.humanize}. Use HH:MM:SS, H:MM:SS, MM:SS, M:SS, or HH:MM:SS")
       record.errors.add(attr, "Invalid format for #{attr.to_s.humanize}. Use HH:MM:SS, H:MM:SS, MM:SS, M:SS, or HH:MM:SS")
     end
+  end
+
+  property :bulkrax_identifier, predicate: ::RDF::URI("http://ams2.wgbh-mla.org/resource#bulkraxIdentifier"), multiple: false do |index|
+    index.as :stored_searchable, :facetable
   end
 
   property :track_type, predicate: ::RDF::URI.new("http://www.ebu.ch/metadata/ontologies/ebucore/ebucore#trackType"), multiple: false do |index|
