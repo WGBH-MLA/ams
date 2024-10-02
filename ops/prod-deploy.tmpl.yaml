@@ -193,9 +193,9 @@ redis:
   password: prod
   master:
     livenessProbe:
-      initialDelaySeconds: 180
+      initialDelaySeconds: 300
     readinessProbe:
-      initialDelaySeconds: 180
+      initialDelaySeconds: 300
 
 solr:
   enabled: false
