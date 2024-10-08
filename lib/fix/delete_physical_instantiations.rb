@@ -40,6 +40,7 @@ module Fix
 
       pis.each do |pi|
         delete_physical_instantiation_resource(pi)
+        ar.members.delete(pi)
       end
 
       Hyrax.index_adapter.save(resource: ar)
