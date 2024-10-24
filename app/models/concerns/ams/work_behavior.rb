@@ -18,14 +18,24 @@ module AMS
     end
 
     def members
-      return @members if @members.present?
-      @members = member_ids.map do |id|
-        begin
-          Hyrax.query_service.find_by(id: id)
-        rescue Valkyrie::Persistence::ObjectNotFoundError
-          Rails.logger.warn("Could not find member #{id} for #{self.id}")
-        end
+      @members ||= []
+      member_id_vals = member_ids.map { |id| id.to_s }.to_set
+      ids_from_members = @members.map { |m| m.id.to_s }
+      # If the member_ids do not match the IDs within the members, then re-set the members to be an accurate reflection of the member IDs.
+      # This allows us to modify resource.member_ids and have #members accurately reflect the changes.
+      if (member_id_vals - ids_from_members).any?
+        @members = member_ids.map do |id|
+          begin
+            Hyrax.query_service.find_by(id: id)
+          rescue Valkyrie::Persistence::ObjectNotFoundError
+            Rails.logger.warn("Could not find member #{id} for #{self.id}")
+            # Return nil (to be removed with #compact below)
+            nil
+          end
+        # Remove nils, all members must be able to respond to #members for recurisve member lookup.
+        end.compact
       end
+      @members
     end
 
     def to_solr

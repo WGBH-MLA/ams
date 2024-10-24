@@ -30,13 +30,6 @@ RSpec.describe 'Delete Asset Resources' do
     end
   end
 
-  let(:ids_file) do
-    f = Tempfile.new
-    f.write(ids.join("\n"))
-    f.flush
-    f.path
-  end
-
   # Non-memoized helper for fetching Asset by ID.
   def asset_resource_results
     ids.map do |id|
@@ -50,7 +43,7 @@ RSpec.describe 'Delete Asset Resources' do
 
   it 'deletes the AssetResources' do
     expect(asset_resource_results.count).to be > 0
-    Fix::DeleteAssetResources.new(ids_file: ids_file).run
+    Fix::DeleteAssetResources.new(ids: ids).run
     expect(asset_resource_results.count).to eq 0
   end
 end

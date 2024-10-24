@@ -2,8 +2,11 @@ module Fix
   class BatchProcess
     attr_reader :ids, :log, :cli_ptions, :log_level
 
-    def initialize(ids_file:, log_level: Logger::INFO)
-      @ids = File.readlines(ids_file, chomp: true)
+    def initialize(ids_file: nil, ids: [], log_level: Logger::INFO)
+      # Try reading ids from :ids_file first if it's given
+      @ids = File.readlines(ids_file, chomp: true) if ids_file
+      # Set ids to given param if not from a file
+      @ids ||= ids
       @cli_options = {}
       @log = Logger.new(STDOUT)
       @log.level = log_level
