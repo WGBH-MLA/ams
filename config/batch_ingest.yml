@@ -84,6 +84,7 @@ ingest_types:
           - playlist_group
           - playlist_order
           - organization
+          - proxy_start_time
   aapb_csv_reader_4:
     label: "AAPB CSV Asset Multivalue Attribute Addition Ingester"
     reader: "AAPB::BatchIngest::CSVReader"
