@@ -42,9 +42,9 @@ module Ams
         find_or_create_admin_data(change_set)
         set_admin_data_attributes(change_set.model.admin_data, change_set)
         change_set.model.admin_data.save!
-        set_annotations_attributes(change_set.model.admin_data, change_set)
         remove_admin_data_from_env_attributes(change_set)
         delete_removed_annotations(change_set.model.admin_data, change_set)
+        set_annotations_attributes(change_set.model.admin_data, change_set)
         remove_annotations_from_env_attributes(change_set)
 
         !!change_set.model.admin_data
