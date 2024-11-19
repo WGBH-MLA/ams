@@ -42,9 +42,9 @@ module Ams
         find_or_create_admin_data(change_set)
         set_admin_data_attributes(change_set.model.admin_data, change_set)
         change_set.model.admin_data.save!
+        set_annotations_attributes(change_set.model.admin_data, change_set)
         remove_admin_data_from_env_attributes(change_set)
         delete_removed_annotations(change_set.model.admin_data, change_set)
-        set_annotations_attributes(change_set.model.admin_data, change_set)
         remove_annotations_from_env_attributes(change_set)
 
         !!change_set.model.admin_data
@@ -61,8 +61,8 @@ module Ams
 
       def delete_removed_annotations(admin_data, change_set)
         return if admin_data.annotations.empty?
-        return if change_set.attributes["annotations"].nil?
-        ids_in_change_set = change_set.attributes["annotations"].select{ |ann| ann["id"].present? }.map{ |ann| ann["id"].to_i }
+        return if change_set.fields["annotations"].nil?
+        ids_in_change_set = change_set.fields["annotations"].select{ |ann| ann["id"].present? }.map{ |ann| ann["id"].to_i }
         admin_data.annotations.each do |annotation|
           annotation.destroy unless ids_in_change_set.include?(annotation.id)
         end
