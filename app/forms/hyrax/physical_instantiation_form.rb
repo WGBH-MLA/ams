@@ -13,7 +13,7 @@ module Hyrax
                    :keyword, :license, :rights_statement, :publisher, :subject, :identifier, :based_near, :related_url,
                    :bibliographic_citation, :source]
     self.required_fields -= [:creator, :keyword, :rights_statement]
-    self.required_fields += [:format, :location, :media_type, :holding_organization]
+    self.required_fields += [:location, :media_type, :holding_organization]
 
     self.single_valued_fields = [:title]
 
