@@ -97,9 +97,6 @@ RSpec.describe AAPB::BatchIngest::PBCoreXMLInstantiationReset, reset_data: false
   # do automatically prior to each example within the same context, including
   # nested contexts.
   let(:actual_instantiations) do
-
-    require 'pry'; binding.pry
-
     PBCore::DescriptionDocument.parse(
       SolrDocument.find(pbcore_identifier.value).export_as_pbcore
     ).instantiations
@@ -116,23 +113,15 @@ RSpec.describe AAPB::BatchIngest::PBCoreXMLInstantiationReset, reset_data: false
 
 
   # Before each example in this spec:
-  # 1. ingest batch_item_1 with PBCoreXMLItemIngester
-  # 2. ingest batch_item_2 with PBCoreXMLInstantiationResetIngester
+  # 1. Ingest batch_item_1 with PBCoreXMLItemIngester
+  # 2. Ingest batch_item_2 with PBCoreXMLInstantiationResetIngester
   before do
     AAPB::BatchIngest::PBCoreXMLItemIngester.new(batch_items.first).ingest
-
-    # check for Asset instantiations here
-    require 'pry'; binding.pry
-
     # Fetch the AssetResource as it was first ingested. This represents an
     # "original" state of an AssetResource prior to running the
     # PBCoreXMLInstantiationReset ingester, which we can use for comparison
     @orig_asset_resource = AssetResource.find(pbcore_identifier.value).dup
     AAPB::BatchIngest::PBCoreXMLInstantiationReset.new(batch_items.last).ingest
-
-    # check for Asset instantiations here
-    require 'pry'; binding.pry
-
   end
 
   describe '#ingest' do
