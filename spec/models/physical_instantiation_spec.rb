@@ -45,7 +45,12 @@ RSpec.describe PhysicalInstantiation do
         expect(physical_instantiation.resource.dump(:ttl)).to match(/ebucore#hasFormat/)
         expect(physical_instantiation.format.include?("Test format")).to be true
       end
-    end
+      it "handles absence of format gracefully" do
+      physical_instantiation.format = nil
+      expect(physical_instantiation.resource.dump(:ttl)).not_to match(/ebucore#hasFormat/)
+      expect(physical_instantiation.format).to be_nil
+        end
+      end
 
     context "standard" do
       let(:physical_instantiation) { FactoryBot.build(:physical_instantiation) }
