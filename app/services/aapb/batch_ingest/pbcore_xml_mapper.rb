@@ -171,7 +171,7 @@ module AAPB
 
       def physical_instantiation_resource_attributes
         @physical_instantiation_resource_attributes ||= instantiation_attributes.tap do |attrs|
-          attrs[:format] = pbcore.physical.value || nil
+          attrs[:format] = pbcore.physical.value if pbcore.physical.value.present?
         end
       end
 
