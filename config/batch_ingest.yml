@@ -59,6 +59,7 @@ ingest_types:
           - eidr_id
           - topics
           - subject
+          - title
           - program_title
           - episode_title
           - segment_title
@@ -114,6 +115,7 @@ ingest_types:
           - eidr_id
           - topics
           - subject
+          - title
           - program_title
           - episode_title
           - segment_title
