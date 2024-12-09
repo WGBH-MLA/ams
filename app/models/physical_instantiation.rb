@@ -12,7 +12,6 @@ class PhysicalInstantiation < ActiveFedora::Base
 
   before_save :save_instantiation_admin_data
 
-  validates :format, presence: { message: 'Your work must have a format.' }
   validates :location, presence: { message: 'Your work must have a location.' }
   validates :media_type, presence: { message: 'Your work must have a media type.' }
   validates :duration, format: { with: AMS::TimeCodeService.regex, allow_blank: true, message: "Invalid format for duration. Use HH:MM:SS, H:MM:SS, MM:SS, or M:SS" }
