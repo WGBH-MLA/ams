@@ -66,6 +66,7 @@ ingest_types:
           - raw_footage_title
           - promo_title
           - clip_title
+          - description
           - program_description
           - episode_description
           - segment_description
@@ -122,6 +123,7 @@ ingest_types:
           - raw_footage_title
           - promo_title
           - clip_title
+          - description
           - program_description
           - episode_description
           - segment_description
