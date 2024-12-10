@@ -31,7 +31,7 @@ module AAPB
             CoolPhysicalJob.perform_later(parent_id: batch_item_object.id.to_s, xml: pbcore_physical_instantiation.to_xml, batch_item: pi_batch_item)
           end
         elsif batch_item_is_digital_instantiation?
-          batch_item_object = ingest_digital_instiation_and_manifest!
+          batch_item_object = ingest_digital_instantiation_and_manifest!
         else
           # TODO: More specific error?
           raise "PBCore XML ingest does not know how to ingest the given XML"
@@ -85,7 +85,7 @@ module AAPB
           ingest_klass(AssetResource, attrs)
         end
 
-        def ingest_digital_instiation_and_manifest!
+        def ingest_digital_instantiation_and_manifest!
           mapper = AAPB::BatchIngest::ZippedPBCoreDigitalInstantiationMapper.new(@batch_item)
           attrs = mapper.digital_instantiation_attributes
           parent = mapper.parent_asset
@@ -95,7 +95,8 @@ module AAPB
         end
 
         def ingest_digital_instantiation!(parent:, xml:)
-          attrs = { pbcore_xml: xml }
+          attrs = AAPB::BatchIngest::PBCoreXMLMapper.new(xml).digital_instantiation_resource_attributes
+          attrs[:pbcore_xml] = xml
           attrs[:title] = ::SolrDocument.new(parent.to_solr).title
           digital_instantiation = ingest_klass(DigitalInstantiationResource, attrs)
           atomically_adopt parent, digital_instantiation
