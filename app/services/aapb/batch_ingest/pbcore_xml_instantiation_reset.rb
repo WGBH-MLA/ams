@@ -27,7 +27,6 @@ module AAPB
           CoolDigitalJob.perform_later(parent_id: asset_resource.id.to_s, xml: pbcore_digital_instantiation.to_xml, batch_item: di_batch_item)
         end
 
-
         pbcore_physical_instantiations.each do |pbcore_physical_instantiation|
           pi_batch_item = Hyrax::BatchIngest::BatchItem.create!(batch: batch_item.batch, status: 'initialized', id_within_batch: batch_item.id_within_batch)
           CoolPhysicalJob.perform_later(parent_id: asset_resource.id.to_s, xml: pbcore_physical_instantiation.to_xml, batch_item: pi_batch_item)
@@ -55,11 +54,6 @@ module AAPB
         def log
           @log ||= Logger.new(STDOUT)
         end
-
-        def destroy_work(work)
-          Hyrax::Transactions::WorkDestroy.new
-        end
-
 
         def asset_resource
           @asset_resource ||= AssetResource.find(asset_resource_id)
