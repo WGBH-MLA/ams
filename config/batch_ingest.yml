@@ -135,3 +135,7 @@ ingest_types:
     label: "AAPB Digital Instantiation PBCore - Zipped"
     reader: "AAPB::BatchIngest::ZippedPBCoreDigitalInstantiationReader"
     ingester: "AAPB::BatchIngest::PBCoreXMLItemIngester"
+  pbcore_xml_instantiation_reset:
+    label: "AAPB PBCore XML Instantiation Reset - Zipped"
+    reader: "AAPB::BatchIngest::ZippedPBCoreReader"
+    ingester: "AAPB::BatchIngest::PBCoreXMLInstantiationReset"
