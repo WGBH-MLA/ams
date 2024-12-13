@@ -60,7 +60,7 @@ module AAPB
         end
 
         def asset_resource_id
-          pbcore.identifiers.detect{|id| id.source == 'http://americanarchiveinventory.org' }&.value
+          pbcore.identifiers.detect{|id| id.source == 'http://americanarchiveinventory.org' }&.value.gsub('/', '-')
         end
     end
   end
