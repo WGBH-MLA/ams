@@ -41,9 +41,15 @@ module Ams
             param_contributor[:admin_set_id] = change_set['admin_set_id']
             param_contributor[:title] = change_set["title"]
 
+            # FIXME: removing members this way doesn't work. The form does not pass _destroy, it simply
+            # doesn't pass the params for the contributor if it was removed. This is because the "Remove"
+            # button deletes the outer HTML of the input fields.
+            # Consider updating members by setting them equal to the contributors passed by params,
+            # effectively removing the members that were not passed.
+            # Importing / batch ingesting may handle deletion differently; verify whatever change made
+            # here works with those features
             to_destroy = ActiveModel::Type::Boolean.new.cast(param_contributor['_destroy'])
             if to_destroy
-              # FIXME: removing the member doesn't seem to work, destroy instead of unlink?
               destroys << param_contributor[:id]
               next
             end
@@ -57,12 +63,6 @@ module Ams
                 Hyrax.publisher.publish('object.metadata.updated', object: contributor_resource, user: user)
                 inserts << contributor_resource.id
               else
-                # param_contributor.slice(:contributor_role, :contributor, :affiliation, :portrayal).each do |attr, value|
-                #   contributor.send("#{attr}=", value)
-                # end
-                # Hyrax.persister.save(resource: contributor)
-                # Hyrax.index_adapter.save(resource: contribution)
-                # Hyrax.publisher.publish('object.metadata.updated', object: contributor, user: user)
                 contribution_form = Hyrax::Forms::ResourceForm.for(contributor)
                 sanitized_params = param_contributor.slice(:contributor_role, :contributor, :affiliation, :portrayal)
                 contribution_form.validate(sanitized_params)
