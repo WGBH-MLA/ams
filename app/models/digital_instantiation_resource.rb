@@ -61,7 +61,6 @@ class DigitalInstantiationResource < Hyrax::Work
     msg = []
     msg << "#{self.id} title is required" unless title.present?
     msg << "#{self.id} location is required" unless location.present?
-    msg << "#{self.id} media_type is required" unless media_type.present?
     msg << "#{self.id} holding_organization is required" unless holding_organization.present?
     msg.to_sentence if msg.present?
   end
