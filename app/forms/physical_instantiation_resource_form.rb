@@ -16,7 +16,7 @@ class PhysicalInstantiationResourceForm < Hyrax::Forms::ResourceForm(PhysicalIns
 
   attr_accessor :controller, :current_ability
 
-  self.required_fields += [:format, :location, :media_type, :holding_organization]
+  self.required_fields += [:format, :location, :holding_organization]
 
   self.single_valued_fields = [:title]
 
