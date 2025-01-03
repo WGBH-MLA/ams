@@ -10,7 +10,7 @@ FactoryBot.define do
     media_type { "Test media_type" }
 
     trait :without_media_type do
-      media_type {nil}
+      media_type { nil }
     end
   end
 
@@ -23,7 +23,7 @@ FactoryBot.define do
   end
 
     trait :without_media_type do
-      media_type {nil}
+      media_type { nil }
     end
   end
 end
