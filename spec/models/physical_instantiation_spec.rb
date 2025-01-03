@@ -68,7 +68,7 @@ RSpec.describe PhysicalInstantiation do
     context "media_type" do
       let(:physical_instantiation) { FactoryBot.build(:physical_instantiation) }
       it "has media_type" do
-        physical_instantiation.format = "Test media_type"
+        physical_instantiation.media_type = "Test media_type"
         expect(physical_instantiation.resource.dump(:ttl)).to match(/terms\/type/)
         expect(physical_instantiation.media_type.include?("Test media_type")).to be true
       end
