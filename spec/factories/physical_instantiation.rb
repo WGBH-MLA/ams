@@ -8,6 +8,10 @@ FactoryBot.define do
     local_instantiation_identifier { [ "1234" ] }
     location { "Test location" }
     media_type { "Test media_type" }
+
+    trait :without_media_type do
+      media_type {nil}
+    end
   end
 
   factory :minimal_physical_instantiation, class: PhysicalInstantiation do
@@ -16,5 +20,10 @@ FactoryBot.define do
     annotation { ["Minimal annotation"] }
     location { "Minimal location" }
     media_type { "Minimal media_type" }
+  end
+
+    trait :without_media_type do
+      media_type {nil}
+    end
   end
 end
