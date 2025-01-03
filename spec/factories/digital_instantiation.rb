@@ -29,6 +29,10 @@ FactoryBot.define do
       media_type { "Sound" }
     end
 
+    trait :without_media_type do
+      media_type { nil }
+    end
+
     transient do
       # Pass in InstantiationAdminData.gid or it will create one for you!
       with_instantiation_admin_data { false }
