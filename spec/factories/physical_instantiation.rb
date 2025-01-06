@@ -20,7 +20,6 @@ FactoryBot.define do
     annotation { ["Minimal annotation"] }
     location { "Minimal location" }
     media_type { "Minimal media_type" }
-  end
 
     trait :without_media_type do
       media_type { nil }
