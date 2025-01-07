@@ -162,8 +162,8 @@ class PbcoreXmlParser < Bulkrax::XmlParser
   def instantiation_rows(instantiations, xml_asset, asset, asset_id)
     xml_records = []
     instantiations.each.with_index do |inst, i|
-      instantiation_class =  'PhysicalInstantiationResource' if inst.physical
-      instantiation_class ||= 'DigitalInstantiationResource' if inst.digital
+      instantiation_class = 'PhysicalInstantiationResource' if inst.nil? || inst.physical
+      instantiation_class ||= 'DigitalInstantiationResource' if inst&.digital
       next unless instantiation_class
       xml_record = AAPB::BatchIngest::PBCoreXMLMapper.new(inst.to_xml).send("#{instantiation_class.to_s.underscore}_attributes").merge!({ pbcore_xml: inst.to_xml, skip_file_upload_validation: true })
       # Find members of the asset that have the same class and local identifier. If no asset, then no digital instantiation can exist
