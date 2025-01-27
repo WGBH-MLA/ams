@@ -20,6 +20,7 @@ module Fix
     def resave_asset_resource(resource:)
       result = { resource: resource }
       log.info "RESAVING #{resource.class} #{resource.id.id}..."
+      resource.set_validation_status
       Hyrax.persister.save(resource: resource)
       Hyrax.index_adapter.save(resource: resource)
       log.info "SAVED #{resource.class} #{resource.id.id}."
