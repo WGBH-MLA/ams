@@ -133,6 +133,10 @@ class AssetResource < Hyrax::Work
   def ams1_legacy_metadata
     ams1_legacy_metadata ||= find_annotation_attribute("ams1_legacy_metadata")
   end 
+
+   def note
+    note ||= find_annotation_attribute("note")
+  end
   
   def find_annotation_attribute(attribute)
     if admin_data.annotations.select { |a| a.annotation_type == attribute }.present?
