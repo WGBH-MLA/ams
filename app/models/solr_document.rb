@@ -532,6 +532,10 @@ class SolrDocument
   def ams1_legacy_metadata
     self[solr_name('ams1_legacy_metadata', :symbol)]
   end
+
+  def note
+    self[solr_name('note', :symbol)]
+  end
   
   def proxy_start_time
     self[solr_name('proxy_start_time', :symbol)]
