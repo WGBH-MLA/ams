@@ -87,6 +87,7 @@ ingest_types:
           - playlist_order
           - organization
           - proxy_start_time
+          - note
   aapb_csv_reader_4:
     label: "AAPB CSV Asset Multivalue Attribute Addition Ingester"
     reader: "AAPB::BatchIngest::CSVReader"
@@ -135,6 +136,7 @@ ingest_types:
           - producing_organization
           - sonyci_id
           - special_collections
+          - note
   zipped_pbcore_digital_instantiation:
     label: "AAPB Digital Instantiation PBCore - Zipped"
     reader: "AAPB::BatchIngest::ZippedPBCoreDigitalInstantiationReader"
