@@ -48,11 +48,7 @@ module AAPB
         if ENV['SETTINGS__BULKRAX__ENABLED'] == 'true'
           type_id
         else
-          if type_id.present?
-            type_id
-          else
-            raise "annotation_type not registered with the AnnotationTypesService: #{type}."
-          end
+          type_id.presence
         end
       end
 
