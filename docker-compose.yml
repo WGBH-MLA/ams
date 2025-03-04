@@ -237,8 +237,10 @@ services:
         condition: service_started
       initialize_app:
         condition: service_completed_successfully
-    expose:
-      - 3000
+    ports:
+      - "3000:3000"
+    # expose:
+    #   - 3000
 
   worker:
     <<: *app
