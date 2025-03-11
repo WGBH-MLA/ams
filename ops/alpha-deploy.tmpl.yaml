@@ -48,7 +48,7 @@ ingress:
 
 extraEnvVars: &envVars
   - name: AAPB_HOST
-    value: "americanarchive.org"
+    value: "aapb-prod.wgbh-mla.org"
   - name: AAPB_SSH_KEY
     value: "/app/aapb/id_rsa"
   - name: AWS_ACCESS_KEY
