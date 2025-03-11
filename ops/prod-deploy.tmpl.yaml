@@ -192,10 +192,8 @@ redis:
     enabled: false
   password: prod
   master:
-    livenessProbe:
-      initialDelaySeconds: 300
-    readinessProbe:
-      initialDelaySeconds: 300
+    persistence:
+      enabled: false
 
 solr:
   enabled: false
