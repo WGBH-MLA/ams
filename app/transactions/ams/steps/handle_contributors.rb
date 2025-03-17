@@ -48,15 +48,17 @@ module Ams
             end
 
 
-            contributor = Contribution.find(param_contributor[:id]) if param_contributor[:id].present?
+            contributor = Hyrax.query_service.find_by(id: param_contributor[:id]) if param_contributor[:id].present?
             if contributor
               param_contributor.delete(:id)
-              contributor.attributes.merge!(param_contributor)
-              contributor_resource = Hyrax.persister.save(resource: contributor)
+              # merged_hash = hash1.merge(hash2) { |key, oldval, newval| newval }
+              contributor_attributes = contributor.attributes.merge(param_contributor) { |key, oldval, newval| newval }
+              contributor_resource = Hyrax.persister.save(resource: ContributionResource.new(contributor_attributes))
               Hyrax.publisher.publish('object.metadata.updated', object: contributor_resource, user: user)
               inserts << contributor_resource.id
               next
             end
+            param_contributor.delete(:id)
             contribution_resource = Hyrax.persister.save(resource: ContributionResource.new(param_contributor.symbolize_keys))
             Hyrax.index_adapter.save(resource: contribution_resource)
             Hyrax.publisher.publish('object.deposited', object: contribution_resource, user: user)
