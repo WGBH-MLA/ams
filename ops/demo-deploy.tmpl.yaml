@@ -47,7 +47,7 @@ ingress:
       secretName: letencrypt-tls
 extraEnvVars: &envVars
   - name: AAPB_HOST
-    value: "aapb-prod.wgbh-mla.org"
+    value: "aapb-demo.wgbh-mla.org"
   - name: AAPB_SSH_KEY
     value: "/app/aapb/id_rsa"
   - name: CI_CLIENT_ID
