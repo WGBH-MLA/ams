@@ -29,7 +29,7 @@ module Ams
 
         contributors = change_set.input_params.delete(:contributors) || []
         contrib = contributors.dup.map { |c| c.respond_to?(:to_unsafe_h) ? c.to_unsafe_h.with_indifferent_access : c.dup.with_indifferent_access }
-        contrib.select { |contributor| contributor&.[]('contributor')&.first }
+        contrib.select { |contributor| contributor.values.any?(&:present?) }
       end
 
       def create_or_update_contributions(change_set, contributions)
@@ -47,12 +47,10 @@ module Ams
               next
             end
 
-
             contributor = Hyrax.query_service.find_by(id: param_contributor[:id]) if param_contributor[:id].present?
             if contributor
               param_contributor.delete(:id)
-              # merged_hash = hash1.merge(hash2) { |key, oldval, newval| newval }
-              contributor_attributes = contributor.attributes.merge(param_contributor) { |key, oldval, newval| newval }
+              contributor_attributes = contributor.attributes.merge(param_contributor.symbolize_keys)
               contributor_resource = Hyrax.persister.save(resource: ContributionResource.new(contributor_attributes))
               Hyrax.publisher.publish('object.metadata.updated', object: contributor_resource, user: user)
               inserts << contributor_resource.id
@@ -67,6 +65,7 @@ module Ams
           end
 
           update_members(change_set, inserts, destroys)
+          destroy_contributions(destroys) if destroys.present?
         end
       end
 
@@ -77,6 +76,13 @@ module Ams
         destroys = destroys & current_member_ids
         change_set.member_ids += inserts.map  { |id| Valkyrie::ID.new(id) }
         change_set.member_ids -= destroys.map { |id| Valkyrie::ID.new(id) }
+      end
+
+      def destroy_contributions(ids)
+        ids.each do |id|
+          Hyrax.persister.delete(resource: Hyrax.query_service.find_by(id: id))
+          Hyrax.index_adapter.delete(resource: SolrDocument.find(id))
+        end
       end
 
       ##
