@@ -11,14 +11,14 @@ module Hyrax
     # Redirects away from controller#new if object does not have parent_id
     include Hyrax::RedirectNewAction
 
-    self.curation_concern_type = ::Contribution
+    self.curation_concern_type = ::ContributionResource
 
     # Use this line if you want to use a custom presenter
     self.show_presenter = Hyrax::ContributionPresenter
   end
 
   def destroy
-    if current_user.can? :destroy, Contribution
+    if current_user.can?(:destroy, Contribution) || current_user.can?(:destroy, ContributionResource)
       super
     else
       flash[:error] = 'You are not permitted to do that!'
