@@ -14,3 +14,11 @@
 @import "blacklight_gallery/osd_viewer";
 @import "hyrax/blacklight_gallery";
 @import 'hyrax/hyrax';
+
+// override to show metadata edit functionality on the first item as well
+.multi_value .listing li:first-of-type {
+  width: 100%;
+}
+.multi_value .listing li:first-of-type .remove {
+  display: block;
+}

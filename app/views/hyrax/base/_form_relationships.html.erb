@@ -1,0 +1,14 @@
+<%#
+  OVERRIDE Hyrax v5.0.0.rc2 to remove relationships partial
+    because we would never want stray child objects hanging out
+%>
+
+<% if Flipflop.assign_admin_set? %>
+  <%= f.input :admin_set_id, as: :select,
+      include_blank: false,
+      collection: admin_set_options,
+      input_html: { class: 'form-control' } %>
+<% end %>
+
+<%= render 'form_in_works', f: f %>
+<%= render 'form_member_of_collections', f: f %>

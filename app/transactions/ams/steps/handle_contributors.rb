@@ -29,7 +29,7 @@ module Ams
 
         contributors = change_set.input_params.delete(:contributors) || []
         contrib = contributors.dup.map { |c| c.respond_to?(:to_unsafe_h) ? c.to_unsafe_h.with_indifferent_access : c.dup.with_indifferent_access }
-        contrib.select { |contributor| contributor&.[]('contributor')&.first }
+        contrib.select { |contributor| contributor.values.any?(&:present?) }
       end
 
       def create_or_update_contributions(change_set, contributions)
@@ -47,16 +47,16 @@ module Ams
               next
             end
 
-
-            contributor = Contribution.find(param_contributor[:id]) if param_contributor[:id].present?
+            contributor = Hyrax.query_service.find_by(id: param_contributor[:id]) if param_contributor[:id].present?
             if contributor
               param_contributor.delete(:id)
-              contributor.attributes.merge!(param_contributor)
-              contributor_resource = Hyrax.persister.save(resource: contributor)
+              contributor_attributes = contributor.attributes.merge(param_contributor.symbolize_keys)
+              contributor_resource = Hyrax.persister.save(resource: ContributionResource.new(contributor_attributes))
               Hyrax.publisher.publish('object.metadata.updated', object: contributor_resource, user: user)
               inserts << contributor_resource.id
               next
             end
+            param_contributor.delete(:id)
             contribution_resource = Hyrax.persister.save(resource: ContributionResource.new(param_contributor.symbolize_keys))
             Hyrax.index_adapter.save(resource: contribution_resource)
             Hyrax.publisher.publish('object.deposited', object: contribution_resource, user: user)
@@ -65,6 +65,7 @@ module Ams
           end
 
           update_members(change_set, inserts, destroys)
+          destroy_contributions(destroys) if destroys.present?
         end
       end
 
@@ -75,6 +76,13 @@ module Ams
         destroys = destroys & current_member_ids
         change_set.member_ids += inserts.map  { |id| Valkyrie::ID.new(id) }
         change_set.member_ids -= destroys.map { |id| Valkyrie::ID.new(id) }
+      end
+
+      def destroy_contributions(ids)
+        ids.each do |id|
+          Hyrax.persister.delete(resource: Hyrax.query_service.find_by(id: id))
+          Hyrax.index_adapter.delete(resource: SolrDocument.find(id))
+        end
       end
 
       ##

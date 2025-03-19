@@ -88,7 +88,7 @@ class AssetResourceForm < Hyrax::Forms::ResourceForm(AssetResource)
   def child_contributors
     child_contributions = []
     model.members.to_a.each do |member|
-      if( member.class == Contribution )
+      if( member.internal_resource == 'Contribution' )
         child_contributions << [member.id, member.contributor_role, member.contributor.first , member.portrayal, member.affiliation]
       end
     end
