@@ -1,6 +1,7 @@
-# This is an override of Hyrax 2.2.4 [hyrax/app/controllers/hyrax/my_controller.rb]
-# The override adds hyrax_batch_ingest_batch_id to the configure_facets class method
-# WARNING: upgrading Hyrax may break this override
+# This is an override of Hyrax (branch double_combo_gbh_version) [hyrax/app/controllers/hyrax/my_controller.rb]
+# The override adds to the configure_facets class method:
+#  hyrax_batch_ingest_batch_id
+#  bulkrax_importer_id
 
 module Hyrax
   class MyController < ApplicationController
@@ -13,11 +14,11 @@ module Hyrax
       blacklight_config.facet_fields = {}
       configure_blacklight do |config|
         # TODO: add a visibility facet (requires visibility to be indexed)
-        config.add_facet_field solr_name('visibility', :stored_sortable),
+        config.add_facet_field "visibility_ssi",
                                helper_method: :visibility_badge,
                                limit: 5, label: I18n.t('hyrax.dashboard.my.heading.visibility')
         config.add_facet_field IndexesWorkflow.suppressed_field, helper_method: :suppressed_to_status
-        config.add_facet_field solr_name("resource_type", :facetable), limit: 5
+        config.add_facet_field "resource_type_sim", limit: 5
         config.add_facet_field solr_name("hyrax_batch_ingest_batch_id", :stored_searchable)
         config.add_facet_field solr_name("bulkrax_importer_id", :stored_searchable)
       end
@@ -31,7 +32,9 @@ module Hyrax
     configure_facets
 
     before_action :authenticate_user!
-    load_and_authorize_resource only: :show, instance_name: :collection
+    load_and_authorize_resource only: :show,
+                                instance_name: :collection,
+                                class: Hyrax.config.collection_model
 
     # include the render_check_all view helper method
     helper Hyrax::BatchEditsHelper
@@ -40,7 +43,7 @@ module Hyrax
 
     def index
       @user = current_user
-      (@response, @document_list) = query_solr
+      (@response, @document_list) = search_service.search_results
       prepare_instance_variables_for_batch_control_display
 
       respond_to do |format|
@@ -52,24 +55,21 @@ module Hyrax
 
     private
 
-      # TODO: Extract a presenter object that wrangles all of these instance variables.
-      def prepare_instance_variables_for_batch_control_display
-        # set up some parameters for allowing the batch controls to show appropriately
-        max_batch_size = 80
-        count_on_page = @document_list.count { |doc| batch.index(doc.id) }
-        @disable_select_all = @document_list.count > max_batch_size
-        @result_set_size = @response.response["numFound"]
-        @empty_batch = batch.empty?
-        @all_checked = (count_on_page == @document_list.count)
-        @add_works_to_collection = params.fetch(:add_works_to_collection, '')
-        @add_works_to_collection_label = params.fetch(:add_works_to_collection_label, '')
-      end
+    # TODO: Extract a presenter object that wrangles all of these instance variables.
+    def prepare_instance_variables_for_batch_control_display
+      # set up some parameters for allowing the batch controls to show appropriately
+      max_batch_size = Hyrax.config.range_for_number_of_results_to_display_per_page.max
+      count_on_page = @document_list.count { |doc| batch.index(doc.id) }
+      @disable_select_all = @document_list.count > max_batch_size
+      @result_set_size = @response.response["numFound"]
+      @empty_batch = batch.empty?
+      @all_checked = (count_on_page == @document_list.count)
+      @add_works_to_collection = params.fetch(:add_works_to_collection, '')
+      @add_works_to_collection_label = params.fetch(:add_works_to_collection_label, '')
+    end
 
-      def query_solr
-        Hyrax::SearchService.new(config: blacklight_config,
-                                  scope: self,
-                                  user_params: params,
-                                  search_builder_class: blacklight_config.search_builder_class).search_results
-      end
+    def search_service
+      Hyrax::SearchService.new(config: blacklight_config, user_params: params, scope: self)
+    end
   end
 end
