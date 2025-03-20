@@ -43,7 +43,13 @@ module AAPB
           ((@workbook.first_column)..@workbook.last_column).each do |col|
             rowData << [@workbook.cell(1, col), @workbook.cell(row, col).to_s]
           end
+
           formatted_row_data = csv_row_to_hash(rowData)
+
+          # We want to take the Contribution batches and put them in as a nested attribute for the Asset instead
+          # this way the ingester would pass it as params, like how you would from the UI.  This way we don't
+          # see it in the UI because it doesn't get created through the form with all the access controls
+          formatted_row_data['Asset']['contributors'] = formatted_row_data.delete('Contribution') if formatted_row_data['Asset']
 
           @batch_items << Hyrax::BatchIngest::BatchItem.new(id_within_batch: row,
                                                             source_data: formatted_row_data.to_json, status: :initialized)

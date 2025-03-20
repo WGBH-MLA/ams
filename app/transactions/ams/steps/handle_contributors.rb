@@ -25,10 +25,11 @@ module Ams
       private
 
       def extract_contributions(change_set)
-        return [] unless change_set.input_params.has_key?(:contributors)
+        return [] unless change_set.input_params.has_key?(:contributors) || change_set.input_params.has_key?('contributors')
 
-        contributors = change_set.input_params.delete(:contributors) || []
+        contributors = change_set.input_params.delete(:contributors) || change_set.input_params.delete('contributors') || []
         contrib = contributors.dup.map { |c| c.respond_to?(:to_unsafe_h) ? c.to_unsafe_h.with_indifferent_access : c.dup.with_indifferent_access }
+
         contrib.select { |contributor| contributor.values.any?(&:present?) }
       end
 
