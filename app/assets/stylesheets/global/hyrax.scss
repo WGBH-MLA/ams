@@ -16,9 +16,9 @@
 @import 'hyrax/hyrax';
 
 // override to show metadata edit functionality on the first item as well
-.multi_value .listing li:first-of-type {
+.child_contributors.multi_value .listing li:first-of-type {
   width: 100%;
 }
-.multi_value .listing li:first-of-type .remove {
+.child_contributors.multi_value .listing li:first-of-type .remove {
   display: block;
 }

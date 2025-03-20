@@ -29,33 +29,35 @@ module Ams
 
         contributors = change_set.input_params.delete(:contributors) || []
         contrib = contributors.dup.map { |c| c.respond_to?(:to_unsafe_h) ? c.to_unsafe_h.with_indifferent_access : c.dup.with_indifferent_access }
-        contrib.select { |contributor| contributor.values.any?(&:present?) }
+        
+        contrib.select { |contributor| contributor.values.any?(&:present?) || ActiveModel::Type::Boolean.new.cast(contributor['_destroy']) }
       end
 
       def create_or_update_contributions(change_set, contributions)
-        if contributions&.first&.[]("contributor")&.present?
-          inserts = []
-          destroys = []
-          contributions.each do |param_contributor|
-            param_contributor[:contributor] = Array(param_contributor['contributor'])
-            param_contributor[:admin_set_id] = change_set['admin_set_id']
-            param_contributor[:title] = change_set["title"]
-
-            to_destroy = ActiveModel::Type::Boolean.new.cast(param_contributor['_destroy'])
-            if to_destroy
-              destroys << param_contributor[:id]
-              next
-            end
-
-            contributor = Hyrax.query_service.find_by(id: param_contributor[:id]) if param_contributor[:id].present?
-            if contributor
-              param_contributor.delete(:id)
-              contributor_attributes = contributor.attributes.merge(param_contributor.symbolize_keys)
-              contributor_resource = Hyrax.persister.save(resource: ContributionResource.new(contributor_attributes))
-              Hyrax.publisher.publish('object.metadata.updated', object: contributor_resource, user: user)
-              inserts << contributor_resource.id
-              next
-            end
+        return unless contributions.present?
+        
+        inserts = []
+        destroys = []
+        
+        contributions.each do |param_contributor|
+          if ActiveModel::Type::Boolean.new.cast(param_contributor['_destroy'])
+            destroys << param_contributor[:id] if param_contributor[:id].present?
+          end
+        end
+        
+        contributions.select { |c| c["contributor"].present? && !ActiveModel::Type::Boolean.new.cast(c['_destroy']) }.each do |param_contributor|
+          param_contributor[:contributor] = Array(param_contributor['contributor'])
+          param_contributor[:admin_set_id] = change_set['admin_set_id']
+          param_contributor[:title] = change_set["title"]
+          
+          contributor = Hyrax.query_service.find_by(id: param_contributor[:id]) if param_contributor[:id].present?
+          if contributor
+            param_contributor.delete(:id)
+            contributor_attributes = contributor.attributes.merge(param_contributor.symbolize_keys)
+            contributor_resource = Hyrax.persister.save(resource: ContributionResource.new(contributor_attributes))
+            Hyrax.publisher.publish('object.metadata.updated', object: contributor_resource, user: user)
+            inserts << contributor_resource.id
+          else
             param_contributor.delete(:id)
             contribution_resource = Hyrax.persister.save(resource: ContributionResource.new(param_contributor.symbolize_keys))
             Hyrax.index_adapter.save(resource: contribution_resource)
@@ -63,10 +65,10 @@ module Ams
             Hyrax::AccessControlList.copy_permissions(source: target_permissions, target: contribution_resource)
             inserts << contribution_resource.id
           end
-
-          update_members(change_set, inserts, destroys)
-          destroy_contributions(destroys) if destroys.present?
         end
+        
+        update_members(change_set, inserts, destroys)
+        destroy_contributions(destroys) if destroys.present?
       end
 
       def update_members(change_set, inserts, destroys)
