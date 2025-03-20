@@ -101,7 +101,7 @@ GIT
       view_component (~> 2.74.1)
 
 GIT
-  remote: https://github.com/scientist-softserv/pbcore.git
+  remote: https://github.com/notch8/pbcore.git
   revision: 21677654f820dac3c8642b63e775ee2342a84114
   branch: fake_out
   specs:
