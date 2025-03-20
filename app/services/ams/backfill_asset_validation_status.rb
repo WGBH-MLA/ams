@@ -51,7 +51,7 @@ module AMS
       # been applied to PBCore XML BatchIngests. Once this logic has been applied to other types of ingests
       # (CSV, etc.), this short-circuit should be removed and this class should be modified to extrac the data
       # from more than just PBCore XML.
-      # @see https://github.com/scientist-softserv/ams/issues/9
+      # @see https://github.com/notch8/ams/issues/9
       if batch.ingest_type != 'aapb_pbcore_zipped'
         raise StandardError, "Don't know how to count intended children when BatchIngest type is #{batch.ingest_type}"
       end

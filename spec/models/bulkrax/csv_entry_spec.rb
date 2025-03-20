@@ -4,7 +4,7 @@
 require 'rails_helper'
 
 module Bulkrax
-  # TODO: Handle resolving these specs in https://github.com/scientist-softserv/ams/issues/105
+  # TODO: Handle resolving these specs in https://github.com/notch8/ams/issues/105
   RSpec.describe CsvEntry, type: :model, skip: 'Skipping CsvEntry tests' do
     let(:path) { './spec/fixtures/bulkrax/csv/good.csv' }
     let(:data) { described_class.read_data(path) }

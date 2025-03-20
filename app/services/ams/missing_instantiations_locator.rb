@@ -3,7 +3,7 @@ require 'ruby-progressbar'
 require 'parallel'
 
 module AMS
-  # @see https://github.com/scientist-softserv/ams/issues/16
+  # @see https://github.com/notch8/ams/issues/16
   class MissingInstantiationsLocator # rubocop:disable Metrics/ClassLength
     WORKING_DIR = Rails.root.join('tmp', 'imports')
 
