@@ -30,7 +30,7 @@ module AAPB
 
       def validate_csv_header
         configured_keys = @options_structure.header_keys.sort
-        @header.sort.each do |key|
+        @header.sort.uniq.each do |key|
           raise("Unknown column `#{key}` Unable to parse CSV.") if configured_keys.exclude?(key)
         end
       end
@@ -135,6 +135,9 @@ module AAPB
       def validate_row_data row, node, child_node = nil
         fail_row = false
         if node.ingest_type == "update" || node.ingest_type == "add"
+          # When we update a contribution, we get rid of the old contributions and create new ones
+          return row if node.object_class == "Contribution"
+
           if child_node
             row[node.object_class].each do |c_data|
               if c_data.to_a.flatten.exclude?("id")
