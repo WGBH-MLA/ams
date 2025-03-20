@@ -26,7 +26,6 @@ class ContributionResourceForm < Hyrax::Forms::ResourceForm(ContributionResource
   end
   remove(
     %i(
-      affiliation
       based_near
       bibliographic_citation
       creator
