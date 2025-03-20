@@ -171,7 +171,8 @@ module AAPB
 
       def physical_instantiation_resource_attributes
         @physical_instantiation_resource_attributes ||= instantiation_attributes.tap do |attrs|
-          attrs[:format] = pbcore.physical.value || nil
+          format = pbcore.physical&.value
+          attrs[:format] = format.present? ? pbcore.physical&.value : 'Instantiation format not provided'
         end
       end
 
@@ -190,7 +191,6 @@ module AAPB
           attrs[:standard]                        = pbcore.standard&.value
           attrs[:location]                        = pbcore.location&.value
           attrs[:media_type]                      = pbcore.media_type&.value
-          attrs[:format]                          = pbcore.physical&.value
           attrs[:generations]                     = pbcore.generations.map(&:value)
           attrs[:time_start]                      = pbcore.time_start&.value
           attrs[:duration]                        = pbcore.duration&.value&.gsub('?', '')
