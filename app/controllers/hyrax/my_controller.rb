@@ -2,6 +2,8 @@
 # The override adds to the configure_facets class method:
 #  hyrax_batch_ingest_batch_id
 #  bulkrax_importer_id
+# There is also an override to remove the standard `load_and_authorize` method and replace it with a custom method that allows for the correct authorization of batches in Hyrax's my_controller.
+# See also batches_controller_decorator.rb
 
 module Hyrax
   class MyController < ApplicationController
@@ -32,9 +34,7 @@ module Hyrax
     configure_facets
 
     before_action :authenticate_user!
-    load_and_authorize_resource only: :show,
-                                instance_name: :collection,
-                                class: Hyrax.config.collection_model
+    before_action :custom_load_and_authorize, only: :show
 
     # include the render_check_all view helper method
     helper Hyrax::BatchEditsHelper
@@ -54,6 +54,18 @@ module Hyrax
     end
 
     private
+
+    # This controller is used by both collections and batch ingest so we needed
+    # to add this method to allow for the correct authorization
+    def custom_load_and_authorize
+      if self.class == Hyrax::BatchIngest::BatchesController
+          authorize_show_batch
+      else
+        @object = Hyrax.query_service.find_by(id: params[:id])
+        return false unless @object
+        authorize! :read, @object
+      end
+    end
 
     # TODO: Extract a presenter object that wrangles all of these instance variables.
     def prepare_instance_variables_for_batch_control_display
