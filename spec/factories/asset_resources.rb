@@ -73,47 +73,60 @@ FactoryBot.define do
       ] }
     end
 
-    trait :with_digital_instantation_resource do
-      members { [ create(:digital_instantation_resource) ] }
+    trait :with_digital_instantiation_resource do
+      members { [ create(:digital_instantiation_resource) ] }
     end
 
-    trait :with_digital_instantation_resource_and_essence_track_resource do
-      members { [ create(:digital_instantation_resource, :aapb_moving_image_with_essence_track_resource) ] }
+    trait :with_digital_instantiation_resource_and_essence_track_resource do
+      members { [ create(:digital_instantiation_resource, :aapb_moving_image_with_essence_track_resource) ] }
     end
 
-    trait :with_two_digital_instantation_resources_and_essence_track_resources do
+    trait :with_two_digital_instantiation_resources_and_essence_track_resources do
       members { [
-        create(:digital_instantation_resource, :aapb_moving_image_with_essence_track_resource),
-        create(:digital_instantation_resource, :aapb_moving_image_with_essence_track_resource)
+        create(:digital_instantiation_resource, :aapb_moving_image_with_essence_track_resource),
+        create(:digital_instantiation_resource, :aapb_moving_image_with_essence_track_resource)
       ] }
     end
 
     trait :with_physical_digital_and_essence_track_resource do
       members { [
-        create(:physical_instantation_resource),
-        create(:digital_instantation_resource, :aapb_moving_image_with_essence_track_resource),
+        create(:physical_instantiation_resource),
+        create(:digital_instantiation_resource, :aapb_moving_image_with_essence_track_resource),
       ] }
     end
 
     trait :family do
-      members do
-        [
-          rand(2..4).times.map do
-            create(:digital_instantation_resource,
-              members: rand(2..4).times.map do
-                create(:essence_track_resource)
-              end
-            )
-          end,
-          rand(1..2).times.map do
-            create(:physical_instantation_resource,
-              members: rand(2..4).times.map do
-                create(:essence_track_resource)
-              end
-            )
-          end,
-          rand(2..4).times.map { create(:contribution_resource) }
-        ].flatten
+      after(:create) do |work|
+        digital_instantiations = rand(2..4).times.map do
+          digital_instantiation = create(:digital_instantiation_resource)
+
+          essence_tracks = rand(2..4).times.map do
+            create(:essence_track_resource)
+          end
+
+          digital_instantiation.member_ids = essence_tracks.map(&:id)
+          Hyrax.persister.save(resource: digital_instantiation)
+        end
+
+        physical_instantiations = rand(1..2).times.map do
+          physical_instantiation = create(:physical_instantiation_resource)
+
+          essence_tracks = rand(2..4).times.map do
+            create(:essence_track_resource)
+          end
+
+          physical_instantiation.member_ids = essence_tracks.map(&:id)
+          Hyrax.persister.save(resource: physical_instantiation)
+        end
+
+        contributions = rand(2..4).times.map do
+          create(:contribution_resource)
+        end
+
+        all_members = digital_instantiations + physical_instantiations + contributions
+        work.member_ids = all_members.flat_map(&:id)
+
+        Hyrax.persister.save(resource: work)
       end
     end
 

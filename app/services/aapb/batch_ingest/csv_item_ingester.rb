@@ -91,6 +91,7 @@ module AAPB
             end
 
             if model_object.is_a?(AssetResource)
+              destroy_current_contributors(model_object)
               attributes = set_asset_objects_attributes(model_object, attributes, ingest_type)
             end
 
@@ -155,6 +156,16 @@ module AAPB
             raise e
           end
           model_object
+        end
+
+        def destroy_current_contributors(work)
+          current_contributions = work.members.select { |member| member.internal_resource == 'Contribution' }
+          current_contributions.each do |contribution|
+            Hyrax.persister.delete(resource: contribution)
+            contribution_doc = SolrDocument.find(contribution.id)
+            Hyrax.index_adapter.delete(resource: contribution_doc)
+            work.member_ids -= [contribution.id]
+          end
         end
 
         def set_options

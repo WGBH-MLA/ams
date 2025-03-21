@@ -30,7 +30,7 @@ module AAPB
 
       def validate_csv_header
         configured_keys = @options_structure.header_keys.sort
-        @header.sort.each do |key|
+        @header.sort.uniq.each do |key|
           raise("Unknown column `#{key}` Unable to parse CSV.") if configured_keys.exclude?(key)
         end
       end
@@ -43,7 +43,13 @@ module AAPB
           ((@workbook.first_column)..@workbook.last_column).each do |col|
             rowData << [@workbook.cell(1, col), @workbook.cell(row, col).to_s]
           end
+
           formatted_row_data = csv_row_to_hash(rowData)
+
+          # We want to take the Contribution batches and put them in as a nested attribute for the Asset instead
+          # this way the ingester would pass it as params, like how you would from the UI.  This way we don't
+          # see it in the UI because it doesn't get created through the form with all the access controls
+          formatted_row_data['Asset']['contributors'] = formatted_row_data.delete('Contribution') if formatted_row_data['Asset']
 
           @batch_items << Hyrax::BatchIngest::BatchItem.new(id_within_batch: row,
                                                             source_data: formatted_row_data.to_json, status: :initialized)
@@ -129,6 +135,9 @@ module AAPB
       def validate_row_data row, node, child_node = nil
         fail_row = false
         if node.ingest_type == "update" || node.ingest_type == "add"
+          # When we update a contribution, we get rid of the old contributions and create new ones
+          return row if node.object_class == "Contribution"
+
           if child_node
             row[node.object_class].each do |c_data|
               if c_data.to_a.flatten.exclude?("id")
