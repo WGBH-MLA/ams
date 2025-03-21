@@ -9,8 +9,10 @@ class AssetResource < Hyrax::Work
   include AMS::WorkBehavior
   include AMS::CreateMemberMethods
 
-  self.valid_child_concerns = [DigitalInstantiationResource, PhysicalInstantiationResource, ContributionResource]
-
+  # Removed ContributionResource since we treat it more as nested metadata and never want
+  # to add it separately through a form. It is added in the Asset's metadata section.
+  self.valid_child_concerns = [DigitalInstantiationResource, PhysicalInstantiationResource]
+  
   VALIDATION_STATUSES = {
     valid: 'valid',
     missing_children: 'missing child record(s)',
