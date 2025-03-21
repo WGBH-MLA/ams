@@ -19,9 +19,10 @@ module AAPB
         def pbcore_digital_instantiations
           pbcore.instantiations.select { |inst| inst.digital }
         end
-        
+
+        # both physical and unidentified format
         def pbcore_physical_instantiations
-          pbcore.instantiations.select { |inst| inst.physical }
+          pbcore.instantiations.reject { |inst| inst.digital }
         end
 
         def current_ability
