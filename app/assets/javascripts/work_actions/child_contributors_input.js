@@ -1,84 +1,138 @@
 $(document).ready(function() {
-  // Create and store a template row at initialization
-  function createTemplateRow() {
-    const $listing = $('.form-group.child_contributors .listing');
-    const $firstRow = $listing.find('li.field-wrapper').first();
-    const $template = $firstRow.clone();
-    
-    // Clear all inputs in the template
-    $template.find('input[type="text"], select').val('');
-    $template.find('input[type="hidden"]').remove();
-    
-    // Add a class to identify it as our template
-    $template.addClass('template-row').hide();
-    
-    // Add it to the listing
-    $listing.append($template);
-  }
-
-  // Create template row on page load
-  createTemplateRow();
-
-  // Handle remove button clicks
-  $('.form-group.child_contributors').on('click', '.remove', function(e) {
+  const $cleanTemplate = $('.form-group.child_contributors .listing li.field-wrapper').first().clone();
+  $cleanTemplate.find('input[type="text"], select').val('');
+  $cleanTemplate.find('input[type="hidden"]').remove();
+  
+  // Remove any existing click handlers from the add button
+  // This is crucial to prevent double-firing of events
+  $('.form-group.child_contributors').find('.add').off('click');
+  
+  $('.form-group.child_contributors').find('.add').on('click', function(e) {
     e.preventDefault();
+    e.stopPropagation(); // Prevent event bubbling to other handlers
     
-    var $wrapper = $(this).closest('li.field-wrapper');
-    var $listing = $wrapper.parent();
-    var $form = $('.edit_asset_resource');
-    var contributorId = $wrapper.find('input[name$="[id]"]').val();
-
+    const $listing = $('.form-group.child_contributors .listing');
+    $listing.find('.has-warning, .message').remove();
+    
+    const $lastRow = $listing.find('li.field-wrapper:visible').last();
+    
+    const hasContent = Array.from($lastRow.find('input[type="text"], select')).some(
+      input => input.value.trim() !== ''
+    );
+    
+    let $newRow;
+    if (hasContent) {
+      // If last row has content, clone it but clear all values
+      $newRow = $lastRow.clone();
+      $newRow.find('input[type="text"], select').val('');
+      $newRow.find('input[type="hidden"]').remove();
+    } else {
+      // If last row is empty, use the clean template
+      $newRow = $cleanTemplate.clone();
+    }
+    
+    $listing.append($newRow);
+    
+    $newRow.find('input, select').first().focus();
+    
+    return false;
+  });
+  
+  $('.form-group.child_contributors').find('.remove').off('click');
+  $('.form-group.child_contributors').find('.remove').on('click', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    const $wrapper = $(this).closest('li.field-wrapper');
+    const $listing = $wrapper.parent();
+    const $form = $('.edit_asset_resource');
+    const contributorId = $wrapper.find('input[name$="[id]"]').val();
+    
     if (contributorId && contributorId !== '') {
-      // Create hidden inputs
-      var idInput = document.createElement('input');
+      const idInput = document.createElement('input');
       idInput.type = 'hidden';
       idInput.name = 'asset_resource[contributors][][id]';
       idInput.value = contributorId;
-
-      var destroyInput = document.createElement('input');
+      
+      const destroyInput = document.createElement('input');
       destroyInput.type = 'hidden';
       destroyInput.name = 'asset_resource[contributors][][_destroy]';
       destroyInput.value = 'true';
-
-      // Append to form using vanilla JavaScript
+      
       $form[0].appendChild(idInput);
       $form[0].appendChild(destroyInput);
     }
-
-    // Remove the wrapper
+    
     $wrapper.remove();
     
-    // Remove any existing warning messages
-    $listing.find('.has-warning').remove();
-
-    // If this was the last visible row (excluding template), show the template
-    if ($listing.find('li.field-wrapper:not(.template-row):visible').length === 0) {
-      const $newRow = $listing.find('.template-row').clone();
-      $newRow.removeClass('template-row').show();
-      $listing.append($newRow);
+    if ($listing.find('li.field-wrapper').length === 0) {
+      $listing.append($cleanTemplate.clone());
     }
-  });
-
-  // Handle add button clicks
-  $('.form-group.child_contributors').on('click', '.add', function(e) {
-    e.preventDefault();
-    const $listing = $(this).closest('.form-group').find('.listing');
-    const $template = $listing.find('.template-row');
     
-    // Remove any existing warning messages
-    $listing.find('.has-warning').remove();
-    
-    if ($template.length) {
-      const $newRow = $template.clone();
-      $newRow.removeClass('template-row').show();
-      $listing.append($newRow);
-    }
+    return false;
   });
-
-  // Override the FieldManager's validation message display
+  
   if (typeof FieldManager !== 'undefined') {
-    FieldManager.prototype.displayEmptyWarning = function() {
-      // Do nothing - this prevents the warning from being displayed
+    FieldManager.prototype.displayEmptyWarning = function() { 
+      // Do nothing - prevent warnings
+    };
+    
+    // Completely disable the addToList method in FieldManager
+    FieldManager.prototype.addToList = function(event) {
+      event.preventDefault();
+      event.stopPropagation();
+      // Do nothing - prevent default behavior
+      return false;
     };
   }
+  
+  $(document).on('DOMNodeInserted', '.form-group.child_contributors .add, .form-group.child_contributors .remove', function() {
+    // Reattach our handlers
+    $(this).off('click');
+    
+    if ($(this).hasClass('add')) {
+      // Re-attach our add handler
+      $(this).on('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        // Trigger the static handler
+        $('.form-group.child_contributors').find('.add').first().trigger('click');
+        return false;
+      });
+    }
+    
+    if ($(this).hasClass('remove')) {
+      $(this).on('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        const $wrapper = $(this).closest('li.field-wrapper');
+        const $listing = $wrapper.parent();
+        const $form = $('.edit_asset_resource');
+        const contributorId = $wrapper.find('input[name$="[id]"]').val();
+        
+        if (contributorId && contributorId !== '') {
+          const idInput = document.createElement('input');
+          idInput.type = 'hidden';
+          idInput.name = 'asset_resource[contributors][][id]';
+          idInput.value = contributorId;
+          
+          const destroyInput = document.createElement('input');
+          destroyInput.type = 'hidden';
+          destroyInput.name = 'asset_resource[contributors][][_destroy]';
+          destroyInput.value = 'true';
+          
+          $form[0].appendChild(idInput);
+          $form[0].appendChild(destroyInput);
+        }
+        
+        $wrapper.remove();
+        
+        if ($listing.find('li.field-wrapper').length === 0) {
+          $listing.append($cleanTemplate.clone());
+        }
+        
+        return false;
+      });
+    }
+  });
 });
