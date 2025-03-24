@@ -15,10 +15,15 @@
 @import "hyrax/blacklight_gallery";
 @import 'hyrax/hyrax';
 
-// override to show metadata edit functionality on the first item as well
-.multi_value .listing li:first-of-type {
+/* Allow the first contributor in a list to be removable
+ * By default, many systems prevent removing the first item to ensure at least one remains
+ * This override ensures the first contributor:
+ * 1. Takes up full width (100%)
+ * 2. Shows the remove button (which is usually hidden for first items)
+ */
+.child_contributors.multi_value .listing li:first-of-type {
   width: 100%;
 }
-.multi_value .listing li:first-of-type .remove {
+.child_contributors.multi_value .listing li:first-of-type .remove {
   display: block;
 }

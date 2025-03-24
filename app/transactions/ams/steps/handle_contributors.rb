@@ -34,7 +34,7 @@ module Ams
       end
 
       def create_or_update_contributions(change_set, contributions)
-        if contributions&.first&.[]("contributor")&.present?
+        if contributions.present?
           inserts = []
           destroys = []
           contributions.each do |param_contributor|
@@ -43,7 +43,7 @@ module Ams
             param_contributor[:title] = change_set["title"]
 
             to_destroy = ActiveModel::Type::Boolean.new.cast(param_contributor['_destroy'])
-            if to_destroy
+            if to_destroy && param_contributor[:id].present?
               destroys << param_contributor[:id]
               next
             end
