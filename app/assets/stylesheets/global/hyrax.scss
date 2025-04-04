@@ -27,3 +27,12 @@
 .child_contributors.multi_value .listing li:first-of-type .remove {
   display: block;
 }
+
+.child_annotations.multi_value .listing li:first-of-type {
+  width: 100%;
+}
+
+.child_annotations.multi_value .listing li:first-of-type .remove {
+  display: block;
+}
+
