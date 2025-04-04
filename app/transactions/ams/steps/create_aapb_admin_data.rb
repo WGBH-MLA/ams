@@ -62,7 +62,9 @@ module Ams
       def delete_removed_annotations(admin_data, change_set)
         return if admin_data.annotations.empty?
         return if change_set.fields["annotations"].nil?
-        ids_in_change_set = change_set.fields["annotations"].select{ |ann| ann["id"].present? }.map{ |ann| ann["id"].to_i }
+        ids_in_change_set = change_set.fields["annotations"].select do |ann|
+          ann["id"].present? && ann["_destroy"] != "true"
+        end.map{ |ann| ann["id"].to_i }
         admin_data.annotations.each do |annotation|
           annotation.destroy unless ids_in_change_set.include?(annotation.id)
         end
@@ -71,6 +73,8 @@ module Ams
       def set_annotations_attributes(admin_data, change_set)
         return if change_set.fields["annotations"].nil?
         change_set.fields["annotations"].each do |annotation|
+          next if annotation["_destroy"] == "true"
+          next if annotation.except("id").values.all?(&:empty?)
           ann = annotation.dup.respond_to?(:to_unsafe_h) ? annotation.to_unsafe_h.with_indifferent_access : annotation.dup.with_indifferent_access
           permitted_annotation = ann.extract!(*annotation_attributes)
           # Fixes an issue where manually deleting annotations sent an
