@@ -150,7 +150,7 @@ module Ams
         types.each do |id|
           model_field = type_service.model_field(id)
           raise "Unable to find model property" unless change_set.model.respond_to?(model_field)
-          change_set.fields[model_field] = get_typed_value(id, values) if typed_value_present?(values)
+          change_set.fields[model_field] = get_typed_value(id, values) if typed_value_present?(values) || type_service.is_a?(DateTypesService)
         end
       end
 
