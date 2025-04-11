@@ -19,6 +19,11 @@ module AAPB
           # the stack if the user cannot be converted to a Sipity::Entity.
           raise "Could not find or create Sipity Agent for user #{submitter}" unless sipity_agent
 
+          # This halts the Asset ingestion as well as subsequent Instantiations if media type is missing.
+          pbcore.instantiations.each do |instantiation|
+            raise "Missing media_type in instantiation" if instantiation.media_type.blank?
+          end
+
           batch_item_object = ingest_asset!
 
           pbcore_digital_instantiations.each do |pbcore_digital_instantiation|
