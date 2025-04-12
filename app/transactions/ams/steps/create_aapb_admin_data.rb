@@ -74,7 +74,7 @@ module Ams
         return if change_set.fields["annotations"].nil?
         change_set.fields["annotations"].each do |annotation|
           next if annotation["_destroy"] == "true"
-          next if annotation.except("id").values.all?(&:empty?)
+          next if annotation.except("id").values.all?(&:blank?)
           ann = annotation.dup.respond_to?(:to_unsafe_h) ? annotation.to_unsafe_h.with_indifferent_access : annotation.dup.with_indifferent_access
           permitted_annotation = ann.extract!(*annotation_attributes)
           # Fixes an issue where manually deleting annotations sent an

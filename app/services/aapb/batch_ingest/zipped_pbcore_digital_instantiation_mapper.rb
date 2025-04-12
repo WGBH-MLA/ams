@@ -33,7 +33,7 @@ module AAPB
           # manifest attributes
           attrs[:title]                           = parent_asset.title
           attrs[:generations]                     = row_data[:generations] unless row_data[:generations].nil?
-          attrs[:holding_organization]            = row_data[:holding_organization][0]unless row_data[:holding_organization].nil?
+          attrs[:holding_organization]            = row_data[:holding_organization][0] unless row_data[:holding_organization].nil?
           attrs[:aapb_preservation_lto]           = row_data[:aapb_preservation_lto][0] unless row_data[:aapb_preservation_lto].nil?
           attrs[:aapb_preservation_disk]          = row_data[:aapb_preservation_disk][0] unless row_data[:aapb_preservation_disk].nil?
           attrs[:md5]                             = row_data[:md5][0] unless row_data[:md5].nil?
