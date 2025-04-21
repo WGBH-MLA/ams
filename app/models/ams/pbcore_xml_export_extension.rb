@@ -174,56 +174,56 @@ module AMS::PbcoreXmlExportExtension
     xml.pbcoreInstantiation do |instantiation_node|
 
       instantiation_node.instantiationIdentifier(source: 'Filename') { instantiation_node.text(instantiation.id) }
-      instantiation.local_instantiation_identifier.to_a.each { |local_instantiation_identifier| instantiation_node.instantiationIdentifier { instantiation_node.text(local_instantiation_identifier) } }
+      instantiation.local_instantiation_identifier&.reject(&:blank?).to_a.each { |local_instantiation_identifier| instantiation_node.instantiationIdentifier { instantiation_node.text(local_instantiation_identifier) } }
 
-      instantiation.date&.to_a&.each { |date|  instantiation_node.instantiationDate { instantiation_node.text(date) } }
-      instantiation.digitization_date&.to_a&.each { |date| instantiation_node.instantiationDate(dateType: 'digitized') { instantiation_node.text(date) } }
+      instantiation.date&.reject(&:blank?)&.to_a&.each { |date|  instantiation_node.instantiationDate { instantiation_node.text(date) } }
+      instantiation.digitization_date&.reject(&:blank?)&.to_a&.each { |date| instantiation_node.instantiationDate(dateType: 'digitized') { instantiation_node.text(date) } }
 
-      instantiation.dimensions&.to_a&.each { |dimension| instantiation_node.instantiationDimensions { instantiation_node.text(dimension) } }
+      instantiation.dimensions&.reject(&:blank?)&.to_a&.each { |dimension| instantiation_node.instantiationDimensions { instantiation_node.text(dimension) } }
 
-      instantiation.format&.to_a&.each { |format| instantiation_node.instantiationPhysical { instantiation_node.text(format) } }
+      instantiation.format&.reject(&:blank?)&.to_a&.each { |format| instantiation_node.instantiationPhysical { instantiation_node.text(format) } }
 
-      instantiation.standard&.to_a&.each { |standard|  instantiation_node.instantiationStandard { instantiation_node.text(standard) }  }
+      instantiation.standard&.reject(&:blank?)&.to_a&.each { |standard|  instantiation_node.instantiationStandard { instantiation_node.text(standard) }  }
 
-      instantiation.location&.to_a&.each { |location|  instantiation_node.instantiationLocation { instantiation_node.text(location) }  }
+      instantiation.location&.reject(&:blank?)&.to_a&.each { |location|  instantiation_node.instantiationLocation { instantiation_node.text(location) }  }
 
-      instantiation.media_type&.to_a&.each { |media_type| instantiation_node.instantiationMediaType { instantiation_node.text(media_type) }  }
+      instantiation.media_type&.reject(&:blank?)&.to_a&.each { |media_type| instantiation_node.instantiationMediaType { instantiation_node.text(media_type) }  }
 
-      instantiation.generations&.to_a&.each { |generation| instantiation_node.instantiationGenerations { instantiation_node.text(generation) } }
+      instantiation.generations&.reject(&:blank?)&.to_a&.each { |generation| instantiation_node.instantiationGenerations { instantiation_node.text(generation) } }
 
-      instantiation.time_start&.to_a&.each { |time_start| instantiation_node.instantiationTimeStart { instantiation_node.text(time_start) }  }
+      instantiation.time_start&.reject(&:blank?)&.to_a&.each { |time_start| instantiation_node.instantiationTimeStart { instantiation_node.text(time_start) }  }
 
-      instantiation.duration&.to_a&.each { |duration| instantiation_node.instantiationDuration { instantiation_node.text(duration) } }
+      instantiation.duration&.reject(&:blank?)&.to_a&.each { |duration| instantiation_node.instantiationDuration { instantiation_node.text(duration) } }
 
-      instantiation.colors&.to_a&.each { |color| instantiation_node.instantiationColors { instantiation_node.text(color) } }
+      instantiation.colors&.reject(&:blank?)&.to_a&.each { |color| instantiation_node.instantiationColors { instantiation_node.text(color) } }
 
-      instantiation.tracks&.to_a&.each { |tracks| instantiation_node.instantiationTracks { instantiation_node.text(tracks) }  }
+      instantiation.tracks&.reject(&:blank?)&.to_a&.each { |tracks| instantiation_node.instantiationTracks { instantiation_node.text(tracks) }  }
 
-      instantiation.channel_configuration&.to_a&.each { |channel_config| instantiation_node.instantiationChannelConfiguration { instantiation_node.text(channel_config) } }
+      instantiation.channel_configuration&.reject(&:blank?)&.to_a&.each { |channel_config| instantiation_node.instantiationChannelConfiguration { instantiation_node.text(channel_config) } }
 
-      instantiation.language&.to_a&.each { |language| instantiation_node.instantiationLanguage { instantiation_node.text(language) } }
+      instantiation.language&.reject(&:blank?)&.to_a&.each { |language| instantiation_node.instantiationLanguage { instantiation_node.text(language) } }
 
-      instantiation.alternative_modes&.to_a&.each { |alternative_mode|  instantiation_node.instantiationAlternativeModes { instantiation_node.text(alternative_mode) }  }
+      instantiation.alternative_modes&.reject(&:blank?)&.to_a&.each { |alternative_mode|  instantiation_node.instantiationAlternativeModes { instantiation_node.text(alternative_mode) }  }
 
       # Prepare Essence Track node
       instantiation.members(only: EssenceTrack).each do |essence_track|
         prepare_essence_track(instantiation_node, essence_track)
       end
 
-      instantiation.rights_summary&.to_a&.each do |rights_summary|
+      instantiation.rights_summary&.reject(&:blank?)&.to_a&.each do |rights_summary|
         instantiation_node.instantiationRights do |instrights_node|
           instrights_node.rightsSummary { instantiation_node.cdata(rights_summary) }
         end
       end
 
-      instantiation.rights_link&.to_a&.each do |rights_link|
+      instantiation.rights_link&.reject(&:blank?)&.to_a&.each do |rights_link|
         instantiation_node.instantiationRights do |instrights_node|
           instrights_node.rightsLink { instantiation_node.cdata(rights_link) }
         end
       end
 
-      instantiation.annotation&.to_a&.each { |annTxt| instantiation_node.instantiationAnnotation { instantiation_node.cdata(annTxt) } }
-      instantiation.holding_organization&.to_a&.each { |org| instantiation_node.instantiationAnnotation(annotationType: 'organization') { instantiation_node.text(org) } }
+      instantiation.annotation&.reject(&:blank?)&.to_a&.each { |annTxt| instantiation_node.instantiationAnnotation { instantiation_node.cdata(annTxt) } }
+      instantiation.holding_organization&.reject(&:blank?)&.to_a&.each { |org| instantiation_node.instantiationAnnotation(annotationType: 'organization') { instantiation_node.text(org) } }
 
     end
   end
@@ -231,42 +231,42 @@ module AMS::PbcoreXmlExportExtension
   def prepare_digital_instantiation(xml, instantiation)
     xml.pbcoreInstantiation do |instantiation_node|
       instantiation_node.instantiationIdentifier { instantiation_node.text(instantiation.id) }
-      instantiation.local_instantiation_identifier.to_a.each { |local_instantiation_identifier| instantiation_node.instantiationIdentifier { instantiation_node.text(local_instantiation_identifier) } }
+      instantiation.local_instantiation_identifier&.reject(&:blank?).to_a.each { |local_instantiation_identifier| instantiation_node.instantiationIdentifier { instantiation_node.text(local_instantiation_identifier) } }
 
-      instantiation.md5&.to_a&.each { |md5| instantiation_node.instantiationIdentifier(source: 'md5') { instantiation_node.text(md5) } }
+      instantiation.md5&.reject(&:blank?)&.to_a&.each { |md5| instantiation_node.instantiationIdentifier(source: 'md5') { instantiation_node.text(md5) } }
 
-      instantiation.date&.to_a&.each { |date|  instantiation_node.instantiationDate { instantiation_node.text(date) } }
-      instantiation.digitization_date&.to_a&.each { |date| instantiation_node.instantiationDate(dateType: 'digitized') { instantiation_node.text(date) } }
+      instantiation.date&.reject(&:blank?)&.to_a&.each { |date|  instantiation_node.instantiationDate { instantiation_node.text(date) } }
+      instantiation.digitization_date&.reject(&:blank?)&.to_a&.each { |date| instantiation_node.instantiationDate(dateType: 'digitized') { instantiation_node.text(date) } }
 
-      instantiation.dimensions&.to_a&.each { |dimension| instantiation_node.instantiationDimensions(unitsOfMeasure: '') { instantiation_node.text(dimension) } }
+      instantiation.dimensions&.reject(&:blank?)&.to_a&.each { |dimension| instantiation_node.instantiationDimensions(unitsOfMeasure: '') { instantiation_node.text(dimension) } }
 
-      instantiation.digital_format&.to_a&.each { |format| instantiation_node.instantiationDigital { instantiation_node.text(format) } }
+      instantiation.digital_format&.reject(&:blank?)&.to_a&.each { |format| instantiation_node.instantiationDigital { instantiation_node.text(format) } }
 
-      instantiation.standard&.to_a&.each { |standard|  instantiation_node.instantiationStandard { instantiation_node.text(standard) }  }
+      instantiation.standard&.reject(&:blank?)&.to_a&.each { |standard|  instantiation_node.instantiationStandard { instantiation_node.text(standard) }  }
 
-      instantiation.location&.to_a&.each { |location|  instantiation_node.instantiationLocation { instantiation_node.text(location) }  }
+      instantiation.location&.reject(&:blank?)&.to_a&.each { |location|  instantiation_node.instantiationLocation { instantiation_node.text(location) }  }
 
-      instantiation.media_type&.to_a&.each { |media_type| instantiation_node.instantiationMediaType { instantiation_node.text(media_type) }  }
+      instantiation.media_type&.reject(&:blank?)&.to_a&.each { |media_type| instantiation_node.instantiationMediaType { instantiation_node.text(media_type) }  }
 
-      instantiation.generations&.to_a&.each { |generation| instantiation_node.instantiationGenerations { instantiation_node.text(generation) } }
+      instantiation.generations&.reject(&:blank?)&.to_a&.each { |generation| instantiation_node.instantiationGenerations { instantiation_node.text(generation) } }
 
-      instantiation.file_size&.to_a&.each { |file_size| instantiation_node.instantiationFileSize { instantiation_node.text(file_size) } }
+      instantiation.file_size&.reject(&:blank?)&.to_a&.each { |file_size| instantiation_node.instantiationFileSize { instantiation_node.text(file_size) } }
 
-      instantiation.time_start&.to_a&.each { |time_start| instantiation_node.instantiationTimeStart { instantiation_node.text(time_start) } }
+      instantiation.time_start&.reject(&:blank?)&.to_a&.each { |time_start| instantiation_node.instantiationTimeStart { instantiation_node.text(time_start) } }
 
-      instantiation.duration&.to_a&.each { |duration| instantiation_node.instantiationDuration { instantiation_node.text(duration) } }
+      instantiation.duration&.reject(&:blank?)&.to_a&.each { |duration| instantiation_node.instantiationDuration { instantiation_node.text(duration) } }
 
       # no dataRate
 
-      instantiation.colors&.to_a&.each { |color| instantiation_node.instantiationColors { instantiation_node.text(color) } }
+      instantiation.colors&.reject(&:blank?)&.to_a&.each { |color| instantiation_node.instantiationColors { instantiation_node.text(color) } }
 
-      instantiation.tracks&.to_a&.each { |tracks| instantiation_node.instantiationTracks { instantiation_node.text(tracks) }  }
+      instantiation.tracks&.reject(&:blank?)&.to_a&.each { |tracks| instantiation_node.instantiationTracks { instantiation_node.text(tracks) }  }
 
-      instantiation.channel_configuration&.to_a&.each { |channel_config| instantiation_node.instantiationChannelConfiguration { instantiation_node.text(channel_config) } }
+      instantiation.channel_configuration&.reject(&:blank?)&.to_a&.each { |channel_config| instantiation_node.instantiationChannelConfiguration { instantiation_node.text(channel_config) } }
 
-      instantiation.language&.to_a&.each { |language| instantiation_node.instantiationLanguage { instantiation_node.text(language) } }
+      instantiation.language&.reject(&:blank?)&.to_a&.each { |language| instantiation_node.instantiationLanguage { instantiation_node.text(language) } }
 
-      instantiation.alternative_modes&.to_a&.each { |alternative_mode|  instantiation_node.instantiationAlternativeModes { instantiation_node.text(alternative_mode) }  }
+      instantiation.alternative_modes&.reject(&:blank?)&.to_a&.each { |alternative_mode|  instantiation_node.instantiationAlternativeModes { instantiation_node.text(alternative_mode) }  }
 
       # Prepare Essence Track node
       instantiation.members(only: EssenceTrack).each do |essence_track|
@@ -275,29 +275,29 @@ module AMS::PbcoreXmlExportExtension
 
       # instantiationRelation
 
-      instantiation.rights_summary.to_a.each do |rights_summary|
+      instantiation.rights_summary&.reject(&:blank?).to_a.each do |rights_summary|
         instantiation.instantiationRights do |instrights_node|
           instrights_node.rightsSummary { instantiation_node.cdata(rights_summary) }
         end
       end
 
-      instantiation.rights_link.to_a.each do |rights_link|
+      instantiation.rights_link&.reject(&:blank?).to_a.each do |rights_link|
         instantiation.instantiationRights do |instrights_node|
           instrights_node.rightsLink { instantiation_node.cdata(rights_link) }
         end
       end
 
-      instantiation.annotation&.to_a&.each { |annTxt| instantiation_node.instantiationAnnotation { instantiation_node.cdata(annTxt) } }
-      instantiation.holding_organization&.to_a&.each { |org| instantiation_node.instantiationAnnotation(annotationType: 'organization') { instantiation_node.text(org) } }
+      instantiation.annotation&.reject(&:blank?)&.to_a&.each { |annTxt| instantiation_node.instantiationAnnotation { instantiation_node.cdata(annTxt) } }
+      instantiation.holding_organization&.reject(&:blank?)&.to_a&.each { |org| instantiation_node.instantiationAnnotation(annotationType: 'organization') { instantiation_node.text(org) } }
     end
   end
 
   def prepare_essence_track(instantiation_node, essence_track)
     instantiation_node.instantiationEssenceTrack do |essence_track_node|
 
-      essence_track_node.essenceTrackType { essence_track_node.text(essence_track.track_type&.first) }
+      essence_track_node.essenceTrackType { essence_track_node.text(essence_track.track_type&.first) } if content?(essence_track.track_type)
 
-      essence_track.track_id&.to_a&.each { |track_id| essence_track_node.essenceTrackIdentifier { essence_track_node.text(track_id) } }
+      essence_track.track_id&.to_a&.each { |track_id| essence_track_node.essenceTrackIdentifier { essence_track_node.text(track_id) } } if content?(essence_track.standard)
 
       essence_track_node.essenceTrackStandard { essence_track_node.text(essence_track.standard&.first) } if content?(essence_track.standard)
 
@@ -313,7 +313,7 @@ module AMS::PbcoreXmlExportExtension
 
       essence_track_node.essenceTrackBitDepth { essence_track_node.text(essence_track.bit_depth&.first) } if content?(essence_track.bit_depth)
 
-      essence_track_node.essenceTrackFrameSize { essence_track_node.text("#{essence_track.frame_width} x #{essence_track.frame_height}") } if essence_track.frame_width && essence_track.frame_height
+      essence_track_node.essenceTrackFrameSize { essence_track_node.text("#{essence_track.frame_width} x #{essence_track.frame_height}") } if content?(essence_track.frame_width) && content?(essence_track.frame_height)
 
       essence_track_node.essenceTrackAspectRatio { essence_track_node.text(essence_track.aspect_ratio&.first) } if content?(essence_track.aspect_ratio)
 
