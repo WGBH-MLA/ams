@@ -6,324 +6,317 @@ module AMS::PbcoreXmlExportExtension
   end
 
   def export_as_pbcore
-    pbcore_builder = pbcore_xml_builder # Method to prepare the PBCore XML
-    pbcore_builder.to_xml # Return PBCore XML
+    pbcore_xml_builder.to_xml # Return PBCore XML
   end
 
   private
 
   def pbcore_xml_builder
     Nokogiri::XML::Builder.new(encoding: 'UTF-8') do |xml|
-      xml.pbcoreDescriptionDocument('xmlns' => 'http://www.pbcore.org/PBCore/PBCoreNamespace.html', 'xmlns:xsi' => 'http://www.w3.org/2001/XMLSchema-instance', 'xsi:schemaLocation' => 'http://www.pbcore.org/PBCore/PBCoreNamespace.html http://www.pbcore.org/xsd/pbcore-2.1.xsd') do
+      xml.pbcoreDescriptionDocument('xmlns' => 'http://www.pbcore.org/PBCore/PBCoreNamespace.html',
+                                    'xmlns:xsi' => 'http://www.w3.org/2001/XMLSchema-instance',
+                                    'xsi:schemaLocation' => 'http://www.pbcore.org/PBCore/PBCoreNamespace.html http://www.pbcore.org/xsd/pbcore-2.1.xsd') do
         # Add asset information on the root node of the XML
         prepare_asset(xml)
-        # Create a root instantiation node
+      end
+    end
+  end
+
+  # Helper method to add nodes for array fields
+  def add_xml_nodes(xml, field_values, node_name, attributes = {}, &block)
+    return if field_values.blank?
+
+    field_values&.to_a&.reject(&:blank?)&.each do |value|
+      if block_given?
+        xml.send(node_name, attributes) { block.call(xml, value) }
+      else
+        xml.send(node_name, attributes) { xml.text(value) }
       end
     end
   end
 
   def prepare_asset(xml)
     # Asset Type
-    asset_types.to_a.each { |type| xml.pbcoreAssetType { xml.text(type) } }
-    # Dates
-    created_date.to_a.each { |date| xml.pbcoreAssetDate(dateType: 'Created') { xml.text(date) } }
-    broadcast_date.to_a.each { |date|  xml.pbcoreAssetDate(dateType: 'Broadcast') { xml.text(date) }  }
-    copyright_date.to_a.each { |date|  xml.pbcoreAssetDate(dateType: 'Copyright') { xml.text(date) }  }
-    self.date.to_a.each { |date| xml.pbcoreAssetDate { xml.text(date) } }
+    add_xml_nodes(xml, asset_types, :pbcoreAssetType)
+
+    # Dates with types
+    date_types = {
+        created_date => 'Created',
+        broadcast_date => 'Broadcast',
+        copyright_date => 'Copyright'
+    }
+
+    date_types.each do |dates, type|
+      add_xml_nodes(xml, dates, :pbcoreAssetDate, dateType: type)
+    end
+
+    # Dates without type
+    add_xml_nodes(xml, self.date, :pbcoreAssetDate)
 
     # Identifiers
-    pbs_nola_code.to_a.each { |pbs_nola_code| xml.pbcoreIdentifier(source: 'NOLA Code') { xml.text(pbs_nola_code) } }
-    sonyci_id.to_a.each { |sonyci_id| xml.pbcoreIdentifier(source: 'Sony Ci') { xml.text(sonyci_id) } }
-    eidr_id.to_a.each { |_local_identifier| xml.pbcoreIdentifier(source: 'EIDR') { xml.text(eidr_id.first) } }
+    identifier_sources = {
+        pbs_nola_code => 'NOLA Code',
+        sonyci_id => 'Sony Ci',
+        eidr_id => 'EIDR',
+        local_identifier => 'Local Identifier'
+    }
+
+    identifier_sources.each do |ids, source|
+      add_xml_nodes(xml, ids, :pbcoreIdentifier, source: source)
+    end
+
+    # Add the main identifier
     xml.pbcoreIdentifier(source: 'http://americanarchiveinventory.org') { xml.text(id) }
-    local_identifier.to_a.each { |local_identifier| xml.pbcoreIdentifier(source: 'Local Identifier') { xml.text(local_identifier) } }
 
     # Titles
-    self['title_tesim'].to_a.each { |title| xml.pbcoreTitle { xml.text(title) } }
-    series_title.to_a.each { |title| xml.pbcoreTitle(titleType: 'Series') { xml.text(title) } }
-    program_title.to_a.each { |title| xml.pbcoreTitle(titleType: 'Program') { xml.text(title) } }
-    episode_title.to_a.each { |title| xml.pbcoreTitle(titleType: 'Episode') { xml.text(title) } }
-    episode_number.to_a.each { |title| xml.pbcoreTitle(titleType: 'Episode Number') { xml.text(title) } }
-    segment_title.to_a.each { |title| xml.pbcoreTitle(titleType: 'Segment') { xml.text(title) } }
-    clip_title.to_a.each { |title| xml.pbcoreTitle(titleType: 'Clip') { xml.text(title) } }
-    promo_title.to_a.each { |title| xml.pbcoreTitle(titleType: 'Promo') { xml.text(title) } }
-    raw_footage_title.to_a.each { |title| xml.pbcoreTitle(titleType: 'Raw Footage') { xml.text(title) } }
+    add_xml_nodes(xml, self['title_tesim'], :pbcoreTitle)
+
+    title_types = {
+        series_title => 'Series',
+        program_title => 'Program',
+        episode_title => 'Episode',
+        episode_number => 'Episode Number',
+        segment_title => 'Segment',
+        clip_title => 'Clip',
+        promo_title => 'Promo',
+        raw_footage_title => 'Raw Footage'
+    }
+
+    title_types.each do |titles, type|
+      add_xml_nodes(xml, titles, :pbcoreTitle, titleType: type)
+    end
 
     # Subject
-    subject.to_a.each { |subject| xml.pbcoreSubject { xml.text(subject) } }
+    add_xml_nodes(xml, subject, :pbcoreSubject)
 
     # Descriptions
-    self['description_tesim'].to_a.each { |description| xml.pbcoreDescription { xml.text(description) } }
-    series_description.to_a.each { |description| xml.pbcoreDescription(descriptionType: 'Series') { xml.text(description) } }
-    program_description.to_a.each { |description| xml.pbcoreDescription(descriptionType: 'Program') { xml.text(description) } }
-    episode_description.to_a.each { |description| xml.pbcoreDescription(descriptionType: 'Episode') { xml.text(description) } }
-    segment_description.to_a.each { |description| xml.pbcoreDescription(descriptionType: 'Segment') { xml.text(description) } }
-    clip_description.to_a.each { |description| xml.pbcoreDescription(descriptionType: 'Clip') { xml.text(description) } }
-    promo_description.to_a.each { |description| xml.pbcoreDescription(descriptionType: 'Promo') { xml.text(description) } }
-    raw_footage_description.to_a.each { |description| xml.pbcoreDescription(descriptionType: 'Raw Footage') { xml.text(description) } }
+    add_xml_nodes(xml, self['description_tesim'], :pbcoreDescription)
+
+    description_types = {
+        series_description => 'Series',
+        program_description => 'Program',
+        episode_description => 'Episode',
+        segment_description => 'Segment',
+        clip_description => 'Clip',
+        promo_description => 'Promo',
+        raw_footage_description => 'Raw Footage'
+    }
+
+    description_types.each do |descriptions, type|
+      add_xml_nodes(xml, descriptions, :pbcoreDescription, descriptionType: type)
+    end
 
     # Genre
-    genre.to_a.each { |genre| xml.pbcoreGenre(source: 'AAPB Format Genre', annotation: 'genre') { xml.text(genre) } }
+    add_xml_nodes(xml, genre, :pbcoreGenre, source: 'AAPB Format Genre', annotation: 'genre')
 
     # Topic
-    topics.to_a.each { |topic| xml.pbcoreGenre(source: 'AAPB Topical Genre', annotation: 'topic') { xml.text(topic) } }
+    add_xml_nodes(xml, topics, :pbcoreGenre, source: 'AAPB Topical Genre', annotation: 'topic')
 
-    # no pbcoreRelation
-      # no pbcoreRelationType
-      # no pbcoreRelationIdentifier
+    # Coverage
+    add_coverage(xml, spatial_coverage, 'Spatial')
+    add_coverage(xml, temporal_coverage, 'Temporal')
 
-    # Spatial Coverage
-    spatial_coverage.to_a.each do |coverage|
-      xml.pbcoreCoverage do |coverage_node|
-        coverage_node.coverage { coverage_node.text(coverage) }
-        coverage_node.coverageType { coverage_node.text('Spatial') }
-      end
-    end
-    # Temporal Coverage
-    temporal_coverage.to_a.each do |coverage|
-      xml.pbcoreCoverage do |coverage_node|
-        coverage_node.coverage { coverage_node.text(coverage) }
-        coverage_node.coverageType { coverage_node.text('Temporal') }
-      end
+    # Audience
+    add_xml_nodes(xml, audience_level, :pbcoreAudienceLevel)
+    add_xml_nodes(xml, audience_rating, :pbcoreAudienceRating)
+
+    # Producing Organization
+    add_xml_nodes(xml, producing_organization, :pbcoreCreator) do |creator_node, org|
+      creator_node.creator { creator_node.text(org) }
+      creator_node.creatorRole { creator_node.text('Producing Organization') }
     end
 
-    # Audience level
-    audience_level.to_a.each { |aud_level| xml.pbcoreAudienceLevel { xml.text(aud_level) } }
+    # Contributors
+    add_contributions(xml)
 
-    # Audience Rating
-    audience_rating.to_a.each { |aud_rating| xml.pbcoreAudienceRating { xml.text(aud_rating) } }
+    # Rights
+    add_rights_summary(xml, rights_summary)
+    add_rights_link(xml, rights_link)
 
-    # Producing Org
-    producing_organization.to_a.each do |org|
-      xml.pbcoreCreator do |creator_node|
-        creator_node.creator { creator_node.text(org) }
-        creator_node.creatorRole { creator_node.text('Producing Organization') }
-      end
+    # Instantiations
+    prepare_instantiations(xml)
+
+    # Annotations
+    add_xml_nodes(xml, annotation, :pbcoreAnnotation) do |node, text|
+      node.cdata(text)
     end
 
+    prepare_annotations(xml)
+  end
+
+  def add_coverage(xml, coverage_values, coverage_type)
+    add_xml_nodes(xml, coverage_values, :pbcoreCoverage) do |node, coverage|
+      node.coverage { node.text(coverage) }
+      node.coverageType { node.text(coverage_type) }
+    end
+  end
+
+  def add_contributions(xml)
     members(only: Contribution).each do |contribution|
       xml.pbcoreContributor do |contributor_node|
         contributor_node.contributor { contributor_node.text(contribution&.contributor&.first) }
 
         # contributorRole is not required!
-        contributor_node.contributorRole { contributor_node.text(contribution&.contributor_role&.first) } if contribution.contributor_role
+        if contribution.contributor_role
+          contributor_node.contributorRole { contributor_node.text(contribution&.contributor_role&.first) }
+        end
       end
     end
-    # people_with_types = members(only: Contribution).sort_by {|peep| peep.contributor_role }
+  end
 
-    # Creators
-    # people_with_types['creator'].each do |contributor|
-    #   xml.pbcoreContributor do |creator_node|
-    #     creator_node.creator { creator_node.text(contribution.contributor.first) }
-    #     creator_node.creatorRole { creator_node.text(contribution.contributor_role.first) }
-    #   end
-    # end
-
-    # # Contributors
-    # people_with_types['contributor'].each do |contributor|
-    #   xml.pbcoreContributor do |contributor_node|
-    #     contributor_node.contributor { contributor_node.text(contribution.contributor.first) }
-    #     contributor_node.contributorRole { contributor_node.text(contribution.contributor_role.first) }
-    #   end
-    # end
-
-    # # Publishers
-    # people_with_types['publisher'].each do |contributor|
-    #   xml.pbcoreContributor do |publisher_node|
-    #     publisher_node.publisher { publisher_node.text(contribution.contributor.first) }
-    #     publisher_node.publisherRole { publisher_node.text(contribution.contributor_role.first) }
-    #   end
-    # end
-
-    # Rights Summary
-    rights_summary.to_a.each do |rights_summary|
-      # xml.pbcoreRightsSummary( xml.rightsSummary(  ) )
-      xml.pbcoreRightsSummary do |rights_node|
-        rights_node.rightsSummary { xml.cdata(rights_summary) }
-      end
+  def add_rights_summary(xml, rights_values)
+    add_xml_nodes(xml, rights_values, :pbcoreRightsSummary) do |node, summary|
+      node.rightsSummary { xml.cdata(summary) }
     end
+  end
 
-    # Rights Link
-    rights_link.to_a.each do |rights_link|
-      # xml.pbcoreRightsSummary( xml.rightsSummary(  ) )
-      xml.pbcoreRightsSummary do |rights_node|
-        rights_node.rightsLink { xml.cdata(rights_link) }
-      end
+  def add_rights_link(xml, link_values)
+    add_xml_nodes(xml, link_values, :pbcoreRightsSummary) do |node, link|
+      node.rightsLink { xml.cdata(link) }
     end
-
-    # make sure that manipulating 'xml' inside this func is still in scope
-    prepare_instantiations(xml)
-
-    # Annotation from the annotation property on Asset
-    annotation.to_a.each { |annotation| xml.pbcoreAnnotation { xml.cdata(annotation) } }
-
-    # Add method here to process associated Annotations
-    prepare_annotations(xml)
   end
 
   def prepare_instantiations(xml)
     members(only: PhysicalInstantiation).each do |instantiation|
-      prepare_physical_instantiation(xml, instantiation) # separate method to put child nodes for the physical instantiation
+      prepare_instantiation(xml, instantiation, :physical)
     end
+
     members(only: DigitalInstantiation).each do |instantiation|
-      prepare_digital_instantiation(xml, instantiation) # separate method to put child nodes for the physical instantiation
+      prepare_instantiation(xml, instantiation, :digital)
     end
   end
 
-  def prepare_physical_instantiation(xml, instantiation)
+  def prepare_instantiation(xml, instantiation, type)
     xml.pbcoreInstantiation do |instantiation_node|
+      # Common identifier fields
+      instantiation_node.instantiationIdentifier(source: type == :physical ? 'Filename' : nil) { instantiation_node.text(instantiation.id) }
 
-      instantiation_node.instantiationIdentifier(source: 'Filename') { instantiation_node.text(instantiation.id) }
-      instantiation.local_instantiation_identifier.to_a.each { |local_instantiation_identifier| instantiation_node.instantiationIdentifier { instantiation_node.text(local_instantiation_identifier) } }
+      add_xml_nodes(instantiation_node, instantiation.local_instantiation_identifier, :instantiationIdentifier)
 
-      instantiation.date&.to_a&.each { |date|  instantiation_node.instantiationDate { instantiation_node.text(date) } }
-      instantiation.digitization_date&.to_a&.each { |date| instantiation_node.instantiationDate(dateType: 'digitized') { instantiation_node.text(date) } }
+      # Add MD5 for digital only
+      if type == :digital
+        add_xml_nodes(instantiation_node, instantiation.md5, :instantiationIdentifier, source: 'md5')
+      end
 
-      instantiation.dimensions&.to_a&.each { |dimension| instantiation_node.instantiationDimensions { instantiation_node.text(dimension) } }
+      # Dates
+      add_xml_nodes(instantiation_node, instantiation.date, :instantiationDate)
+      add_xml_nodes(instantiation_node, instantiation.digitization_date, :instantiationDate, dateType: 'digitized')
 
-      instantiation.format&.to_a&.each { |format| instantiation_node.instantiationPhysical { instantiation_node.text(format) } }
+      # Dimensions
+      if type == :digital
+        add_xml_nodes(instantiation_node, instantiation.dimensions, :instantiationDimensions, unitsOfMeasure: '')
+      else
+        add_xml_nodes(instantiation_node, instantiation.dimensions, :instantiationDimensions)
+      end
 
-      instantiation.standard&.to_a&.each { |standard|  instantiation_node.instantiationStandard { instantiation_node.text(standard) }  }
+      # Format based on type
+      if type == :physical
+        add_xml_nodes(instantiation_node, instantiation.format, :instantiationPhysical)
+      else
+        add_xml_nodes(instantiation_node, instantiation.digital_format, :instantiationDigital)
+      end
 
-      instantiation.location&.to_a&.each { |location|  instantiation_node.instantiationLocation { instantiation_node.text(location) }  }
+      # Common fields
+      common_fields = {
+          standard: :instantiationStandard,
+          location: :instantiationLocation,
+          media_type: :instantiationMediaType,
+          generations: :instantiationGenerations,
+          time_start: :instantiationTimeStart,
+          duration: :instantiationDuration,
+          colors: :instantiationColors,
+          tracks: :instantiationTracks,
+          channel_configuration: :instantiationChannelConfiguration,
+          language: :instantiationLanguage,
+          alternative_modes: :instantiationAlternativeModes
+      }
 
-      instantiation.media_type&.to_a&.each { |media_type| instantiation_node.instantiationMediaType { instantiation_node.text(media_type) }  }
+      common_fields.each do |field, node_name|
+        add_xml_nodes(instantiation_node, instantiation.send(field), node_name)
+      end
 
-      instantiation.generations&.to_a&.each { |generation| instantiation_node.instantiationGenerations { instantiation_node.text(generation) } }
+      # Digital-only fields
+      if type == :digital
+        add_xml_nodes(instantiation_node, instantiation.file_size, :instantiationFileSize)
+      end
 
-      instantiation.time_start&.to_a&.each { |time_start| instantiation_node.instantiationTimeStart { instantiation_node.text(time_start) }  }
-
-      instantiation.duration&.to_a&.each { |duration| instantiation_node.instantiationDuration { instantiation_node.text(duration) } }
-
-      instantiation.colors&.to_a&.each { |color| instantiation_node.instantiationColors { instantiation_node.text(color) } }
-
-      instantiation.tracks&.to_a&.each { |tracks| instantiation_node.instantiationTracks { instantiation_node.text(tracks) }  }
-
-      instantiation.channel_configuration&.to_a&.each { |channel_config| instantiation_node.instantiationChannelConfiguration { instantiation_node.text(channel_config) } }
-
-      instantiation.language&.to_a&.each { |language| instantiation_node.instantiationLanguage { instantiation_node.text(language) } }
-
-      instantiation.alternative_modes&.to_a&.each { |alternative_mode|  instantiation_node.instantiationAlternativeModes { instantiation_node.text(alternative_mode) }  }
-
-      # Prepare Essence Track node
+      # Essence Tracks
       instantiation.members(only: EssenceTrack).each do |essence_track|
         prepare_essence_track(instantiation_node, essence_track)
       end
 
-      instantiation.rights_summary&.to_a&.each do |rights_summary|
-        instantiation_node.instantiationRights do |instrights_node|
-          instrights_node.rightsSummary { instantiation_node.cdata(rights_summary) }
-        end
+      # Rights
+      instantiation_rights(instantiation_node, instantiation.rights_summary, instantiation.rights_link)
+
+      # Annotations
+      add_xml_nodes(instantiation_node, instantiation.annotation, :instantiationAnnotation) do |node, annTxt|
+        node.cdata(annTxt)
       end
 
-      instantiation.rights_link&.to_a&.each do |rights_link|
-        instantiation_node.instantiationRights do |instrights_node|
-          instrights_node.rightsLink { instantiation_node.cdata(rights_link) }
-        end
-      end
-
-      instantiation.annotation&.to_a&.each { |annTxt| instantiation_node.instantiationAnnotation { instantiation_node.cdata(annTxt) } }
-      instantiation.holding_organization&.to_a&.each { |org| instantiation_node.instantiationAnnotation(annotationType: 'organization') { instantiation_node.text(org) } }
-
+      add_xml_nodes(instantiation_node, instantiation.holding_organization, :instantiationAnnotation, annotationType: 'organization')
     end
   end
 
-  def prepare_digital_instantiation(xml, instantiation)
-    xml.pbcoreInstantiation do |instantiation_node|
-      instantiation_node.instantiationIdentifier { instantiation_node.text(instantiation.id) }
-      instantiation.local_instantiation_identifier.to_a.each { |local_instantiation_identifier| instantiation_node.instantiationIdentifier { instantiation_node.text(local_instantiation_identifier) } }
-
-      instantiation.md5&.to_a&.each { |md5| instantiation_node.instantiationIdentifier(source: 'md5') { instantiation_node.text(md5) } }
-
-      instantiation.date&.to_a&.each { |date|  instantiation_node.instantiationDate { instantiation_node.text(date) } }
-      instantiation.digitization_date&.to_a&.each { |date| instantiation_node.instantiationDate(dateType: 'digitized') { instantiation_node.text(date) } }
-
-      instantiation.dimensions&.to_a&.each { |dimension| instantiation_node.instantiationDimensions(unitsOfMeasure: '') { instantiation_node.text(dimension) } }
-
-      instantiation.digital_format&.to_a&.each { |format| instantiation_node.instantiationDigital { instantiation_node.text(format) } }
-
-      instantiation.standard&.to_a&.each { |standard|  instantiation_node.instantiationStandard { instantiation_node.text(standard) }  }
-
-      instantiation.location&.to_a&.each { |location|  instantiation_node.instantiationLocation { instantiation_node.text(location) }  }
-
-      instantiation.media_type&.to_a&.each { |media_type| instantiation_node.instantiationMediaType { instantiation_node.text(media_type) }  }
-
-      instantiation.generations&.to_a&.each { |generation| instantiation_node.instantiationGenerations { instantiation_node.text(generation) } }
-
-      instantiation.file_size&.to_a&.each { |file_size| instantiation_node.instantiationFileSize { instantiation_node.text(file_size) } }
-
-      instantiation.time_start&.to_a&.each { |time_start| instantiation_node.instantiationTimeStart { instantiation_node.text(time_start) } }
-
-      instantiation.duration&.to_a&.each { |duration| instantiation_node.instantiationDuration { instantiation_node.text(duration) } }
-
-      # no dataRate
-
-      instantiation.colors&.to_a&.each { |color| instantiation_node.instantiationColors { instantiation_node.text(color) } }
-
-      instantiation.tracks&.to_a&.each { |tracks| instantiation_node.instantiationTracks { instantiation_node.text(tracks) }  }
-
-      instantiation.channel_configuration&.to_a&.each { |channel_config| instantiation_node.instantiationChannelConfiguration { instantiation_node.text(channel_config) } }
-
-      instantiation.language&.to_a&.each { |language| instantiation_node.instantiationLanguage { instantiation_node.text(language) } }
-
-      instantiation.alternative_modes&.to_a&.each { |alternative_mode|  instantiation_node.instantiationAlternativeModes { instantiation_node.text(alternative_mode) }  }
-
-      # Prepare Essence Track node
-      instantiation.members(only: EssenceTrack).each do |essence_track|
-        prepare_essence_track(instantiation_node, essence_track)
+  def instantiation_rights(node, rights_summary, rights_link)
+    # Rights Summary
+    rights_summary&.to_a&.reject(&:blank?)&.each do |summary|
+      node.instantiationRights do |rights_node|
+        rights_node.rightsSummary { node.cdata(summary) }
       end
+    end
 
-      # instantiationRelation
-
-      instantiation.rights_summary.to_a.each do |rights_summary|
-        instantiation.instantiationRights do |instrights_node|
-          instrights_node.rightsSummary { instantiation_node.cdata(rights_summary) }
-        end
+    # Rights Link
+    rights_link&.to_a&.reject(&:blank?)&.each do |link|
+      node.instantiationRights do |rights_node|
+        rights_node.rightsLink { node.cdata(link) }
       end
-
-      instantiation.rights_link.to_a.each do |rights_link|
-        instantiation.instantiationRights do |instrights_node|
-          instrights_node.rightsLink { instantiation_node.cdata(rights_link) }
-        end
-      end
-
-      instantiation.annotation&.to_a&.each { |annTxt| instantiation_node.instantiationAnnotation { instantiation_node.cdata(annTxt) } }
-      instantiation.holding_organization&.to_a&.each { |org| instantiation_node.instantiationAnnotation(annotationType: 'organization') { instantiation_node.text(org) } }
     end
   end
 
   def prepare_essence_track(instantiation_node, essence_track)
     instantiation_node.instantiationEssenceTrack do |essence_track_node|
+      # Track type - simple field but needs to be handled specially as it's the first required field
+      add_xml_nodes(essence_track_node, essence_track.track_type, :essenceTrackType)
 
-      essence_track_node.essenceTrackType { essence_track_node.text(essence_track.track_type&.first) }
+      # Track ID
+      add_xml_nodes(essence_track_node, essence_track.track_id, :essenceTrackIdentifier)
 
-      essence_track.track_id&.to_a&.each { |track_id| essence_track_node.essenceTrackIdentifier { essence_track_node.text(track_id) } }
+      # Simple fields
+      track_fields = {
+          standard: :essenceTrackStandard,
+          encoding: :essenceTrackEncoding,
+          aspect_ratio: :essenceTrackAspectRatio,
+          time_start: :essenceTrackTimeStart,
+          duration: :essenceTrackDuration
+      }
 
-      essence_track_node.essenceTrackStandard { essence_track_node.text(essence_track.standard&.first) } if content?(essence_track.standard)
+      track_fields.each do |field, node_name|
+        value = essence_track.send(field)
+        add_xml_nodes(essence_track_node, value, node_name)
+      end
 
-      essence_track_node.essenceTrackEncoding { essence_track_node.text(essence_track.encoding&.first) } if content?(essence_track.encoding)
+      # Fields with units
+      add_xml_nodes(essence_track_node, essence_track.data_rate, :essenceTrackDataRate, unitsOfMeasure: 'kb/s')
 
-      essence_track_node.essenceTrackDataRate(unitsOfMeasure: 'kb/s') { essence_track_node.text(essence_track.data_rate&.first) } if content?(essence_track.data_rate)
+      if essence_track.playback_speed&.any?(&:present?)
+        add_xml_nodes(essence_track_node, [essence_track.playback_speed], :essenceTrackPlaybackSpeed,
+                      unitsOfMeasure: essence_track.playback_speed_units)
+      end
 
-      essence_track_node.essenceTrackFrameRate { essence_track_node.text(essence_track.frame_rate&.first) } if content?(essence_track.frame_rate)
+      # Rate fields
+      add_xml_nodes(essence_track_node, essence_track.frame_rate, :essenceTrackFrameRate)
+      add_xml_nodes(essence_track_node, essence_track.sample_rate, :essenceTrackSamplingRate)
+      add_xml_nodes(essence_track_node, essence_track.bit_depth, :essenceTrackBitDepth)
 
-      essence_track_node.essenceTrackPlaybackSpeed(unitsOfMeasure: essence_track.playback_speed_units) { essence_track_node.text(essence_track.playback_speed) } if content?(essence_track.playback_speed)
+      # Frame size (needs both width and height)
+      if essence_track.frame_width&.any?(&:present?) && essence_track.frame_height&.any?(&:present?)
+        frame_size = ["#{essence_track.frame_width} x #{essence_track.frame_height}"]
+        add_xml_nodes(essence_track_node, frame_size, :essenceTrackFrameSize)
+      end
 
-      essence_track_node.essenceTrackSamplingRate { essence_track_node.text(essence_track.sample_rate&.first) } if content?(essence_track.sample_rate)
-
-      essence_track_node.essenceTrackBitDepth { essence_track_node.text(essence_track.bit_depth&.first) } if content?(essence_track.bit_depth)
-
-      essence_track_node.essenceTrackFrameSize { essence_track_node.text("#{essence_track.frame_width} x #{essence_track.frame_height}") } if essence_track.frame_width && essence_track.frame_height
-
-      essence_track_node.essenceTrackAspectRatio { essence_track_node.text(essence_track.aspect_ratio&.first) } if content?(essence_track.aspect_ratio)
-
-      essence_track_node.essenceTrackTimeStart { essence_track_node.text(essence_track.time_start&.first) } if content?(essence_track.time_start)
-
-      essence_track_node.essenceTrackDuration { essence_track_node.text(essence_track.duration&.first) } if content?(essence_track.duration)
-
-      essence_track.language&.to_a&.each { |lang| essence_track_node.essenceTrackLanguage { essence_track_node.text(lang) } }
-
-      essence_track.annotation&.to_a&.each { |annTxt| essence_track_node.essenceTrackAnnotation { essence_track_node.text(annTxt) } }
+      # Arrays for language and annotation
+      add_xml_nodes(essence_track_node, essence_track.language, :essenceTrackLanguage)
+      add_xml_nodes(essence_track_node, essence_track.annotation, :essenceTrackAnnotation)
     end
   end
 
@@ -331,14 +324,13 @@ module AMS::PbcoreXmlExportExtension
     return if annotations.blank?
 
     annotations.each do |annotation|
-      xml.pbcoreAnnotation(annotationType: AnnotationTypesService.new.label(annotation.annotation_type), ref: annotation.ref, source: annotation.source, annotation: annotation.annotation, version: annotation.version) { xml.text(annotation.value) }
+      xml.pbcoreAnnotation(
+          annotationType: AnnotationTypesService.new.label(annotation.annotation_type),
+          ref: annotation.ref,
+          source: annotation.source,
+          annotation: annotation.annotation,
+          version: annotation.version
+      ) { xml.text(annotation.value) }
     end
   end
-
-  private
-
-    def content?(data_node)
-      return false if data_node.nil? || (data_node.is_a?(Array) && data_node.first.blank?) || data_node.blank?
-      true
-    end
 end
