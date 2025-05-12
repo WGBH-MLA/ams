@@ -143,17 +143,16 @@ RSpec.describe AssetIndexer do
     end
   end
 
-  context "annotations" do
-  it "indexes annotation data on asset's solr document" do
+context "annotations" do
+  it "indexes annotation data on asset's solr document only if annotation type is present" do
     annotation = asset_with_annotation.admin_data.annotations.first
     solr_doc = asset_solr_doc_with_annotations.generate_solr_document
 
+    # Only index annotations with a type
     if annotation.annotation_type
-      # Annotation has a type
       expect(solr_doc.fetch(solr_name(annotation.annotation_type, :symbol))).to eq([annotation.value])
     else
-      # Annotation type is nil, use a default field or skip indexing
-      expect(solr_doc.fetch("default_annotation_field")).to eq([annotation.value])
+      expect(solr_doc.key?(solr_name(annotation.annotation_type, :symbol))).to be_falsey
     end
   end
 end
