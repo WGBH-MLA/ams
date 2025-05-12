@@ -26,7 +26,7 @@ module AAPB
         final_annotations = []
 
         annotations.each do |anno|
-          annotation_type = find_annotation_type_id(anno.type)
+          annotation_type = anno.type ? find_annotation_type_id(anno.type) : nil
 
           anno_hash = {
             "ref" => anno.ref,
@@ -43,14 +43,20 @@ module AAPB
       end
 
       def find_annotation_type_id(type)
+        return nil if type.nil?
+        
         type_id = Annotation.find_annotation_type_id(type)
 
         if ENV['SETTINGS__BULKRAX__ENABLED'] == 'true'
           type_id
         else
-          type_id.presence
+          if type_id.present?
+            type_id
+        else
+          raise "annotation_type not registered with the AnnotationTypesService: #{type}."
         end
       end
+    end
 
       def asset_attributes
         @asset_attributes ||= {}.tap do |attrs|
