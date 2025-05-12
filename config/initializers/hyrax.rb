@@ -224,10 +224,10 @@ Hyrax.config do |config|
     url = "#{ActiveFedora.fedora.host}#{ActiveFedora.fedora.base_path}/#{::Noid::Rails.treeify(id)}"
     begin
       ActiveFedora::Fedora.instance.connection.head(url)
-    rescue Ldp::NotFound
+    rescue
       begin
         old_url = "#{ActiveFedora.fedora.host}#{ActiveFedora.fedora.base_path}/#{::Noid::Rails.treeify(id, false)}"
-        ActiveFedora::Fedora.instance.connection.head(old_url)
+        # ActiveFedora::Fedora.instance.connection.head(old_url)
       rescue Ldp::NotFound
         # Do nothing
       rescue Ldp::Gone
