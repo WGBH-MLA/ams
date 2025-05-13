@@ -52,6 +52,7 @@ module Ams
             if contributor
               param_contributor.delete(:id)
               contributor_attributes = contributor.attributes.merge(param_contributor.symbolize_keys)
+              contributor_attributes.delete(:internal_resource)
               contributor_resource = Hyrax.persister.save(resource: ContributionResource.new(contributor_attributes))
               Hyrax.publisher.publish('object.metadata.updated', object: contributor_resource, user: user)
               inserts << contributor_resource.id
