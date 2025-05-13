@@ -29,7 +29,7 @@ RSpec.describe Annotation, type: :model do
       end
 
       context "with annotation_type present" do
-        let(:annotation) { FactoryBot.build(:annotation, admin_data: admin_data, annotation_type: annotation_type) }
+        let(:annotation) { FactoryBot.build(:annotation, :with_annotation_type) }
 
         it "is valid when annotation_type is present" do
           expect(annotation.valid?).to be true
