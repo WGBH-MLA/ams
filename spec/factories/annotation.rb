@@ -13,7 +13,7 @@ FactoryBot.define do
       value { nil }
     end
 
-    train :no_annotation_type do
+    trait :no_annotation_type do
       annotation_type { nil }
   end
 end
