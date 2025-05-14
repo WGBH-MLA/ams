@@ -78,7 +78,7 @@ module AAPB
           attributes["admin_set_id"] = @batch_item.batch.admin_set_id
 
           unless %w[Asset DigitalInstantiation EssenceTrack].include?(node.object_class)
-            attributes["format"] = attributes["format"].present? ? attributes["format"] : 'Instantiation format not provided'
+            attributes["format"] = attributes["format"].present? ? attributes["format"] : '   '
           end
 
           if ingest_type == "new"
