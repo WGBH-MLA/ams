@@ -43,7 +43,7 @@ module AAPB
       end
 
       def find_annotation_type_id(type)
-        return nil if type.nil?
+        return nil if type.empty?
         
         type_id = Annotation.find_annotation_type_id(type)
 
