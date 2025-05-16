@@ -43,7 +43,6 @@ RSpec.describe SonyCi::WebhooksController do
        'and returns a success message, ' \
        'and saves the Sony Ci ID to the Asset, ' \
        'and creates a WebhookLog record for logging containing the GUID' do
-      byebug
       expect(response.status).to eq 200
       expect(response_body['message']).to match /success/
       expect(asset.admin_data.reload.sonyci_id).to eq [ sony_ci_id ]
