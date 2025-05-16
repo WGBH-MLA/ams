@@ -39,7 +39,7 @@ module AMS
       def destroy_asset_by_id(asset_id)
         # Order is important! When looking up a record, if it is found in Fedora but not Postgres,
         # the record in Fedora is copied over to Postgres.
-        destroy_in_fedora(asset_id)
+        #destroy_in_fedora(asset_id)
         destroy_in_postgres(asset_id)
       end
 
