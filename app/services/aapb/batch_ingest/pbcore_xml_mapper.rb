@@ -171,8 +171,10 @@ module AAPB
 
       def physical_instantiation_resource_attributes
         @physical_instantiation_resource_attributes ||= instantiation_attributes.tap do |attrs|
-          format = pbcore.physical&.value
-          attrs[:format] = format.present? ? pbcore.physical&.value : 'Instantiation format not provided'
+          if pbcore.physical&.present?
+            attrs[:format] = pbcore.physical&.value.presence || 'Unavailable'
+          end
+
         end
       end
 
