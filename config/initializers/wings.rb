@@ -46,10 +46,15 @@ Rails.application.config.after_initialize do
   end
 
   Valkyrie::MetadataAdapter.register(
-    Freyja::MetadataAdapter.new,
-    :freyja
+    Valkyrie::Persistence::Postgres::MetadataAdapter.new,
+    :nurax_pg_metadata_adapter
   )
-  Valkyrie.config.metadata_adapter = :freyja
+
+  # Valkyrie::MetadataAdapter.register(
+  #   Freyja::MetadataAdapter.new,
+  #   :freyja
+  # )
+  Valkyrie.config.metadata_adapter = :nurax_pg_metadata_adapter
   Hyrax.config.query_index_from_valkyrie = true
   Hyrax.config.index_adapter = :solr_index
 
@@ -67,6 +72,7 @@ Rails.application.config.after_initialize do
     Hyrax::CustomQueries::Navigators::CollectionMembers,
     Hyrax::CustomQueries::Navigators::ChildCollectionsNavigator,
     Hyrax::CustomQueries::Navigators::ParentCollectionsNavigator,
+    Hyrax::CustomQueries::Navigators::ParentWorkNavigator,
     Hyrax::CustomQueries::Navigators::ChildFileSetsNavigator,
     Hyrax::CustomQueries::Navigators::ChildWorksNavigator,
     Hyrax::CustomQueries::Navigators::FindFiles,
@@ -80,14 +86,14 @@ Rails.application.config.after_initialize do
     Hyrax::CustomQueries::FindByDateRange,
     Hyrax::CustomQueries::FindByBulkraxIdentifier,
   ].each do |handler|
-    Hyrax.query_service.services[0].custom_queries.register_query_handler(handler)
+    Hyrax.query_service.custom_queries.register_query_handler(handler)
   end
 
-  [
-    Wings::CustomQueries::FindByBulkraxIdentifier
-  ].each do |handler|
-    Hyrax.query_service.services[1].custom_queries.register_query_handler(handler)
-  end
+  # [
+  #   Wings::CustomQueries::FindByBulkraxIdentifier
+  # ].each do |handler|
+  #   Hyrax.query_service.services[1].custom_queries.register_query_handler(handler)
+  # end
 
   Hyrax::Transactions::Container.merge(Ams::Container)
   Hyrax::Transactions::Container.merge(Bulkrax::Container)

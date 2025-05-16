@@ -559,6 +559,7 @@ class SolrDocument
 
   def annotations
     return unless is_asset?
+    return [] if admin_data.nil? || admin_data == false
     @annotations ||= admin_data&.annotations
   end
 
