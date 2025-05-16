@@ -96,19 +96,20 @@ RSpec.describe PushesController, type: :controller do
     let(:params) { { id_field: asset_resource_ids.join("\n") } }
 
     # The params with which we expect to run the PushToAAPBJob
-    let(:expected_job_params) { { user: user, ids: asset_resource_ids } }
+    let(:expected_job_params) { { id: Push.last.id, user: user } }
+    let(:pushed_id_csv) { params.fetch(:id_field, '').split(/\s+/).reject(&:empty?).uniq.join(',') }
 
     # Hook up the mocks
     before do
+      ActiveJob::Base.queue_adapter = :test
+      post :create, params: params
       allow(PushToAAPBJob).to receive(:perform_later).with(expected_job_params)
     end
 
     it 'creates a new Push instance and calls :perform_later on ' \
       'ExportRecordJob with correct search params' do
-      expect { post :create, params: params }.to change { Push.count }.by(1)
-      expect(PushToAAPBJob).to have_received(:perform_later).
-                              with(expected_job_params).
-                              exactly(1).times
+      expect(SavePushJob).to have_been_enqueued.with(push: Push.last, pushed_id_csv: pushed_id_csv).exactly(:once)
+      expect(PushToAAPBJob).to have_been_enqueued.with(expected_job_params).exactly(:once)
     end
   end
 end
