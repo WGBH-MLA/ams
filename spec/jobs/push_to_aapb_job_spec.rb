@@ -1,9 +1,11 @@
 require 'rails_helper'
 
 RSpec.describe PushToAAPBJob, type: :job do
-  describe '.perform_now' do
+  include ActiveJob::TestHelper
 
-    let(:ids) { Array.new(500) { SecureRandom.uuid } }
+  describe '.perform_now' do
+    let(:push) { create(:push, user_id: user.id, status: 'pending') }
+    let(:id) { push.id }
     let(:user) { create(:user) }
 
     let(:delivery_instance) { instance_double(AMS::Export::Delivery::AAPBDelivery) }
@@ -16,13 +18,36 @@ RSpec.describe PushToAAPBJob, type: :job do
       allow_any_instance_of(described_class).to receive(:delivery).and_return(delivery_instance)
       allow_any_instance_of(described_class).to receive(:notification).and_return(notification_instance)
 
-      # Call the method under test and assert expectations below.
-      described_class.perform_now(ids: ids, user: user)
     end
 
-    it 'call #deliver of its AMS::Export::Delivery::AAPBDelivery instance' do
-      expect(delivery_instance).to have_received(:deliver)
-      expect(notification_instance).to have_received(:send_success)
+    context 'when push ids are present' do
+      before do
+        allow(Push).to receive(:find).and_return(push)
+        allow(push).to receive(:push_ids).and_return(Array.new(500) { SecureRandom.uuid })
+
+        # Call the method under test and assert expectations below.
+        described_class.perform_now(id: id, user: user)
+      end
+
+      it 'call #deliver of its AMS::Export::Delivery::AAPBDelivery instance' do
+        expect(delivery_instance).to have_received(:deliver)
+        expect(notification_instance).to have_received(:send_success)
+      end
+    end
+
+    context 'when push ids are not present' do
+      before do
+        allow(Push).to receive(:find).and_return(push)
+        allow(push).to receive(:push_ids).and_return([])
+
+        # Call the method under test and assert expectations below.
+        described_class.perform_now(id: id, user: user)
+      end
+
+      it 'reschedules the job' do
+        expect(delivery_instance).not_to have_received(:deliver)
+        expect(PushToAAPBJob).to have_been_enqueued.with({ id: push.id, user: user }).exactly(:once)
+      end
     end
   end
 end

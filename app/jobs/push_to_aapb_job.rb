@@ -16,13 +16,24 @@ class PushToAAPBJob < ApplicationJob
   # Runs the search, compiles the results, and delivers them.
   # NOTE: named arguments to #perform are accessed in other methods via
   #   #named_arguments (see ApplicationJob#named_arguments).
-  def perform(ids:, user:)
-    delivery.deliver
+  def perform(id:, user:)
+    push = Push.find(id)
+
+    if push.push_ids.present?
+      delivery.deliver
+    else
+      PushToAAPBJob.set(wait: 1.minute).perform_later(id: id, user: user)
+      @rescheduled = true
+    end
   end
 
-  after_perform { notification.send_success }
+  after_perform { notification.send_success } unless @rescheduled
 
   private
+
+    def ids
+      @ids ||= Push.find(named_arguments[:id]).push_ids
+    end
 
     def delivery
       @delivery ||= AMS::Export::Delivery::AAPBDelivery.new(export_results: results)
@@ -33,7 +44,7 @@ class PushToAAPBJob < ApplicationJob
     end
 
     def search
-      @search ||= AMS::Export::Search::CombinedIDSearch.new(ids: named_arguments[:ids], user: named_arguments[:user], model_class_name: 'Asset')
+      @search ||= AMS::Export::Search::CombinedIDSearch.new(ids: ids, user: named_arguments[:user], model_class_name: 'Asset')
     end
 
     def notification
