@@ -13,7 +13,7 @@ class Push < ApplicationRecord
   # TODO: we could just use a serialized field for push_ids rather than manually
   # converting it to CSV and back again. Would require migration of course.
   def push_ids
-    pushed_id_csv.to_s.split(',')
+    Array(pushed_id_csv&.to_s&.split(','))
   end
 
   private
