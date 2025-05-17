@@ -59,18 +59,15 @@ RSpec.feature "Ingest: AAPB PBCore - Zipped" do
         + physical_instantiation_essence_tracks.count
     end
 
-    it 'creates the correct number of batch item records' do
-      skip 'TODO fix feature specs'
+    it 'creates the correct number of batch item records', skip: 'TODO fix feature specs' do
       expect(@batch.batch_items.to_a.count).to eq expected_batch_item_count
     end
 
-    it 'ingests the correct number of objects' do
-      skip 'TODO fix feature specs'
+    it 'ingests the correct number of objects', skip: 'TODO fix feature specs' do
       expect(@ingested_objects.count).to eq expected_batch_item_count
     end
 
-    it 'creates additional BatchItem records that all share the same `id_within_batch` value' do
-      skip 'TODO fix feature specs'
+    it 'creates additional BatchItem records that all share the same `id_within_batch` value', skip: 'TODO fix feature specs' do
       batch_items_by_repo_object_id = @batch.batch_items.index_by(&:repo_object_id)
       ingested_objects_by_id = @ingested_objects.index_by(&:id)
       batch_items_by_repo_object_id.each do |repo_object_id, batch_item|
@@ -83,18 +80,15 @@ RSpec.feature "Ingest: AAPB PBCore - Zipped" do
       end
     end
 
-    it 'has a status of completed' do
-      skip 'TODO fix feature specs'
+    it 'has a status of completed', skip: 'TODO fix feature specs' do
       expect(@batch.status).to eq "completed"
     end
 
-    it 'has no errors for any batch item' do
-      skip 'TODO fix feature specs'
+    it 'has no errors for any batch item', skip: 'TODO fix feature specs' do
       expect(@batch.batch_items.map(&:error)).to all(be_nil)
     end
 
-    it 'has status of "completed" for each batch item' do
-      skip 'TODO fix feature specs'
+    it 'has status of "completed" for each batch item', skip: 'TODO fix feature specs' do
       expect(@batch.batch_items.map(&:status)).to all( eq 'completed' )
     end
   end
