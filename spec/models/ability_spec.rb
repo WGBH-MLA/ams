@@ -6,7 +6,7 @@ RSpec.describe Ability do
   let(:subject) { Ability.new user }
 
   context 'for any user (no group)' do
-    let(:user) { create(:user) }
+    let!(:user) { create(:user) }
 
     it { is_expected.to be_able_to(:show, Asset) }
     [:create, :update, :destroy].each do |action|
@@ -52,7 +52,7 @@ RSpec.describe Ability do
   end
 
   context ', given a user who is part of the "ingester" group, ' do
-    let(:user) { create(:user, role_names: [:ingester]) }
+    let!(:user) { create(:user, role_names: [:ingester]) }
 
     # An 'ingester' user may create and update the following object types.
     [:create, :update].each do |action|
@@ -76,7 +76,7 @@ RSpec.describe Ability do
   end
 
   context ', given a user who is part of the "admin" group, ' do
-    let(:user) { create(:admin_user) }
+    let!(:user) { create(:admin_user) }
     it { is_expected.to be_able_to(:manage, :all) }
   end
 end
