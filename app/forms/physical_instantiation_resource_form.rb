@@ -18,7 +18,7 @@ class PhysicalInstantiationResourceForm < Hyrax::Forms::ResourceForm(PhysicalIns
 
   self.required_fields += [:format, :location, :media_type, :holding_organization]
 
-  self.single_valued_fields = [:title]
+  self.single_valued_fields = [:title, :location, :alternative_modes, :standard, :tracks, :channel_configuration]
 
   #removing id, created_at & updated_at from attributes
   instantiation_admin_data_attributes = (InstantiationAdminData.attribute_names.dup - ['id', 'created_at', 'updated_at']).map &:to_sym

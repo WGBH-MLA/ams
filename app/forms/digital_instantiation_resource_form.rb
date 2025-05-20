@@ -16,6 +16,8 @@ class DigitalInstantiationResourceForm < Hyrax::Forms::ResourceForm(DigitalInsta
 
   self.required_fields += [:title, :location, :holding_organization]
 
+  self.single_valued_fields = [:location, :alternative_modes, :standard, :tracks, :channel_configuration]
+
   class_attribute :field_groups
 
   #removing id, created_at & updated_at from attributes
