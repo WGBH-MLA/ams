@@ -10,11 +10,14 @@ class DigitalInstantiationResourceForm < Hyrax::Forms::ResourceForm(DigitalInsta
   include Hyrax::FormFields(:digital_instantiation_resource)
   include DisabledFields
   include ChildCreateButton
+  include SingleValuedForm
   include InheritParentTitle
 
   attr_accessor :controller, :current_ability
 
   self.required_fields += [:title, :location, :holding_organization]
+
+  self.single_valued_fields = [:location, :alternative_modes, :standard, :tracks, :channel_configuration]
 
   class_attribute :field_groups
 
