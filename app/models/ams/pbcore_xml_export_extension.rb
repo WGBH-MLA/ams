@@ -189,13 +189,18 @@ module AMS::PbcoreXmlExportExtension
   def prepare_instantiation(xml, instantiation, type)
     xml.pbcoreInstantiation do |instantiation_node|
       # Common identifier fields
-      instantiation_node.instantiationIdentifier(source: type == :physical ? 'Filename' : nil) { instantiation_node.text(instantiation.id) }
+      if type == :physical
+        instantiation_node.instantiationIdentifier(source: 'Filename') { instantiation_node.text(instantiation.id) }
+      else
+        instantiation_node.instantiationIdentifier { instantiation_node.text(instantiation.id) }
+      end
 
       add_xml_nodes(instantiation_node, instantiation.local_instantiation_identifier, :instantiationIdentifier)
 
-      # Add MD5 for digital only
+      # Add MD5 and FileSize for digital only
       if type == :digital
         add_xml_nodes(instantiation_node, instantiation.md5, :instantiationIdentifier, source: 'md5')
+        add_xml_nodes(instantiation_node, instantiation.file_size, :instantiationFileSize)
       end
 
       # Dates
@@ -233,11 +238,6 @@ module AMS::PbcoreXmlExportExtension
 
       common_fields.each do |field, node_name|
         add_xml_nodes(instantiation_node, instantiation.send(field), node_name)
-      end
-
-      # Digital-only fields
-      if type == :digital
-        add_xml_nodes(instantiation_node, instantiation.file_size, :instantiationFileSize)
       end
 
       # Essence Tracks
