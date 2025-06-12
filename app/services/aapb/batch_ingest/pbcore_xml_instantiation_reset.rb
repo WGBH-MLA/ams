@@ -48,6 +48,8 @@ module AAPB
               log.debug(e.backtrace.join("\n"))
             end
           end
+          asset_resource.member_ids = asset_resource.member_ids - instantiations.map(&:id)
+          Hyrax.persister.save(resource: asset_resource)
           Hyrax.index_adapter.save(resource: asset_resource)
         end
 
