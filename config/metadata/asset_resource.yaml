@@ -304,6 +304,15 @@ attributes:
       required: false
       primary: false
       multiple: true
+  rundown_description:
+    type: string
+    multiple: true
+    index_keys:
+      - "rundown_description_tesim"
+    form:
+      required: false
+      primary: false
+      multiple: true
   producing_organization:
     type: string
     multiple: true
