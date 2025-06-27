@@ -79,7 +79,7 @@ class AssetResourceForm < Hyrax::Forms::ResourceForm(AssetResource)
     if group == :identifying_info
       group_terms = field_groups[group] - [:titles_with_types, :descriptions_with_types]
       group_terms += [:title, :program_title, :episode_title, :episode_number, :segment_title, :raw_footage_title, :promo_title, :clip_title]
-      group_terms += [:description, :episode_description, :segment_description, :raw_footage_description, :promo_description, :clip_description]
+      group_terms += [:description, :episode_description, :segment_description, :raw_footage_description, :promo_description, :clip_description, :rundown_description]
     end
     group_terms
   end
