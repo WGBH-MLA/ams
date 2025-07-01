@@ -24,6 +24,7 @@ FactoryBot.define do
     program_description  { ['Test program_description'] }
     program_title  { ['Test program_title'] }
     promo_description  { ['Test promo_description'] }
+    rundown_description { ['Test rundown_description'] }
     promo_title  { ['Test promo_title'] }
     raw_footage_description  { ['Test raw_footage_description'] }
     raw_footage_title  { ['Test raw_footage_title'] }
