@@ -87,6 +87,7 @@ module AAPB
         attrs[:program_description]         = (grouped_descriptions.fetch("program", []) + grouped_descriptions.fetch("program description", []))
         attrs[:segment_description]         = (grouped_descriptions.fetch("segment", []) + grouped_descriptions.fetch("segment description", []))
         attrs[:clip_description]            = (grouped_descriptions.fetch("clip", []) + grouped_descriptions.fetch("clip description", []))
+        attrs[:rundown_description]         = (grouped_descriptions.fetch("rundown", []) + grouped_descriptions.fetch("rundown description", []))
         attrs[:promo_description]           = (grouped_descriptions.fetch("promo", []) + grouped_descriptions.fetch("promo description", []))
         attrs[:raw_footage_description]     = (grouped_descriptions.fetch("raw footage", []) + grouped_descriptions.fetch("raw footage description", []))
 
