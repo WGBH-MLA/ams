@@ -154,6 +154,7 @@ RSpec.describe AAPB::BatchIngest::PBCoreXMLInstantiationReset, reset_data: false
           :raw_footage_description,
           :promo_description,
           :clip_description,
+          :rundown_description,
           :producing_organization,
           :admin_data_gid,
           :series_title,
