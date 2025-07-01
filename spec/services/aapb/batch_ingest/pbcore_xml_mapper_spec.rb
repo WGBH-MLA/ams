@@ -11,7 +11,7 @@ RSpec.describe AAPB::BatchIngest::PBCoreXMLMapper, :pbcore_xpath_helper do
       [:id, :title, :program_title, :episode_title, :segment_title, :clip_title,
       :promo_title, :raw_footage_title, :episode_number, :description,
       :program_description, :episode_description, :segment_description,
-      :clip_description, :promo_description, :raw_footage_description,
+      :clip_description, :promo_description, :raw_footage_description, :rundown_description,
       :audience_level, :audience_rating, :asset_types, :genre,
       :spatial_coverage, :temporal_coverage, :rights_summary,
       :rights_link, :local_identifier, :pbs_nola_code, :eidr_id, :topics,
