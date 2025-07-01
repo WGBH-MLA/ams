@@ -44,8 +44,7 @@ describe SolrDocument do
 
   describe '#display_description' do
     let(:description_type_preferred_order) do
-      %i( rundown_description raw_footage_description segment_description clip_description
-          promo_description episode_description program_description )
+      %i( raw_footage_description segment_description clip_description rundown_description promo_description episode_description program_description )
     end
 
     it 'returns the most preferred description type' do
