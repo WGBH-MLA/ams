@@ -273,7 +273,7 @@ module AAPB
       end
 
       def desc_types
-        @desc_types ||= ['program','segment','clip','promo','footage','episode','series','raw footage','program description','segment description','clip description','promo description','raw footage description','episode description','series description']
+        @desc_types ||= ['program','segment','clip','promo','rundown','footage','episode','series','raw footage','program description','segment description','clip description','promo description','rundown description','raw footage description','episode description','series description']
       end
 
       def date_types
