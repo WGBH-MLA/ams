@@ -40,6 +40,7 @@ RSpec.describe AMS::CsvExportExtension do
         [
           solr_doc.id,
           solr_doc.local_identifier.join('; '),
+          solr_doc.sonyci_id,
           solr_doc.title.join('; '),
           solr_doc.dates,
           solr_doc.producing_organization.join('; '),
