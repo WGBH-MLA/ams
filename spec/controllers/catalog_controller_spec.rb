@@ -103,7 +103,7 @@ RSpec.describe CatalogController, controller: true do
           }
 
           # Put together the expected CSV data from the test Assets created.
-          let(:expected_csv_header) { [ "Asset ID", "Local Identifier", "Title", "Dates", "Producing Organization", "Description", "Level of User Access", "Cataloging Status", "Holding Organization" ] }
+          let(:expected_csv_header) { [ "Asset ID", "Local Identifier", "Sony Ci", "Title", "Dates", "Producing Organization", "Description", "Level of User Access", "Cataloging Status", "Holding Organization" ] }
 
           it 'sends the CSV file as a download with a clear filename and correct Content-Type' do
             expect(response.headers['Content-Disposition']).to match /attachment/
