@@ -99,7 +99,8 @@ module AMS::PbcoreXmlExportExtension
         segment_description => 'Segment',
         clip_description => 'Clip',
         promo_description => 'Promo',
-        raw_footage_description => 'Raw Footage'
+        raw_footage_description => 'Raw Footage',
+        rundown_description => 'Rundown Description'
     }
 
     description_types.each do |descriptions, type|
