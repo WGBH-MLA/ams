@@ -320,8 +320,17 @@ class SolrDocument
   end
 
   def display_description
-    description = [raw_footage_description, segment_description, clip_description, promo_description, episode_description, program_description, series_description, rundown_description, self[solr_name('description')]].find(&:present?)
-    description.first.truncate(100, separator: ' ') unless description.nil?
+    description = [
+      rundown_description,
+      raw_footage_description,
+      segment_description,
+      clip_description,
+      promo_description,
+      episode_description,
+      program_description
+    ].find(&:present?)
+    raise "No description available" if description.nil?
+    description.first.truncate(100, separator: ' ')
   end
 
   def series_description
