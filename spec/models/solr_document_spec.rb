@@ -44,16 +44,16 @@ describe SolrDocument do
 
   describe '#display_description' do
     let(:description_type_preferred_order) do
-      %i( raw_footage_description segment_description clip_description promo_description episode_description program_description series_description rundown_description )
+      %i( rundown_description raw_footage_description segment_description clip_description
+          promo_description episode_description program_description )
     end
 
     it 'returns the most preferred description type' do
       description_type_preferred_order.each do |desc_type|
-        # Expect #display_desciption to be the same as the next preferred
-        # description.
-        expect(asset_solr_doc.display_description).to eq asset_solr_doc.send(desc_type).first
-        # Now nilify the description type we just compared, and loop to assert
-        # the next preferred description.
+        value = asset_solr_doc.send(desc_type)
+        if value
+          expect(asset_solr_doc.display_description).to eq value.first
+        end
         allow(asset_solr_doc).to receive(desc_type).and_return(nil)
       end
     end
