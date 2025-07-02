@@ -13,6 +13,10 @@ RSpec.describe AMS::CsvExportExtension do
   let!(:asset) do
     create(:asset,
       ordered_members: [ digital_instantiation, physical_instantiation ],
+      # sonyci_id: 'SONY123',
+      date: ['2023-01-01'],
+      producing_organization: ['WGBH Productions'],
+      description: ['A test asset description'],
       with_admin_data: create(:admin_data,
         annotations: [
           build(:annotation,
@@ -40,7 +44,7 @@ RSpec.describe AMS::CsvExportExtension do
         [
           solr_doc.id,
           solr_doc.local_identifier.join('; '),
-          solr_doc.sonyci_id,
+          solr_doc.sonyci_id.join('; '),
           solr_doc.title.join('; '),
           solr_doc.dates,
           solr_doc.producing_organization.join('; '),
