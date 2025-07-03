@@ -1,13 +1,12 @@
 class Annotation < ApplicationRecord
   belongs_to :admin_data
 
-  validates :annotation_type, :presence => true
   validate :annotation_type_registered
   validates :value, :presence => true
   validates :ref, presence: true, if: :supplemental_material?
 
   def annotation_type_registered
-    return true if AnnotationTypesService.new.select_all_options.to_h.values.include?(annotation_type)
+    return true if annotation_type.nil? || AnnotationTypesService.new.select_all_options.to_h.values.include?(annotation_type)
     raise "annotation_type not registered with the AnnotationTypesService: #{annotation_type}."
   end
 
