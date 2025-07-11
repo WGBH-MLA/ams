@@ -49,7 +49,7 @@ class PushToAAPBJob < ApplicationJob
     raise
   rescue StandardError => e
     Rails.logger.error "Error processing Push ID: #{id} - #{e.message}"
-    notification.send_failure(e.message)
+    notification.send_failure(error_message: e.message)
     raise
   end
 
