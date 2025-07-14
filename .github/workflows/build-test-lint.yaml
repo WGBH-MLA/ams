@@ -89,7 +89,7 @@ jobs:
       - name: Build and push solr
         uses: docker/build-push-action@v3
         with:
-          context: .
+          context: ./solr
           platforms: linux/amd64
           # platforms: linux/amd64,linux/arm64
           target: ams-solr
