@@ -86,6 +86,18 @@ jobs:
           push: true
           tags: |
             ${{ env.REGISTRY }}/${{ env.REPO_LOWER }}/worker:${{ env.TAG }}
+      - name: Build and push solr
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          platforms: linux/amd64
+          # platforms: linux/amd64,linux/arm64
+          target: ams-solr
+          cache-from: |
+            ${{ env.REGISTRY }}/${{ env.REPO_LOWER }}/solr:${TAG}
+          push: true
+          tags: |
+            ${{ env.REGISTRY }}/${{ env.REPO_LOWER }}/solr:${{ env.TAG }}
 
   # lint:
   #   needs: build
