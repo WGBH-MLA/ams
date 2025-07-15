@@ -1,5 +1,5 @@
 ARG HYRAX_IMAGE_VERSION=hyrax-v5.0.0.rc1
-FROM ghcr.io/samvera/hyrax/hyrax-base:$HYRAX_IMAGE_VERSION as ams-base
+FROM ghcr.io/samvera/hyrax/hyrax-base:$HYRAX_IMAGE_VERSION AS ams-base
 USER root
 
 RUN apk --no-cache upgrade && \
@@ -60,5 +60,5 @@ RUN sh -l -c " \
 
 CMD ./bin/web
 
-FROM ams-base as ams-worker
+FROM ams-base AS ams-worker
 CMD ./bin/worker

@@ -106,10 +106,10 @@ services:
       timeout: "8s"
 
   solr:
-    image: ams/solr:8
+    image: ghcr.io/wgbh-mla/ams/solr:${TAG:-latest}
     build:
-      context: solr
-      dockerfile: Dockerfile
+      context: ./solr
+      target: ams-solr
     env_file:
       - .env
     environment:
