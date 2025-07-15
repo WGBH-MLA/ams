@@ -106,7 +106,7 @@ services:
       timeout: "8s"
 
   solr:
-    image: ams/solr:8
+    image: ghcr.io/wgbh-mla/solr:${TAG:-latest}
     build:
       context: ./solr
       target: ams-solr
