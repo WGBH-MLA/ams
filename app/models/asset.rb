@@ -50,6 +50,7 @@ class Asset < ActiveFedora::Base
     all_descriptions += clip_description.to_a
     all_descriptions += promo_description.to_a
     all_descriptions += raw_footage_description.to_a
+    all_descriptions += rundown_description.to_a
     if all_descriptions.empty?
       errors.add :description, "cannot be empty"
     end
@@ -197,6 +198,10 @@ class Asset < ActiveFedora::Base
     index.as :stored_searchable
   end
 
+  property :rundown_description, predicate: ::RDF::URI.new('http://pbcore.org#hasRundownDescription'), multiple: :true do |index|
+    index.as :stored_searchable
+  end
+  
   property :producing_organization, predicate: ::RDF::URI.new("http://purl.org/dc/elements/1.1/creator"), multiple: true do |index|
     index.as :stored_searchable, :facetable
   end

@@ -54,6 +54,7 @@ module PBCoreXPathHelper
         episode_description:            '//pbcoreDescription[@descriptionType="Episode" or @descriptionType="Episode Description"]',
         segment_description:            '//pbcoreDescription[@descriptionType="Segment"]',
         clip_description:               '//pbcoreDescription[@descriptionType="Clip"]',
+        rundown_description:            '//pbcoreDescription[@descriptionType="Rundown"]',
         promo_description:              '//pbcoreDescription[@descriptionType="Promo"]',
         raw_footage_description:        '//pbcoreDescription[@descriptionType="Raw Footage"]',
         audience_level:                 '//pbcoreAudienceLevel',
@@ -142,7 +143,7 @@ module PBCoreXPathHelper
     #   pbcore_xpath_helper(pbcore_xml).descriptions_without_type
     def descriptions_without_type
       all_descs = values_from_xpath('//pbcoreDescription')
-      with_types = values_from_xpath(:series_description) + values_from_xpath(:program_description) + values_from_xpath(:episode_description) + values_from_xpath(:segment_description) + values_from_xpath(:clip_description) + values_from_xpath(:promo_description) + values_from_xpath(:raw_footage_description) + values_from_xpath(:episode_number)
+      with_types = values_from_xpath(:series_description) + values_from_xpath(:program_description) + values_from_xpath(:episode_description) + values_from_xpath(:segment_description) + values_from_xpath(:clip_description) + values_from_xpath(:rundown_description) + values_from_xpath(:promo_description) + values_from_xpath(:raw_footage_description) + values_from_xpath(:episode_number)
       remove_exactly_once_from_array all_descs, with_types
     end
 

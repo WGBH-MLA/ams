@@ -29,6 +29,7 @@ FactoryBot.define do
     raw_footage_title  { ['Test raw_footage_title'] }
     rights_link  { ['http://www.google.com'] }
     rights_summary  { ['Sample rights_summary'] }
+    rundown_description { ['Test rundown_description'] }
     segment_description  { ['Test segment_description'] }
     segment_title  { ['Test segment_title'] }
     spatial_coverage  { ['TEST spatial_coverage'] }

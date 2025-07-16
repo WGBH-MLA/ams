@@ -134,6 +134,7 @@ class CatalogController < ApplicationController
     config.add_show_field solr_name("episode_description", :stored_searchable)
     config.add_show_field solr_name("clip_description", :stored_searchable)
     config.add_show_field solr_name("promo_description", :stored_searchable)
+    config.add_show_field solr_name("rundown_description", :stored_searchable)
 
     config.add_show_field solr_name("producing_organization", :stored_searchable)
     config.add_show_field solr_name("episode_number", :stored_searchable)
