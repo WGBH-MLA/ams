@@ -12,7 +12,7 @@ class PushesController < ApplicationController
   end
 
   def create
-    @push = Push.create(user_id: current_user.id, status: 'pending', pushed_id_csv: pushed_id_csv_from_id_field)
+    @push = Push.create(user_id: current_user.id, status: 'pending')
     if @push.valid?
       SavePushJob.perform_later(push: @push, pushed_id_csv: pushed_id_csv_from_id_field)
       PushToAAPBJob.perform_later(id: @push.id, user: current_user)
