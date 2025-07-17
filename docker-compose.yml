@@ -239,7 +239,7 @@ services:
         condition: service_completed_successfully
     expose:
       - 3000
-
+      
   worker:
     <<: *app
     build:
