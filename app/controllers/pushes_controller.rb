@@ -14,8 +14,7 @@ class PushesController < ApplicationController
   def create
     @push = Push.create(user_id: current_user.id, status: 'pending')
     if @push.valid?
-      SavePushJob.perform_later(push: @push, pushed_id_csv: pushed_id_csv_from_id_field)
-      PushToAAPBJob.perform_later(id: @push.id, user: current_user)
+      SavePushJob.perform_later(push: @push, pushed_id_csv: pushed_id_csv_from_id_field, user: current_user)
       redirect_to @push
     else
       render :new

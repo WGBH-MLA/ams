@@ -190,11 +190,15 @@ module AMS::PbcoreXmlExportExtension
   def prepare_instantiation(xml, instantiation, type)
     xml.pbcoreInstantiation do |instantiation_node|
       # Common identifier fields
-      instantiation_node.instantiationIdentifier(source: type == :physical ? 'Filename' : nil) { instantiation_node.text(instantiation.id) }
+      if type == :physical
+        instantiation_node.instantiationIdentifier(source: 'Filename') { instantiation_node.text(instantiation.id) }
+      else
+        instantiation_node.instantiationIdentifier { instantiation_node.text(instantiation.id) }
+      end
 
       add_xml_nodes(instantiation_node, instantiation.local_instantiation_identifier, :instantiationIdentifier)
 
-      # Add MD5 for digital only
+      # Add MD5 and FileSize for digital only
       if type == :digital
         add_xml_nodes(instantiation_node, instantiation.md5, :instantiationIdentifier, source: 'md5')
       end
@@ -217,12 +221,22 @@ module AMS::PbcoreXmlExportExtension
         add_xml_nodes(instantiation_node, instantiation.digital_format, :instantiationDigital)
       end
 
-      # Common fields
-      common_fields = {
+      # Common fields 1
+      common_fields_1 = {
           standard: :instantiationStandard,
           location: :instantiationLocation,
           media_type: :instantiationMediaType,
-          generations: :instantiationGenerations,
+          generations: :instantiationGenerations
+      }
+      common_fields_1.each do |field, node_name|
+        add_xml_nodes(instantiation_node, instantiation.send(field), node_name)
+      end
+      # Required for proper PBcore ordering
+      if type == :digital
+        add_xml_nodes(instantiation_node, instantiation.file_size, :instantiationFileSize)
+      end
+      # Common fields 2
+      common_fields_2 = {
           time_start: :instantiationTimeStart,
           duration: :instantiationDuration,
           colors: :instantiationColors,
@@ -232,13 +246,8 @@ module AMS::PbcoreXmlExportExtension
           alternative_modes: :instantiationAlternativeModes
       }
 
-      common_fields.each do |field, node_name|
+      common_fields_2.each do |field, node_name|
         add_xml_nodes(instantiation_node, instantiation.send(field), node_name)
-      end
-
-      # Digital-only fields
-      if type == :digital
-        add_xml_nodes(instantiation_node, instantiation.file_size, :instantiationFileSize)
       end
 
       # Essence Tracks
@@ -282,30 +291,19 @@ module AMS::PbcoreXmlExportExtension
       # Track ID
       add_xml_nodes(essence_track_node, essence_track.track_id, :essenceTrackIdentifier)
 
-      # Simple fields
-      track_fields = {
-          standard: :essenceTrackStandard,
-          encoding: :essenceTrackEncoding,
-          aspect_ratio: :essenceTrackAspectRatio,
-          time_start: :essenceTrackTimeStart,
-          duration: :essenceTrackDuration
-      }
-
-      track_fields.each do |field, node_name|
-        value = essence_track.send(field)
-        add_xml_nodes(essence_track_node, value, node_name)
-      end
+      # Simple fields 1
+      add_xml_nodes(essence_track_node, essence_track.standard, :essenceTrackStandard)
+      add_xml_nodes(essence_track_node, essence_track.encoding, :essenceTrackEncoding)
 
       # Fields with units
       add_xml_nodes(essence_track_node, essence_track.data_rate, :essenceTrackDataRate, unitsOfMeasure: 'kb/s')
 
+      # Rate fields
+      add_xml_nodes(essence_track_node, essence_track.frame_rate, :essenceTrackFrameRate)
       if essence_track.playback_speed&.any?(&:present?)
         add_xml_nodes(essence_track_node, [essence_track.playback_speed], :essenceTrackPlaybackSpeed,
                       unitsOfMeasure: essence_track.playback_speed_units)
       end
-
-      # Rate fields
-      add_xml_nodes(essence_track_node, essence_track.frame_rate, :essenceTrackFrameRate)
       add_xml_nodes(essence_track_node, essence_track.sample_rate, :essenceTrackSamplingRate)
       add_xml_nodes(essence_track_node, essence_track.bit_depth, :essenceTrackBitDepth)
 
@@ -314,6 +312,11 @@ module AMS::PbcoreXmlExportExtension
         frame_size = ["#{essence_track.frame_width} x #{essence_track.frame_height}"]
         add_xml_nodes(essence_track_node, frame_size, :essenceTrackFrameSize)
       end
+
+      # Simple fields 2
+      add_xml_nodes(essence_track_node, essence_track.aspect_ratio, :essenceTrackAspectRatio)
+      add_xml_nodes(essence_track_node, essence_track.time_start, :essenceTrackTimeStart)
+      add_xml_nodes(essence_track_node, essence_track.duration, :essenceTrackDuration)
 
       # Arrays for language and annotation
       add_xml_nodes(essence_track_node, essence_track.language, :essenceTrackLanguage)
