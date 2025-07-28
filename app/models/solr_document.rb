@@ -329,8 +329,7 @@ class SolrDocument
       episode_description,
       program_description
     ].find(&:present?)
-    raise "No description available" if description.nil?
-    description.first.truncate(100, separator: ' ')
+    description&.first&.truncate(100, separator: ' ')
   end
 
   def series_description
