@@ -57,6 +57,7 @@ FactoryBot.define do
           build_list(:pbcore_description, rand(1..3), type: 'Promo'),
           build_list(:pbcore_description, rand(1..3), type: 'Clip'),
           build_list(:pbcore_description, rand(1..3), type: 'Raw Footage'),
+          build_list(:pbcore_description, rand(1..3), type: 'Rundown'),
         ].flatten
       end
 

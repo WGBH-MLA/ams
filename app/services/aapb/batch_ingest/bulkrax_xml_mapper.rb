@@ -87,6 +87,7 @@ module AAPB
         attrs[:program_description]         = (grouped_descriptions.fetch("program", []) + grouped_descriptions.fetch("program description", []))
         attrs[:segment_description]         = (grouped_descriptions.fetch("segment", []) + grouped_descriptions.fetch("segment description", []))
         attrs[:clip_description]            = (grouped_descriptions.fetch("clip", []) + grouped_descriptions.fetch("clip description", []))
+        attrs[:rundown_description]         = (grouped_descriptions.fetch("rundown", []) + grouped_descriptions.fetch("rundown description", []))
         attrs[:promo_description]           = (grouped_descriptions.fetch("promo", []) + grouped_descriptions.fetch("promo description", []))
         attrs[:raw_footage_description]     = (grouped_descriptions.fetch("raw footage", []) + grouped_descriptions.fetch("raw footage description", []))
 
@@ -272,7 +273,7 @@ module AAPB
       end
 
       def desc_types
-        @desc_types ||= ['program','segment','clip','promo','footage','episode','series','raw footage','program description','segment description','clip description','promo description','raw footage description','episode description','series description']
+        @desc_types ||= ['program','segment','clip','promo','rundown','footage','episode','series','raw footage','program description','segment description','clip description','promo description','rundown description','raw footage description','episode description','series description']
       end
 
       def date_types

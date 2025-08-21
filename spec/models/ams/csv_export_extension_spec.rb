@@ -12,23 +12,27 @@ RSpec.describe AMS::CsvExportExtension do
   let!(:physical_instantiation) { create(:physical_instantiation) }
   let!(:asset) do
     create(:asset,
-      ordered_members: [ digital_instantiation, physical_instantiation ],
-      with_admin_data: create(:admin_data,
-        annotations: [
-          build(:annotation,
-            annotation_type: 'level_of_user_access',
-            value: "Online Reading Room"
-          ),
-          build(:annotation,
-            annotation_type: 'cataloging_status',
-            value: 'Minimally Cataloged'
-          ),
-          build(:annotation,
-            annotation_type: 'organization',
-            value: 'WGBH'
-          )
-        ]
-      ).gid # :with_admin_data expects the GlobalID, not the object itself.
+           ordered_members:         [ digital_instantiation, physical_instantiation ],
+           date:                    ['2023-01-01'],
+           producing_organization:  ['WGBH Productions'],
+           description:             ['A test asset description'],
+           with_admin_data:         create(:admin_data,
+                                          sonyci_id:['Sony-1'],
+                                          annotations: [
+                                            build(:annotation,
+                                                  annotation_type: 'level_of_user_access',
+                                                  value: "Online Reading Room"
+                                            ),
+                                            build(:annotation,
+                                                  annotation_type: 'cataloging_status',
+                                                  value: 'Minimally Cataloged'
+                                            ),
+                                            build(:annotation,
+                                                  annotation_type: 'organization',
+                                                  value: 'WGBH'
+                                            )
+                                          ]
+           ).gid # :with_admin_data expects the GlobalID, not the object itself.
     )
   end
 
@@ -40,6 +44,7 @@ RSpec.describe AMS::CsvExportExtension do
         [
           solr_doc.id,
           solr_doc.local_identifier.join('; '),
+          solr_doc.sonyci_id.join('; '),
           solr_doc.title.join('; '),
           solr_doc.dates,
           solr_doc.producing_organization.join('; '),

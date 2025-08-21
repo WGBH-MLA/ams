@@ -16,20 +16,49 @@ class PushToAAPBJob < ApplicationJob
   # Runs the search, compiles the results, and delivers them.
   # NOTE: named arguments to #perform are accessed in other methods via
   #   #named_arguments (see ApplicationJob#named_arguments).
-  def perform(id:, user:)
+
+  def perform(id:, user:, retry_count: 0, max_retries: 20)
     push = Push.find(id)
 
     if push.push_ids.present?
       delivery.deliver
+      notification.send_success
     else
-      PushToAAPBJob.set(wait: 1.minute).perform_later(id: id, user: user)
-      @rescheduled = true
+      # Check if the job has exceeded max retries
+      if retry_count >= max_retries
+        Rails.logger.error "Max retries exceeded for Push ID: #{id}"
+        notification.send_failure(error_message: "Max retries exceeded for Push ID: #{id}")
+        return
+      end
+
+      # Calculate delay with a backoff
+      delay = calculate_delay(retry_count)
+
+      Rails.logger.info "Rescheduling Push ID: #{id}, retry: #{retry_count + 1}, delay: #{delay}s"
+
+      PushToAAPBJob.set(wait: delay.seconds).perform_later(
+          id: id,
+          user: user,
+          retry_count: retry_count + 1,
+          max_retries: max_retries
+      )
     end
+  rescue ActiveRecord::RecordNotFound => e
+    Rails.logger.error "Push not found: #{id}"
+    notification.send_failure(error_message: "Push #{id} not found")
+    raise
+  rescue StandardError => e
+    Rails.logger.error "Error processing Push ID: #{id} - #{e.message}"
+    notification.send_failure(error_message: e.message)
+    raise
   end
 
-  after_perform { notification.send_success } unless @rescheduled
 
   private
+
+    def calculate_delay(retry_count)
+      [60 * (2 ** retry_count), 600].min # max 10 mins
+    end
 
     def ids
       @ids ||= Push.find(named_arguments[:id]).push_ids

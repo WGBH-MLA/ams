@@ -73,6 +73,7 @@ ingest_types:
           - raw_footage_description
           - promo_description
           - clip_description
+          - rundown_description
           - series_title
           - series_description
           - producing_organization
@@ -138,6 +139,7 @@ ingest_types:
           - raw_footage_description
           - promo_description
           - clip_description
+          - rundown_description
           - series_title
           - series_description
           - producing_organization

@@ -113,6 +113,7 @@ if ENV['SETTINGS__BULKRAX__ENABLED'] == 'true'
       'rights_link' => { from: headers('rights_link'), split: true, join: true },
       'rights_statement' => { from: headers('rights_statement'), split: true, join: true },
       'rights_summary' => { from: headers('rights_summary'), split: true, join: true },
+      'rundown_description' => { from: headers('rundown_description'), split: true, join: true },
       'sample_rate' => { from: ["EssenceTrack.sample_rate"] },
       'segment_description' => { from: headers('segment_description'), split: true, join: true },
       'segment_title' => { from: headers('segment_title') },

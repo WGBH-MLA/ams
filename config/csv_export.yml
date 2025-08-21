@@ -5,6 +5,8 @@ exports:
       - name: "Asset ID"
         method: :id
       - name: "Local Identifier"
+      - name: "Sony Ci"
+        method: :sonyci_id
       - name: "Title"
       - name: "Dates"
       - name: "Producing Organization"

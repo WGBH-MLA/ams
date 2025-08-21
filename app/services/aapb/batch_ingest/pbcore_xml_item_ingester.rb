@@ -132,6 +132,7 @@ module AAPB
         def atomically_adopt(parent, child)
           # Get the lock for 10 seconds
           lock_manager.lock!("add_ordered_member_to:#{parent.id}", 120000) do |locked|
+            parent = Hyrax.query_service.find_by(id: parent.id)
             parent.member_ids += [child.id.to_s]
             Hyrax.persister.save(resource: parent)
             Hyrax.index_adapter.save(resource: parent)
