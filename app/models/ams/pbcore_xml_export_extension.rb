@@ -328,13 +328,17 @@ module AMS::PbcoreXmlExportExtension
     return if annotations.blank?
 
     annotations.each do |annotation|
-      xml.pbcoreAnnotation(
-          annotationType: AnnotationTypesService.new.label(annotation.annotation_type),
-          ref: annotation.ref,
-          source: annotation.source,
-          annotation: annotation.annotation,
-          version: annotation.version
-      ) { xml.text(annotation.value) }
+      attributes = {
+        ref: annotation.ref,
+        source: annotation.source,
+        annotation: annotation.annotation,
+        version: annotation.version
+      }
+      # Only add annotationType if present
+      if annotation.annotation_type.present?
+        attributes[:annotationType] = AnnotationTypesService.new.label(annotation.annotation_type)
+      end
+      xml.pbcoreAnnotation(attributes) { xml.text(annotation.value) }
     end
   end
 end
