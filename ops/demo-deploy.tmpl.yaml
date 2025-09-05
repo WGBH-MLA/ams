@@ -118,6 +118,8 @@ extraEnvVars: &envVars
     value: http://10.0.4.190:8983/solr/ams
   - name: SIDEKIQ_CONCURRENCY
     value: "1"
+  - name: SIDEKIQ_OPTIONS
+    value: "-q default -q ingest -q exports -q mailers -q push_to_aapb"
   - name: AWS_ACCESS_KEY
     value: "AKIAIWFN3WW3WBIMKNCQ"
   - name: MAIL_DELIVERY_METHOD

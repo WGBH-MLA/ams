@@ -123,6 +123,8 @@ extraEnvVars: &envVars
     value: "false"
   - name: SIDEKIQ_CONCURRENCY
     value: "1"
+  - name: SIDEKIQ_OPTIONS
+    value: "-q default -q ingest -q exports -q mailers -q push_to_aapb"
   - name: SIDEKIQ_REDIS_URL
     value: "redis://:prod@ams-prod-redis-master:6379/0"
   - name: SMTP_ADDRESS
@@ -155,7 +157,7 @@ worker:
   extraEnvVars: *envVars
 
 importWorker:
-  enabled: true
+  enabled: false
   replicaCount: 3
   # extraEnvVars will not handle overriden values
   # only additional to the original workerEnvVars list
