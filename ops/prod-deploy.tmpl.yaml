@@ -157,8 +157,8 @@ worker:
   extraEnvVars: *envVars
 
 importWorker:
-  enabled: false
-  replicaCount: 3
+  enabled: true
+  replicaCount: 0
   # extraEnvVars will not handle overriden values
   # only additional to the original workerEnvVars list
   extraEnvVars:
