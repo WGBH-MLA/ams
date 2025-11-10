@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+return unless defined?(BULKRAX_ENABLED) && BULKRAX_ENABLED
+
 FactoryBot.define do
   factory :bulkrax_exporter, class: 'Bulkrax::Exporter' do
     name { 'Export from Importer' }

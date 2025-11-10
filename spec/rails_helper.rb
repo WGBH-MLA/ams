@@ -145,6 +145,10 @@ end
 # Travis or development.
 # Webdrivers.logger.level = :DEBUG
 
+# Bulkrax feature flag
+# Set to false to skip Bulkrax-related tests
+BULKRAX_ENABLED = ENV.fetch('SETTINGS__BULKRAX__ENABLED', 'true').downcase == 'true'
+
 require 'valkyrie'
 Valkyrie::MetadataAdapter.register(Valkyrie::Persistence::Memory::MetadataAdapter.new, :test_adapter)
 Valkyrie::StorageAdapter.register(Valkyrie::Storage::Memory.new, :memory)

@@ -2,6 +2,8 @@
 
 require 'rails_helper'
 
+return unless defined?(BULKRAX_ENABLED) && BULKRAX_ENABLED
+
 module Bulkrax
   RSpec.describe DeleteWorkJob, type: :job do
     subject(:delete_work_job) { described_class.new }
