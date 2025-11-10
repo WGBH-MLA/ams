@@ -60,23 +60,4 @@ RSpec.describe AMS::AssetDestroyer do
     #   end
     # end
   end
-
-  describe 'eradicate_asset_tombstones' do
-    # context 'when given a list of IDs' do
-    #   let(:asset) { create(:asset) }
-    #   # let(:destroy_asset) { Hyrax::CurationConcern.actor.destroy(Hyrax::Actors::Environment.new(asset, ability, {})) }
-    #
-    #   it 'skips destroying the tombstone if an Asset exists' do
-    #     subject.eradicate_asset_tombstones [ asset.id ]
-    #     expect((ActiveFedora::Base.find asset.id)).to eq(asset)
-    #   end
-    #
-    #   it 'deletes the tombstone if no Asset exists' do
-    #     asset.destroy
-    #     expect{ ActiveFedora::Base.find asset.id }.to raise_error(Ldp::Gone)
-    #     subject.eradicate_asset_tombstones [ asset.id ]
-    #     expect{ ActiveFedora::Base.find asset.id }.to raise_error(ActiveFedora::ObjectNotFoundError)
-    #   end
-    # end
-  end
 end

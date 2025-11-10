@@ -25,12 +25,7 @@ class Ability
     # Minimal permissions for everybody
     can [:show], [ AdminData,
                    InstantiationAdminData,
-                   Asset,
-                   EssenceTrack,
-                   PhysicalInstantiation,
-                   DigitalInstantiation,
                    Collection,
-                   Contribution,
                    AssetResource,
                    EssenceTrackResource,
                    PhysicalInstantiationResource,
@@ -42,12 +37,7 @@ class Ability
     # Explicitly forbid these actions.
     cannot [:destroy, :update], [ AdminData,
                                   InstantiationAdminData,
-                                  Asset,
-                                  EssenceTrack,
-                                  PhysicalInstantiation,
-                                  DigitalInstantiation,
                                   Collection,
-                                  Contribution,
                                   AssetResource,
                                   EssenceTrackResource,
                                   PhysicalInstantiationResource,
@@ -66,12 +56,7 @@ class Ability
   # Sets permission for 'ingester' users
   def ams_ingester_permissions
     return unless user_groups.include? 'ingester'
-    can [:create, :update], [ Asset,
-                              EssenceTrack,
-                              PhysicalInstantiation,
-                              DigitalInstantiation,
-                              Collection,
-                              Contribution,
+    can [:create, :update], [ Collection,
                               AdminData,
                               InstantiationAdminData,
                               AssetResource,
@@ -92,12 +77,7 @@ class Ability
     return unless user_groups.include?('aapb-admin')
     can [:create, :update, :destroy], [ AdminData,
                                         InstantiationAdminData,
-                                        Asset,
-                                        EssenceTrack,
-                                        PhysicalInstantiation,
-                                        DigitalInstantiation,
                                         Collection,
-                                        Contribution,
                                         AssetResource,
                                         EssenceTrackResource,
                                         PhysicalInstantiationResource,

@@ -1,8 +1,0 @@
-it:
-  hyrax:
-    icons:
-      digital_instantiation:     'fa fa-file-text-o'
-    select_type:
-      digital_instantiation:
-        name:               "Digital Instantiation"
-        description:        "Digital instantiation opere"

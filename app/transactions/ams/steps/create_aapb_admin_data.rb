@@ -173,7 +173,7 @@ module Ams
         # This is ultimately because there is a possibility that the creation of all of an Asset's
         # Contributions could be skipped, which would significantly throw off the count for comparison.
         # @see #create_or_update_contributions
-        current_children_count = change_set.model.all_members.reject { |child| child.is_a?(Contribution) }.size
+        current_children_count = change_set.model.all_members.reject { |child| child.is_a?(ContributionResource) }.size
         intended_children_count = change_set.model.intended_children_count.to_i
 
         if change_set.model.intended_children_count.blank? && change_set.model.validation_status_for_aapb.blank?
