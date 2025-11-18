@@ -183,6 +183,10 @@ externalMariadb:
     database: hyrax
 
 redis:
+  image:
+    registry: docker.io
+    repository: bitnamilegacy/redis
+    tag: 6.2.9-debian-11-r0
   enabled: false
   cluster:
     enabled: false
