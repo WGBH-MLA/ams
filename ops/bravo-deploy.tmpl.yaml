@@ -120,7 +120,7 @@ extraEnvVars: &envVars
   - name: SIDEKIQ_CONCURRENCY
     value: "10"
   - name: SIDEKIQ_REDIS_URL
-    value: "redis://:prod@ams-prod-redis-master:6379/0"
+    value: "redis://:prod@ams-prod-redis-master.ams-prod.svc.cluster.local:6379/0"
   - name: AWS_ACCESS_KEY
     value: "AKIAIWFN3WW3WBIMKNCQ"
   - name: MAIL_DELIVERY_METHOD
