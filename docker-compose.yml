@@ -37,7 +37,7 @@ networks:
 
 services:
   postgres:
-    image: postgres:latest
+    image: postgres:14
     env_file:
       - .env
       - .env.development
