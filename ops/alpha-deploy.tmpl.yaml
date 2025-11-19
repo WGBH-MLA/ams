@@ -92,7 +92,7 @@ extraEnvVars: &envVars
   - name: PRODUCTION_HOST
     value: "ams2.wgbh-mla.org"
   - name: RAILS_CACHE_STORE_URL
-    value: redis://:prod@ams-prod-redis-master.ams-prod.svc.cluster.local:6379/ams-prod
+    value: redis://:prod@ams-prod-redis-master:6379/ams-prod
   - name: RAILS_ENV
     value: production
   - name: RAILS_LOG_TO_STDOUT
@@ -102,13 +102,13 @@ extraEnvVars: &envVars
   - name: RAILS_SERVE_STATIC_FILES
     value: "true"
   - name: REDIS_HOST
-    value: ams-prod-redis-master.ams-prod.svc.cluster.local
+    value: ams-prod-redis-master
   - name: REDIS_PASSWORD
     value: prod
   - name: REDIS_PREFIX
     value: ams-prod
   - name: REDIS_SERVER
-    value: redis://:prod@ams-prod-redis-master.ams-prod.svc.cluster.local:6379
+    value: redis://:prod@ams-prod-redis-master:6379
   - name: S3_EXPORT_BUCKET
     value: "ams-edge.wgbh-mla.org"
   - name: S3_EXPORT_DIR
@@ -124,7 +124,7 @@ extraEnvVars: &envVars
   - name: SIDEKIQ_CONCURRENCY
     value: "10"
   - name: SIDEKIQ_REDIS_URL
-    value: "redis://:prod@ams-prod-redis-master.ams-prod.svc.cluster.local:6379/0"
+    value: "redis://:prod@ams-prod-redis-master:6379/0"
   - name: SMTP_ADDRESS
     value: "email-smtp.us-east-1.amazonaws.com"
   - name: SMTP_AUTHENTICATION

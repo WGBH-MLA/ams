@@ -87,7 +87,7 @@ extraEnvVars: &envVars
   - name: LD_LIBRARY_PATH
     value: /app/fits/tools/mediainfo/linux
   - name: RAILS_CACHE_STORE_URL
-    value: redis://:demo@ams-demo-redis-master.ams-demo.svc.cluster.local:6379/ams-demo
+    value: redis://:demo@ams-demo-redis-master:6379/ams-demo
   - name: RAILS_ENV
     value: production
   - name: RAILS_LOG_TO_STDOUT
@@ -97,11 +97,11 @@ extraEnvVars: &envVars
   - name: RAILS_SERVE_STATIC_FILES
     value: "true"
   - name: REDIS_HOST
-    value: ams-demo-redis-master.ams-demo.svc.cluster.local
+    value: ams-demo-redis-master
   - name: REDIS_PREFIX
     value: ams-demo
   - name: REDIS_SERVER
-    value: redis://:demo@ams-demo-redis-master.ams-demo.svc.cluster.local:6379
+    value: redis://:demo@ams-demo-redis-master:6379
   - name: SENTRY_DSN
     value: https://6f6e6b5f54234b5bb2218786c3493a37@o1008683.ingest.sentry.io/6745030
   - name: SENTRY_ENVIRONMENT
@@ -148,10 +148,6 @@ worker:
     fsGroupChangePolicy: "OnRootMismatch"
   extraVolumeMounts: *volMounts
   extraEnvVars: *envVars
-  dnsConfig:
-    options:
-      - name: ndots
-        value: "1"
 
 importWorker:
   enabled: false
@@ -167,11 +163,6 @@ podSecurityContext:
   runAsGroup: 101
   fsGroup: 101
   fsGroupChangePolicy: "OnRootMismatch"
-
-dnsConfig:
-  options:
-    - name: ndots
-      value: "1"
 
 embargoRelease:
   enabled: false

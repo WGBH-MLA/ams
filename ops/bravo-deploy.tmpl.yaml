@@ -86,7 +86,7 @@ extraEnvVars: &envVars
   - name: LD_LIBRARY_PATH
     value: /app/fits/tools/mediainfo/linux
   - name: RAILS_CACHE_STORE_URL
-    value: redis://:prod@ams-prod-redis-master.ams-prod.svc.cluster.local:6379/ams-prod
+    value: redis://:prod@ams-prod-redis-master:6379/ams-prod
   - name: RAILS_ENV
     value: production
   - name: RAILS_LOG_TO_STDOUT
@@ -96,13 +96,13 @@ extraEnvVars: &envVars
   - name: RAILS_SERVE_STATIC_FILES
     value: "true"
   - name: REDIS_HOST
-    value: ams-prod-redis-master.ams-prod.svc.cluster.local
+    value: ams-prod-redis-master
   - name: REDIS_PREFIX
     value: ams-prod
   - name: REDIS_PASSWORD
     value: prod
   - name: REDIS_SERVER
-    value: redis://:prod@ams-prod-redis-master.ams-prod.svc.cluster.local:6379
+    value: redis://:prod@ams-prod-redis-master:6379
   - name: SENTRY_DSN
     value: https://6f6e6b5f54234b5bb2218786c3493a37@o1008683.ingest.sentry.io/6745030
   - name: SENTRY_ENVIRONMENT
@@ -120,7 +120,7 @@ extraEnvVars: &envVars
   - name: SIDEKIQ_CONCURRENCY
     value: "10"
   - name: SIDEKIQ_REDIS_URL
-    value: "redis://:prod@ams-prod-redis-master.ams-prod.svc.cluster.local:6379/0"
+    value: "redis://:prod@ams-prod-redis-master:6379/0"
   - name: AWS_ACCESS_KEY
     value: "AKIAIWFN3WW3WBIMKNCQ"
   - name: MAIL_DELIVERY_METHOD
