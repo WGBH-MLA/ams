@@ -148,6 +148,10 @@ worker:
     fsGroupChangePolicy: "OnRootMismatch"
   extraVolumeMounts: *volMounts
   extraEnvVars: *envVars
+  dnsConfig:
+    options:
+      - name: ndots
+        value: "1"
 
 importWorker:
   enabled: false
@@ -163,6 +167,11 @@ podSecurityContext:
   runAsGroup: 101
   fsGroup: 101
   fsGroupChangePolicy: "OnRootMismatch"
+
+dnsConfig:
+  options:
+    - name: ndots
+      value: "1"
 
 embargoRelease:
   enabled: false
