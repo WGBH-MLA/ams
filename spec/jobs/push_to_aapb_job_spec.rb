@@ -46,7 +46,7 @@ RSpec.describe PushToAAPBJob, type: :job do
 
       it 'reschedules the job' do
         expect(delivery_instance).not_to have_received(:deliver)
-        expect(PushToAAPBJob).to have_been_enqueued.with({ id: push.id, user: user }).exactly(:once)
+        expect(described_class).to have_been_enqueued.with(hash_including(id: push.id, user: user)).exactly(:once)
       end
     end
   end

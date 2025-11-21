@@ -17,7 +17,7 @@ then
 fi
 release_name="${1}"
 namespace="${2}"
-
+# https://github.com/samvera/hyrax/blame/1225474d93a21356af5d3246549f1d53aaa5fe57/chart/hyrax/Chart.yaml
 CHART_VERSION="${CHART_VERSION:-1.6.0}"
 
 DEPLOY_IMAGE="${DEPLOY_IMAGE:-ghcr.io/samvera/hyku}"
