@@ -5,8 +5,8 @@ class PushToAAPBJob < ApplicationJob
 
   rescue_from StandardError do |error|
     Rails.logger.error "#{error.class}: #{error.message}\n\nBacktrace:\n#{error.backtrace.join("\n")}"
-    notification.send_failure(error_message: error.message)
-  rescue => secondary_error
+    failure_notification.send_failure(error_message: error.message)
+  rescue StandardError => secondary_error
     # Double rescue!! Sometimes the rescue_from block throws an error.
     # NOTE: Unrescued errors will be retried by Sidekiq, which we don't want to
     # do if there is no chance of success.
@@ -27,7 +27,7 @@ class PushToAAPBJob < ApplicationJob
       # Check if the job has exceeded max retries
       if retry_count >= max_retries
         Rails.logger.error "Max retries exceeded for Push ID: #{id}"
-        notification.send_failure(error_message: "Max retries exceeded for Push ID: #{id}")
+        failure_notification.send_failure(error_message: "Max retries exceeded for Push ID: #{id}")
         return
       end
 
@@ -45,11 +45,11 @@ class PushToAAPBJob < ApplicationJob
     end
   rescue ActiveRecord::RecordNotFound => e
     Rails.logger.error "Push not found: #{id}"
-    notification.send_failure(error_message: "Push #{id} not found")
+    failure_notification.send_failure(error_message: "Push #{id} not found")
     raise
   rescue StandardError => e
     Rails.logger.error "Error processing Push ID: #{id} - #{e.message}"
-    notification.send_failure(error_message: e.message)
+    failure_notification.send_failure(error_message: e.message)
     raise
   end
 
@@ -78,5 +78,11 @@ class PushToAAPBJob < ApplicationJob
 
     def notification
       @notification ||= AMS::Export::Notification::PushToAAPBNotification.new(user: named_arguments[:user], delivery: delivery)
+    end
+
+    # Notification without delivery dependency, used for failure notifications
+    # that may occur before the delivery object can be created.
+    def failure_notification
+      @failure_notification ||= AMS::Export::Notification::PushToAAPBNotification.new(user: named_arguments[:user])
     end
 end
