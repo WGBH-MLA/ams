@@ -1,4 +1,5 @@
 require 'rails_helper'
+include ActiveJob::TestHelper
 
 RSpec.describe PushesController, type: :controller do
   # Use a real memoized method to generate test user once.
@@ -103,12 +104,14 @@ RSpec.describe PushesController, type: :controller do
     before do
       ActiveJob::Base.queue_adapter = :test
       post :create, params: params
-      allow(PushToAAPBJob).to receive(:perform_later).with(expected_job_params)
+      allow(PushToAAPBJob).to receive(:perform_later).with(expected_job_params).and_call_original
     end
 
     it 'creates a new Push instance and calls :perform_later on ' \
       'ExportRecordJob with correct search params' do
-      expect(SavePushJob).to have_been_enqueued.with(push: Push.last, pushed_id_csv: pushed_id_csv).exactly(:once)
+      expect(Rails.configuration.active_job.queue_adapter).to be_an_instance_of(ActiveJob::QueueAdapters::TestAdapter)
+      expect(SavePushJob).to have_been_enqueued.with(hash_including(push: Push.last, pushed_id_csv: pushed_id_csv)).exactly(:once)
+      perform_enqueued_jobs
       expect(PushToAAPBJob).to have_been_enqueued.with(expected_job_params).exactly(:once)
     end
   end

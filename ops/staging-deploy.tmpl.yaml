@@ -173,6 +173,10 @@ mariadb:
       size: 8Gi
 
 redis:
+  image:
+    registry: docker.io
+    repository: bitnamilegacy/redis
+    tag: 6.2.9-debian-11-r0
   cluster:
     enabled: false
   password: staging

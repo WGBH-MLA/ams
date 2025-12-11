@@ -13,7 +13,10 @@ fi
 
 if [[ -n $AAPB_HOST ]]
 then
-    mkdir ~/.ssh && ssh-keyscan $AAPB_HOST >> ~/.ssh/known_hosts
+  mkdir -p ~/.ssh && \
+  for i in 1 2 3 4 5; do \
+    ssh-keyscan $AAPB_HOST >> ~/.ssh/known_hosts 2>&1 && break || sleep 2; \
+  done
 fi
 
 exec bundle exec puma -v -b tcp://0.0.0.0:3000
