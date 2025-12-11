@@ -55,8 +55,12 @@ RSpec.describe ExportRecordsJob, type: :job do
     allow(delivery_class).to      receive(:new).
                                   with(export_results: results_instance).
                                   and_return(delivery_instance)
+    # Allow notification to be created with or without delivery (for failure notifications)
     allow(notification_class).to  receive(:new).
                                   with(user: user, delivery: delivery_instance).
+                                  and_return(notification_instance)
+    allow(notification_class).to  receive(:new).
+                                  with(user: user).
                                   and_return(notification_instance)
 
     # Mock the Rails logger
