@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe AMS::Migrations::Audit::AuditingService do
-  let(:asset) { create(:asset) }
+  let(:asset) { create(:asset_resource) }
   let(:user) { create(:user) }
   let(:comparison_report) {
     { "id" => asset.id,

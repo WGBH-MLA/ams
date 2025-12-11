@@ -177,11 +177,11 @@ module Ams
         intended_children_count = change_set.model.intended_children_count.to_i
 
         if change_set.model.intended_children_count.blank? && change_set.model.validation_status_for_aapb.blank?
-          change_set.model.validation_status_for_aapb = [Asset::VALIDATION_STATUSES[:status_not_validated]]
+          change_set.model.validation_status_for_aapb = [AssetResource::VALIDATION_STATUSES[:status_not_validated]]
         elsif current_children_count < intended_children_count
-          change_set.model.validation_status_for_aapb = [Asset::VALIDATION_STATUSES[:missing_children]]
+          change_set.model.validation_status_for_aapb = [AssetResource::VALIDATION_STATUSES[:missing_children]]
         else
-          change_set.model.validation_status_for_aapb = [Asset::VALIDATION_STATUSES[:valid]]
+          change_set.model.validation_status_for_aapb = [AssetResource::VALIDATION_STATUSES[:valid]]
         end
       end
 

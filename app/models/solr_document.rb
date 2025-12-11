@@ -81,11 +81,11 @@ class SolrDocument
   end
 
   def physical_instantiations
-    members only: [PhysicalInstantiation, PhysicalInstantiationResource]
+    members only: [PhysicalInstantiationResource]
   end
 
   def digital_instantiations
-    members only: [DigitalInstantiation, DigitalInstantiationResource]
+    members only: [DigitalInstantiationResource]
   end
 
   def asset_types

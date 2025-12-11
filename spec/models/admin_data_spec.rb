@@ -18,7 +18,7 @@ RSpec.describe AdminData, type: :model do
   end
 
   context 'when it has an associated Fedora object and Solr document (as it always should)' do
-    let!(:asset) { create(:asset) }
+    let!(:asset) { create(:asset_resource) }
     let(:admin_data) { AdminData.find_by_gid(asset.admin_data_gid) }
 
     describe '#solr_doc' do
