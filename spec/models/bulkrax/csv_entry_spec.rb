@@ -3,6 +3,8 @@
 
 require 'rails_helper'
 
+return unless defined?(BULKRAX_ENABLED) && BULKRAX_ENABLED
+
 module Bulkrax
   # TODO: Handle resolving these specs in https://github.com/notch8/ams/issues/105
   RSpec.describe CsvEntry, type: :model, skip: 'Skipping CsvEntry tests' do

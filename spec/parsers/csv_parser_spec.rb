@@ -2,6 +2,8 @@
 
 require 'rails_helper'
 
+return unless defined?(BULKRAX_ENABLED) && BULKRAX_ENABLED
+
 RSpec.describe CsvParser do
   describe '#create_works' do
     subject { described_class.new(importer) }

@@ -2,6 +2,8 @@
 
 require 'rails_helper'
 
+return unless defined?(BULKRAX_ENABLED) && BULKRAX_ENABLED
+
 RSpec.describe PbcoreManifestParser do
   describe '#create_works' do
     subject(:xml_parser) { described_class.new(importer) }

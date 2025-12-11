@@ -2,6 +2,8 @@
 
 require 'rails_helper'
 
+return unless defined?(BULKRAX_ENABLED) && BULKRAX_ENABLED
+
 module Bulkrax
   RSpec.describe PbcoreXmlEntry, type: :model do
     let(:path) { './spec/fixtures/bulkrax/xml/pbcore_doc.xml' }
