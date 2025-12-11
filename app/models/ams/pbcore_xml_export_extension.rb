@@ -153,7 +153,7 @@ module AMS::PbcoreXmlExportExtension
   end
 
   def add_contributions(xml)
-    members(only: Contribution).each do |contribution|
+    members(only: ContributionResource).each do |contribution|
       xml.pbcoreContributor do |contributor_node|
         contributor_node.contributor { contributor_node.text(contribution&.contributor&.first) }
 

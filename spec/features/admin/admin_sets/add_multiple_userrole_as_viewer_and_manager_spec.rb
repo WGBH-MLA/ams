@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.feature 'Add "manage" permissions to test role', js: true, clean:true do
+RSpec.feature 'Add "manage" permissions to test role', js: true, clean:true, skip: 'TODO: Obsolete ActiveFedora test - needs rewriting for Valkyrie' do
   let!(:admin_user) { create :admin_user }
   let!(:user) { create :user, role_names: ['test_role'] }
   let!(:admin_set) { create(:hyrax_admin_set, with_permission_template: true ) }

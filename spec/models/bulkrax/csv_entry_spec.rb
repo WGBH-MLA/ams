@@ -120,7 +120,7 @@ module Bulkrax
     describe 'exporting by Asset worktype' do
       subject { described_class.new(importerexporter: exporter, identifier: asset.id, parsed_metadata: {}) }
       let(:exporter) { FactoryBot.create(:bulkrax_exporter_worktype, parser_klass: 'CsvParser', export_source: 'Asset') }
-      let(:asset) { FactoryBot.create(:asset, :with_two_physical_instantiations) }
+      let(:asset) { FactoryBot.create(:asset_resource, :with_two_physical_instantiations) }
       let(:headers) { exporter.parser.export_headers }
 
       before do
