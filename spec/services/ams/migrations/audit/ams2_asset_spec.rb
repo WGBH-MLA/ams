@@ -27,21 +27,21 @@ RSpec.describe AMS::Migrations::Audit::AMS2Asset, reset_data: false do
     end
 
     describe '#digital_instantiations_count' do
-      let(:expected_count) { @asset.all_members(only: DigitalInstantiation).count }
+      let(:expected_count) { @asset.all_members(only: DigitalInstantiationResource).count }
       it 'returns the number of digital instantiations' do
         expect(ams2_asset.digital_instantiations_count).to eq expected_count
       end
     end
 
     describe '#physical_instantiations_count' do
-      let(:expected_count) { @asset.all_members(only: PhysicalInstantiation).count }
+      let(:expected_count) { @asset.all_members(only: PhysicalInstantiationResource).count }
       it 'returns the number of physical instantiations' do
         expect(ams2_asset.physical_instantiations_count).to eq expected_count
       end
     end
 
     describe '#essence_tracks_count' do
-      let(:expected_count) { @asset.all_members(only: EssenceTrack).count }
+      let(:expected_count) { @asset.all_members(only: EssenceTrackResource).count }
       it 'returns the number of essence tracks' do
         expect(ams2_asset.essence_tracks_count).to eq expected_count
       end

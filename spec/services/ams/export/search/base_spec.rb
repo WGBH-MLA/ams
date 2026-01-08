@@ -12,7 +12,7 @@ RSpec.describe AMS::Export::Search::Base do
       let(:searchable_title) { Faker::Lorem.sentence }
       let(:search_params) { { q: searchable_title } }
       let(:solr_documents) { subject.solr_documents }
-      let(:asset_ids) { Set.new(assets.map(&:id)) }
+      let(:asset_ids) { Set.new(assets.map { |a| a.id.to_s }) }
       let(:solr_doc_ids) { Set.new(solr_documents.map(&:id)) }
 
       it 'is expected to return solr documents for the found Asset records' do
