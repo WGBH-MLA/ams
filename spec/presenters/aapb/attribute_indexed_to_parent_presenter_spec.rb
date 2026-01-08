@@ -8,8 +8,8 @@ RSpec.describe AAPB::AttributeIndexedToParentPresenter do
   let(:physical_instantiation) { create(:physical_instantiation_resource) }
   let(:digital_instantiation) { create(:digital_instantiation_resource) }
 
-  let(:pi_presenter) { Hyrax::PhysicalInstantiationPresenter.new(SolrDocument.new(physical_instantiation.to_solr), ability, request) }
-  let(:di_presenter) { Hyrax::DigitalInstantiationPresenter.new(SolrDocument.new(digital_instantiation.to_solr), ability, request) }
+  let(:pi_presenter) { Hyrax::PhysicalInstantiationResourcePresenter.new(SolrDocument.new(physical_instantiation.to_solr), ability, request) }
+  let(:di_presenter) { Hyrax::DigitalInstantiationResourcePresenter.new(SolrDocument.new(digital_instantiation.to_solr), ability, request) }
 
   context "PhysicalInstantiation" do
     it "#attribute_indexed_to_parent?" do

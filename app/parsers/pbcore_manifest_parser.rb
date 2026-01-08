@@ -131,7 +131,7 @@ class PbcoreManifestParser < Bulkrax::XmlParser
 
     records.sort_by! do |record|
       csv_row = manifest_hash[record[:filename]]
-      asset_id = csv_row['Asset.id'].strip if csv_row.keys.include?('Asset.id')
+      asset_id = extract_id_value(csv_row['Asset.id']) if csv_row.keys.include?('Asset.id')
 
       asset_id
     end
@@ -139,22 +139,29 @@ class PbcoreManifestParser < Bulkrax::XmlParser
     records.each_with_index do |file, index|
       prev_index = (index - 1).positive? ? index - 1 : 0
       prev_csv_row = manifest_hash[records[prev_index][:filename]]
-      prev_asset_id = prev_csv_row['Asset.id'].strip
+      prev_asset_id = extract_id_value(prev_csv_row['Asset.id'])
       csv_row = manifest_hash[file[:filename]]
-      asset_id = csv_row['Asset.id'].strip if csv_row.keys.include?('Asset.id')
-      asset = Asset.find(asset_id)
+      asset_id = extract_id_value(csv_row['Asset.id']) if csv_row.keys.include?('Asset.id')
+      asset = find_asset_resource(asset_id)
       manifest_filename = get_manifest_filename(csv_row)
-      digital_instantiation = DigitalInstantiation.where(local_instantiation_identifier: manifest_filename).first
+      digital_instantiation = find_digital_instantiation(manifest_filename)
       pbcore = PBCore::Instantiation.parse(file[:data])
       tracks = pbcore.essence_tracks
 
-      asset_bulkrax_identifier =  if asset.bulkrax_identifier
+      asset_bulkrax_identifier =  if asset.bulkrax_identifier.present?
                                     asset.bulkrax_identifier
                                   else
                                     Bulkrax.fill_in_blank_source_identifiers.call("Asset", asset_id, 1)
                                   end
-      asset.update(bulkrax_identifier: asset_bulkrax_identifier) if asset.bulkrax_identifier.nil?
-      add_object(asset.attributes.symbolize_keys, 'Asset', nil) if index == 0 || prev_asset_id != asset_id
+
+      # Update asset with bulkrax_identifier if it doesn't have one
+      if asset.bulkrax_identifier.blank?
+        updated_asset = asset.dup
+        updated_asset.bulkrax_identifier = asset_bulkrax_identifier
+        asset = Hyrax.persister.save(resource: updated_asset)
+      end
+
+      add_object(asset_to_hash(asset), 'Asset', nil) if index == 0 || prev_asset_id != asset_id
 
       di_bulkrax_identifier = build_digital_instantiations(file, csv_row, digital_instantiation, index, asset)
       # essence tracks don't have a unique identifier so importing the same one repeatedly, will create multiple identical models
@@ -212,5 +219,44 @@ class PbcoreManifestParser < Bulkrax::XmlParser
         md5: csv_row["DigitalInstantiation.md5"]
       ).gid
     end
+  end
+
+  # Extract ID value from either a string or Valkyrie::ID object
+  def extract_id_value(value)
+    return nil if value.nil?
+    return value.to_s.strip if value.is_a?(Valkyrie::ID)
+    value.to_s.strip
+  end
+
+  # Find AssetResource using Valkyrie
+  def find_asset_resource(asset_id)
+    return nil if asset_id.blank?
+    Hyrax.query_service.find_by(id: asset_id)
+  rescue Valkyrie::Persistence::ObjectNotFoundError
+    nil
+  end
+
+  # Find DigitalInstantiationResource by local_instantiation_identifier using Solr
+  def find_digital_instantiation(filename)
+    return nil if filename.blank?
+
+    solr_results = ActiveFedora::Base.search_with_conditions(
+      { local_instantiation_identifier_ssi: filename },
+      { rows: 1 }
+    )
+    return nil if solr_results.empty?
+
+    Hyrax.query_service.find_by(id: solr_results.first['id'])
+  rescue Valkyrie::Persistence::ObjectNotFoundError
+    nil
+  end
+
+  # Convert AssetResource to hash for legacy compatibility
+  def asset_to_hash(asset)
+    hash = {}
+    asset.class.schema.each_key do |key|
+      hash[key] = asset.public_send(key) if asset.respond_to?(key)
+    end
+    hash.symbolize_keys
   end
 end

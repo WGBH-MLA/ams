@@ -155,6 +155,38 @@ class CsvParser < Bulkrax::CsvParser
 
   private
 
+  # Find AssetResource by ID using Valkyrie
+  def find_asset_by_id(asset_id)
+    Hyrax.query_service.find_by(id: asset_id)
+  rescue Valkyrie::Persistence::ObjectNotFoundError
+    nil
+  end
+
+  # Find AssetResource by bulkrax_identifier using Solr
+  def find_asset_by_bulkrax_identifier(bulkrax_identifier)
+    solr_results = ActiveFedora::Base.search_with_conditions(
+      { bulkrax_identifier_ssi: bulkrax_identifier },
+      { rows: 1 }
+    )
+    return nil if solr_results.empty?
+
+    Hyrax.query_service.find_by(id: solr_results.first['id'])
+  rescue Valkyrie::Persistence::ObjectNotFoundError
+    nil
+  end
+
+  # Map old model names to new Resource model names
+  def map_legacy_model_name(model_name)
+    legacy_mapping = {
+      'Asset' => 'AssetResource',
+      'PhysicalInstantiation' => 'PhysicalInstantiationResource',
+      'DigitalInstantiation' => 'DigitalInstantiationResource',
+      'EssenceTrack' => 'EssenceTrackResource',
+      'Contribution' => 'ContributionResource'
+    }
+    legacy_mapping[model_name] || model_name
+  end
+
   def validate_csv_headers(headers, file_for_import)
     csv_headers = headers - ['annotation', 'children', 'id', 'model', 'ref', 'source', 'version']
     unknown_headers = []
@@ -167,14 +199,22 @@ class CsvParser < Bulkrax::CsvParser
 
   def valid_header_key?(key)
     klass, value = key.split('.')
-    object_class = klass if Hyrax.config.curation_concerns.include?(klass.constantize)
+    resource_class_name = map_legacy_model_name(klass)
+
+    begin
+      resource_class = resource_class_name.constantize
+      object_class = klass if Hyrax.config.curation_concerns.include?(resource_class)
+    rescue NameError
+      return false
+    end
+
     extra_attr = if object_class == "Asset"
                   (AdminData.attribute_names.dup - ['created_at', 'updated_at'] +
                     Annotation.ingestable_attributes).uniq
                 elsif object_class.include?("Instantiation")
                   (InstantiationAdminData.attribute_names.dup - ['created_at', 'updated_at'])
                 end
-    fedora_attr = object_class.constantize.properties.collect { |p| p.first.dup }.push('id'.dup)
+    fedora_attr = resource_class.properties.collect { |p| p.first.dup }.push('id'.dup)
     attr = extra_attr.nil? ? fedora_attr : fedora_attr.concat(extra_attr.deep_dup)
     attr.collect { |a| a.prepend(object_class + ".") }
     [[object_class] + attr].flatten.include?(key)
@@ -195,7 +235,7 @@ class CsvParser < Bulkrax::CsvParser
     full_row = full_row.select { |k, v| !k.nil? }
     full_row_to_hash = full_row.to_hash
     asset_id = full_row_to_hash['Asset.id'].strip if full_row_to_hash.keys.include?('Asset.id')
-    asset = Asset.find(asset_id) if asset_id.present?
+    asset = find_asset_by_id(asset_id) if asset_id.present?
 
     full_row_to_hash.keys.each do |key|
       standarized_key = key_without_numbers(key)
@@ -204,7 +244,7 @@ class CsvParser < Bulkrax::CsvParser
         add_object(current_object.symbolize_keys)
         key_count = objects.select { |obj| obj[:model] == standarized_key }.count + 1
         bulkrax_identifier = full_row_to_hash["#{standarized_key}.bulkrax_identifier_#{key_count}"] || Bulkrax.fill_in_blank_source_identifiers.call(standarized_key, asset_id, key_count)
-        asset = Asset.where(bulkrax_identifier: [bulkrax_identifier]).first if asset.nil?
+        asset = find_asset_by_bulkrax_identifier(bulkrax_identifier) if asset.nil?
         admin_data_gid = if standarized_key == 'Asset'
           if asset.present?
             asset.admin_data.update!(bulkrax_importer_id: importer.id)

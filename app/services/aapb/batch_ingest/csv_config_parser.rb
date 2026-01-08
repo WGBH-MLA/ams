@@ -3,9 +3,22 @@ module AAPB
     class CSVConfigTree < Struct.new(:object_class, :ingest_type, :attributes, :children)
       include Enumerable
 
+      # Map old model names to new Resource model names
+      def self.map_legacy_model_name(model_name)
+        legacy_mapping = {
+          'Asset' => 'AssetResource',
+          'PhysicalInstantiation' => 'PhysicalInstantiationResource',
+          'DigitalInstantiation' => 'DigitalInstantiationResource',
+          'EssenceTrack' => 'EssenceTrackResource',
+          'Contribution' => 'ContributionResource'
+        }
+        legacy_mapping[model_name] || model_name
+      end
+
       def self.new_from_hash(hash)
         model = hash.fetch("object_class")
-        if klass = model.constantize
+        resource_model = map_legacy_model_name(model)
+        if klass = resource_model.constantize
 
           children = hash.fetch("children").map { |k| CSVConfigTree.new_from_hash(k) } || {} if hash.keys.include?("children")
 
@@ -40,6 +53,8 @@ module AAPB
 
       def header_keys
         attr = []
+        resource_class_name = self.class.map_legacy_model_name(object_class)
+
         attr = if attributes.any?
                  attributes.deep_dup
                else
@@ -49,7 +64,7 @@ module AAPB
                  elsif object_class.include?("Instantiation")
                    extra_attr=(InstantiationAdminData.attribute_names.dup - ['id', 'created_at', 'updated_at'])
                  end
-                 fedora_attr=object_class.constantize.properties.collect { |p| p.first.dup }
+                 fedora_attr=resource_class_name.constantize.properties.collect { |p| p.first.dup }
                  fedora_attr.concat(extra_attr.deep_dup)
                end
 

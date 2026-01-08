@@ -10,7 +10,7 @@ module Bulkrax
 
     describe 'successful job object removed' do
       before do
-        work = instance_double(Asset, id: 1)
+        work = instance_double(AssetResource, id: 1)
         factory = instance_double("Bulkrax::ObjectFactory")
         asset_destroyer = AMS::AssetDestroyer.new
         allow(work).to receive(:is_a?)
