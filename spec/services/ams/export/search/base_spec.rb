@@ -8,7 +8,7 @@ RSpec.describe AMS::Export::Search::Base do
   describe '#solr_documents' do
     context 'when searching for Asset records' do
       # create assets first with let!
-      let!(:assets) { create_list(:asset, rand(11..14), title: [ searchable_title ] ) }
+      let!(:assets) { create_list(:asset_resource, rand(11..14), title: [ searchable_title ] ) }
       let(:searchable_title) { Faker::Lorem.sentence }
       let(:search_params) { { q: searchable_title } }
       let(:solr_documents) { subject.solr_documents }

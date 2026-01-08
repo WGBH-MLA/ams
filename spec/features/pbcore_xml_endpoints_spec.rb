@@ -10,7 +10,7 @@ RSpec.feature 'PBCore XML endpoints' do
 
     describe '/concerns/asset_resources/[id].xml' do
       before do
-        visit "#{url_for(asset_resource)}.xml"
+        visit "#{hyrax_asset_resource_path(asset_resource)}.xml"
       end
 
       it 'returns the PBCore XML' do

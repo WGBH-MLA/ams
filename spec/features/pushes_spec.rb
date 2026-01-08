@@ -11,7 +11,11 @@ RSpec.describe "Pushes features", type: :controller, js: true do
   let!(:asset_resource3) { create(:asset_resource, depositor: user.user_key, needs_update: true, validation_status_for_aapb: [AssetResource::VALIDATION_STATUSES[:valid]]) }
 
   # Login/logout before/after each test.
-  before { login_as(user) }
+  before do
+    login_as(user)
+    # Stub thumbnail rendering to avoid missing ActiveFedora partial
+    allow_any_instance_of(ActionView::Base).to receive(:render_thumbnail_tag).and_return('')
+  end
   after { Warden.test_reset! }
 
   context '#pushes' do

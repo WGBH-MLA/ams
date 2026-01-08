@@ -7,7 +7,7 @@ RSpec.describe PbcoreManifestParser do
     subject(:xml_parser) { described_class.new(importer) }
     let(:importer) { FactoryBot.create(:bulkrax_importer_pbcore_manifest_xml) }
     let(:entry) { FactoryBot.create(:bulkrax_entry, importerexporter: importer) }
-    let!(:asset) { FactoryBot.create(:asset, id: 'cpb-aacip-20-000000hr')}
+    let!(:asset) { FactoryBot.create(:asset_resource, id: 'cpb-aacip-20-000000hr')}
 
     before do
       Bulkrax.field_mappings['PbcoreManifestParser'] = {

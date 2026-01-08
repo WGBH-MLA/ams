@@ -5,7 +5,7 @@ RSpec.describe AMS::Export::Results::PhysicalInstantiationsCSVResults do
     let(:assets) do
       Array.new(rand(1..3)) do
         create(:asset_resource,
-          ordered_members: Array.new(rand(1..3)) do
+          members: Array.new(rand(1..3)) do
             create(:physical_instantiation_resource)
           end
         )

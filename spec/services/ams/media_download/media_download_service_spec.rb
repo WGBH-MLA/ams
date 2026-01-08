@@ -4,7 +4,7 @@ RSpec.describe AMS::MediaDownload::MediaDownloadService do
   subject { service }
 
   let(:admin_data) { create(:admin_data, :one_sony_ci_id) }
-  let(:asset) { create(:asset, with_admin_data: admin_data.gid) }
+  let(:asset) { create(:asset_resource, with_admin_data: admin_data.gid) }
   # Pared down response from Sony Ci. For this spec, we just really need the
   # 'id' and 'location'.
   let(:fake_sony_ci_api_result) {

@@ -2,7 +2,7 @@ require 'rails_helper'
 
 describe SolrDocument do
   let(:solr_document) { described_class.new }
-  let(:asset) { create(:asset_resource, :with_physical_digital_and_essence_track) }
+  let(:asset) { create(:asset_resource, :with_physical_digital_and_essence_track_resource) }
   let(:asset_solr_doc) { SolrDocument.find(asset.id) }
 
   describe '#title' do
@@ -141,7 +141,7 @@ describe SolrDocument do
   describe '#members' do
     context 'with > 10 members (i.e. the default row limit)' do
       let(:asset) {
-        create(:asset_resource, ordered_members: [
+        create(:asset_resource, members: [
             # 11 members across 3 different types
             create_list(:contribution_resource, 9),
             create(:digital_instantiation_resource),
