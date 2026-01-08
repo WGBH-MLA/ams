@@ -164,9 +164,9 @@ class CsvParser < Bulkrax::CsvParser
 
   # Find AssetResource by bulkrax_identifier using Solr
   def find_asset_by_bulkrax_identifier(bulkrax_identifier)
-    solr_results = ActiveFedora::Base.search_with_conditions(
-      { bulkrax_identifier_ssi: bulkrax_identifier },
-      { rows: 1 }
+    solr_results = Hyrax::SolrService.query(
+      "bulkrax_identifier_ssi:#{bulkrax_identifier}",
+      rows: 1
     )
     return nil if solr_results.empty?
 

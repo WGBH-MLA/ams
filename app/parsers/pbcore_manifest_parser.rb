@@ -240,9 +240,9 @@ class PbcoreManifestParser < Bulkrax::XmlParser
   def find_digital_instantiation(filename)
     return nil if filename.blank?
 
-    solr_results = ActiveFedora::Base.search_with_conditions(
-      { local_instantiation_identifier_ssi: filename },
-      { rows: 1 }
+    solr_results = Hyrax::SolrService.query(
+      "local_instantiation_identifier_ssi:#{filename}",
+      rows: 1
     )
     return nil if solr_results.empty?
 
