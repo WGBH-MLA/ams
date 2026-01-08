@@ -64,7 +64,7 @@ module AAPB
                  elsif object_class.include?("Instantiation")
                    extra_attr=(InstantiationAdminData.attribute_names.dup - ['id', 'created_at', 'updated_at'])
                  end
-                 fedora_attr=resource_class_name.constantize.properties.collect { |p| p.first.dup }
+                 fedora_attr=resource_class_name.constantize.fields.map { |f| f.to_s.dup }
                  fedora_attr.concat(extra_attr.deep_dup)
                end
 

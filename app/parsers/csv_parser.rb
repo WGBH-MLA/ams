@@ -214,7 +214,7 @@ class CsvParser < Bulkrax::CsvParser
                 elsif object_class.include?("Instantiation")
                   (InstantiationAdminData.attribute_names.dup - ['created_at', 'updated_at'])
                 end
-    fedora_attr = resource_class.properties.collect { |p| p.first.dup }.push('id'.dup)
+    fedora_attr = resource_class.fields.map { |f| f.to_s.dup }.push('id'.dup)
     attr = extra_attr.nil? ? fedora_attr : fedora_attr.concat(extra_attr.deep_dup)
     attr.collect { |a| a.prepend(object_class + ".") }
     [[object_class] + attr].flatten.include?(key)

@@ -122,8 +122,17 @@ module AAPB
         !attribute.nil? && attribute != "id" && Annotation.ingestable_attributes.include?(attribute)
       end
 
-      def multi_value_fedora_attribute?(attribute,klass)
-        klass.constantize.properties[attribute] && klass.constantize.properties[attribute].multiple?
+      def multi_value_fedora_attribute?(attribute, klass)
+        resource_class = klass.constantize
+        return false unless resource_class.respond_to?(:schema)
+        return false unless resource_class.fields.include?(attribute.to_sym)
+
+        schema_key = resource_class.schema.key(attribute.to_sym)
+        return false unless schema_key
+
+        # Check if field has multiple: true in its metadata
+        meta = schema_key.meta
+        meta && meta.fetch(:multiple, false) == true
       end
 
       def instantiation_multi_attr?(attribute,klass)
