@@ -164,7 +164,7 @@ describe SolrDocument do
   end
 
   describe '#intended_children_count' do
-    let(:asset) { create(:asset_resource, :with_physical_digital_and_essence_track, intended_children_count: '3') }
+    let(:asset) { create(:asset_resource, :with_physical_digital_and_essence_track_resource, intended_children_count: '3') }
 
     it 'indexes as an Integer' do
       expect(asset_solr_doc.intended_children_count).to eq(asset.intended_children_count.to_i)
@@ -172,7 +172,7 @@ describe SolrDocument do
   end
 
   describe '#validation_status_for_aapb' do
-    let(:asset) { create(:asset_resource, :with_physical_digital_and_essence_track, validation_status_for_aapb: ['test']) }
+    let(:asset) { create(:asset_resource, :with_physical_digital_and_essence_track_resource, validation_status_for_aapb: ['test']) }
 
     it 'indexes the value as an Array' do
       # Use #to_a since asset.validation_status_for_aapb is an ActiveTriples::Relation, which causes the

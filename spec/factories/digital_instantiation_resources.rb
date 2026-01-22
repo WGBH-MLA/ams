@@ -45,15 +45,13 @@ FactoryBot.define do
       else
         instantiation_admin_data = create(:instantiation_admin_data)
         work.instantiation_admin_data_gid = instantiation_admin_data.gid
-        # TODO: we shouldn't be saving the DigitalInstantiation after :build.
-        # the purpose of :build (instead of :create) is to deliberately NOT
-        # save the object.
-        work.save
+        # Save using Valkyrie persister pattern for Ruby 3.2 compatibility
+        Hyrax.persister.save(resource: work)
       end
     end
 
     after(:create) do |work, evaluator|
-      work.permission_manager.acl.save
+      work.permission_manager.acl&.save
     end
   end
 end

@@ -191,7 +191,7 @@ FactoryBot.define do
           .assign_access_for(visibility: evaluator.visibility_setting)
       end
 
-      work.permission_manager.acl.save
+      work.permission_manager.acl&.save
       Hyrax.index_adapter.save(resource: work) if evaluator.with_index
     end
   end

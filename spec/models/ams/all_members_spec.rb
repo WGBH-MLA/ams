@@ -22,7 +22,7 @@ RSpec.describe AMS::AllMembers, reset_data: false  do
 
       context 'with the :only param passed' do
         it 'only returns classes specified by :only param' do
-          expect(@asset.all_members(only: DigitalInstantiation).to_set).to all( be_a DigitalInstantiation )
+          expect(@asset.all_members(only: DigitalInstantiationResource).to_set).to all( be_a DigitalInstantiationResource )
         end
       end
     end

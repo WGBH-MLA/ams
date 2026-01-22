@@ -23,7 +23,7 @@ RSpec.describe AAPB::BatchIngest::ZippedPBCoreDigitalInstantiationReader do
         subject = described_class.new(source_location)
         subject.read
         # NOTE: testing private method #extraction_path.
-        File.directory?(subject.send(:extraction_path)).should be true
+        expect(File.directory?(subject.send(:extraction_path))).to be true
         unzipped_file_names = Dir.glob("#{subject.send(:extraction_path)}/**/*.xml").map { |f| File.basename(f) }
         expect(unzipped_file_names).to include File.basename(xml_file_name)
       end

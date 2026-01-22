@@ -66,7 +66,8 @@ class PbcoreXmlParser < Bulkrax::XmlParser
     end
     importer.record_status
   rescue StandardError => e
-    status_info(e)
+    Rails.logger.error "#{self.class.name} error: #{e.message}\n#{e.backtrace.join("\n")}"
+    importer.status_info(e, runnable: current_run) if importer && current_run
   end
 
   ##
@@ -85,7 +86,8 @@ class PbcoreXmlParser < Bulkrax::XmlParser
       progress.increment if progress
     end
   rescue StandardError => e
-    status_info(e)
+    Rails.logger.error "#{self.class.name} error: #{e.message}\n#{e.backtrace.join("\n")}"
+    importer.status_info(e, runnable: current_run) if importer && current_run
   end
 
   ##
@@ -101,7 +103,8 @@ class PbcoreXmlParser < Bulkrax::XmlParser
       increment_counters(index)
     end
   rescue StandardError => e
-    status_info(e)
+    Rails.logger.error "#{self.class.name} error: #{e.message}\n#{e.backtrace.join("\n")}"
+    importer.status_info(e, runnable: current_run) if importer && current_run
   end
 
   def total
@@ -127,7 +130,8 @@ class PbcoreXmlParser < Bulkrax::XmlParser
       Bulkrax::ChildRelationshipsJob.set(wait: 5.minutes).perform_later(parent.id, children.map(&:id), current_run.id) if parent.present? && children.present?
     end
   rescue StandardError => e
-    status_info(e)
+    Rails.logger.error "#{self.class.name} error: #{e.message}\n#{e.backtrace.join("\n")}"
+    importer.status_info(e, runnable: current_run) if importer && current_run
   end
 
   def collection_field_mapping
@@ -175,7 +179,7 @@ class PbcoreXmlParser < Bulkrax::XmlParser
       xml_tracks = []
       inst.essence_tracks.each.with_index do |track, j|
         xml_track = AAPB::BatchIngest::PBCoreXMLMapper.new(track.to_xml).essence_track_attributes.merge({ pbcore_xml: track.to_xml })
-        essence_track = instantiation.members[j] if instantiation&.members&.[](j)&.class == EssenceTrack
+        essence_track = instantiation.members[j] if instantiation&.members&.[](j)&.class == EssenceTrackResource
         xml_track = essence_track.attributes.symbolize_keys.merge(xml_track) if essence_track
         xml_track[:title] = create_title(nil)
         parse_rows([xml_track], 'EssenceTrackResource', asset_id, asset, j+1)

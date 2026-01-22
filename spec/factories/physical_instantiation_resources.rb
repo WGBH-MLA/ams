@@ -11,7 +11,7 @@ FactoryBot.define do
     visibility { Hydra::AccessControls::AccessRight::VISIBILITY_TEXT_VALUE_PUBLIC }
 
     after(:create) do |work, evaluator|
-      work.permission_manager.acl.save
+      work.permission_manager.acl&.save
     end
 
   end
@@ -24,7 +24,7 @@ FactoryBot.define do
     media_type { "Minimal media_type" }
 
     after(:create) do |work, evaluator|
-      work.permission_manager.acl.save
+      work.permission_manager.acl&.save
     end
 
   end

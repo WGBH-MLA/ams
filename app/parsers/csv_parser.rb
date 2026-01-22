@@ -36,7 +36,8 @@ class CsvParser < Bulkrax::CsvParser
     end
     importer.record_status
   rescue StandardError => e
-    status_info(e)
+    Rails.logger.error "#{self.class.name} error: #{e.message}\n#{e.backtrace.join("\n")}"
+    importer.status_info(e, runnable: current_run) if importer && current_run
   end
 
   def missing_elements(keys)

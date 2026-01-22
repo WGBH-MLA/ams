@@ -8,6 +8,7 @@ class AssetResource < Hyrax::Work
   include Hyrax::ArResource
   include AMS::WorkBehavior
   include AMS::CreateMemberMethods
+  include AMS::AllMembers
 
   self.valid_child_concerns = [DigitalInstantiationResource, PhysicalInstantiationResource, ContributionResource]
 

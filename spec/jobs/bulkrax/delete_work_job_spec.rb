@@ -12,9 +12,8 @@ module Bulkrax
       before do
         work = instance_double(AssetResource, id: 1)
         factory = instance_double("Bulkrax::ObjectFactory")
-        asset_destroyer = AMS::AssetDestroyer.new
-        allow(work).to receive(:is_a?)
-        allow(asset_destroyer).to receive(:destroy).and_return true
+        allow(work).to receive(:is_a?).with(AssetResource).and_return(true)
+        allow(work).to receive(:destroy).and_return(true)
         expect(factory).to receive(:find).and_return(work)
         expect(entry).to receive(:factory).and_return(factory)
       end
