@@ -26,15 +26,6 @@ attributes:
     index_keys:
       - "bulkrax_identifier_sim"
       - "bulkrax_identifier_tesim"
-  contributor:
-    type: string
-    multiple: true
-    index_keys:
-      - "contributor_tesim"
-    form:
-      required: false
-      primary: false
-      multiple: true
   contributor_role:
     type: string
     multiple: false
