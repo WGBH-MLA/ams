@@ -35,7 +35,14 @@ module AAPB
               whitelisted_properties += InstantiationAdminData.attribute_names
             end
 
-            raise("Unknown attribute #{attr} configured for object class #{model}") unless attr == "id" || whitelisted_properties.include?(attr)
+            # For Valkyrie resources, also check if attribute exists in schema (includes inherited attributes)
+            attribute_valid = attr == "id" || whitelisted_properties.include?(attr)
+            if !attribute_valid && klass.respond_to?(:schema)
+              # Try to get the schema key - this will work for inherited attributes too
+              attribute_valid = klass.schema.key(attr.to_sym).present? rescue false
+            end
+
+            raise("Unknown attribute #{attr} configured for object class #{model}") unless attribute_valid
           end
           children = [] if children.nil?
 
