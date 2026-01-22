@@ -128,6 +128,8 @@ FactoryBot.define do
         work.member_ids = all_members.flat_map(&:id)
 
         Hyrax.persister.save(resource: work)
+        # Re-index after adding members so SolrDocument has correct member data
+        Hyrax.index_adapter.save(resource: work)
       end
     end
 
@@ -191,7 +193,7 @@ FactoryBot.define do
           .assign_access_for(visibility: evaluator.visibility_setting)
       end
 
-      work.permission_manager.acl&.save
+      work.permission_manager.acl.save
       Hyrax.index_adapter.save(resource: work) if evaluator.with_index
     end
   end

@@ -20,8 +20,7 @@ class PbcoreManifestParser < Bulkrax::XmlParser
     end
     importer.record_status
   rescue StandardError => e
-    Rails.logger.error "#{self.class.name} error: #{e.message}\n#{e.backtrace.join("\n")}"
-    importer.status_info(e, runnable: current_run) if importer && current_run
+    status_info(e) if respond_to?(:current_run) && current_run
   end
 
   # In either case there may be multiple metadata files returned by metadata_paths
@@ -117,8 +116,7 @@ class PbcoreManifestParser < Bulkrax::XmlParser
       Bulkrax::ChildRelationshipsJob.perform_later(parent.id, [child.id], current_run.id)
     end
   rescue StandardError => e
-    Rails.logger.error "#{self.class.name} error: #{e.message}\n#{e.backtrace.join("\n")}"
-    importer.status_info(e, runnable: current_run) if importer && current_run
+    status_info(e) if respond_to?(:current_run) && current_run
   end
 
   def collection_field_mapping

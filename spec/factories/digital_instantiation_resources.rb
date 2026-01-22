@@ -51,7 +51,7 @@ FactoryBot.define do
     end
 
     after(:create) do |work, evaluator|
-      work.permission_manager.acl&.save
+      work.permission_manager.acl.save
     end
   end
 end

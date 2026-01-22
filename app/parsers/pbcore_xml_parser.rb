@@ -66,8 +66,7 @@ class PbcoreXmlParser < Bulkrax::XmlParser
     end
     importer.record_status
   rescue StandardError => e
-    Rails.logger.error "#{self.class.name} error: #{e.message}\n#{e.backtrace.join("\n")}"
-    importer.status_info(e, runnable: current_run) if importer && current_run
+    status_info(e) if respond_to?(:current_run) && current_run
   end
 
   ##
@@ -86,8 +85,7 @@ class PbcoreXmlParser < Bulkrax::XmlParser
       progress.increment if progress
     end
   rescue StandardError => e
-    Rails.logger.error "#{self.class.name} error: #{e.message}\n#{e.backtrace.join("\n")}"
-    importer.status_info(e, runnable: current_run) if importer && current_run
+    status_info(e) if respond_to?(:current_run) && current_run
   end
 
   ##
@@ -103,8 +101,7 @@ class PbcoreXmlParser < Bulkrax::XmlParser
       increment_counters(index)
     end
   rescue StandardError => e
-    Rails.logger.error "#{self.class.name} error: #{e.message}\n#{e.backtrace.join("\n")}"
-    importer.status_info(e, runnable: current_run) if importer && current_run
+    status_info(e) if respond_to?(:current_run) && current_run
   end
 
   def total
@@ -130,8 +127,7 @@ class PbcoreXmlParser < Bulkrax::XmlParser
       Bulkrax::ChildRelationshipsJob.set(wait: 5.minutes).perform_later(parent.id, children.map(&:id), current_run.id) if parent.present? && children.present?
     end
   rescue StandardError => e
-    Rails.logger.error "#{self.class.name} error: #{e.message}\n#{e.backtrace.join("\n")}"
-    importer.status_info(e, runnable: current_run) if importer && current_run
+    status_info(e) if respond_to?(:current_run) && current_run
   end
 
   def collection_field_mapping

@@ -124,7 +124,7 @@ module AAPB
 
       def multi_value_fedora_attribute?(attribute, klass)
         # Map legacy model names (e.g., "Contribution" → "ContributionResource")
-        mapped_class_name = AAPB::BatchIngest::CSVConfigParser.map_legacy_model_name(klass)
+        mapped_class_name = AAPB::BatchIngest::CSVConfigTree.map_legacy_model_name(klass)
         resource_class = mapped_class_name.constantize
         return false unless resource_class.respond_to?(:schema)
         return false unless resource_class.fields.include?(attribute.to_sym)
