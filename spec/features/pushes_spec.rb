@@ -15,6 +15,8 @@ RSpec.describe "Pushes features", type: :controller, js: true do
     login_as(user)
     # Stub thumbnail rendering to avoid missing ActiveFedora partial
     allow_any_instance_of(ActionView::Base).to receive(:render_thumbnail_tag).and_return('')
+    # Stub document partial rendering to avoid ActiveFedora base partial lookup
+    allow_any_instance_of(SolrDocument).to receive(:to_partial_path).and_return('catalog/document')
   end
   after { Warden.test_reset! }
 

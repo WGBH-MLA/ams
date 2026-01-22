@@ -14,8 +14,8 @@ RSpec.describe AMS::AllMembers, reset_data: false  do
   context "an @asset with nested members" do
     describe "#all_members" do
       it 'returns a list of all members' do
-        actual_members_set = @asset.all_members.map(&:id).to_set
-        expected_member_set = @asset_solr_doc.all_members.map(&:id).to_set
+        actual_members_set = @asset.all_members.map(&:id).map(&:to_s).to_set
+        expected_member_set = @asset_solr_doc.all_members.map(&:id).map(&:to_s).to_set
         expect(actual_members_set).to eq expected_member_set
       end
 
