@@ -37,7 +37,6 @@ class CsvParser < Bulkrax::CsvParser
     importer.record_status
   rescue StandardError => e
     status_info(e) if respond_to?(:current_run) && current_run
-    raise # Re-raise the error so tests and monitoring can see it
   end
 
   def missing_elements(keys)

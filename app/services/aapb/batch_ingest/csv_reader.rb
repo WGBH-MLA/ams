@@ -134,7 +134,7 @@ module AAPB
 
         # Check if field has multiple: true in its metadata
         meta = schema_key.meta
-        meta && meta.fetch(:multiple, false) == true
+        meta && meta['multiple'] == true
       end
 
       def instantiation_multi_attr?(attribute,klass)

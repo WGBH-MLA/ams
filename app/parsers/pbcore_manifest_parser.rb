@@ -118,7 +118,6 @@ class PbcoreManifestParser < Bulkrax::XmlParser
     end
   rescue StandardError => e
     status_info(e) if respond_to?(:current_run) && current_run
-    raise # Re-raise the error so tests and monitoring can see it
   end
 
   def collection_field_mapping
@@ -256,7 +255,7 @@ class PbcoreManifestParser < Bulkrax::XmlParser
   # Convert AssetResource to hash for legacy compatibility
   def asset_to_hash(asset)
     hash = {}
-    asset.class.schema.each_key do |key|
+    asset.class.fields.each do |key|
       hash[key] = asset.public_send(key) if asset.respond_to?(key)
     end
     hash.symbolize_keys

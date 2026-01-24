@@ -559,10 +559,10 @@ class SolrDocument
     # Fetch members recursively and memoize. Subtract self from the list.
     @all_members ||= SolrDocument.get_members(self) - [ self ]
 
-    # Filter @all_members with the :only and :except params
-    only, except = Array(only).map(&:to_s), Array(except).map(&:to_s)
+    # Filter @all_members with the :only and :exclude params
+    only, exclude = Array(only).map(&:to_s), Array(exclude).map(&:to_s)
     @all_members.select { |m| only.empty? || only.include?(m.has_model) }.
-                 reject { |m| except.include?(m.has_model) }
+                 reject { |m| exclude.include?(m.has_model) }
   end
 
   def admin_data_gid
