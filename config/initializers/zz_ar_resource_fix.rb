@@ -3,6 +3,8 @@
 # OVERRIDE Hyrax to fix Ruby 3.0+ argument compatibility in Hyrax::ArResource
 # FactoryBot may pass positional arguments to save, but ArResource#save only accepts keyword arguments
 # In Ruby 3.0+, positional and keyword arguments are strictly separated
+#
+# This file is named 'zz_' to ensure it loads after Hyrax is fully initialized
 
 module ArResourceArgumentFix
   # Override save to accept positional arguments (and ignore them) for FactoryBot compatibility
@@ -19,5 +21,8 @@ module ArResourceArgumentFix
   end
 end
 
-# Prepend immediately to Hyrax::ArResource so all including classes get the fix
-Hyrax::ArResource.prepend(ArResourceArgumentFix)
+# Prepend to Hyrax::ArResource so all including classes get the fix
+if defined?(Hyrax::ArResource)
+  Hyrax::ArResource.prepend(ArResourceArgumentFix)
+  Rails.logger.info "ArResourceArgumentFix prepended to Hyrax::ArResource" if defined?(Rails.logger)
+end

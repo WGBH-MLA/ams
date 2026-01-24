@@ -36,17 +36,22 @@ FactoryBot.define do
       with_instantiation_admin_data { false }
     end
 
+    # Use Valkyrie persister instead of ActiveRecord-style save! for Ruby 3.0+ compatibility
+    to_create do |instance|
+      result = Hyrax.persister.save(resource: instance)
+      # Update the instance with the persisted ID
+      instance.id = result.id
+      instance.new_record = false if instance.respond_to?(:new_record=)
+      result
+    end
 
     after(:build) do |work, evaluator|
-
       if evaluator.with_instantiation_admin_data
         attributes = {}
         work.instantiation_admin_data_gid = evaluator.with_instantiation_admin_data if !work.instantiation_admin_data_gid.present?
       else
         instantiation_admin_data = create(:instantiation_admin_data)
         work.instantiation_admin_data_gid = instantiation_admin_data.gid
-        # Save using Valkyrie persister pattern for Ruby 3.2 compatibility
-        Hyrax.persister.save(resource: work)
       end
     end
 
