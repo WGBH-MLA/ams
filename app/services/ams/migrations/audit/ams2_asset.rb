@@ -10,15 +10,15 @@ module AMS
         end
 
         def digital_instantiations_count
-          solr_document.all_members(only: 'DigitalInstantiation').count
+          solr_document.all_members(only: 'DigitalInstantiationResource').count
         end
 
         def physical_instantiations_count
-          solr_document.all_members(only: 'PhysicalInstantiation').count
+          solr_document.all_members(only: 'PhysicalInstantiationResource').count
         end
 
         def essence_tracks_count
-          solr_document.all_members(only: 'EssenceTrack').count
+          solr_document.all_members(only: 'EssenceTrackResource').count
         end
 
         private

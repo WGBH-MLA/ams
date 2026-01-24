@@ -127,8 +127,8 @@ module AAPB
         mapped_class_name = AAPB::BatchIngest::CSVConfigTree.map_legacy_model_name(klass)
         resource_class = mapped_class_name.constantize
         return false unless resource_class.respond_to?(:schema)
-        return false unless resource_class.fields.include?(attribute.to_sym)
 
+        # Check if attribute exists in schema (includes inherited attributes from basic_metadata, etc.)
         schema_key = resource_class.schema.key(attribute.to_sym)
         return false unless schema_key
 

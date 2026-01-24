@@ -21,6 +21,7 @@ class PbcoreManifestParser < Bulkrax::XmlParser
     importer.record_status
   rescue StandardError => e
     status_info(e) if respond_to?(:current_run) && current_run
+    raise # Re-raise the error so tests and monitoring can see it
   end
 
   # In either case there may be multiple metadata files returned by metadata_paths
@@ -117,6 +118,7 @@ class PbcoreManifestParser < Bulkrax::XmlParser
     end
   rescue StandardError => e
     status_info(e) if respond_to?(:current_run) && current_run
+    raise # Re-raise the error so tests and monitoring can see it
   end
 
   def collection_field_mapping

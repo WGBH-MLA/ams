@@ -549,6 +549,12 @@ class SolrDocument
     self[solr_name('proxy_start_time', :symbol)]
   end
 
+  # Override to_partial_path to use generic catalog/document partial instead of
+  # model-specific ActiveFedora partials that were removed during Valkyrie migration
+  def to_partial_path
+    'catalog/document'
+  end
+
   def all_members(only: [], exclude: [])
     # Fetch members recursively and memoize. Subtract self from the list.
     @all_members ||= SolrDocument.get_members(self) - [ self ]

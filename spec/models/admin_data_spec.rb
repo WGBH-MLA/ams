@@ -33,7 +33,8 @@ RSpec.describe AdminData, type: :model do
 
     describe '#asset' do
       it 'returns the asset' do
-        expect(admin_data.asset).to eq asset
+        # Compare IDs only since validation_status_for_aapb may be updated during save
+        expect(admin_data.asset.id).to eq asset.id
       end
     end
   end

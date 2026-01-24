@@ -67,6 +67,7 @@ class PbcoreXmlParser < Bulkrax::XmlParser
     importer.record_status
   rescue StandardError => e
     status_info(e) if respond_to?(:current_run) && current_run
+    raise # Re-raise the error so tests and monitoring can see it
   end
 
   ##
@@ -86,6 +87,7 @@ class PbcoreXmlParser < Bulkrax::XmlParser
     end
   rescue StandardError => e
     status_info(e) if respond_to?(:current_run) && current_run
+    raise # Re-raise the error so tests and monitoring can see it
   end
 
   ##
@@ -102,6 +104,7 @@ class PbcoreXmlParser < Bulkrax::XmlParser
     end
   rescue StandardError => e
     status_info(e) if respond_to?(:current_run) && current_run
+    raise # Re-raise the error so tests and monitoring can see it
   end
 
   def total
@@ -128,6 +131,7 @@ class PbcoreXmlParser < Bulkrax::XmlParser
     end
   rescue StandardError => e
     status_info(e) if respond_to?(:current_run) && current_run
+    raise # Re-raise the error so tests and monitoring can see it
   end
 
   def collection_field_mapping

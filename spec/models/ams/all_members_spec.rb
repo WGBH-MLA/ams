@@ -5,17 +5,15 @@ RSpec.describe AMS::AllMembers, reset_data: false  do
     # Creating an @asset family is slow, so let's not do it for every example
     # using a `let'; use instance var instead.
     @asset = create(:asset_resource, :family)
-
-    # Use the complimentary recursive method SolrDocument#all_members to check
-    # the values.
-    @asset_solr_doc = SolrDocument.find(@asset.id)
   end
 
   context "an @asset with nested members" do
     describe "#all_members" do
       it 'returns a list of all members' do
+        # Fetch solr doc fresh to avoid stale data from reset_data: false
+        asset_solr_doc = SolrDocument.find(@asset.id)
         actual_members_set = @asset.all_members.map(&:id).map(&:to_s).to_set
-        expected_member_set = @asset_solr_doc.all_members.map(&:id).map(&:to_s).to_set
+        expected_member_set = asset_solr_doc.all_members.map(&:id).map(&:to_s).to_set
         expect(actual_members_set).to eq expected_member_set
       end
 

@@ -10,7 +10,22 @@ FactoryBot.define do
     media_type { "Test media_type" }
     visibility { Hydra::AccessControls::AccessRight::VISIBILITY_TEXT_VALUE_PUBLIC }
 
+    transient do
+      # Pass in InstantiationAdminData.gid or it will create one for you!
+      with_instantiation_admin_data { false }
+    end
 
+    after(:build) do |work, evaluator|
+      if evaluator.with_instantiation_admin_data
+        attributes = {}
+        work.instantiation_admin_data_gid = evaluator.with_instantiation_admin_data if !work.instantiation_admin_data_gid.present?
+      else
+        instantiation_admin_data = create(:instantiation_admin_data)
+        work.instantiation_admin_data_gid = instantiation_admin_data.gid
+        # Save using Valkyrie persister pattern for Ruby 3.2 compatibility
+        Hyrax.persister.save(resource: work)
+      end
+    end
   end
 
   factory :minimal_physical_instantiation_resource, class: PhysicalInstantiationResource do
@@ -20,6 +35,21 @@ FactoryBot.define do
     location { "Minimal location" }
     media_type { "Minimal media_type" }
 
+    transient do
+      # Pass in InstantiationAdminData.gid or it will create one for you!
+      with_instantiation_admin_data { false }
+    end
 
+    after(:build) do |work, evaluator|
+      if evaluator.with_instantiation_admin_data
+        attributes = {}
+        work.instantiation_admin_data_gid = evaluator.with_instantiation_admin_data if !work.instantiation_admin_data_gid.present?
+      else
+        instantiation_admin_data = create(:instantiation_admin_data)
+        work.instantiation_admin_data_gid = instantiation_admin_data.gid
+        # Save using Valkyrie persister pattern for Ruby 3.2 compatibility
+        Hyrax.persister.save(resource: work)
+      end
+    end
   end
 end
