@@ -20,6 +20,11 @@ FactoryBot.define do
       media_type { "Moving Image" }
       members { [ create(:essence_track_resource)] }
     end
+    trait :aapb_moving_image_with_essence_track_resource do
+      holding_organization { "American Archive of Public Broadcasting" }
+      media_type { "Moving Image" }
+      members { [ create(:essence_track_resource)] }
+    end
     trait :aapb_sound do
       holding_organization { "American Archive of Public Broadcasting" }
       media_type { "Sound" }
@@ -36,18 +41,8 @@ FactoryBot.define do
       with_instantiation_admin_data { false }
     end
 
-    # Use Valkyrie persister instead of ActiveRecord-style save! for Ruby 3.0+ compatibility
-    to_create do |instance|
-      result = Hyrax.persister.save(resource: instance)
-      # Update the instance with the persisted ID
-      instance.id = result.id
-      instance.new_record = false if instance.respond_to?(:new_record=)
-      result
-    end
-
     after(:build) do |work, evaluator|
       if evaluator.with_instantiation_admin_data
-        attributes = {}
         work.instantiation_admin_data_gid = evaluator.with_instantiation_admin_data if !work.instantiation_admin_data_gid.present?
       else
         instantiation_admin_data = create(:instantiation_admin_data)
@@ -55,5 +50,7 @@ FactoryBot.define do
       end
     end
 
+    # Use Valkyrie persister instead of ActiveRecord-style save! for Ruby 3.0+ compatibility
+    to_create { |instance| Hyrax.persister.save(resource: instance) }
   end
 end
