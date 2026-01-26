@@ -4,7 +4,27 @@
 # This fixes Ruby 3.0+ compatibility issues with Hyrax::ArResource#save
 # which doesn't accept positional arguments but FactoryBot may pass them
 
-# Patch the FactoryBot create strategy to handle Valkyrie resources
+# First, patch Hyrax::ArResource directly to accept positional arguments
+# This is needed because nested factory calls may still trigger ArResource#save
+if defined?(Hyrax::ArResource)
+  Hyrax::ArResource.module_eval do
+    # Store original methods
+    alias_method :_original_save, :save
+    alias_method :_original_save_bang, :save!
+
+    # Override save to accept positional arguments (ignore them) and forward keyword args
+    def save(*_args, persister: Hyrax.persister, index_adapter: Hyrax.index_adapter, user: ::User.system_user)
+      _original_save(persister: persister, index_adapter: index_adapter, user: user)
+    end
+
+    # Override save! to accept positional arguments (ignore them) and forward keyword args
+    def save!(*_args, **opts)
+      _original_save_bang(**opts)
+    end
+  end
+end
+
+# Also patch the FactoryBot create strategy as a belt-and-suspenders approach
 module FactoryBotValkyrieStrategy
   def result(evaluation)
     evaluation.object.tap do |instance|
