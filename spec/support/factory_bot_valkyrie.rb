@@ -10,12 +10,16 @@ module FactoryBotValkyrieStrategy
     evaluation.object.tap do |instance|
       evaluation.notify(:after_build, instance)
 
-      # Use Valkyrie persister for Valkyrie resources instead of calling @to_create
-      # which would call save! on the instance
+      # Use Valkyrie persister for Valkyrie resources instead of calling save!
       if instance.is_a?(Valkyrie::Resource)
         Hyrax.persister.save(resource: instance)
       else
-        @to_create.call(instance, evaluation)
+        # Fall back to default behavior for non-Valkyrie objects
+        if @to_create
+          @to_create.call(instance, evaluation)
+        else
+          instance.save!
+        end
       end
 
       evaluation.notify(:after_create, instance)
