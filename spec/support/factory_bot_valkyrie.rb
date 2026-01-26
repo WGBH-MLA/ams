@@ -4,26 +4,24 @@
 # This fixes Ruby 3.0+ compatibility issues with Hyrax::ArResource#save
 # which doesn't accept positional arguments but FactoryBot may pass them
 
-# Force load Hyrax::ArResource so we can patch it
-require 'hyrax/ar_resource'
-
-# Module to prepend to Hyrax::ArResource to fix argument handling
-module ArResourceSaveArgumentFix
-  # Override save to accept positional arguments (ignore them) and forward keyword args
-  def save(*_args, persister: Hyrax.persister, index_adapter: Hyrax.index_adapter, user: ::User.system_user)
-    super(persister: persister, index_adapter: index_adapter, user: user)
-  end
-
-  # Override save! to accept positional arguments (ignore them) and forward keyword args
-  def save!(*_args, **opts)
-    super(**opts)
+# Patch FactoryBot's evaluator to handle Valkyrie resource save calls
+module FactoryBotEvaluatorValkyriefix
+  def method_missing(method_name, *args, &block)
+    # Intercept save/save! calls for Valkyrie resources and strip positional args
+    if %i[save save!].include?(method_name) && @instance.is_a?(Valkyrie::Resource)
+      # Call save without positional arguments, only keyword args
+      kwargs = args.last.is_a?(Hash) ? args.last : {}
+      @instance.public_send(method_name, **kwargs)
+    else
+      super
+    end
   end
 end
 
-# Prepend the fix to Hyrax::ArResource immediately
-Hyrax::ArResource.prepend(ArResourceSaveArgumentFix)
+# Apply the evaluator patch
+FactoryBot::Evaluator.prepend(FactoryBotEvaluatorValkyriefix)
 
-# Also patch the FactoryBot create strategy as a belt-and-suspenders approach
+# Also patch the FactoryBot create strategy
 module FactoryBotValkyrieStrategy
   def result(evaluation)
     evaluation.object.tap do |instance|
