@@ -256,6 +256,8 @@ postgresql:
 ## and to act as an auth proxy for Cantelope
 nginx:
   enabled: false
+  service:
+    port: 80
   # The set up below does malicious bot / ip blocking and mounts
   # vaolumes to allow nginx to server assets and other public directory items
   # image:
