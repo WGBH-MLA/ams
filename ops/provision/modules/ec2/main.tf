@@ -67,8 +67,18 @@ resource "aws_instance" "fcrepo" {
       fcrepo_db_username = var.fcrepo_db_username
       fcrepo_db_password = var.fcrepo_db_password
       solr_collection = var.solr_collection
-      site24x7_key = var.site24x7_key
-      site24x7_group = var.site24x7_group
     }
   })
+
+  # Prevent Terraform from replacing imported instances due to drift
+  lifecycle {
+    ignore_changes = [
+      user_data,
+      ami,
+      instance_type,
+      ebs_block_device,
+      root_block_device,
+      vpc_security_group_ids,
+    ]
+  }
 }

@@ -35,17 +35,10 @@ variable "fcrepo_db_username" {
 }
 
 variable "fcrepo_db_password" {
-  type = string
+  type      = string
+  sensitive = true
 }
 
 variable "solr_collection" {
-  type = string
-}
-
-variable "site24x7_key" {
-  type = string
-}
-
-variable "site24x7_group" {
   type = string
 }

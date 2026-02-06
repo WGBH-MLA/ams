@@ -1,0 +1,21 @@
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: letsencrypt-prod-dns
+  namespace: cert-manager
+spec:
+  acme:
+    # The ACME server URL
+    server: https://acme-v02.api.letsencrypt.org/directory
+    # Email address used for ACME registration
+    email: andrew_myers@wgbh.org
+    # Name of a secret used to store the ACME account private key
+    privateKeySecretRef:
+      name: letsencrypt-prod-dns
+    # DNS-01 solver via Route53
+    # Avoids HTTP-01 redirect issues with NGINX Inc Ingress Controller
+    solvers:
+    - dns01:
+        route53:
+          region: us-east-1
+          hostedZoneID: Z1NW9A2RAA74H1
