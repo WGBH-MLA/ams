@@ -9,13 +9,8 @@ on:
         default: 'demo'
         type: choice
         options:
-          - staging
           - demo
           - prod
-          - alpha
-          - bravo
-          - charlie
-          - delta
       debug_enabled:
         type: boolean
         description: 'Run the build with tmate debugging enabled (https://github.com/marketplace/actions/debugging-with-tmate)'
@@ -24,16 +19,20 @@ on:
 
 env:
   REGISTRY: ghcr.io
+  AWS_REGION: us-east-1
+  EKS_CLUSTER_NAME: AMS
 
 jobs:
   deployment:
     runs-on: ubuntu-latest
-    container: dtzar/helm-kubectl:3.9.4
     environment: ${{ inputs.environment }}
+    permissions:
+      id-token: write   # Required for requesting the OIDC JWT
+      contents: read    # Required for actions/checkout
+
     env:
-      KUBECONFIG_FILE: ${{ secrets.KUBECONFIG_FILE }}
-      KUBECONFIG: ./kubeconfig.yml
       TARGET: ${{ inputs.environment }}
+
     steps:
       - name: Set env
         run: >-
@@ -42,25 +41,41 @@ jobs:
         env:
           HEAD_TAG: ${{ github.event.pull_request.head.sha || github.sha }}
         shell: bash
+
       - name: Downcase repo
         env:
           REPO: "${{ inputs.image_name || github.repository }}"
         run: |
           echo "REPO_LOWER=${REPO,,}" >> ${GITHUB_ENV}
         shell: bash
+
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
           submodules: true
           token: ${{ secrets.CHECKOUT_TOKEN || secrets.GITHUB_TOKEN }}
           clean: false
+
+      - name: Configure AWS credentials via OIDC
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::127946490116:role/AMS-github-actions-deploy
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Set up kubeconfig
+        run: aws eks update-kubeconfig --name $EKS_CLUSTER_NAME --region $AWS_REGION
+
+      - name: Install Helm
+        uses: azure/setup-helm@v4
+        with:
+          version: 'v3.14.0'
+
       - name: Setup tmate session
         uses: mxschmitt/action-tmate@v3
         if: ${{ github.event_name == 'workflow_dispatch' && inputs.debug_enabled }}
         with:
           limit-access-to-actor: true
+
       - name: Do deploy
-        run: |
-          echo $KUBECONFIG_FILE | base64 -d > $KUBECONFIG;
-          ./bin/deploy.sh $TARGET $TAG
+        run: ./bin/deploy.sh $TARGET $TAG
