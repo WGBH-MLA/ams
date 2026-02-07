@@ -8,8 +8,10 @@ readinessProbe:
 brandingVolume:
   storageClass: efs-sc
 derivativesVolume:
+  existingClaim: ams-prod-hyrax-derivatives
   storageClass: efs-sc
 uploadsVolume:
+  existingClaim: ams-prod-hyrax-uploads
   storageClass: efs-sc
 
 extraVolumeMounts: &volMounts

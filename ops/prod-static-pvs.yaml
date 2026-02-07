@@ -1,0 +1,73 @@
+# Static PVs for prod - pointing to existing EFS access points with production data
+# These must be applied BEFORE deploying the prod Helm release.
+#
+# Prod volume mapping:
+#   uploads     -> pvc-70b6158b (18K files, UID 50036, fsap-0e587801421b56a1e)
+#   derivatives -> pvc-d2a2e1d0 (UID 50037, fsap-04942a3e372f763e9)
+#   branding    -> fresh (no branding data in prod DB)
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: ams-prod-uploads-pv
+spec:
+  capacity:
+    storage: 20Gi
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: efs-sc
+  claimRef:
+    namespace: ams-prod
+    name: ams-prod-hyrax-uploads
+  csi:
+    driver: efs.csi.aws.com
+    volumeHandle: fs-0dd9f8ff037001c5d::fsap-0e587801421b56a1e
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: ams-prod-derivatives-pv
+spec:
+  capacity:
+    storage: 10Gi
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: efs-sc
+  claimRef:
+    namespace: ams-prod
+    name: ams-prod-hyrax-derivatives
+  csi:
+    driver: efs.csi.aws.com
+    volumeHandle: fs-0dd9f8ff037001c5d::fsap-04942a3e372f763e9
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: ams-prod-hyrax-uploads
+  namespace: ams-prod
+spec:
+  accessModes:
+    - ReadWriteMany
+  storageClassName: efs-sc
+  volumeName: ams-prod-uploads-pv
+  resources:
+    requests:
+      storage: 20Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: ams-prod-hyrax-derivatives
+  namespace: ams-prod
+spec:
+  accessModes:
+    - ReadWriteMany
+  storageClassName: efs-sc
+  volumeName: ams-prod-derivatives-pv
+  resources:
+    requests:
+      storage: 10Gi

@@ -6,10 +6,12 @@ readinessProbe:
   enabled: false
 
 brandingVolume:
+  existingClaim: ams-demo-hyrax-branding
   storageClass: efs-sc
 derivativesVolume:
   storageClass: efs-sc
 uploadsVolume:
+  existingClaim: ams-demo-hyrax-uploads
   storageClass: efs-sc
 
 extraVolumeMounts: &volMounts
