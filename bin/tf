@@ -1,23 +1,27 @@
 #!/usr/bin/env ruby
 
-# require 'byebug'
-
 dir = File.expand_path(File.join(__FILE__, '../../ops/provision'))
-env_file = File.expand_path("#{dir}/.env.#{ARGV[0]}")
 workspace = "#{ARGV[0]}"
+tfvars = File.expand_path("#{dir}/#{ARGV[0]}.tfvars")
+subcmd = ARGV[1..-1].join(' ')
+
+# Commands that accept -var-file
+VAR_FILE_CMDS = %w[plan apply destroy import refresh console validate]
 
 # workspace commands can not have TF_WORKSPACE set
 cmd = if(ARGV[0].match(/workspace/) && ARGV[1].match(/new/))
-        %Q{cd #{dir} && unset TF_WORKSPACE && terraform workspace #{ARGV[1..-1].join(' ')}}
+        %Q{cd #{dir} && unset TF_WORKSPACE && terraform workspace #{subcmd}}
       elsif ARGV[0].match(/workspace/)
-        %Q{cd #{dir} && TF_WORKSPACE=default terraform workspace #{ARGV[1..-1].join(' ')}}
+        %Q{cd #{dir} && TF_WORKSPACE=default terraform workspace #{subcmd}}
       else
-        %Q{cd #{dir} && TF_WORKSPACE=#{workspace} dotenv -f #{env_file} "terraform #{ARGV[1..-1].join(' ')}"}
+        base = %Q{cd #{dir} && TF_WORKSPACE=#{workspace} AWS_PROFILE=gbh terraform #{subcmd}}
+        # Only append -var-file for commands that support it
+        if VAR_FILE_CMDS.any? { |c| subcmd.start_with?(c) } && File.exist?(tfvars)
+          base + " -var-file=#{tfvars}"
+        else
+          base
+        end
       end
-
-if ARGV[1].match(/init/)
- cmd[0..-2] += " -backend-config=./.backend "
-end
 
 puts cmd
 exec cmd

@@ -63,3 +63,4 @@ docker-compose.override.yml
 
 # Ignore spacemacs files
 *~undo-tree~
+ops/provision/terraform-state-backup-*.json

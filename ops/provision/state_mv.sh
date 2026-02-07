@@ -7,16 +7,22 @@
 # root-level address into the new module.eks address so Terraform
 # won't try to destroy & recreate them.
 #
-# Usage:
+# Usage (from repo root):
 #   cd ops/provision
-#   bash state_mv.sh
+#   TF_WORKSPACE=notch8 AWS_PROFILE=gbh bash state_mv.sh
 #
 # After running, verify with:
-#   terraform plan   # should show 0 changes (or only cosmetic diffs)
+#   ./bin/tf notch8 plan   # should show 0 changes (or only cosmetic diffs)
 # ─────────────────────────────────────────────────────────────────────
 set -euo pipefail
 
+export TF_WORKSPACE="${TF_WORKSPACE:-notch8}"
+export AWS_PROFILE="${AWS_PROFILE:-gbh}"
+
 echo "=== Moving EKS resources into module.eks ==="
+echo "    Workspace: $TF_WORKSPACE"
+echo "    Profile:   $AWS_PROFILE"
+echo ""
 
 # ── cluster.tf ──
 terraform state mv 'aws_eks_cluster.main[0]'                          'module.eks.aws_eks_cluster.main[0]'

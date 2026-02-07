@@ -329,7 +329,7 @@ resource "helm_release" "nginx_ingress" {
       subnets      = join(",", var.public_subnets)
       eip          = var.ingress_nlb_eip
       replicas     = 2
-      cluster_name = aws_eks_cluster.main[0].name
+      cluster_name = lower(aws_eks_cluster.main[0].name)
     })
   ]
 

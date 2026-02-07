@@ -5,7 +5,7 @@
 # The NLB is named "${cluster_name}-ingress" via the Helm values template
 data "aws_lb" "ingress" {
   count = var.create_eks_cluster && var.deploy_k8s_apps ? 1 : 0
-  name  = "${var.cluster_name}-ingress"
+  name  = "${lower(var.cluster_name)}-ingress"
 
   depends_on = [helm_release.nginx_ingress]
 }

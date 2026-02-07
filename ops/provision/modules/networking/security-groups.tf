@@ -1,4 +1,5 @@
-// SG to allow SSH connections from anywhere
+// SG for EC2 instances (fcrepo/solr/postgres)
+// Allows SSH from anywhere and service ports from the VPC (EKS pods)
 resource "aws_security_group" "access" {
   name        = "${var.namespace}-access"
   description = "Allow SSH inbound traffic"
@@ -12,33 +13,31 @@ resource "aws_security_group" "access" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-
+  # PostgreSQL — allow EKS pods (VPC CIDR) to reach the database
   ingress {
-    cidr_blocks      = [
-      "18.205.248.83/32",
-    ]
-    description      = "AMS2 on digital-eks-dev cluster"
-    from_port        = 8080
-    ipv6_cidr_blocks = []
-    prefix_list_ids  = []
-    protocol         = "tcp"
-    security_groups  = []
-    self             = false
-    to_port          = 8080
+    description = "PostgreSQL from VPC (EKS pods)"
+    from_port   = 5432
+    to_port     = 5432
+    protocol    = "tcp"
+    cidr_blocks = ["10.0.0.0/16"]
   }
 
+  # Fcrepo — allow EKS pods (VPC CIDR) to reach Fedora
   ingress {
-    cidr_blocks      = [
-      "18.205.248.83/32",
-    ]
-    description      = "AMS2 on digital-eks-dev cluster"
-    from_port        = 8983
-    ipv6_cidr_blocks = []
-    prefix_list_ids  = []
-    protocol         = "tcp"
-    security_groups  = []
-    self             = false
-    to_port          = 8983
+    description = "Fcrepo from VPC (EKS pods)"
+    from_port   = 8080
+    to_port     = 8080
+    protocol    = "tcp"
+    cidr_blocks = ["10.0.0.0/16"]
+  }
+
+  # Solr — allow EKS pods (VPC CIDR) to reach Solr
+  ingress {
+    description = "Solr from VPC (EKS pods)"
+    from_port   = 8983
+    to_port     = 8983
+    protocol    = "tcp"
+    cidr_blocks = ["10.0.0.0/16"]
   }
 
   egress {
