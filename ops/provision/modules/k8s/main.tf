@@ -60,9 +60,7 @@ provider "kubernetes" {
 resource "kubernetes_storage_class_v1" "storage_class" {
   count               = var.deploy_k8s_apps ? 1 : 0
   storage_provisioner = "efs.csi.aws.com"
-  # When a PVC is deleted, we also remove the associated EFS access point.
-  # Otherwise, it becomes orphaned and continues to incur AWS costs.
-  reclaim_policy      = "Delete"
+  reclaim_policy      = "Retain"
 
   parameters = {
     directoryPerms   = "700"

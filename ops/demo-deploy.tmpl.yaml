@@ -121,7 +121,7 @@ extraEnvVars: &envVars
   - name: SIDEKIQ_CONCURRENCY
     value: "1"
   - name: AWS_ACCESS_KEY
-    value: "AKIAIWFN3WW3WBIMKNCQ"
+    value: "AKIAR3SRUQECAPYH3ZU6"
   - name: MAIL_DELIVERY_METHOD
     value: "smtp"
   - name: PRODUCTION_HOST
@@ -139,7 +139,7 @@ extraEnvVars: &envVars
   - name: SMTP_PORT
     value: "587"
   - name: SMTP_USERNAME
-    value: "AKIAINCFFPY4ILW2LNJQ"
+    value: "AKIAR3SRUQECNGVQ3FHW"
 
 worker:
   replicaCount: 1
