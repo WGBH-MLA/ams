@@ -16,6 +16,7 @@ variable "region" {
 variable "kubeconfig" {
   type = string
   default = "kube_config.yaml"
+  sensitive = true
 }
 
 variable "efs_name" {
@@ -27,6 +28,7 @@ variable "rsa_key" {
   description = "Path to SSH private key file (optional if rsa_key_content is provided)"
   type        = string
   default     = ""
+  sensitive = true
 }
 
 variable "rsa_key_content" {
@@ -36,24 +38,36 @@ variable "rsa_key_content" {
   sensitive   = true
 }
 
-variable "mysql_password" {
-  type = string
+variable "db_password" {
+  description = "PostgreSQL password for database connections"
+  type        = string
+  sensitive   = true
+}
+
+variable "solr_admin_password" {
+  description = "Solr admin password for basic auth"
+  type        = string
+  sensitive   = true
 }
 
 variable "smtp_password" {
-  type = string
+  type      = string
+  sensitive = true
 }
 
 variable "aws_secret_key" {
   type = string
+  sensitive = true
 }
 
 variable "ci_client_secret" {
   type = string
+  sensitive = true
 }
 
 variable "ci_password" {
   type = string
+  sensitive = true
 }
 
 variable "cluster_endpoint" {

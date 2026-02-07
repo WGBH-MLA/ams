@@ -16,10 +16,15 @@ locals {
   # Extract individual values
   s3_secret_key       = local.app_secrets.s3.SecretAccessKey
   smtp_password       = local.app_secrets.smtp.SecretAccessKey
-  mysql_password      = local.app_secrets.mysql.password
   ci_client_secret    = local.app_secrets.sony_ci.client_secret
   ci_password         = local.app_secrets.sony_ci.password
   fcrepo_db_password  = local.app_secrets.fcrepo_db.password
+  
+  # PostgreSQL password (shared across environments)
+  db_password         = local.app_secrets.postgresql.password
+  
+  # Solr admin password
+  solr_admin_password = local.app_secrets.solr.admin_password
   
   # SSH key from Secrets Manager (if exists)
   aapb_ssh_key        = try(local.app_secrets.aapb_ssh.private_key, null)

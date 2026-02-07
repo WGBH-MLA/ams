@@ -180,13 +180,6 @@ fcrepo:
 mariadb:
   enabled: false
 
-externalMariadb:
-  db:
-    host: ams-prod-rails-db.cmrjt7rckp5r.us-east-1.rds.amazonaws.com
-  auth:
-    username: hyrax
-    database: hyrax
-
 redis:
   image:
     registry: docker.io

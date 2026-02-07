@@ -45,7 +45,8 @@ module "k8s" {
   cert_manager_role_arn = var.create_eks_cluster ? aws_iam_role.cert_manager[0].arn : ""
 
   # Secrets automatically loaded from AWS Secrets Manager (see secrets.tf)
-  mysql_password    = local.mysql_password
+  db_password       = local.db_password
+  solr_admin_password = local.solr_admin_password
   smtp_password     = local.smtp_password
   aws_secret_key    = local.s3_secret_key
   ci_client_secret  = local.ci_client_secret

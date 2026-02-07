@@ -58,12 +58,6 @@ variable "rsa_key" {
   default     = ""
 }
 
-variable "mysql_password" {
-  description = "MySQL password - can be provided or will be read from AWS Secrets Manager"
-  type        = string
-  sensitive   = true
-  default     = ""
-}
 
 variable "smtp_password" {
   description = "SMTP password - can be provided or will be read from AWS Secrets Manager"
