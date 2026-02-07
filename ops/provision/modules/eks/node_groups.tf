@@ -8,7 +8,7 @@ resource "aws_launch_template" "eks_nodes" {
   instance_type = var.node_instance_type
 
   # EKS bootstrap user data
-  user_data = base64encode(templatefile("${path.module}/eks_user_data.tpl", {
+  user_data = base64encode(templatefile("${path.module}/user_data.tpl", {
     cluster_name     = aws_eks_cluster.main[0].name
     cluster_endpoint = aws_eks_cluster.main[0].endpoint
     cluster_ca       = aws_eks_cluster.main[0].certificate_authority[0].data
@@ -42,7 +42,7 @@ resource "aws_eks_node_group" "main" {
   cluster_name         = aws_eks_cluster.main[0].name
   node_group_name      = "${var.namespace}-ng"
   node_role_arn        = aws_iam_role.eks_node[0].arn
-  subnet_ids           = module.networking.vpc.private_subnets
+  subnet_ids           = var.private_subnets
 
   scaling_config {
     desired_size = var.desired_size

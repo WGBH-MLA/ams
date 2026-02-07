@@ -247,7 +247,6 @@ resource "aws_eks_access_policy_association" "github_actions" {
   }
 }
 
-# S3 access policy for nodes (to access AMS buckets)
 # ── IRSA role for cert-manager (Route53 DNS-01 challenges) ──
 resource "aws_iam_role" "cert_manager" {
   count = var.create_eks_cluster ? 1 : 0

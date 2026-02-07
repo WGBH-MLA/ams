@@ -6,7 +6,7 @@ resource "aws_security_group" "efs" {
   
   name        = "${var.cluster_name}-efs-sg"
   description = "Security group for EFS mount targets"
-  vpc_id      = module.networking.vpc.vpc_id
+  vpc_id      = var.vpc_id
 
   tags = {
     Name        = "${var.cluster_name}-efs-sg"
@@ -19,7 +19,7 @@ resource "aws_vpc_security_group_ingress_rule" "efs_nfs" {
   count = var.create_eks_cluster && var.create_efs ? 1 : 0
   
   security_group_id = aws_security_group.efs[0].id
-  cidr_ipv4         = module.networking.vpc.vpc_cidr_block
+  cidr_ipv4         = var.vpc_cidr_block
   description       = "Allow NFS traffic from VPC"
   from_port         = 2049
   to_port           = 2049
@@ -59,7 +59,7 @@ resource "aws_efs_mount_target" "main" {
   
   file_system_id  = aws_efs_file_system.main[0].id
   security_groups = [aws_security_group.efs[0].id]
-  subnet_id       = module.networking.vpc.private_subnets[count.index]
+  subnet_id       = var.private_subnets[count.index]
 
   lifecycle {
     create_before_destroy = true

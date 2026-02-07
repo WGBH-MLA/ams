@@ -1,9 +1,42 @@
-# Data source for AWS account ID (used by KMS policy and other resources)
-data "aws_caller_identity" "current" {}
-
 module "networking" {
   source    = "./modules/networking"
   namespace = var.namespace
+}
+
+module "eks" {
+  source             = "./modules/eks"
+  create_eks_cluster = var.create_eks_cluster
+  deploy_k8s_apps    = var.deploy_k8s_apps
+  create_efs         = var.create_efs
+  efs_name           = var.efs_name
+
+  # Cluster config
+  cluster_name = var.cluster_name
+  k8s_version  = var.k8s_version
+  namespace    = var.namespace
+  region       = var.region
+  profile      = var.profile
+
+  # Node config
+  node_instance_type = var.node_instance_type
+  desired_size       = var.desired_size
+  min_size           = var.min_size
+  max_size           = var.max_size
+
+  # Networking
+  vpc_id          = module.networking.vpc.vpc_id
+  vpc_cidr_block  = module.networking.vpc.vpc_cidr_block
+  private_subnets = module.networking.vpc.private_subnets
+  public_subnets  = module.networking.vpc.public_subnets
+
+  # Ingress
+  nginx_ingress_chart_version = var.nginx_ingress_chart_version
+  ingress_nlb_eip             = var.ingress_nlb_eip
+
+  # Rancher
+  enable_rancher        = var.enable_rancher
+  rancher_chart_version = var.rancher_chart_version
+  rancher_hostname      = var.rancher_hostname
 }
 
 module "ec2" {
@@ -27,13 +60,13 @@ module "ec2" {
 module "k8s" {
   source            = "./modules/k8s"
   deploy_k8s_apps   = var.deploy_k8s_apps
-  efs_name          = var.create_efs ? aws_efs_file_system.main[0].id : var.efs_name
+  efs_name          = module.eks.efs_id
   region            = var.region
   namespace         = var.namespace
   
   # EKS cluster connection details
-  cluster_endpoint  = var.create_eks_cluster ? aws_eks_cluster.main[0].endpoint : ""
-  cluster_ca_cert   = var.create_eks_cluster ? aws_eks_cluster.main[0].certificate_authority[0].data : ""
+  cluster_endpoint  = module.eks.cluster_endpoint
+  cluster_ca_cert   = module.eks.cluster_ca_data
   cluster_name      = var.cluster_name
   aws_profile       = var.profile
   
@@ -42,17 +75,17 @@ module "k8s" {
   rsa_key_content   = local.aapb_ssh_key
   
   # cert-manager IRSA for Route53 DNS-01 challenges
-  cert_manager_role_arn = var.create_eks_cluster ? aws_iam_role.cert_manager[0].arn : ""
+  cert_manager_role_arn = module.eks.cert_manager_role_arn
 
   # Secrets automatically loaded from AWS Secrets Manager (see secrets.tf)
-  db_password       = local.db_password
+  db_password         = local.db_password
   solr_admin_password = local.solr_admin_password
-  smtp_password     = local.smtp_password
-  aws_secret_key    = local.s3_secret_key
-  ci_client_secret  = local.ci_client_secret
-  ci_password       = local.ci_password
+  smtp_password       = local.smtp_password
+  aws_secret_key      = local.s3_secret_key
+  ci_client_secret    = local.ci_client_secret
+  ci_password         = local.ci_password
 
-  # Note: AWS LB Controller (eks_ingress.tf) must be deployed and healthy before
-  # this module's Helm releases run — its webhook intercepts Service creation.
+  # Note: AWS LB Controller (modules/eks/ingress.tf) must be deployed and healthy
+  # before this module's Helm releases run — its webhook intercepts Service creation.
   # On first deploy, run with deploy_k8s_apps=false first, then flip to true.
 }

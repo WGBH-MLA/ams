@@ -300,7 +300,7 @@ resource "helm_release" "aws_load_balancer_controller" {
     },
     {
       name  = "vpcId"
-      value = module.networking.vpc.vpc_id
+      value = var.vpc_id
     }
   ]
 
@@ -325,8 +325,8 @@ resource "helm_release" "nginx_ingress" {
   timeout          = 900
 
   values = [
-    templatefile("${path.module}/modules/k8s/files/nginx-ingress-values.yaml", {
-      subnets      = join(",", module.networking.vpc.public_subnets)
+    templatefile("${path.module}/files/nginx-ingress-values.yaml", {
+      subnets      = join(",", var.public_subnets)
       eip          = var.ingress_nlb_eip
       replicas     = 2
       cluster_name = aws_eks_cluster.main[0].name
