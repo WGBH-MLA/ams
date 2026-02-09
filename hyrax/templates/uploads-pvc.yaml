@@ -3,6 +3,8 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: {{ template "hyrax.fullname" . }}-uploads
+  annotations:
+    "helm.sh/resource-policy": keep
   labels:
     {{- include "hyrax.labels" . | nindent 4 }}
 spec:

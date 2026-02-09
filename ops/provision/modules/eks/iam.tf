@@ -334,6 +334,8 @@ resource "aws_iam_role_policy" "eks_node_s3_policy" {
         Resource = [
           "arn:aws:s3:::ams-edge.wgbh-mla.org",
           "arn:aws:s3:::ams-edge.wgbh-mla.org/*",
+          "arn:aws:s3:::ams-edge-test",
+          "arn:aws:s3:::ams-edge-test/*",
           "arn:aws:s3:::${var.namespace}-ams-*",
           "arn:aws:s3:::${var.namespace}-ams-*/*"
         ]

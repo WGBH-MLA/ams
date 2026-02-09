@@ -127,7 +127,7 @@ extraEnvVars: &envVars
   - name: PRODUCTION_HOST
     value: "ams2.wgbh-mla.org"
   - name: S3_EXPORT_BUCKET
-    value: "ams-edge.wgbh-mla.org"
+    value: "ams-edge-test"
   - name: S3_EXPORT_DIR
     value: "ip-10-10-1-77"
   - name: SMTP_ADDRESS
