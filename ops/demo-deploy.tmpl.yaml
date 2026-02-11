@@ -6,10 +6,12 @@ readinessProbe:
   enabled: false
 
 brandingVolume:
+  existingClaim: ams-demo-hyrax-branding
   storageClass: efs-sc
 derivativesVolume:
   storageClass: efs-sc
 uploadsVolume:
+  existingClaim: ams-demo-hyrax-uploads
   storageClass: efs-sc
 
 extraVolumeMounts: &volMounts
@@ -31,15 +33,15 @@ extraVolumeMounts: &volMounts
 
 ingress:
   enabled: true
+  ingressClassName: nginx
   hosts:
     - host: ams2-demo.wgbh-mla.org
       paths:
         - path: /
   annotations:
     {
-      kubernetes.io/ingress.class: "nginx",
       nginx.ingress.kubernetes.io/proxy-body-size: "0",
-      cert-manager.io/cluster-issuer: letsencrypt-prod,
+      cert-manager.io/cluster-issuer: letsencrypt-prod-dns,
     }
   tls:
     - hosts:
@@ -119,13 +121,13 @@ extraEnvVars: &envVars
   - name: SIDEKIQ_CONCURRENCY
     value: "1"
   - name: AWS_ACCESS_KEY
-    value: "AKIAIWFN3WW3WBIMKNCQ"
+    value: "AKIAR3SRUQECAPYH3ZU6"
   - name: MAIL_DELIVERY_METHOD
     value: "smtp"
   - name: PRODUCTION_HOST
     value: "ams2.wgbh-mla.org"
   - name: S3_EXPORT_BUCKET
-    value: "ams-edge.wgbh-mla.org"
+    value: "ams-edge-test"
   - name: S3_EXPORT_DIR
     value: "ip-10-10-1-77"
   - name: SMTP_ADDRESS
@@ -137,7 +139,7 @@ extraEnvVars: &envVars
   - name: SMTP_PORT
     value: "587"
   - name: SMTP_USERNAME
-    value: "AKIAINCFFPY4ILW2LNJQ"
+    value: "AKIAR3SRUQECNGVQ3FHW"
 
 worker:
   replicaCount: 1
@@ -174,13 +176,6 @@ fcrepo:
 
 mariadb:
   enabled: false
-
-externalMariadb:
-  db:
-    host: ams-demo-rails-db.cmrjt7rckp5r.us-east-1.rds.amazonaws.com
-  auth:
-    username: hyrax
-    database: hyrax
 
 redis:
   image:

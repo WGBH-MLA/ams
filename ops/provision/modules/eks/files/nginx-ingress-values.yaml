@@ -1,0 +1,53 @@
+## NGINX Inc Ingress Controller (OSS) — Helm chart v2.4.3
+## Only overrides from chart defaults are listed here.
+## Full defaults: helm show values nginx-stable/nginx-ingress --version 2.4.3
+
+controller:
+  ## Two replicas for HA across AZs
+  replicaCount: ${replicas}
+
+  ## Ingress class is set via `set` blocks in ingress.tf
+
+  service:
+    ## NLB provisioned by AWS Load Balancer Controller
+    type: LoadBalancer
+    loadBalancerClass: service.k8s.aws/nlb
+
+    ## Preserve client source IP (default in chart 2.x, explicit for clarity)
+    externalTrafficPolicy: Local
+
+    annotations:
+      service.beta.kubernetes.io/aws-load-balancer-name: ${cluster_name}-ingress
+      service.beta.kubernetes.io/aws-load-balancer-backend-protocol: tcp
+      service.beta.kubernetes.io/aws-load-balancer-cross-zone-load-balancing-enabled: "true"
+      service.beta.kubernetes.io/aws-load-balancer-ip-address-type: ipv4
+      service.beta.kubernetes.io/aws-load-balancer-scheme: internet-facing
+      service.beta.kubernetes.io/aws-load-balancer-subnets: ${subnets}
+      service.beta.kubernetes.io/aws-load-balancer-type: external
+      service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: ip
+      ## NLB health checks → NGINX readiness endpoint (chart default port 8081)
+      service.beta.kubernetes.io/aws-load-balancer-healthcheck-protocol: http
+      service.beta.kubernetes.io/aws-load-balancer-healthcheck-path: /nginx-ready
+      service.beta.kubernetes.io/aws-load-balancer-healthcheck-port: "8081"
+%{~ if eip != "" ~}
+      service.beta.kubernetes.io/aws-load-balancer-eip-allocations: ${eip}
+%{~ endif ~}
+
+  resources:
+    requests:
+      cpu: 250m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+
+## Prometheus metrics — enabled by default in chart 2.x (port 9113)
+## ServiceMonitor disabled until monitoring stack is deployed
+prometheus:
+  create: true
+
+  service:
+    create: false
+
+  serviceMonitor:
+    create: false

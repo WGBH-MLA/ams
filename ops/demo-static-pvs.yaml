@@ -1,0 +1,73 @@
+# Static PVs for demo - pointing to existing EFS access points with demo data
+# These must be applied BEFORE deploying the demo Helm release.
+#
+# Demo volume mapping:
+#   uploads  -> pvc-ddc9a803 (575 import dirs, UID 50041, fsap-0b0c9056db4d6304c)
+#   branding -> pvc-47c2b565 (10 branding files, UID 50038, fsap-0e780c3121d69918b)
+#   derivatives -> fresh (no existing data)
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: ams-demo-uploads-pv
+spec:
+  capacity:
+    storage: 20Gi
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: efs-sc
+  claimRef:
+    namespace: ams-demo
+    name: ams-demo-hyrax-uploads
+  csi:
+    driver: efs.csi.aws.com
+    volumeHandle: fs-0dd9f8ff037001c5d::fsap-0b0c9056db4d6304c
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: ams-demo-branding-pv
+spec:
+  capacity:
+    storage: 2Gi
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: efs-sc
+  claimRef:
+    namespace: ams-demo
+    name: ams-demo-hyrax-branding
+  csi:
+    driver: efs.csi.aws.com
+    volumeHandle: fs-0dd9f8ff037001c5d::fsap-0e780c3121d69918b
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: ams-demo-hyrax-uploads
+  namespace: ams-demo
+spec:
+  accessModes:
+    - ReadWriteMany
+  storageClassName: efs-sc
+  volumeName: ams-demo-uploads-pv
+  resources:
+    requests:
+      storage: 20Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: ams-demo-hyrax-branding
+  namespace: ams-demo
+spec:
+  accessModes:
+    - ReadWriteMany
+  storageClassName: efs-sc
+  volumeName: ams-demo-branding-pv
+  resources:
+    requests:
+      storage: 2Gi

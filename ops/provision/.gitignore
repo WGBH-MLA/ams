@@ -33,4 +33,3 @@ override.tf.json
 *-values.yaml
 kube_config.*.yml
 *.pem
-.terraform.lock.hcl
