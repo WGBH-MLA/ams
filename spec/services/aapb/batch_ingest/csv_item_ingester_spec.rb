@@ -72,6 +72,7 @@ RSpec.describe AAPB::BatchIngest::CSVItemIngester do
         physical_instantiation_resource = asset_resource.members.select { |member| member.is_a? PhysicalInstantiationResource }.first
         expect(physical_instantiation_resource.format).to eq('1 inch videotape')
         expect(physical_instantiation_resource.media_type).to eq('Moving Image')
+        expect(physical_instantiation_resource.location).to eq('Houston')
         expect(physical_instantiation_resource.holding_organization).to eq('University of Houston')
       end
     end
