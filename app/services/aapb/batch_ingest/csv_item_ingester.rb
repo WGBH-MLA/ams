@@ -3,23 +3,33 @@ require 'aapb/batch_ingest'
 module AAPB
   module BatchIngest
     class CSVItemIngester < AAPB::BatchIngest::BatchItemIngester
+      
       def ingest
         @works_ingested = []
         set_options
         @source_data = JSON.parse(@batch_item.source_data)
-        # This halts the Asset ingestion as well as subsequent Instantiations if media type is missing.
-        @source_data.keys.select{|k| k.to_s.include?("Instantiation")}.each do |inst_key|
-          @source_data[inst_key].each do |instantiation|
-            raise "Missing media_type in instantiation" if instantiation["media_type"].blank?
-          end
-        end
+        
+        validate_physical_instantiations_required_fields!
+        
         result = ingest_object_at options, @source_data
-
+        
         raise "Batch item contained invalid data.\n\n#{@batch_item.error}" unless @batch_item.error.nil?
         @works_ingested.first
       end
-
+        
       private
+
+      def validate_physical_instantiations_required_fields!
+        physical_instantiations = @source_data['PhysicalInstantiation']
+        
+        return unless physical_instantiations.present?
+        
+        Array.wrap(physical_instantiations).each do |instantiation|
+          raise "Missing location in PhysicalInstantiation" if instantiation['location'].blank?
+          raise "Missing holding_organization in PhysicalInstantiation" if instantiation['holding_organization'].blank?
+          raise "Missing media_type in instantiation" if instantiation["media_type"].blank?
+        end
+      end
 
       def object_list
         @object_list ||= {
