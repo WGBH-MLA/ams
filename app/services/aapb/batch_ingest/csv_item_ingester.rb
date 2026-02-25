@@ -25,7 +25,6 @@ module AAPB
         return unless physical_instantiations.present?
         
         Array.wrap(physical_instantiations).each do |instantiation|
-          raise "Missing location in PhysicalInstantiation" if instantiation['location'].blank?
           raise "Missing holding_organization in PhysicalInstantiation" if instantiation['holding_organization'].blank?
           raise "Missing media_type in instantiation" if instantiation["media_type"].blank?
         end
