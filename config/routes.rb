@@ -86,7 +86,8 @@ Rails.application.routes.draw do
   end
 
   namespace :api do
-    resources :assets, only: [:show, :search_doc], defaults: { format: :json }
+    resources :assets, only: [:show], defaults: { format: :json }
+    get 'assets/:id/search_doc', to: 'assets#search_doc', defaults: { format: :json }
   end
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
 end
