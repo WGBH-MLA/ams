@@ -21,6 +21,13 @@ module API
       end
     end
 
+    # Shows the Asset's indexed search document, currently Solr
+    def search_doc
+      respond_to do |format|
+        format.json {render json: solr_doc.to_json}
+      end
+    end
+
     private
 
     def pbcore_json
