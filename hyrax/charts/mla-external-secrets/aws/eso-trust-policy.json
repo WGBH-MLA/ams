@@ -1,0 +1,18 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+      {
+        "Effect": "Allow",
+        "Principal": {
+          "Federated": "arn:aws:iam::127946490116:oidc-provider/oidc.eks.us-east-1.amazonaws.com/id/914A886F9E8342BC60F830DB3525F670"
+        },
+        "Action": "sts:AssumeRoleWithWebIdentity",
+        "Condition": {
+          "StringEquals": {
+            "oidc.eks.us-east-1.amazonaws.com/id/914A886F9E8342BC60F830DB3525F670:sub": "system:serviceaccount:external-secrets:external-secrets-operator"
+          }
+        }
+      }
+    ]
+  }
+  
