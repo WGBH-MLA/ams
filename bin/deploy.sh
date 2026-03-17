@@ -1,5 +1,20 @@
 #!/bin/bash
 
+# Install external-secrets dependency
+helm repo add external-secrets https://charts.external-secrets.io
+helm repo update
+
+helm upgrade --install external-secrets external-secrets/external-secrets \
+  --namespace external-secrets \
+  --create-namespace \
+  --set installCRDs=true
+
+# TODO: Handle failure case
+kubectl wait --for=condition=Established \
+  crd/clustersecretstores.external-secrets.io \
+  --timeout=60s
+
+# Set up the environment variables for the Helm deployment and run the custom script.
 export HELM_EXPERIMENTAL_OCI=1
 export HELM_RELEASE_NAME=ams-$1
 export KUBE_NAMESPACE=ams-$1
