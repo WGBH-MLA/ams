@@ -9,3 +9,4 @@ dependencies:
 - name: external-secrets
   version: 0.20.3
   repository: https://charts.external-secrets.io
+  installCRDs: true
