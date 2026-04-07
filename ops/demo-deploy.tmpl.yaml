@@ -130,6 +130,8 @@ extraEnvVars: &envVars
     value: "ams-edge-test"
   - name: S3_EXPORT_DIR
     value: "ip-10-10-1-77"
+  - name: S3_PUBLISHED_PBCORE_JSON_BUCKET
+    value: "pbcore-json-aapb-dev"
   - name: SMTP_ADDRESS
     value: "email-smtp.us-east-1.amazonaws.com"
   - name: SMTP_AUTHENTICATION
