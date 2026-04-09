@@ -434,3 +434,10 @@ nodeSelector: {}
 tolerations: []
 
 affinity: {}
+
+# Config for external-secrets
+external-secrets:
+  serviceAccount:
+    name: external-secrets
+    annotations:
+      eks.amazonaws.com/role-arn: arn:aws:iam::127946490116:role/eso-irsa-role

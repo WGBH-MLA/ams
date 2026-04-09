@@ -111,32 +111,3 @@ resource "kubectl_manifest" "prod_dns_issuer" {
   depends_on = [helm_release.cert_manager]
   yaml_body  = file("modules/k8s/files/prod_dns_issuer.yaml")
 }
-
-resource "helm_release" "secrets_replicator" {
-  count            = var.deploy_k8s_apps ? 1 : 0
-  chart            = "kubernetes-replicator"
-  name             = "kubernetes-replicator"
-  namespace        = "default"
-  version          = "2.12.2"
-  create_namespace = true
-  repository       = "https://helm.mittwald.de"
-}
-
-resource "kubectl_manifest" "aapb_ssh_keys" {
-  count     = var.deploy_k8s_apps ? 1 : 0
-  yaml_body = templatefile("modules/k8s/files/aapb_ssh_keys.yaml", {
-    rsa_key = var.rsa_key != "" ? filebase64(var.rsa_key) : base64encode(var.rsa_key_content)
-  })
-}
-
-resource "kubectl_manifest" "app_secrets" {
-  count     = var.deploy_k8s_apps ? 1 : 0
-  yaml_body = templatefile("modules/k8s/files/app_secrets.yaml", {
-    db_password      = base64encode(var.db_password),
-    solr_admin_password = base64encode(var.solr_admin_password),
-    smtp_password    = base64encode(var.smtp_password),
-    aws_secret_key   = base64encode(var.aws_secret_key),
-    ci_client_secret = base64encode(var.ci_client_secret),
-    ci_password      = base64encode(var.ci_password)
-  })
-}
