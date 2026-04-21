@@ -18,6 +18,7 @@ class SolrDocument
 
   SolrDocument.use_extension(AMS::CsvExportExtension)
   SolrDocument.use_extension(AMS::PbcoreXmlExportExtension)
+  SolrDocument.use_extension(AMS::PbcoreJSONExportExtension)
 
   attribute :intended_children_count, Solr::String, 'intended_children_count_isi'
   attribute :validation_status_for_aapb, Solr::Array, 'validation_status_for_aapb_tesim'

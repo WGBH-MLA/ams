@@ -2,14 +2,15 @@ class SavePushJob < ApplicationJob
   queue_as :push_to_aapb
 
   def perform(push:, pushed_id_csv:, user:)
-    begin
-      push.pushed_id_csv = pushed_id_csv
-      push.status = 'pushed'
-      push.save!
-      PushToAAPBJob.perform_later(id: push.id, user: user)
-    rescue => e
-      Rails.logger.error("SavePushJob failed for push ID #{push.id}: #{e.message}")
-      push.update(status: "Push Error: #{e.message}")
+    push.pushed_id_csv = pushed_id_csv
+    # TODO: Changed "pushed" to be a more reflective status to indiatte the records are still processing.
+    push.status = 'pushed'
+    push.save!
+
+
+    push.push_ids.each do |asset_id|
+      pbcore_json_hash = SolrDocument.find(asset_id).export_as_pbcore_json
+      PublishPbcoreJsonJob.perform_later(pbcore_json_hash: pbcore_json_hash, user: user)
     end
   end
 end
