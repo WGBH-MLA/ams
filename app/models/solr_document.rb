@@ -18,6 +18,7 @@ class SolrDocument
 
   SolrDocument.use_extension(AMS::CsvExportExtension)
   SolrDocument.use_extension(AMS::PbcoreXmlExportExtension)
+  SolrDocument.use_extension(AMS::PbcoreJSONExportExtension)
 
   attribute :intended_children_count, Solr::String, 'intended_children_count_isi'
   attribute :validation_status_for_aapb, Solr::Array, 'validation_status_for_aapb_tesim'
@@ -284,6 +285,8 @@ class SolrDocument
     self[solr_name('alternative_modes')]
   end
 
+  # @return [Array] A single-element array (to conform with typical Solr behavior)
+  #   of all titles concatenated with ';', empty oes removed.
   def title
     concatenated_titles = [series_title,
       program_title, episode_number, episode_title, segment_title, clip_title,

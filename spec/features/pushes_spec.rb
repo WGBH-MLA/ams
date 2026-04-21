@@ -19,7 +19,7 @@ RSpec.describe "Pushes features", type: :controller, js: true do
     it 'gives validation error when invalid GUID input data' do
       visit '/pushes/new'
       bad_ids = [ 'blerg', 'cpb-aacip-11111111111' ]
-      fill_in(id: 'id_field', with: bad_ids.join("\n") )
+      fill_in(id: 'asset_ids_queue', with: bad_ids.join("\n") )
       expect(page).to have_text "The following IDs are not found"
       bad_ids.each do |bad_id|
         expect(page).to have_text bad_id
@@ -28,7 +28,7 @@ RSpec.describe "Pushes features", type: :controller, js: true do
 
     it 'gives all clear for valid GUID input data' do
       visit '/pushes/new'
-      fill_in(id: 'id_field', with: asset_resource.id )
+      fill_in(id: 'asset_ids_queue', with: asset_resource.id )
       expect(page).to have_text('All GUIDs are valid!')
     end
 
@@ -54,7 +54,7 @@ RSpec.describe "Pushes features", type: :controller, js: true do
     it 'can submit a push successfully' do
       allow(PushToAAPBJob).to receive(:perform_later)
       visit '/pushes/new'
-      fill_in('id_field', with: asset_resource.id )
+      fill_in('asset_ids_queue', with: asset_resource.id )
       click_button(id: 'push-submit')
 
       # this will have the output mail
