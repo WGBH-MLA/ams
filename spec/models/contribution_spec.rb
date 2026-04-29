@@ -42,18 +42,22 @@ RSpec.describe Contribution do
         expect(contribution.portrayal.include?("Test portrayal")).to be true
       end
     end
+
     context "affiliation" do
       it "has affiliation" do
-        contribution.portrayal = "Test affiliation"
+        contribution.affiliation = "Test affiliation"
         expect(contribution.resource.dump(:ttl)).to match(/ebucore\/ebucore#hasAffiliation/)
-        expect(contribution.portrayal.include?("Test affiliation")).to be true
+        expect(contribution.affiliation.include?("Test affiliation")).to be true
       end
     end
+
     context "annotation" do
       it "has annotation" do
         contribution.annotation = "Test annotation"
-        expect(contribution.resource.dump(:ttl)).to match(/http:\/\/ams2.wgbh-mla.org\/resource#annotation/)
+        expect(contribution.resource.dump(:ttl)).to match(/pbcore.org#hasContributorAnnotation/)
         expect(contribution.annotation.include?("Test annotation")).to be true
       end
     end
   end
+
+end
