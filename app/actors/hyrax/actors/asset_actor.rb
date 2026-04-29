@@ -146,6 +146,8 @@ module Hyrax
                 # Moving contributor into Array before saving object
                 param_contributor[:contributor] = Array(param_contributor[:contributor])
                 param_contributor[:annotation] = param_contributor[:annotation].to_s if param_contributor.key?(:annotation)
+                param_contributor[:affiliation] = param_contributor[:affiliation].to_s if param_contributor.key?(:affiliation)
+                param_contributor[:portrayal] = param_contributor[:portrayal].to_s if param_contributor.key?(:portrayal)
                 param_contributor[:admin_set_id] = env.curation_concern.admin_set_id
                 param_contributor[:title] = env.attributes["title"]
 
