@@ -52,7 +52,7 @@ RSpec.describe Contribution do
     context "annotation" do
       it "has annotation" do
         contribution.annotation = "Test annotation"
-        expect(contribution.resource.dump(:ttl)).to match(/http:\/\/ams2.wgbh-mla.org\/resource#annotation/)
+        expect(contribution.resource.dump(:ttl)).to match(/http:\/\/ams2\.wgbh-mla\.org\/resource#annotation/)
         expect(contribution.annotation.include?("Test annotation")).to be true
       end
     end
