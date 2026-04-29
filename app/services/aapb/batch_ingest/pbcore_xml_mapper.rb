@@ -161,11 +161,12 @@ module AAPB
 
       def person_attributes(person, role)
         {
-          contributor: (person.value if person),
+          contributor:      (person.value if person),
           contributor_role: (role.value if role),
           # pbcorecontributor ONLY
-          affiliation: (person.affiliation if defined? person.affiliation),
-          portrayal: (role.portrayal if role && defined? role.portrayal),
+          affiliation:      (person.respond_to?(:affiliation) ? person.affiliation : nil),
+          portrayal:        (role.respond_to?(:portrayal) ? role.portrayal : nil if role),
+          annotation:       (person.respond_to?(:annotation) ? person.annotation : nil)
         }
 
       end

@@ -11,7 +11,7 @@ class Contribution < ActiveFedora::Base
   property :bulkrax_identifier, predicate: ::RDF::URI("http://ams2.wgbh-mla.org/resource#bulkraxIdentifier"), multiple: false do |index|
     index.as :stored_searchable, :facetable
   end
-  
+
   property :contributor, predicate: ::RDF::URI.new("http://www.w3.org/2006/vcard/ns#hasName"), multiple: false do |index|
     index.as :stored_searchable
   end
@@ -25,6 +25,10 @@ class Contribution < ActiveFedora::Base
   end
 
   property :affiliation, predicate: ::RDF::URI.new("http://www.ebu.ch/metadata/ontologies/ebucore/ebucore#hasAffiliation"), multiple: false, index_to_parent:true do |index|
+    index.as :stored_searchable
+  end
+
+  property :annotation, predicate: ::RDF::URI.new("http://pbcore.org#hasContributorAnnotation"), multiple: false do |index|
     index.as :stored_searchable
   end
 

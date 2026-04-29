@@ -145,6 +145,7 @@ module Hyrax
                 actor ||= Hyrax::CurationConcern.actor
                 # Moving contributor into Array before saving object
                 param_contributor[:contributor] = Array(param_contributor[:contributor])
+                param_contributor[:annotation] = param_contributor[:annotation].to_s if param_contributor.key?(:annotation)
                 param_contributor[:admin_set_id] = env.curation_concern.admin_set_id
                 param_contributor[:title] = env.attributes["title"]
 

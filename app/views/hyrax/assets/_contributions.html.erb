@@ -14,6 +14,7 @@
           <th><%= t('.name') %></th>
           <th><%= t('.affiliation') %></th>
           <th><%= t('.portrayal') %></th>
+          <th><%= t('.annotation') %></th>
         </tr>
         </thead>
         <tbody>
@@ -23,6 +24,7 @@
           <td><%= contribution.solr_document.try(:contributor).try(:first) %></td>
           <td><%= contribution.solr_document.try(:affiliation).try(:first) %></td>
           <td><%= contribution.solr_document.try(:portrayal).try(:first) %></td>
+          <td><%= contribution.solr_document.try(:annotation).try(:first) %></td>
         </tr>
         <% end %>
         </tbody>

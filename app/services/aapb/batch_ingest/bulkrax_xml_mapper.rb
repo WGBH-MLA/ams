@@ -166,6 +166,7 @@ module AAPB
         # pbcorecontributor ONLY
         affiliation: (person.affiliation if defined? person.affiliation),
         portrayal: (role.portrayal if role && defined? role.portrayal),
+        annotation: (role.annotation if role && defined? role.annotation)
       }
 
     end

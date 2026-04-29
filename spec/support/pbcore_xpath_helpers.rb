@@ -222,6 +222,7 @@ module PBCoreXPathHelper
           affiliation: contributor.xpath('//contributor').first.attributes['affiliation'].value,
           contributor_role: contributor.xpath('//contributorRole').first.text,
           portrayal: contributor.xpath('//contributorRole').first.attributes['portrayal'].value,
+          annotation: contributor.xpath('//contributor').first.attributes['annotation'].value
         }
       end
     end

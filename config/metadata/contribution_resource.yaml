@@ -55,3 +55,13 @@ attributes:
       required: false
       primary: false
       multiple: false
+  annotation:
+    type: string
+    multiple: false
+    index_to_parent: false
+    index_keys:
+      - "annotation_tesim"
+    form:
+      required: false
+      primary: false
+      multiple: false

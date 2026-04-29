@@ -5,6 +5,8 @@ terms:
     term: Adapter
   - id: Anchor
     term: Anchor
+  - id: Appearing
+    term: Appearing
   - id: Artist
     term: Artist
   - id: Artistic Director
@@ -55,6 +57,8 @@ terms:
     term: Copyright Holder
   - id: Costume Designer
     term: Costume Designer
+  - id: Crew
+    term: Crew
   - id: Describer
     term: Describer
   - id: Director

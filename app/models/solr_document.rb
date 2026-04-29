@@ -240,6 +240,10 @@ class SolrDocument
     self[solr_name('portrayal')]
   end
 
+  def annotation
+    self[solr_name('annotation')]
+  end
+
   def digital_format
     self[solr_name('digital_format')]
   end
@@ -359,11 +363,11 @@ class SolrDocument
   def clip_description
     self[solr_name('clip_description')]
   end
-  
+
   def rundown_description
     self[solr_name('rundown_description')]
   end
-  
+
   def all_dates
     [
       date,
@@ -540,11 +544,11 @@ class SolrDocument
     # this nonsensical ':symbol' option indicates that I am selecting the _ssim suffix from down in solrizer - default was _tesim, which was wrong for this field
     self[solr_name('md5', :symbol)]
   end
-  
+
   def ams1_legacy_metadata
     self[solr_name('ams1_legacy_metadata', :symbol)]
   end
-  
+
   def proxy_start_time
     self[solr_name('proxy_start_time', :symbol)]
   end
