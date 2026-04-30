@@ -12,9 +12,9 @@ class PushesController < ApplicationController
   end
 
   def create
-    @push = Push.create(user_id: current_user.id, status: 'pending')
+    @push = Push.create(user_id: current_user.id, status: 'initiated', pushed_id_csv: submitted_ids)
     if @push.valid?
-      SavePushJob.perform_later(push: @push, pushed_id_csv: pushed_id_csv_from_id_field, user: current_user)
+      SavePushJob.perform_later(push: @push)
       redirect_to @push
     else
       render :new
@@ -24,16 +24,16 @@ class PushesController < ApplicationController
   # #validate_ids aynchronous validation of IDs to be pushed to AAPB.
   def validate_ids
     response = {}
-    @push = Push.new(user: current_user, pushed_id_csv: pushed_id_csv_from_id_field)
+    @push = Push.new(user: current_user, asset_ids_queue: submitted_ids)
     response[:error] = @push.errors.values.flatten.join("\n\n") if @push.invalid?
     render json: response
   end
 
   def new
-    # If we have search params but no explicitly passed IDs in :id_field, then
-    # do the search and set the :id_field to the found IDs.
-    if (search_params[:q] || search_params[:fq] && !params[:id_field])
-      params[:id_field] = assets_search.solr_documents.map(&:id).join("\n")
+    # If we have search params but no explicitly passed IDs in :asset_ids_queue, then
+    # do the search and set the :asset_ids_queue to the found IDs.
+    if (search_params[:q] || search_params[:fq] && !params[:asset_ids_queue])
+      params[:asset_ids_queue] = assets_search.solr_documents.map(&:id).join("\n")
     end
   end
 
@@ -45,10 +45,10 @@ class PushesController < ApplicationController
 
   private
 
-    # Converting a list of values from the id_field (a texteara in the #new
+    # Converting a list of values from the asset_ids_queue (a texteara in the #new
     # view) to a comma-separated list of IDs.
-    def pushed_id_csv_from_id_field
-      params.fetch(:id_field, '').split(/\s+/).reject(&:empty?).uniq.join(',')
+    def submitted_ids
+      params.fetch(:asset_ids_queue, '').split(/\s+/).reject(&:empty?).uniq
     end
 
     def assets_search

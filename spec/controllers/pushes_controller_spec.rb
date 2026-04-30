@@ -57,20 +57,20 @@ RSpec.describe PushesController, type: :controller do
       end
 
       it 'performs the search to get the IDs, and renders the "new" view with' \
-        'the IDs in the id_field' do
+        'the IDs in the asset_ids_queue' do
           expect(Set.new(actual_ids)).to eq Set.new(asset_resources.map { |v| v.id.to_s })
       end
     end
   end
 
   describe 'POST /pushes/validate_ids' do
-    before { post :validate_ids, params: { id_field: id_field } }
+    before { post :validate_ids, params: { asset_ids_queue: asset_ids_queue } }
     let(:json_response) { JSON.parse(response.body) }
 
     context 'with some invalid IDs' do
       let(:asset_resource_ids) { asset_resources.map(&:id) }
       let(:missing_ids) { ["cpb-aacip-xxxxxxxxxxx", "cpb-aacip-xxxxxxxxxxx", "cpb-aacip-yyyyyyyyyyy"] }
-      let(:id_field) { (asset_resource_ids + missing_ids).shuffle.join("\n") }
+      let(:asset_ids_queue) { (asset_resource_ids + missing_ids).shuffle.join("\n") }
       it 'returns error message that includes the invalid IDs but not any valid
           IDs' do
         missing_ids.each do |missing_id|
@@ -84,7 +84,7 @@ RSpec.describe PushesController, type: :controller do
     end
 
     context 'with valid ids' do
-      let(:id_field) { asset_resources.map(&:id).join("\n") }
+      let(:asset_ids_queue) { asset_resources.map(&:id).join("\n") }
       it 'returns no error' do
         expect(json_response).not_to have_key('error')
       end
@@ -93,12 +93,12 @@ RSpec.describe PushesController, type: :controller do
 
   describe 'POST /pushes/create' do
     let(:asset_resource_ids) { asset_resources.map(&:id) }
-    # Simulate a list of IDs passed into the id_field param.
-    let(:params) { { id_field: asset_resource_ids.join("\n") } }
+    # Simulate a list of IDs passed into the asset_ids_queue param.
+    let(:params) { { asset_ids_queue: asset_resource_ids.join("\n") } }
 
     # The params with which we expect to run the PushToAAPBJob
     let(:expected_job_params) { { id: Push.last.id, user: user } }
-    let(:pushed_id_csv) { params.fetch(:id_field, '').split(/\s+/).reject(&:empty?).uniq.join(',') }
+    let(:pushed_id_csv) { params.fetch(:asset_ids_queue, '').split(/\s+/).reject(&:empty?).uniq.join(',') }
 
     # Hook up the mocks
     before do

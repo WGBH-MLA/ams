@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2025_05_16_192817) do
+ActiveRecord::Schema.define(version: 2026_04_28_165216) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -465,12 +465,31 @@ ActiveRecord::Schema.define(version: 2025_05_16_192817) do
     t.index ["grantor_id"], name: "idx_20462_index_proxy_deposit_rights_on_grantor_id"
   end
 
+  create_table "published_assets", force: :cascade do |t|
+    t.string "job_id"
+    t.string "asset_id"
+    t.bigint "push_id", null: false
+    t.integer "status"
+    t.string "location"
+    t.string "error"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["asset_id", "status"], name: "index_published_assets_on_asset_id_and_status"
+    t.index ["created_at"], name: "index_published_assets_on_created_at"
+    t.index ["push_id", "status"], name: "index_published_assets_on_push_id_and_status"
+    t.index ["push_id"], name: "index_published_assets_on_push_id"
+    t.index ["updated_at"], name: "index_published_assets_on_updated_at"
+  end
+
   create_table "pushes", force: :cascade do |t|
     t.text "pushed_id_csv"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "user_id"
     t.string "status"
+    t.string "destination"
+    t.text "asset_ids_queue"
+    t.text "error"
   end
 
   create_table "qa_local_authorities", force: :cascade do |t|
@@ -805,6 +824,7 @@ ActiveRecord::Schema.define(version: 2025_05_16_192817) do
   add_foreign_key "mailboxer_notifications", "mailboxer_conversations", column: "conversation_id", name: "notifications_on_conversation_id", on_update: :restrict, on_delete: :restrict
   add_foreign_key "mailboxer_receipts", "mailboxer_notifications", column: "notification_id", name: "receipts_on_notification_id", on_update: :restrict, on_delete: :restrict
   add_foreign_key "permission_template_accesses", "permission_templates", on_update: :restrict, on_delete: :restrict
+  add_foreign_key "published_assets", "pushes"
   add_foreign_key "qa_local_authority_entries", "qa_local_authorities", column: "local_authority_id", on_update: :restrict, on_delete: :restrict
   add_foreign_key "uploaded_files", "users", on_update: :restrict, on_delete: :restrict
 end

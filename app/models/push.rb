@@ -1,63 +1,92 @@
 class Push < ApplicationRecord
   # push to aapb
   belongs_to :user
+  has_many :published_assets
 
-  validate do
-    errors.add(:user, "is required") unless user.is_a? User
-    missing_ids = ids_not_found
-    errors.add(:pushed_id_csv, "The following IDs are not found in the repository: #{missing_ids.join(', ')}") unless missing_ids.empty?
-    validate_status
-  end
+  serialize :asset_ids_queue, type: Array, coder: JSON
 
-  # NOTE: do not memoize
-  # TODO: we could just use a serialized field for push_ids rather than manually
-  # converting it to CSV and back again. Would require migration of course.
-  def push_ids
-    Array(pushed_id_csv&.to_s&.split(','))
-  end
+  enum status: {
+    initiated: "initiated",
+    queueing: "queueing",
+    uploading: "uploading",
+    finished: "finished"
+  }
+
+  validate(
+    :validate_user,
+    :validate_assets_exist,
+    :validate_assets_have_titles,
+    :validate_assets_have_descriptions,
+    :validate_assets_chilren_validation_status,
+    :validate_lua_and_sonyci_id
+  )
 
   private
 
-    # NOTE: do not memoize
-    def found_ids
-      export_search.solr_documents.map(&:id)
+  def found_docs
+    @found_docs ||= export_search.solr_documents
+  end
+
+  # NOTE: do not memoize
+  # @return [AMS::Export::Search::CombinedIDSearch] instance used for performing
+  #   search and returning solr document results.
+  def export_search
+    AMS::Export::Search::CombinedIDSearch.new(ids: asset_ids_queue, user: user)
+  end
+
+  def validate_user
+    errors.add(:user, "is required") unless user.is_a? User
+  end
+
+  def valudate_assets_exist
+    not_found = asset_ids_queue - found_docs.map(&:id)
+    errors.add(:asset_ids_queue, "The following IDs are not found in the repository: #{not_found.join(', ')}") if not_found.present?
+  end
+
+  def validate_assets_have_titles
+    # Check for missing titles. And yes, SolrDocument#title returns an array
+    # of a single element, hence the call to `doc.title.first`.
+    # Add an error message any IDs missing titles.
+    missing_titles = found_docs.select { |doc| doc.title.first.empty? }.map(&:id)
+    errors.add(:asset_ids_queue, "The following IDs are missing a title: #{missing_titles.join(', ')}") if missing_titles.present?
+  end
+
+  def validate_assets_have_descriptions
+    # Check for missing titles. Unlike title, display_description is a string or nil, so need to call .to_s before checking .empty?
+    missing_descriptions = found_docs.select { |doc| doc.display_description.to_s.empty? }.map(&:id)
+    errors.add(:asset_ids_queue, "The following IDs are missing a description: #{missing_descriptions.join(', ')}") if missing_descriptions.present?
+  end
+
+  def validate_assets_chilren_validation_status
+    if assets_with_invalid_children_status.present?
+      assets_witth_invalid_children_status.each do |status, asset_ids|
+        errors.add(:asset_ids_queue, "The following Assets have invalid status '#{status}': #{asset_ids.join(', ')}")
+      end
+    end
+  end
+
+  def validate_lua_and_sonyci_id
+    with_lua_no_sony_ci_id = found_docs.select do |doc|
+      doc.level_of_user_access.first.present? && doc.sonyci_id.empty?
+    end.map(&:id)
+
+    with_sonyci_id_no_lua = found_docs.select do |doc|
+      doc.sonyci_id.present? && doc.level_of_user_access.first.to_s.empty?
     end
 
-    # NOTE: do not memoize
-    def ids_not_found
-      push_ids - found_ids
-    end
+    errors.add(:asset_ids_queue, "The following IDs have a Level of User Access but no Sony CI ID: #{with_lua_no_sony_ci_id.join(', ')}") if with_lua_no_sony_ci_id.present?
+    errors.add(:asset_ids_queue, "The following IDs have a Sony CI ID but no Level of User Access: #{with_sonyci_id_no_lua.join(', ')}") if with_sonyci_id_no_lua.present?
+  end
 
-    def validate_status
-      invalid_docs = export_search.solr_documents.reject do |doc|
+  def assets_with_invalid_children_status
+    {}.tap do |hash|
+      found_docs.reject do |doc|
         doc.validation_status_for_aapb == [AssetResource::VALIDATION_STATUSES[:valid]]
-      end
-      return if invalid_docs.blank?
-
-      AssetResource::VALIDATION_STATUSES.each_pair do |status_key, status_value|
-        next if status_key == :valid
-        add_status_error(invalid_docs, status_value)
+      end.each do |doc|
+        status = doc.validation_status_for_aapb.first
+        hash[status] ||= []
+        hash[status] << doc.id
       end
     end
-
-    def add_status_error(invalid_docs, status)
-      ids_matching_status = if status == AssetResource::VALIDATION_STATUSES[:empty]
-                              invalid_docs.select { |doc| doc.validation_status_for_aapb.blank? }.map(&:id)
-                            else
-                              invalid_docs.select { |doc| doc.validation_status_for_aapb.include?(status) }.map(&:id)
-                            end
-
-      # Prevents adding errors to docs that don't have a value
-      # in :validation_status_for_aapb, including all non-AssetResources.
-      return if ids_matching_status.blank?
-
-      errors.add(:pushed_id_csv, "The following IDs are #{status}: #{ids_matching_status.join(', ')}")
-    end
-
-    # NOTE: do not memoize
-    # @return [AMS::Export::Search::CombinedIDSearch] instance used for performing
-    #   search and returning solr document results.
-    def export_search
-      AMS::Export::Search::CombinedIDSearch.new(ids: push_ids, user: user)
-    end
+  end
 end
