@@ -20,7 +20,7 @@
     form.addEventListener('submit', function(e) {
       if (fileInput.files.length > 0 && fileInput.files[0].size > MAX_SIZE) {
         e.preventDefault();
-        alert('File size exceeds the 10MB limit. Please upload a file smaller than 2MB.');
+        alert('File size exceeds the 2MB limit. Please upload a file smaller than 2MB.');
         fileInput.value = '';
       }
     });
