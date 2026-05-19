@@ -10,3 +10,19 @@
   <%= f.input :admin_set_id, collection: @admin_sets, required: true %>
   <%= f.button :submit,  value: 'Save' %>
 <% end %>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const form = document.querySelector('form');
+    const fileInput = document.querySelector('input[type="file"]');
+    const MAX_SIZE = 2 * 1024 * 1024; // 2MB in bytes
+
+    form.addEventListener('submit', function(e) {
+      if (fileInput.files.length > 0 && fileInput.files[0].size > MAX_SIZE) {
+        e.preventDefault();
+        alert('File size exceeds the 10MB limit. Please upload a file smaller than 2MB.');
+        fileInput.value = '';
+      }
+    });
+  });
+</script>
