@@ -18,24 +18,30 @@
 </div>
 
 <script>
-  document.addEventListener('DOMContentLoaded', function() {
-    const form = document.querySelector('form');
+function initFileValidation() {
     const fileInput = document.querySelector('input[type="file"]');
-    const submitButton = form.querySelector('input[type="submit"], button[type="submit"]');
+    const submitButton = document.querySelector('input[type="submit"]');
     const errorDiv = document.getElementById('file-size-error');
     const MAX_SIZE = 2 * 1024 * 1024; // 2MB in bytes
 
     fileInput.addEventListener('change', function() {
-      if (fileInput.files.length > 0 && fileInput.files[0].size > MAX_SIZE) {
-        errorDiv.style.display = 'block';
-        fileInput.value = '';
-        submitButton.disabled = false;
-      } else {
-        errorDiv.style.display = 'none';
-        submitButton.disabled = false;
-      }
-    });
-  });
+  if (fileInput.files.length === 0) return; // ignore the clear event
+
+  if (fileInput.files[0].size > MAX_SIZE) {
+    errorDiv.style.display = 'block';
+    fileInput.value = '';
+    submitButton.disabled = false;
+    submitButton.removeAttribute('data-disabled');
+  } else {
+    errorDiv.style.display = 'none';
+    submitButton.disabled = false;
+    submitButton.removeAttribute('data-disabled');
+  }
+});
+
+    }
+
+  initFileValidation();
+  document.addEventListener('turbo:load', initFileValidation);
+  document.addEventListener('turbolinks:load', initFileValidation);
 </script>
-
-
