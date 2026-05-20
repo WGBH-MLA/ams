@@ -11,18 +11,31 @@
   <%= f.button :submit,  value: 'Save' %>
 <% end %>
 
+<%# Client-side validation to catch files exceeding the 2MB nginx upload limit
+    before they hit the server and return a confusing 413 error %>
+<div id="file-size-error" style="display:none; color:red; margin-top:8px;">
+  File size exceeds the 2MB limit. Please upload a smaller file.
+</div>
+
 <script>
   document.addEventListener('DOMContentLoaded', function() {
     const form = document.querySelector('form');
     const fileInput = document.querySelector('input[type="file"]');
+    const submitButton = form.querySelector('input[type="submit"], button[type="submit"]');
+    const errorDiv = document.getElementById('file-size-error');
     const MAX_SIZE = 2 * 1024 * 1024; // 2MB in bytes
 
-    form.addEventListener('submit', function(e) {
+    fileInput.addEventListener('change', function() {
       if (fileInput.files.length > 0 && fileInput.files[0].size > MAX_SIZE) {
-        e.preventDefault();
-        alert('File size exceeds the 2MB limit. Please upload a file smaller than 2MB.');
+        errorDiv.style.display = 'block';
         fileInput.value = '';
+        submitButton.disabled = false;
+      } else {
+        errorDiv.style.display = 'none';
+        submitButton.disabled = false;
       }
     });
   });
 </script>
+
+
