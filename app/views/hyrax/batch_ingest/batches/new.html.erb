@@ -10,3 +10,38 @@
   <%= f.input :admin_set_id, collection: @admin_sets, required: true %>
   <%= f.button :submit,  value: 'Save' %>
 <% end %>
+
+<%# Client-side validation to catch files exceeding the 2MB nginx upload limit
+    before they hit the server and return a confusing 413 error %>
+<div id="file-size-error" style="display:none; color:red; margin-top:8px;">
+  File size exceeds the 2MB limit. Please upload a smaller file.
+</div>
+
+<script>
+function initFileValidation() {
+    const fileInput = document.querySelector('input[type="file"]');
+    const submitButton = document.querySelector('input[type="submit"]');
+    const errorDiv = document.getElementById('file-size-error');
+    const MAX_SIZE = 2 * 1024 * 1024; // 2MB in bytes
+
+    fileInput.addEventListener('change', function() {
+  if (fileInput.files.length === 0) return; // ignore the clear event
+
+  if (fileInput.files[0].size > MAX_SIZE) {
+    errorDiv.style.display = 'block';
+    fileInput.value = '';
+    submitButton.disabled = false;
+    submitButton.removeAttribute('data-disabled');
+  } else {
+    errorDiv.style.display = 'none';
+    submitButton.disabled = false;
+    submitButton.removeAttribute('data-disabled');
+  }
+});
+
+    }
+
+  initFileValidation();
+  document.addEventListener('turbo:load', initFileValidation);
+  document.addEventListener('turbolinks:load', initFileValidation);
+</script>
