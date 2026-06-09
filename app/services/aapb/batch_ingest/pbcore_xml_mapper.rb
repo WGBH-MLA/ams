@@ -165,7 +165,7 @@ module AAPB
           contributor_role: (role.value if role),
           # pbcorecontributor ONLY
           affiliation:      (person.respond_to?(:affiliation) ? person.affiliation : nil),
-          portrayal:        (role.respond_to?(:portrayal) ? role.portrayal : nil if role),
+          portrayal:        (role.respond_to?(:portrayal) ? role.portrayal : nil),
           annotation:       (person.respond_to?(:annotation) ? person.annotation : nil)
         }
 
