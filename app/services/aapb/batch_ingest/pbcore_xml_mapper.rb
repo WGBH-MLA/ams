@@ -163,11 +163,10 @@ module AAPB
         {
           contributor:      (person.value if person),
           contributor_role: (role.value if role),
-          # pbcorecontributor ONLY
-          affiliation:      (person.respond_to?(:affiliation) ? person.affiliation : nil),
-          portrayal:        (role.respond_to?(:portrayal) ? role.portrayal : nil),
-          annotation:       (person.respond_to?(:annotation) ? person.annotation : nil)
-        }.compact
+          affiliation:      (person.affiliation if defined? person.affiliation),
+          portrayal:        (role.portrayal if role && defined? role.portrayal),
+          annotation:       (person.annotation if defined? person.annotation)
+        }
       end
 
       def physical_instantiation_resource_attributes
