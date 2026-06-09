@@ -167,8 +167,7 @@ module AAPB
           affiliation:      (person.respond_to?(:affiliation) ? person.affiliation : nil),
           portrayal:        (role.respond_to?(:portrayal) ? role.portrayal : nil),
           annotation:       (person.respond_to?(:annotation) ? person.annotation : nil)
-        }
-
+        }.compact
       end
 
       def physical_instantiation_resource_attributes
