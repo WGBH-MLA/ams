@@ -40,7 +40,9 @@ ingress:
         - path: /
   annotations:
     {
-      nginx.ingress.kubernetes.io/proxy-body-size: "0",
+      nginx.org/client-max-body-size: "2m",
+      nginx.org/proxy-read-timeout: "120",
+      nginx.org/proxy-send-timeout: "120",
       cert-manager.io/cluster-issuer: letsencrypt-prod-dns,
     }
   tls:
