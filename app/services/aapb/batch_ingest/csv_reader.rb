@@ -122,8 +122,19 @@ module AAPB
         !attribute.nil? && attribute != "id" && Annotation.ingestable_attributes.include?(attribute)
       end
 
-      def multi_value_fedora_attribute?(attribute,klass)
-        klass.constantize.properties[attribute] && klass.constantize.properties[attribute].multiple?
+      def multi_value_fedora_attribute?(attribute, klass)
+        # Map legacy model names (e.g., "Contribution" → "ContributionResource")
+        mapped_class_name = AAPB::BatchIngest::CSVConfigTree.map_legacy_model_name(klass)
+        resource_class = mapped_class_name.constantize
+        return false unless resource_class.respond_to?(:schema)
+
+        # Check if attribute exists in schema (includes inherited attributes from basic_metadata, etc.)
+        schema_key = resource_class.schema.key(attribute.to_sym)
+        return false unless schema_key
+
+        # Check if field has multiple: true in its metadata
+        meta = schema_key.meta
+        meta && meta['multiple'] == true
       end
 
       def instantiation_multi_attr?(attribute,klass)

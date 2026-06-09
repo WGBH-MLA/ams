@@ -2,13 +2,13 @@
 Rails.application.config.after_initialize do
   # converts from new class (v) to old class (af)
   [
-    Asset,
-    PhysicalInstantiation,
-    DigitalInstantiation,
-    EssenceTrack,
-    Contribution
+    AssetResource,
+    PhysicalInstantiationResource,
+    DigitalInstantiationResource,
+    EssenceTrackResource,
+    ContributionResource
   ].each do |klass|
-    Wings::ModelRegistry.register("#{klass}Resource".constantize, klass)
+    #Wings::ModelRegistry.register("#{klass}Resource".constantize, klass)
     # we register itself so we can pre-translate the class in Freyja instead of having to translate in each query_service
     Wings::ModelRegistry.register(klass, klass)
   end

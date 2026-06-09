@@ -173,15 +173,15 @@ module Ams
         # This is ultimately because there is a possibility that the creation of all of an Asset's
         # Contributions could be skipped, which would significantly throw off the count for comparison.
         # @see #create_or_update_contributions
-        current_children_count = change_set.model.all_members.reject { |child| child.is_a?(Contribution) }.size
+        current_children_count = change_set.model.all_members.reject { |child| child.is_a?(ContributionResource) }.size
         intended_children_count = change_set.model.intended_children_count.to_i
 
         if change_set.model.intended_children_count.blank? && change_set.model.validation_status_for_aapb.blank?
-          change_set.model.validation_status_for_aapb = [Asset::VALIDATION_STATUSES[:status_not_validated]]
+          change_set.model.validation_status_for_aapb = [AssetResource::VALIDATION_STATUSES[:status_not_validated]]
         elsif current_children_count < intended_children_count
-          change_set.model.validation_status_for_aapb = [Asset::VALIDATION_STATUSES[:missing_children]]
+          change_set.model.validation_status_for_aapb = [AssetResource::VALIDATION_STATUSES[:missing_children]]
         else
-          change_set.model.validation_status_for_aapb = [Asset::VALIDATION_STATUSES[:valid]]
+          change_set.model.validation_status_for_aapb = [AssetResource::VALIDATION_STATUSES[:valid]]
         end
       end
 

@@ -1,8 +1,0 @@
-pt-BR:
-  hyrax:
-    icons:
-      contribution:     'fa fa-file-text-o'
-    select_type:
-      contribution:
-        name:               "Contribution"
-        description:        "Contribution trabalhos"

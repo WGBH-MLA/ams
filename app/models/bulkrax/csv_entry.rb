@@ -34,7 +34,7 @@ Bulkrax::CsvEntry.class_eval do
     self.parsed_metadata = {}
     add_identifier
     add_metadata_for_model
-    self.parsed_metadata['bulkrax_importer_id'] = importer.id if self.raw_metadata['model'] == 'Asset'
+    self.parsed_metadata['bulkrax_importer_id'] = importer.id if self.raw_metadata['model'] == 'AssetResource'
     add_visibility
     add_ingested_metadata
     add_rights_statement
@@ -144,7 +144,7 @@ Bulkrax::CsvEntry.class_eval do
 
   def flatten_hash(data, initializer = {}, index = '')
     data.each_with_object(initializer) do |(key, value), hash|
-      curation_concerns = ['Asset', 'Contribution', 'DigitalInstantiation', 'EssenceTrack', 'PhysicalInstantiation']
+      curation_concerns = ['AssetResource', 'ContributionResource', 'DigitalInstantiationResource', 'EssenceTrackResource', 'PhysicalInstantiationResource']
       model = key_without_numbers(key)
 
       if curation_concerns.include?(model)

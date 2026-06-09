@@ -1,0 +1,14 @@
+<%# Fallback partial for ActiveFedora::Base objects during Valkyrie migration %>
+<%# This partial exists to prevent "Missing partial" errors when rendering %>
+<%# objects that still have ActiveFedora in their ancestry chain %>
+<%# The local variable 'base' comes from the partial name '_base' %>
+<% if base.respond_to?(:to_solr) %>
+  <% document = SolrDocument.new(base.to_solr) %>
+  <%= render partial: 'catalog/document', locals: { document: document, document_counter: local_assigns[:base_counter] } %>
+<% elsif base.respond_to?(:id) %>
+  <div class="document" id="document_<%= base.id %>">
+    <div class="documentHeader">
+      <h5 class="index_title"><%= base.try(:title)&.first || base.id %></h5>
+    </div>
+  </div>
+<% end %>

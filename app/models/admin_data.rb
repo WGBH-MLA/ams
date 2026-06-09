@@ -65,8 +65,14 @@ class AdminData < ApplicationRecord
 
   def asset(refresh: false)
     @asset = @asset_error = nil if refresh
-    @asset ||= Asset.find(solr_doc[:id]) unless @asset_error
-  rescue => error
+    return @asset if @asset
+    return nil if @asset_error
+
+    doc = solr_doc
+    return nil unless doc
+
+    @asset ||= Hyrax.query_service.find_by(id: doc[:id])
+  rescue Valkyrie::Persistence::ObjectNotFoundError, StandardError => error
     @asset_error = error
     nil
   end

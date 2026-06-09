@@ -8,11 +8,11 @@ RSpec.describe AMS::Export::Search::Base do
   describe '#solr_documents' do
     context 'when searching for Asset records' do
       # create assets first with let!
-      let!(:assets) { create_list(:asset, rand(11..14), title: [ searchable_title ] ) }
+      let!(:assets) { create_list(:asset_resource, rand(11..14), title: [ searchable_title ] ) }
       let(:searchable_title) { Faker::Lorem.sentence }
       let(:search_params) { { q: searchable_title } }
       let(:solr_documents) { subject.solr_documents }
-      let(:asset_ids) { Set.new(assets.map(&:id)) }
+      let(:asset_ids) { Set.new(assets.map { |a| a.id.to_s }) }
       let(:solr_doc_ids) { Set.new(solr_documents.map(&:id)) }
 
       it 'is expected to return solr documents for the found Asset records' do

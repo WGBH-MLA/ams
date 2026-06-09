@@ -6,9 +6,11 @@ Bulkrax::DeleteWorkJob.class_eval do
   # rubocop:disable Rails/SkipsModelValidations
   def perform(entry, importer_run)
     work = entry.factory.find
-    if work.is_a? Asset
-      asset_destroyer = AMS::AssetDestroyer.new
-      asset_destroyer.destroy([work.id])
+    # Note: AssetDestroyer was removed during old model cleanup
+    # AssetResource deletion is handled by the default Bulkrax behavior
+    if work.is_a? AssetResource
+      # TODO: Implement custom AssetResource deletion logic if needed
+      work.destroy
     end
     importer_run.increment!(:deleted_records)
     importer_run.decrement!(:enqueued_records)

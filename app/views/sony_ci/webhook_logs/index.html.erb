@@ -65,7 +65,7 @@
         <td>
           <ul class="guids">
             <% presenter.guids.each_with_index do |guid, i| %>
-              <li><%= link_to guid, hyrax_asset_path(guid) %></li>
+              <li><%= link_to guid, hyrax_asset_resource_path(guid) %></li>
             <% end %>
           </ul>
         </td>

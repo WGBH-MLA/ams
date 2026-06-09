@@ -10,6 +10,9 @@ FactoryBot.define do
       with_index { true }
     end
 
+    # Use Valkyrie persister instead of ActiveRecord-style save! for Ruby 3.0+ compatibility
+    to_create { |instance| Hyrax.persister.save(resource: instance) }
+
     after(:build) do |adminset, evaluator|
       adminset.creator = [evaluator.user.user_key]
     end
@@ -51,6 +54,8 @@ FactoryBot.define do
 
   factory :invalid_hyrax_admin_set, class: 'Hyrax::AdministrativeSet' do
     # Title is required.  Without title, the admin set is invalid.
+    # Use Valkyrie persister instead of ActiveRecord-style save! for Ruby 3.0+ compatibility
+    to_create { |instance| Hyrax.persister.save(resource: instance) }
   end
 
   factory :default_hyrax_admin_set, class: 'Hyrax::AdministrativeSet' do
@@ -60,6 +65,9 @@ FactoryBot.define do
     transient do
       with_persisted_default_id { true }
     end
+
+    # Use Valkyrie persister instead of ActiveRecord-style save! for Ruby 3.0+ compatibility
+    to_create { |instance| Hyrax.persister.save(resource: instance) }
 
     after(:create) do |admin_set, evaluator|
       Hyrax::DefaultAdministrativeSet.update(default_admin_set_id: admin_set.id) if

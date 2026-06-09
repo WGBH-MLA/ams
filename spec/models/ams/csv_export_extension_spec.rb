@@ -4,15 +4,15 @@ RSpec.describe AMS::CsvExportExtension do
   # Create a test Asset, with a physical instantiation and a digital
   # instantiation and an Annotation for level_of_user_access.
   let!(:digital_instantiation) do
-    create(:digital_instantiation,
+    create(:digital_instantiation_resource,
       # :with_instantiation_admin_data param expects a Global ID.
       with_instantiation_admin_data: create(:instantiation_admin_data).gid
     )
   end
-  let!(:physical_instantiation) { create(:physical_instantiation) }
+  let!(:physical_instantiation) { create(:physical_instantiation_resource) }
   let!(:asset) do
-    create(:asset,
-           ordered_members:         [ digital_instantiation, physical_instantiation ],
+    create(:asset_resource,
+           members:                 [ digital_instantiation, physical_instantiation ],
            date:                    ['2023-01-01'],
            producing_organization:  ['WGBH Productions'],
            description:             ['A test asset description'],

@@ -81,11 +81,11 @@ class SolrDocument
   end
 
   def physical_instantiations
-    members only: [PhysicalInstantiation, PhysicalInstantiationResource]
+    members only: [PhysicalInstantiationResource]
   end
 
   def digital_instantiations
-    members only: [DigitalInstantiation, DigitalInstantiationResource]
+    members only: [DigitalInstantiationResource]
   end
 
   def asset_types
@@ -549,14 +549,20 @@ class SolrDocument
     self[solr_name('proxy_start_time', :symbol)]
   end
 
+  # Override to_partial_path to use generic catalog/document partial instead of
+  # model-specific ActiveFedora partials that were removed during Valkyrie migration
+  def to_partial_path
+    'catalog/document'
+  end
+
   def all_members(only: [], exclude: [])
     # Fetch members recursively and memoize. Subtract self from the list.
     @all_members ||= SolrDocument.get_members(self) - [ self ]
 
-    # Filter @all_members with the :only and :except params
-    only, except = Array(only).map(&:to_s), Array(except).map(&:to_s)
+    # Filter @all_members with the :only and :exclude params
+    only, exclude = Array(only).map(&:to_s), Array(exclude).map(&:to_s)
     @all_members.select { |m| only.empty? || only.include?(m.has_model) }.
-                 reject { |m| except.include?(m.has_model) }
+                 reject { |m| exclude.include?(m.has_model) }
   end
 
   def admin_data_gid

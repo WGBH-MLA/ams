@@ -2,7 +2,11 @@ require 'rails_helper'
 
 RSpec.feature 'PBCore XML endpoints' do
 
-  before { login_as(create(:user)) }
+  before do
+    login_as(create(:user))
+    # Stub breadcrumb method to avoid active_fedora_basis_path error
+    allow_any_instance_of(Hyrax::AssetResourcesController).to receive(:add_breadcrumb_for_action)
+  end
 
   context 'for an AssetResource record' do
     let(:asset_resource) { create(:asset_resource) }
@@ -10,7 +14,7 @@ RSpec.feature 'PBCore XML endpoints' do
 
     describe '/concerns/asset_resources/[id].xml' do
       before do
-        visit "#{url_for(asset_resource)}.xml"
+        visit "#{hyrax_asset_resource_path(asset_resource)}.xml"
       end
 
       it 'returns the PBCore XML' do

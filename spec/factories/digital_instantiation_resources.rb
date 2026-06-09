@@ -18,7 +18,12 @@ FactoryBot.define do
     trait :aapb_moving_image_with_essence_track do
       holding_organization { "American Archive of Public Broadcasting" }
       media_type { "Moving Image" }
-      members { [ create(:essence_track)] }
+      members { [ create(:essence_track_resource)] }
+    end
+    trait :aapb_moving_image_with_essence_track_resource do
+      holding_organization { "American Archive of Public Broadcasting" }
+      media_type { "Moving Image" }
+      members { [ create(:essence_track_resource)] }
     end
     trait :aapb_sound do
       holding_organization { "American Archive of Public Broadcasting" }
@@ -36,24 +41,16 @@ FactoryBot.define do
       with_instantiation_admin_data { false }
     end
 
-
     after(:build) do |work, evaluator|
-
       if evaluator.with_instantiation_admin_data
-        attributes = {}
         work.instantiation_admin_data_gid = evaluator.with_instantiation_admin_data if !work.instantiation_admin_data_gid.present?
       else
         instantiation_admin_data = create(:instantiation_admin_data)
         work.instantiation_admin_data_gid = instantiation_admin_data.gid
-        # TODO: we shouldn't be saving the DigitalInstantiation after :build.
-        # the purpose of :build (instead of :create) is to deliberately NOT
-        # save the object.
-        work.save
       end
     end
 
-    after(:create) do |work, evaluator|
-      work.permission_manager.acl.save
-    end
+    # Use Valkyrie persister instead of ActiveRecord-style save! for Ruby 3.0+ compatibility
+    to_create { |instance| Hyrax.persister.save(resource: instance) }
   end
 end

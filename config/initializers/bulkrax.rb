@@ -28,7 +28,7 @@ if ENV['SETTINGS__BULKRAX__ENABLED'] == 'true'
     ]
 
     def headers(term = nil)
-      cc = [Asset, Contribution, DigitalInstantiation, EssenceTrack, PhysicalInstantiation]
+      cc = [AssetResource, ContributionResource, DigitalInstantiationResource, EssenceTrackResource, PhysicalInstantiationResource]
       properties = []
 
       cc.each { |model| properties << "#{model}.#{term}" }

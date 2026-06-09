@@ -57,6 +57,9 @@ FactoryBot.define do
       uploaded_files { [] }
     end
 
+    # Use Valkyrie persister instead of ActiveRecord-style save! for Ruby 3.0+ compatibility
+    to_create { |instance| Hyrax.persister.save(resource: instance) }
+
 
 
     trait :public do
@@ -102,32 +105,49 @@ FactoryBot.define do
           digital_instantiation = create(:digital_instantiation_resource)
 
           essence_tracks = rand(2..4).times.map do
-            create(:essence_track_resource)
+            et = create(:essence_track_resource)
+            # Index essence track to Solr so SolrDocument#members can find it
+            Hyrax.index_adapter.save(resource: et)
+            et
           end
 
           digital_instantiation.member_ids = essence_tracks.map(&:id)
-          Hyrax.persister.save(resource: digital_instantiation)
+          digital_instantiation = Hyrax.persister.save(resource: digital_instantiation)
+          # Index digital instantiation to Solr so SolrDocument#members can find it
+          Hyrax.index_adapter.save(resource: digital_instantiation)
+          digital_instantiation
         end
 
         physical_instantiations = rand(1..2).times.map do
           physical_instantiation = create(:physical_instantiation_resource)
 
           essence_tracks = rand(2..4).times.map do
-            create(:essence_track_resource)
+            et = create(:essence_track_resource)
+            # Index essence track to Solr so SolrDocument#members can find it
+            Hyrax.index_adapter.save(resource: et)
+            et
           end
 
           physical_instantiation.member_ids = essence_tracks.map(&:id)
-          Hyrax.persister.save(resource: physical_instantiation)
+          physical_instantiation = Hyrax.persister.save(resource: physical_instantiation)
+          # Index physical instantiation to Solr so SolrDocument#members can find it
+          Hyrax.index_adapter.save(resource: physical_instantiation)
+          physical_instantiation
         end
 
         contributions = rand(2..4).times.map do
-          create(:contribution_resource)
+          contribution = create(:contribution_resource)
+          # Index contribution to Solr so SolrDocument#members can find it
+          Hyrax.index_adapter.save(resource: contribution)
+          contribution
         end
 
         all_members = digital_instantiations + physical_instantiations + contributions
         work.member_ids = all_members.flat_map(&:id)
 
         Hyrax.persister.save(resource: work)
+        # Re-index after adding members so SolrDocument has correct member data
+        Hyrax.index_adapter.save(resource: work)
       end
     end
 

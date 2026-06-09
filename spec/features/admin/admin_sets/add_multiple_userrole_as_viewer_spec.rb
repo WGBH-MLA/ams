@@ -15,6 +15,13 @@ RSpec.feature 'AssignMultipleRolesAsViewer.', js: true do
       admin_set_1.permission_manager.acl.save
       admin_set_2.permission_manager.read_users = [user_with_role]
       admin_set_2.permission_manager.acl.save
+
+      # Re-index assets to ensure they're searchable after permission changes
+      Hyrax.index_adapter.save(resource: asset_resource_1)
+      Hyrax.index_adapter.save(resource: asset_resource_2)
+
+      # Stub thumbnail rendering to avoid missing ActiveFedora partial
+      allow_any_instance_of(ActionView::Base).to receive(:render_thumbnail_tag).and_return('')
     end
 
     scenario 'Assign set of user (role) as Viewer to AdminSet' do

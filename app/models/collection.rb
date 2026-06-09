@@ -4,4 +4,10 @@ class Collection < ActiveFedora::Base
   # You can replace these metadata if they're not suitable
   include Hyrax::BasicMetadata
   self.indexer = Hyrax::CollectionWithBasicMetadataIndexer
+
+  # Override to_partial_path to use generic catalog/document partial
+  # instead of ActiveFedora-based partial that doesn't exist
+  def to_partial_path
+    'catalog/document'
+  end
 end

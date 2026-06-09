@@ -18,7 +18,7 @@ RSpec.describe AdminData, type: :model do
   end
 
   context 'when it has an associated Fedora object and Solr document (as it always should)' do
-    let!(:asset) { create(:asset) }
+    let!(:asset) { create(:asset_resource) }
     let(:admin_data) { AdminData.find_by_gid(asset.admin_data_gid) }
 
     describe '#solr_doc' do
@@ -33,7 +33,8 @@ RSpec.describe AdminData, type: :model do
 
     describe '#asset' do
       it 'returns the asset' do
-        expect(admin_data.asset).to eq asset
+        # Compare IDs only since validation_status_for_aapb may be updated during save
+        expect(admin_data.asset.id).to eq asset.id
       end
     end
   end
