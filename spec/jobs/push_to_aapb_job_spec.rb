@@ -40,7 +40,7 @@ RSpec.describe PushToAAPBJob, type: :job do
         allow(Push).to receive(:find).and_return(push)
         allow(push).to receive(:push_ids).and_return([])
 
-        # Call the method under test and assert expectations below.
+        clear_enqueued_jobs  # clears anything enqueued by factory callbacks
         described_class.perform_now(id: id, user: user)
       end
 
