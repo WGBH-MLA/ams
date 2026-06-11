@@ -40,11 +40,11 @@ RSpec.describe PushToAAPBJob, type: :job do
         allow(Push).to receive(:find).and_return(push)
         allow(push).to receive(:push_ids).and_return([])
 
-        clear_enqueued_jobs  # clears anything enqueued by factory callbacks
+        # Call the method under test and assert expectations below.
+        described_class.perform_now(id: id, user: user)
       end
 
       it 'reschedules the job' do
-        described_class.perform_now(id: id, user: user)
         expect(delivery_instance).not_to have_received(:deliver)
         expect(described_class).to have_been_enqueued.with(hash_including(id: push.id, user: user)).exactly(:once)
       end

@@ -217,14 +217,12 @@ module PBCoreXPathHelper
 
     def contributors_attrs
       noko.xpath('//pbcoreContributor').map do |contributor|
-        contributor_node = contributor.xpath('contributor').first
-        role_node = contributor.xpath('contributorRole').first
         {
-          contributor: contributor_node&.text,
-          affiliation: contributor_node&.attributes&.[]('affiliation')&.value,
-          contributor_role: role_node&.text,
-          portrayal: role_node&.attributes&.[]('portrayal')&.value,
-          annotation: contributor_node&.attributes&.[]('annotation')&.value
+          contributor: contributor.xpath('//contributor').first.text,
+          affiliation: contributor.xpath('//contributor').first.attributes['affiliation'].value,
+          contributor_role: contributor.xpath('//contributorRole').first.text,
+          portrayal: contributor.xpath('//contributorRole').first.attributes['portrayal'].value,
+          annotation: contributor.xpath('//contributor').first.attributes['annotation'].value
         }
       end
     end
