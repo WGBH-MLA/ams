@@ -37,3 +37,4 @@ data:
   SOLR_HOST: {{ template "hyrax.solr.host" . }}
   SOLR_PORT: {{ (include "hyrax.solr.port" .) | quote }}
   SOLR_URL: {{ template "hyrax.solr.url" . }}
+  AAPB_SSH_KEY: aapb-ssh-key
