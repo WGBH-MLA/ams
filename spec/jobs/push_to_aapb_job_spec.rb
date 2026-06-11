@@ -40,13 +40,21 @@ RSpec.describe PushToAAPBJob, type: :job do
         allow(Push).to receive(:find).and_return(push)
         allow(push).to receive(:push_ids).and_return([])
 
-        # Call the method under test and assert expectations below.
+        # Prevent ActiveJob from trying to use real scheduling
+        allow(described_class).to receive(:set).and_return(described_class)
+        allow(described_class).to receive(:perform_later)
+
         described_class.perform_now(id: id, user: user)
       end
 
-      it 'reschedules the job' do
+      it 'does not deliver the push and reschedules the job' do
         expect(delivery_instance).not_to have_received(:deliver)
-        expect(described_class).to have_been_enqueued.with(hash_including(id: push.id, user: user)).exactly(:once)
+
+        expect(described_class).to have_received(:set)
+        .with(wait: anything)
+
+        expect(described_class).to have_received(:perform_later)
+        .with(hash_including(id: push.id, user: user))
       end
     end
   end
