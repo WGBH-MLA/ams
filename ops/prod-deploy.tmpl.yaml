@@ -51,8 +51,6 @@ ingress:
 extraEnvVars: &envVars
   - name: AAPB_HOST
     value: "aapb-prod.wgbh-mla.org"
-  - name: AAPB_SSH_KEY
-    value: "/app/aapb/id_rsa"
   - name: AWS_ACCESS_KEY
     value: "AKIAR3SRUQECAPYH3ZU6"
   - name: CI_CLIENT_ID

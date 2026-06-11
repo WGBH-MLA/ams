@@ -50,8 +50,6 @@ ingress:
 extraEnvVars: &envVars
   - name: AAPB_HOST
     value: "aapb-demo.wgbh-mla.org"
-  - name: AAPB_SSH_KEY
-    value: "/app/aapb/id_rsa"
   - name: CI_CLIENT_ID
     value: "044dbd5644f640fb856a6131fd37e5cb"
   - name: CI_WORKSPACE_ID
