@@ -171,7 +171,7 @@ spec:
       volumes:
         - name: "aapb"
           secret:
-            secretName: aapb-ssh-keys
+            secretName: aapb-ssh-key-{{ .Release.Name }}
             optional: true
             defaultMode: 0660
         - name: "branding"
