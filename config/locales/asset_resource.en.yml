@@ -9,6 +9,7 @@ en:
         role:      'Role'
         affiliation:      'Affiliation'
         portrayal:      'portrayal'
+        annotation:      'Annotation'
         name:      'name'
         credits:    'Credits'
       instantiations:

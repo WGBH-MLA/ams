@@ -42,6 +42,7 @@ if ENV['SETTINGS__BULKRAX__ENABLED'] == 'true'
       'admin_data_gid' => { from: headers('admin_data_gid') },
       'affiliation' => { from: 'Contributor.affiliation' },
       'alternative_modes' => { from: headers('alternative_modes'), split: true, join: true },
+      'annotation' => { from: 'Contributor.annotation' },
       'annotation' => { from: headers('annotation'), split: true, join: true },
       'aspect_ratio' => { from: ["EssenceTrack.aspect_ratio"] },
       'asset_types' => { from: headers('asset_types'), split: true, join: true },

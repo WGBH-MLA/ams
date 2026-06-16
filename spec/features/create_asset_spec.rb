@@ -124,6 +124,7 @@ RSpec.feature 'Create and Validate Asset', js: true, asset_form_helpers: true, c
       fill_in('asset_child_contributors_0_contributor', with: contribution_attributes[:contributor].first)
       fill_in('asset_child_contributors_0_portrayal', with: contribution_attributes[:portrayal])
       fill_in('asset_child_contributors_0_affiliation', with: contribution_attributes[:affiliation])
+      fill_in('asset_child_contributors_0_annotation', with: contribution_attributes[:annotation])
 
       click_link "Relationships" # define adminset relation
       find("#asset_admin_set_id option[value='#{admin_set_id}']").select_option
@@ -159,6 +160,7 @@ RSpec.feature 'Create and Validate Asset', js: true, asset_form_helpers: true, c
         expect(page).to have_content contribution_attributes[:contributor].first
         expect(page).to have_content contribution_attributes[:portrayal]
         expect(page).to have_content contribution_attributes[:affiliation]
+        expect(page).to have_content contribution_attributes[:annotation]
         expect(page).to have_content contribution_attributes[:contributor_role]
       end
     end

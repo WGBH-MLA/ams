@@ -155,11 +155,21 @@ module AMS::PbcoreXmlExportExtension
   def add_contributions(xml)
     members(only: Contribution).each do |contribution|
       xml.pbcoreContributor do |contributor_node|
-        contributor_node.contributor { contributor_node.text(contribution&.contributor&.first) }
+        contributor_attrs = {}
+        contributor_attrs[:annotation] = contribution.annotation.first if contribution.annotation.present? && contribution.annotation.first.present?
+        contributor_attrs[:affiliation] = contribution.affiliation.first if contribution.affiliation.present? && contribution.affiliation.first.present?
 
-        # contributorRole is not required!
-        if contribution.contributor_role
-          contributor_node.contributorRole { contributor_node.text(contribution&.contributor_role&.first) }
+        contributor_node.contributor(contributor_attrs) do
+          contributor_node.text(contribution&.contributor&.first)
+        end
+
+        if contribution.contributor_role.present?
+          role_attrs = {}
+          role_attrs[:portrayal] = contribution.portrayal.first if contribution.portrayal.present? && contribution.portrayal.first.present?
+
+          contributor_node.contributorRole(role_attrs) do
+            contributor_node.text(contribution&.contributor_role&.first)
+          end
         end
       end
     end

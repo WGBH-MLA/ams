@@ -4,5 +4,6 @@ FactoryBot.define do
     contributor_role  { "Actor" }
     portrayal  { "Test portrayal" }
     affiliation  { "Test affiliation" }
+    annotation  { "Test annotation" }
   end
 end

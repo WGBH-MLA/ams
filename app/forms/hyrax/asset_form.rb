@@ -102,7 +102,7 @@ module Hyrax
       child_contributions = []
       model.ordered_members.to_a.each do |member|
          if( member.class == Contribution )
-            child_contributions << [member.id, member.contributor_role, member.contributor.first , member.portrayal, member.affiliation]
+            child_contributions << [member.id, member.contributor_role, member.contributor.first , member.portrayal, member.affiliation, member.annotation]
          end
        end
       child_contributions
@@ -172,7 +172,7 @@ module Hyrax
       end
     end
 
-    def bulkrax_importer_id 
+    def bulkrax_importer_id
       if model.admin_data
         model.admin_data.bulkrax_importer_id
       else

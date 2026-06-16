@@ -84,7 +84,7 @@ FactoryBot.define do
 
       contributors do
         [
-          build(:pbcore_contributor, :with_portrayal, :with_affiliation)
+          build(:pbcore_contributor, :with_portrayal, :with_affiliation, :with_annotation)
         ]
       end
 

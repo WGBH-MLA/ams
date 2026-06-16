@@ -161,13 +161,12 @@ module AAPB
 
       def person_attributes(person, role)
         {
-          contributor: (person.value if person),
+          contributor:      (person.value if person),
           contributor_role: (role.value if role),
-          # pbcorecontributor ONLY
-          affiliation: (person.affiliation if defined? person.affiliation),
-          portrayal: (role.portrayal if role && defined? role.portrayal),
+          affiliation:      (person.affiliation if defined? person.affiliation),
+          portrayal:        (role.portrayal if role && defined? role.portrayal),
+          annotation:       (person.annotation if defined? person.annotation)
         }
-
       end
 
       def physical_instantiation_resource_attributes
