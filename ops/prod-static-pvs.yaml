@@ -43,31 +43,3 @@ spec:
   csi:
     driver: efs.csi.aws.com
     volumeHandle: fs-0dd9f8ff037001c5d::fsap-04942a3e372f763e9
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: ams-prod-hyrax-uploads
-  namespace: ams-prod
-spec:
-  accessModes:
-    - ReadWriteMany
-  storageClassName: efs-sc
-  volumeName: ams-prod-uploads-pv
-  resources:
-    requests:
-      storage: 20Gi
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: ams-prod-hyrax-derivatives
-  namespace: ams-prod
-spec:
-  accessModes:
-    - ReadWriteMany
-  storageClassName: efs-sc
-  volumeName: ams-prod-derivatives-pv
-  resources:
-    requests:
-      storage: 10Gi
