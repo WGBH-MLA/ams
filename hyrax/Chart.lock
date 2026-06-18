@@ -1,7 +1,4 @@
 dependencies:
-- name: fcrepo
-  repository: oci://ghcr.io/samvera
-  version: 0.8.0
 - name: memcached
   repository: https://raw.githubusercontent.com/bitnami/charts/archive-full-index/bitnami
   version: 4.2.21
@@ -16,9 +13,9 @@ dependencies:
   version: 10.7.16
 - name: solr
   repository: https://raw.githubusercontent.com/bitnami/charts/archive-full-index/bitnami
-  version: 1.0.1
+  version: 4.1.2
 - name: nginx
   repository: https://raw.githubusercontent.com/bitnami/charts/archive-full-index/bitnami
   version: 9.8.0
-digest: sha256:c99a3bc46d0b988f40b576c8adebb4896ce355b249bfe5ffbddf170ee1f4a9e7
-generated: "2022-11-01T00:02:54.954597-07:00"
+digest: sha256:c07523b39393cb9de634da0cf55f62aac9d3342065ab837730ed41894a89c5f6
+generated: "2026-06-17T16:24:07.346344-04:00"

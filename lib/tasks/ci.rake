@@ -1,7 +1,6 @@
 unless Rails.env.production?
   APP_ROOT = File.dirname(__FILE__) unless defined?(APP_ROOT)
   require "solr_wrapper"
-  require "fcrepo_wrapper"
   require 'solr_wrapper/rake_task'
 
   desc "Run Continuous Integration"
@@ -10,9 +9,6 @@ unless Rails.env.production?
     solr_params = {
       config: 'config/solr_wrapper_test.yml'
     }
-    fcrepo_params = {
-      config: 'config/fcrepo_wrapper_test.yml'
-    }
 
     SolrWrapper.wrap(solr_params) do |solr|
       solr.with_collection(
@@ -20,9 +16,7 @@ unless Rails.env.production?
         persist: false,
         dir: Rails.root.join("solr", "config")
       ) do
-        FcrepoWrapper.wrap(fcrepo_params) do
-          Rake::Task["spec"].invoke
-        end
+        Rake::Task["spec"].invoke
       end
     end
   end

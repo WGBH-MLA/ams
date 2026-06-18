@@ -104,11 +104,6 @@ uploadsVolume:
 extraVolumeMounts: []
 extraVolumes: []
 
-# configuration for an external/existing fcrepo service;
-#   ignored if `fcrepo.enabled` is true
-externalFcrepoHost: ""
-fcrepoBasePathOverride: ""
-
 # database configuration for an external postgresql;
 #   ignored if `postgresql.enabled` is true
 externalPostgresql: {}
@@ -213,16 +208,6 @@ worker:
     # timeoutSeconds: 1
     # failureThreshold: 10
     # successThreshold: 2
-
-fcrepo:
-  enabled: true
-  externalDatabaseUsername: "hyrax"
-  servicePort: 8080
-  postgresql:
-    enabled: false
-    image:
-      repository: bitnami/postgresql
-      tag: 12.3.0
 
 memcached:
   enabled: false

@@ -70,22 +70,6 @@ Create the name of the service account to use
 {{- end }}
 {{- end }}
 
-{{/*
-Create default fully qualified service names.
-We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
-*/}}
-{{- define "hyrax.fcrepo.fullname" -}}
-{{- printf "%s-%s" .Release.Name "fcrepo" | trunc 63 | trimSuffix "-" -}}
-{{- end -}}
-
-{{- define "hyrax.fcrepo.host" -}}
-{{- if .Values.fcrepo.enabled }}
-{{- include "hyrax.fcrepo.fullname" . }}
-{{- else }}
-{{- .Values.externalFcrepoHost | default "NO_FCREPO_HOST_DEFINED" }}
-{{- end }}
-{{- end -}}
-
 {{- define "hyrax.memcached.fullname" -}}
 {{- printf "%s-%s" .Release.Name "memcached" | trunc 63 | trimSuffix "-" -}}
 {{- end -}}

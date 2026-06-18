@@ -40,10 +40,6 @@ The chart populates the following environment variables:
 | RACK_ENV          | app environment ('production') | n/a                    |
 | RAILS_ENV         | app environment ('production') | n/a                    |
 | REDIS_HOST        | Redis service host             | `redis.enabled`        |
-| FCREPO_BASE_PATH  | Fedora Commons root path       | n/a                    |
-| FCREPO_HOST       | Fedora Commons host            | n/a                    |
-| FCREPO_PORT       | Fedora Commons port            | n/a                    |
-| FCREPO_REST_PATH  | Fedora Commons REST endpoint   | n/a                    |
 | SKIP_HYRAX_ENGINE_SEED   | Flag to load Hyrax engine seed file | n/a                    |
 | SOLR_ADMIN_USER   | Solr user for basic auth       | n/a                    |
 | SOLR_ADMIN_PASSWORD | Solr password for basic auth | n/a                    |
@@ -73,16 +69,6 @@ this to work.
 
 If you want to manage your ConfigSet manually, disable this behavior with
 `--set loadSolrConfigSet=false`.
-
-## With an external Fedora Commons Repository
-
-By default, this chart deploys a local Fedora Repository, backed by the
-application's Postgresql system.
-
-To use an existing or external `fcrepo` instance, use the chart values:
-
-  - `fcrepo.enabled`: false
-  - `externalFcrepoHost`: "myfedora.hostname.example.com"
 
 ## For DevOps:
 
