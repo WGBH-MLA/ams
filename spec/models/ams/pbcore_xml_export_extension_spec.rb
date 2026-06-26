@@ -28,7 +28,7 @@ RSpec.describe AMS::PbcoreXmlExportExtension, :pbcore_xpath_helper, skip: 'TODO:
         :description, :program_description, :episode_description, :series_description,
         :segment_description, :clip_description, :rundown_description, :promo_description,
         :raw_footage_description, :audience_level, :audience_rating, :asset_types,
-        :genre, :rights_summary, :sonyci_id, :special_collections,
+        :genre, :rights_summary, :sonyci_id, :special_collections, :exhibit,
         :rights_link, :local_identifier, :pbs_nola_code, :eidr_id, :topics,
         :date, :broadcast_date, :copyright_date, :created_date, :subject,
         :producing_organization]

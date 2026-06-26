@@ -81,6 +81,7 @@ ingest_types:
           - cataloging_status
           - outside_url
           - special_collections
+          - exhibit
           - transcript_status
           - sonyci_id
           - licensing_info
@@ -146,6 +147,7 @@ ingest_types:
           - producing_organization
           - sonyci_id
           - special_collections
+          - exhibit
         children:
         - object_class: Contribution
           ingest_type: update

@@ -5,6 +5,8 @@ terms:
     term: Captions URL
   - id: cataloging_status
     term: cataloging status
+  - id: exhibit
+    term: Exhibit
   - id: external_reference_url
     term: External Reference URL
   - id: level_of_user_access

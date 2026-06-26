@@ -98,6 +98,10 @@ class AssetResource < Hyrax::Work
     external_reference_url ||= find_annotation_attribute("external_reference_url")
   end
 
+  def exhibit
+    exhibit ||= find_annotation_attribute("exhibit")
+  end
+
   def mavis_number
     mavis_number ||= find_annotation_attribute("mavis_number")
   end
@@ -129,11 +133,11 @@ class AssetResource < Hyrax::Work
   def proxy_start_time
     proxy_start_time ||= find_annotation_attribute("proxy_start_time")
   end
- 
+
   def ams1_legacy_metadata
     ams1_legacy_metadata ||= find_annotation_attribute("ams1_legacy_metadata")
-  end 
-  
+  end
+
   def find_annotation_attribute(attribute)
     if admin_data.annotations.select { |a| a.annotation_type == attribute }.present?
       return admin_data.annotations.select { |a| a.annotation_type == attribute }.map(&:value)
