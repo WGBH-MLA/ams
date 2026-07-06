@@ -5,10 +5,10 @@
 replicaCount: 1
 
 image:
-  repository: samveralabs/dassie
+  repository: ghcr.io/samvera/hyrax/dassie
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: ""
+  tag: "hyrax-3.7.1"
 
 # use true to skip loading Hyrax engine database seed file
 skipHyraxEngineSeed: false
@@ -71,21 +71,24 @@ extraContainerConfiguration: []
 applicationExistingClaim: ""
 
 brandingVolume:
-  enabled: true
+  # Disabling because we don't use it and don't need the PVC
+  enabled: false
   # the name of an existing volume claim; must be an ReadWriteMany volume
   existingClaim: ""
   size: 2Gi
   storageClass: ""
 
 derivativesVolume:
-  enabled: true
+  # Disabling because we don't use it and don't need the PVC
+  enabled: false
   # the name of an existing volume claim; must be an ReadWriteMany volume
   existingClaim: ""
   size: 10Gi
   storageClass: ""
 
 uploadsVolume:
-  enabled: true
+  # Disabling because we don't use it and don't need the PVC
+  enabled: false
   # the name of an existing volume claim; must be an ReadWriteMany volume
   existingClaim: ""
   size: 20Gi
@@ -184,9 +187,9 @@ worker:
   enabled: true
   replicaCount: 3
   image:
-    repository: samveralabs/dassie-worker
+    repository: ghcr.io/samvera/hyrax/dassie
     pullPolicy: IfNotPresent
-    tag: ""
+    tag: "hyrax-3.7.1"
   extraInitContainers: []
   extraVolumeMounts: []
   extraVolumes: []

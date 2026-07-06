@@ -63,3 +63,8 @@ docker-compose.override.yml
 
 # Ignore spacemacs files
 *~undo-tree~
+
+# Ignore compiled Helm charts
+# This is a deliberate change, vendored charts were shipped before
+# but moving away from that.
+hyrax/charts

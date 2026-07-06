@@ -23,7 +23,6 @@ locals {
   smtp_password       = local.app_secrets.smtp.SecretAccessKey
   ci_client_secret    = local.app_secrets.sony_ci.client_secret
   ci_password         = local.app_secrets.sony_ci.password
-  fcrepo_db_password  = local.app_secrets.fcrepo_db.password
 
   # PostgreSQL password (shared across environments)
   db_password         = local.app_secrets.postgresql.password

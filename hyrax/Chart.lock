@@ -1,21 +1,15 @@
 dependencies:
 - name: memcached
-  repository: https://raw.githubusercontent.com/bitnami/charts/archive-full-index/bitnami
-  version: 4.2.21
+  repository: https://kubelauncher.github.io/charts
+  version: 0.1.24
 - name: minio
-  repository: https://raw.githubusercontent.com/bitnami/charts/archive-full-index/bitnami
-  version: 6.7.2
-- name: mariadb
-  repository: https://raw.githubusercontent.com/bitnami/charts/archive-full-index/bitnami
-  version: 9.5.1
+  repository: https://charts.min.io
+  version: 5.4.0
 - name: redis
-  repository: https://raw.githubusercontent.com/bitnami/charts/archive-full-index/bitnami
-  version: 10.7.16
-- name: solr
-  repository: https://raw.githubusercontent.com/bitnami/charts/archive-full-index/bitnami
-  version: 4.1.2
+  repository: https://kubelauncher.github.io/charts
+  version: 0.4.2
 - name: nginx
-  repository: https://raw.githubusercontent.com/bitnami/charts/archive-full-index/bitnami
-  version: 9.8.0
-digest: sha256:c07523b39393cb9de634da0cf55f62aac9d3342065ab837730ed41894a89c5f6
-generated: "2026-06-17T16:24:07.346344-04:00"
+  repository: https://charts.bitnami.com/bitnami
+  version: 25.0.11
+digest: sha256:8873ed9a311eb5cf7073ac1082659c8d11be8869001cae245914410be8e3bc78
+generated: "2026-06-29T12:53:39.759356-04:00"

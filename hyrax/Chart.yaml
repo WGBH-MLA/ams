@@ -3,29 +3,21 @@ name: hyrax
 description: An open-source, Samvera-powered digital repository system
 type: application
 version: 1.6.0
-appVersion: 3.3.0
+appVersion: 3.7.1
 dependencies:
   - name: memcached
-    version: 4.2.21
-    repository: https://raw.githubusercontent.com/bitnami/charts/archive-full-index/bitnami
+    version: 0.1.24
+    repository: https://kubelauncher.github.io/charts
     condition: memcached.enabled
   - name: minio
-    version: 6.7.2
-    repository: https://raw.githubusercontent.com/bitnami/charts/archive-full-index/bitnami
+    version: 5.4.0
+    repository: https://charts.min.io
     condition: minio.enabled
-  - name: mariadb
-    repository: https://raw.githubusercontent.com/bitnami/charts/archive-full-index/bitnami
-    version: 9.5.1
-    condition: mariadb.enabled
   - name: redis
-    version: 10.7.16
-    repository: https://raw.githubusercontent.com/bitnami/charts/archive-full-index/bitnami
+    version: 0.4.2
+    repository: https://kubelauncher.github.io/charts
     condition: redis.enabled
-  - name: solr
-    version: 4.1.2
-    repository: https://raw.githubusercontent.com/bitnami/charts/archive-full-index/bitnami
-    condition: solr.enabled
   - name: nginx
-    version: 9.8.0
-    repository: https://raw.githubusercontent.com/bitnami/charts/archive-full-index/bitnami
+    version: 25.0.11
+    repository: https://charts.bitnami.com/bitnami
     condition: nginx.enabled

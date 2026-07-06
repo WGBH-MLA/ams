@@ -143,16 +143,26 @@ spec:
               port: 3000
           {{- end }}
           volumeMounts:
+            {{- if and .Values.brandingVolume.enabled (not .Values.brandingVolume.existingClaim) }}
             - name: branding
               mountPath: /app/samvera/branding
+            {{- end }}
+            {{- if and .Values.derivativesVolume.enabled (not .Values.derivativesVolume.existingClaim) }}
             - name: derivatives
               mountPath: /app/samvera/derivatives
+            {{- end }}
+            {{- if and .Values.uploadsVolume.enabled (not .Values.uploadsVolume.existingClaim) }}
             - name: uploads
               subPath: file_cache
               mountPath: /app/samvera/file_cache
+            {{- end }}
+            {{- if and .Values.uploadsVolume.enabled (not .Values.uploadsVolume.existingClaim) }}
             - name: uploads
               subPath: uploads
               mountPath: /app/samvera/uploads
+            {{- end }}
+            # Always mount /app/aapb (no conditionals), since it is used for the
+            # AAPB SSH key needed for publishing records to AAPB
             - name: aapb
               mountPath: "/app/aapb"
               readOnly: true
