@@ -19,4 +19,4 @@ queues = if !ARGV.empty?
          else
            ''
          end
-# exec "echo $DB_URL && SETTINGS__BULKRAX__ENABLED=false bundle exec sidekiq #{queues}"
+exec "echo $DB_URL && SETTINGS__BULKRAX__ENABLED=false bundle exec sidekiq #{queues}"
