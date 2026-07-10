@@ -201,14 +201,22 @@ module AAPB
           # TODO: change left side to rights_summaries (because multiple: true), or to rights (to agree with PBCore gem's Instantiation#rights)
           attrs[:rights_summary]                  = pbcore.rights.map(&:summary).map(&:value)
           attrs[:rights_link]                     = pbcore.rights.map(&:link).map(&:value)
-          attrs[:local_instantiation_identifier]  = pbcore.identifiers.select { |identifier| identifier.source.to_s.downcase.strip != "ams" }.map(&:value)
           attrs[:tracks]                          = pbcore.tracks&.value
           attrs[:channel_configuration]           = pbcore.channel_configuration&.value
           attrs[:alternative_modes]               = pbcore.alternative_modes&.value
 
-          orgs, annotations = pbcore.annotations.partition { |anno| anno.type && anno.type.downcase == 'organization' }
-          attrs[:holding_organization] = orgs.first.value if orgs.present?
-          attrs[:annotation] = annotations.map(&:value)
+          md5_ids, other_ids = pbcore.identifiers.partition { |identifier| identifier.source.to_s.downcase.strip == "md5" }
+          attrs[:md5] = md5_ids.first.value if md5_ids.present?
+          attrs[:local_instantiation_identifier] = other_ids.select { |identifier| identifier.source.to_s.downcase.strip != "ams" }.map(&:value)
+
+          orgs, remaining = pbcore.annotations.partition { |anno| anno.type && anno.type.downcase == 'organization' }
+          ltos, remaining = remaining.partition { |anno| anno.type && anno.type.downcase == 'preservation lto' }
+          disks, remaining = remaining.partition { |anno| anno.type && anno.type.downcase == 'preservation disk' }
+
+          attrs[:holding_organization]  = orgs.first.value if orgs.present?
+          attrs[:aapb_preservation_lto]  = ltos.first.value if ltos.present?
+          attrs[:aapb_preservation_disk] = disks.first.value if disks.present?
+          attrs[:annotation] = remaining.map(&:value)
         end
       end
 

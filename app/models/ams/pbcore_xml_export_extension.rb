@@ -274,6 +274,8 @@ module AMS::PbcoreXmlExportExtension
       end
 
       add_xml_nodes(instantiation_node, instantiation.holding_organization, :instantiationAnnotation, annotationType: 'organization')
+      add_xml_nodes(instantiation_node, instantiation.aapb_preservation_lto, :instantiationAnnotation, annotationType: 'preservation LTO')
+      add_xml_nodes(instantiation_node, instantiation.aapb_preservation_disk, :instantiationAnnotation, annotationType: 'preservation disk')
     end
   end
 
