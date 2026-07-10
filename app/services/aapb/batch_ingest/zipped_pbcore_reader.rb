@@ -25,7 +25,7 @@ module AAPB
 
         def unzipped_file_paths
           @unzipped_file_paths  ||= begin
-            files = zip_file.glob('**/*.xml') + zip_file.glob('**/*.pbcore')
+            files = zip_file.glob('**/*.xml') + zip_file.glob('**/*.pbcore') + zip_file.glob('**/*.csv')
             files.map do |entry|
               unzipped_file_path = File.join(extraction_path, entry.name)
               FileUtils.mkdir_p File.dirname(unzipped_file_path)
