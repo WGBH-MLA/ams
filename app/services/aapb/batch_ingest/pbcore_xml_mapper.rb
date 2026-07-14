@@ -205,7 +205,7 @@ module AAPB
           attrs[:channel_configuration]           = pbcore.channel_configuration&.value
           attrs[:alternative_modes]               = pbcore.alternative_modes&.value
 
-          md5_ids, other_ids = pbcore.identifiers.partition { |identifier| identifier.source.to_s.downcase.strip == "md5" }
+          md5_ids, other_ids = pbcore.identifiers.partition { |identifier| identifier.source.to_s.downcase.strip =~ /md5/ }
           attrs[:md5] = md5_ids.first.value if md5_ids.present?
           attrs[:local_instantiation_identifier] = other_ids.select { |identifier| identifier.source.to_s.downcase.strip != "ams" }.map(&:value)
 
