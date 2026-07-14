@@ -204,8 +204,13 @@ module Ams
 
       def set_instantiation_admin_data_attributes(change_set)
         instantiation_admin_data_attributes.each do |k|
-          change_set.instantiation_admin_data.send("#{k}=", change_set.fields[k].to_s)
+          value = change_set.fields[k]
+          value = change_set.fields[k.to_s] if value.nil?
+
+          change_set.instantiation_admin_data.public_send("#{k}=", value)
         end
+
+        change_set.instantiation_admin_data.save!
       end
 
       def remove_instantiation_admin_data_from_env_attributes(change_set)
