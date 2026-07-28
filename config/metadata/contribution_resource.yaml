@@ -35,6 +35,15 @@ attributes:
       required: false
       primary: false
       multiple: false
+  contributor_role_annotation:
+    type: string
+    multiple: false
+    index_keys:
+      - "contributor_role_annotation_tesim"
+    form:
+      required: false
+      primary: false
+      multiple: false
   portrayal:
     type: string
     multiple: false
@@ -55,6 +64,46 @@ attributes:
       required: false
       primary: false
       multiple: false
+  affiliation_source: 
+    type: string
+    multiple: false
+    index_to_parent: true
+    index_keys:
+      - "affiliation_source_tesim"
+    form:
+      required: false
+      primary: false
+      multiple: false
+  affiliation_ref:
+    type: string
+    multiple: false
+    index_to_parent: true
+    index_keys:
+      - "affiliation_ref_tesim"
+    form:
+      required: false
+      primary: false
+      multiple: false
+  affiliation_version:
+    type: string
+    multiple: false
+    index_to_parent: true
+    index_keys:
+      - "affiliation_version_tesim"
+    form:
+      required: false
+      primary: false
+      multiple: false
+  affiliation_annotation:
+    type: string
+    multiple: false
+    index_to_parent: true
+    index_keys:
+      - "affiliation_annotation_tesim"
+    form:
+      required: false
+      primary: false
+      multiple: false
   annotation:
     type: string
     multiple: false
@@ -65,3 +114,33 @@ attributes:
       required: false
       primary: false
       multiple: false
+  start_time:
+      type: date
+      multiple: false
+      index_to_parent: false
+      index_keys:
+        - "start_time_dtsi"
+      form:
+        required: false
+        primary: false
+        multiple: false
+  end_time:
+      type: date
+      multiple: false
+      index_to_parent: false
+      index_keys:
+        - "end_time_dtsi"
+      form:
+        required: false
+        primary: false
+        multiple: false
+  time_annotation:
+      type: string
+      multiple: false
+      index_to_parent: false
+      index_keys:
+        - "time_annotation_tesim"
+      form:
+        required: false
+        primary: false
+        multiple: false
