@@ -64,36 +64,6 @@ attributes:
       required: false
       primary: false
       multiple: false
-  affiliation_source: 
-    type: string
-    multiple: false
-    index_to_parent: true
-    index_keys:
-      - "affiliation_source_tesim"
-    form:
-      required: false
-      primary: false
-      multiple: false
-  affiliation_ref:
-    type: string
-    multiple: false
-    index_to_parent: true
-    index_keys:
-      - "affiliation_ref_tesim"
-    form:
-      required: false
-      primary: false
-      multiple: false
-  affiliation_version:
-    type: string
-    multiple: false
-    index_to_parent: true
-    index_keys:
-      - "affiliation_version_tesim"
-    form:
-      required: false
-      primary: false
-      multiple: false
   affiliation_annotation:
     type: string
     multiple: false
