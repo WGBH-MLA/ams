@@ -5,9 +5,6 @@ FactoryBot.define do
     contributor_role_annotation { "Test contributor role annotation" }
     portrayal  { "Test portrayal" }
     affiliation  { "Test affiliation" }
-    affiliation_source { "Test affiliation source" }
-    affiliation_ref { "https://test-affiliation-ref.com" }
-    affiliation_version { "Test affiliation version" }
     affiliation_annotation { "Test affiliation annotation" }
     source { "Test source" }
     annotation { "Test annotation" }
