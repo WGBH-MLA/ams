@@ -26,6 +26,29 @@
 }
 .child_contributors.multi_value .listing li:first-of-type .remove {
   display: block;
+  border: 1px solid #ccc;
+  color: white;
+  background: #920000;
+  text-decoration: none;
+}
+
+.child_contributors {
+  .contributor-field-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 10px;
+
+    input {
+      flex-grow: 1;
+      flex-shrink: 1;
+      flex-basis: auto;
+    }
+
+    input.long {
+      flex-basis: 300px;
+    }
+  }
 }
 
 .multiple_dates_with_types.multi_value .listing li:first-of-type .remove{
