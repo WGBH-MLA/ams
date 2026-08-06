@@ -5,6 +5,8 @@
 #
 # @see https://github.com/samvera/hyrax/wiki/Hyrax-Valkyrie-Usage-Guide#forms
 # @see https://github.com/samvera/valkyrie/wiki/ChangeSets-and-Dirty-Tracking
+
+
 class AssetResourceForm < Hyrax::Forms::ResourceForm(AssetResource)
   include Hyrax::FormFields(:basic_metadata)
   include Hyrax::FormFields(:asset_resource)
@@ -15,6 +17,11 @@ class AssetResourceForm < Hyrax::Forms::ResourceForm(AssetResource)
   validates :date, date: { allow_blank: true }
   validates :broadcast_date, date: { allow_blank: true }
   validates :copyright_date, date: { allow_blank: true }
+
+  # NOTE: the `child_contributors: true` tells Rails to use the
+  # ChildContributorsValidator class to validate the child_contributors
+  # property. See app/validators/child_contributors_validator.rb.
+  validates :child_contributors, contributors_metadata: true
 
   attr_accessor :controller, :current_ability
 
