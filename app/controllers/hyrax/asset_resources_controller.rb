@@ -17,6 +17,9 @@ module Hyrax
     self.work_form_service = Hyrax::FormFactory.new
     self.show_presenter = AssetResourcePresenter
 
+    before_action :remove_blank_floats, only: [:create, :update]
+
+
     private
     # This extends functionality from
     # Hyrax::WorksControllerBehavior#additional_response_formats, adding a
@@ -24,6 +27,18 @@ module Hyrax
     def additional_response_formats(format)
       format.xml { render(plain: presenter.solr_document.export_as_pbcore) }
       super
+    end
+
+
+    # Removes blank start_time and end_time values from the contributors hash in the params.
+    # This is necessary because the form allows for empty values, but the model expects these fields to be either a valid float or nil.
+    def remove_blank_floats
+      raise "adsf"
+      params.fetch("asset_resource", {})
+            .fetch("contributors", []).each do |contrib|
+              contrib.delete("start_time") if contrib.fetch("start_time", "").blank?
+              contrib.delete("end_time") if contrib.fetch("end_time", "").blank?
+            end
     end
   end
 end
