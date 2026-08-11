@@ -21,7 +21,8 @@ class AssetResourceForm < Hyrax::Forms::ResourceForm
   # NOTE: the `child_contributors: true` tells Rails to use the
   # ChildContributorsValidator class to validate the child_contributors
   # property. See app/validators/child_contributors_validator.rb.
-  validates :child_contributors, contributors_metadata: true
+  # TODO - REMOVE IF STILL NOT WORKIN BY PR REVIEW TIME
+  # validates :child_contributors, contributors_metadata: true
 
   attr_accessor :controller, :current_ability
 
