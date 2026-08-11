@@ -19,10 +19,10 @@ class ContributorsMetadataValidator < ActiveModel::EachValidator
     set_instance_vars!(
       record: record,
       attribute: attribute,
-      contributors: contributors_from_values_arrays
+      contributors: contributors_from_values_arrays(contributors_values_arrays)
     )
 
-    contributors.each { |contributor| validate_contributor(contributor) }
+    contributors.each_with_index { |contributor, i| validate_contributor(contributor, i) }
   end
 
   private
@@ -42,23 +42,24 @@ class ContributorsMetadataValidator < ActiveModel::EachValidator
   end
 
 
-  def validate_contributor(contributor)
-    validate_name_if_role(contributor)
-    validate_time_fields(contributor)
+  def validate_contributor(contributor, i)
+    validate_name_if_role(contributor, i)
+    validate_time_fields(contributor, i)
   end
 
-  def validate_name_if_role(contributor)
+  def validate_name_if_role(contributor, i)
+    raise "fuck yeah!!"
     if contributor[:contributor_role].present? && contributor[:contributor].blank?
-      errors.add(:contributor, "must be present if a role is specified")
+      record.errors.add(:contributor, "must be present if a role is specified")
     end
   end
 
-  def validate_time_fields
+  def validate_time_fields(contributor, i)
     if contributor[:start_time].present? && contributor[:end_time].present?
       start_time_float = contributor[:start_time].to_f
       end_time_float = contributor[:end_time].to_f
       if contributor[:start_time] > contributor[:end_time]
-        errors.add(:start_time, "must be less than or equal to end time")
+        record.errors.add(:start_time, "must be less than or equal to end time")
       end
     end
   end

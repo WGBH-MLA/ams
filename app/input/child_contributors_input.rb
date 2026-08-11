@@ -109,8 +109,12 @@ class ChildContributorsInput < MultiValueInput
     @builder.text_field(
       :contributor_name,
       text_input_options(
-        id: "contributor_name",
-        name: "contributor_name",
+        # NOTE: We refer to contributor_name in this file for clarity, but the
+        # HTML field for the contributor name is actually just called
+        # 'contributor' from the PBCore element <contributor> and needs to stay
+        # 'contributor' to work with downstream code that is expecting that name.
+        id: "contributor",
+        name: "contributor",
         value: value,
         placeholder: "Name"
       )
