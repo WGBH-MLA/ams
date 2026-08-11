@@ -48,7 +48,6 @@ class ContributorsMetadataValidator < ActiveModel::EachValidator
   end
 
   def validate_name_if_role(contributor, i)
-    raise "fuck yeah!!"
     if contributor[:contributor_role].present? && contributor[:contributor].blank?
       record.errors.add(:contributor, "must be present if a role is specified")
     end
