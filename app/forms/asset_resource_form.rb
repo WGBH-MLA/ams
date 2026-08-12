@@ -7,7 +7,7 @@
 # @see https://github.com/samvera/valkyrie/wiki/ChangeSets-and-Dirty-Tracking
 
 
-class AssetResourceForm < Hyrax::Forms::ResourceForm
+class AssetResourceForm < Hyrax::Forms::ResourceForm(AssetResource)
   include Hyrax::FormFields(:basic_metadata)
   include Hyrax::FormFields(:asset_resource)
   include ChildCreateButton
