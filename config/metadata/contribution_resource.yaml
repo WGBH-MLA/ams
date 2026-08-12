@@ -67,7 +67,7 @@ attributes:
   affiliation_annotation:
     type: string
     multiple: false
-    index_to_parent: true
+    index_to_parent: false
     index_keys:
       - "affiliation_annotation_tesim"
     form:
@@ -85,21 +85,21 @@ attributes:
       primary: false
       multiple: false
   start_time:
-      type: float
+      type: string
       multiple: false
       index_to_parent: false
       index_keys:
-        - "start_time_fsi"
+        - "start_time_ssi"
       form:
         required: false
         primary: false
         multiple: false
   end_time:
-      type: float
+      type: string
       multiple: false
       index_to_parent: false
       index_keys:
-        - "end_time_fsi"
+        - "end_time_ssi"
       form:
         required: false
         primary: false
