@@ -94,6 +94,7 @@ ingest_types:
           attributes:
             - contributor
             - contributor_role
+            - contributor_role_annotation
             - portrayal
             - affiliation
             - affiliation_annotation
@@ -107,7 +108,8 @@ ingest_types:
     ingester: "AAPB::BatchIngest::CSVItemIngester"
     reader_options:
       schema:
-      - object_class: Asset
+      - object_class: AssetResource
+        column_header: Asset
         ingest_type: add
         attributes:
           - id
@@ -151,11 +153,13 @@ ingest_types:
           - sonyci_id
           - special_collections
         children:
-        - object_class: Contribution
+        - object_class: ContributionResource
+          column_header: Contribution
           ingest_type: update
           attributes:
             - contributor
             - contributor_role
+            - contributor_role_annotation
             - portrayal
             - affiliation
             - affiliation_annotation
