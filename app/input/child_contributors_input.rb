@@ -112,7 +112,8 @@ class ChildContributorsInput < MultiValueInput
         # NOTE: We refer to contributor_name in this file for clarity, but the
         # HTML field for the contributor name is actually just called
         # 'contributor' from the PBCore element <contributor> and needs to stay
-        # 'contributor' to work with downstream code that is expecting that name.
+        # 'contributor' to work with downstream code that is expecting that name,
+        # namely AssetResourceForm (see app/forms/asset_resource_form.rb)
         id: "contributor",
         name: "contributor",
         value: value,
