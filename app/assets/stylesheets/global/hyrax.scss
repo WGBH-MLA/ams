@@ -21,10 +21,10 @@
  * 1. Takes up full width (100%)
  * 2. Shows the remove button (which is usually hidden for first items)
  */
-.child_contributors.multi_value .listing li:first-of-type {
+.child_contributors.multi_value .listing li {
   width: 100%;
 }
-.child_contributors.multi_value .listing li:first-of-type .remove {
+.child_contributors.multi_value .listing li .remove {
   display: block;
   border: 1px solid #ccc;
   color: white;
