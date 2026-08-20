@@ -36,7 +36,8 @@ ingest_types:
     ingester: "AAPB::BatchIngest::CSVItemIngester"
     reader_options:
       schema:
-      - object_class: Asset
+      - object_class: AssetResource
+        column_header: Asset
         ingest_type: update
         attributes:
           - id
@@ -89,7 +90,8 @@ ingest_types:
           - organization
           - proxy_start_time
         children:
-        - object_class: Contribution
+        - object_class: ContributionResource
+          column_header: Contribution
           ingest_type: update
           attributes:
             - contributor
