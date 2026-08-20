@@ -155,7 +155,6 @@ module AMS::PbcoreXmlExportExtension
   def add_contributions(xml)
     members(only: Contribution).each do |contribution|
       xml.pbcoreContributor do |contributor_node|
-        exit
         contributor_attrs = {}
         contributor_attrs[:annotation] = contribution.annotation.first if contribution.annotation.present? && contribution.annotation.first.present?
         contributor_attrs[:affiliation] = contribution.affiliation.first if contribution.affiliation.present? && contribution.affiliation.first.present?
