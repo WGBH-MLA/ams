@@ -100,7 +100,7 @@ attributes:
       multiple: false
       index_to_parent: false
       index_keys:
-        - "end_time_testim"
+        - "end_time_tesim"
       form:
         required: false
         primary: false
