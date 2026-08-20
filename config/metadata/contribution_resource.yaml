@@ -18,7 +18,6 @@
 #
 # Generated via
 #  `rails generate hyrax:work_resource ContributionResource`
-
 attributes:
   bulkrax_identifier:
     type: string
@@ -29,6 +28,7 @@ attributes:
   contributor_role:
     type: string
     multiple: false
+    index_to_parent: false
     index_keys:
       - "contributor_role_tesim"
     form:
@@ -38,6 +38,7 @@ attributes:
   contributor_role_annotation:
     type: string
     multiple: false
+    index_to_parent: false
     index_keys:
       - "contributor_role_annotation_tesim"
     form:
@@ -47,7 +48,7 @@ attributes:
   portrayal:
     type: string
     multiple: false
-    index_to_parent: true
+    index_to_parent: false
     index_keys:
       - "portrayal_tesim"
     form:
@@ -57,7 +58,7 @@ attributes:
   affiliation:
     type: string
     multiple: false
-    index_to_parent: true
+    index_to_parent: false
     index_keys:
       - "affiliation_tesim"
     form:
@@ -89,7 +90,7 @@ attributes:
       multiple: false
       index_to_parent: false
       index_keys:
-        - "start_time_ssi"
+        - "start_time_tesim"
       form:
         required: false
         primary: false
@@ -99,7 +100,7 @@ attributes:
       multiple: false
       index_to_parent: false
       index_keys:
-        - "end_time_ssi"
+        - "end_time_testim"
       form:
         required: false
         primary: false
