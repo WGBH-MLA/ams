@@ -169,6 +169,7 @@ module AMS::PbcoreXmlExportExtension
 
         if contribution.contributor_role.present?
           role_attrs = {}
+          role_attrs[:annotation] = contribution.contributor_role_annotation.first if contribution.contributor_role_annotation.present? && contribution.contributor_role_annotation.first.present?
           role_attrs[:portrayal] = contribution.portrayal.first if contribution.portrayal.present? && contribution.portrayal.first.present?
 
           contributor_node.contributorRole(role_attrs) do
