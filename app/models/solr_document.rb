@@ -232,6 +232,10 @@ class SolrDocument
     self[solr_name('contributor_role')]
   end
 
+  def contributor_role_annotation
+    self[solr_name('contributor_role_annotation')]
+  end
+
   def contributor
     self[solr_name('contributor')]
   end
