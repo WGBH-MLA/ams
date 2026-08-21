@@ -14,13 +14,6 @@ Rails.application.configure do
 
   config.web_console.whitelisted_ips = ['172.18.0.0/16', '172.27.0.0/16', '0.0.0.0/0']
 
-  # Settings specified here will take precedence over those in config/application.rb.
-
-  # In the development environment your application's code is reloaded on
-  # every request. This slows down response time but is perfect for development
-  # since you don't have to restart the web server when you make code changes.
-  config.cache_classes = false
-
   # Do not eager load code on boot.
   config.eager_load = false
 
@@ -30,19 +23,17 @@ Rails.application.configure do
   # Enable/disable caching. By default caching is disabled.
   if Rails.root.join('tmp/caching-dev.txt').exist?
     config.action_controller.perform_caching = true
-
     config.cache_store = :memory_store
     config.public_file_server.headers = {
       'Cache-Control' => "public, max-age=#{2.days.seconds.to_i}"
     }
   else
     config.action_controller.perform_caching = false
-
     config.cache_store = :null_store
   end
 
   # Don't care if the mailer can't send.
-  config.action_mailer.raise_delivery_errors = false
+  config.action_mailer.raise_delivery_errors = true
 
   config.action_mailer.perform_caching = false
 
@@ -74,15 +65,18 @@ Rails.application.configure do
   config.action_mailer.delivery_method = ENV["MAIL_DELIVERY_METHOD"].try(:to_sym) || :letter_opener
   config.action_mailer.perform_deliveries = true
 
-  # Not needed unless ENV["MAIL_DELIVERY_METHOD"] is defined
-  config.action_mailer.smtp_settings = {
-    address: ENV.fetch("SMTP_ADDRESS", ''),
-    port: ENV.fetch("SMTP_PORT", '').to_i,
-    user_name: ENV.fetch("SMTP_USERNAME", ''),
-    password: ENV.fetch("SMTP_PASSWORD", ''),
-    authentication: ENV.fetch("SMTP_AUTHENTICATION", '').to_sym,
-    enable_starttls_auto: truthy_env_var?(ENV.fetch("SMTP_ENABLE_STARTTLS", ''))
-  }
+  # Configure additional SMTP settings if that is the sepcified mail delivery method.
+  if ENV.fetch('MAIL_DELIVERY_METHOD', '').downcase.strip == 'smtp'
+    config.action_mailer.smtp_settings = {
+      address: ENV.fetch("SMTP_ADDRESS", ''),
+      port: ENV.fetch("SMTP_PORT", '').to_i,
+      user_name: ENV.fetch("SMTP_USERNAME", ''),
+      password: ENV.fetch("SMTP_PASSWORD", ''),
+      authentication: ENV.fetch("SMTP_AUTHENTICATION", '').to_sym,
+      enable_starttls_auto: truthy_env_var?(ENV.fetch("SMTP_ENABLE_STARTTLS", ''))
+    }
+  end
+
 
   # Raises error for missing translations
   # config.action_view.raise_on_missing_translations = true
@@ -94,6 +88,6 @@ Rails.application.configure do
 
   # Use an evented file watcher to asynchronously detect changes in source code,
   # routes, locales, etc. This feature depends on the listen gem.
-  config.file_watcher = ActiveSupport::EventedFileUpdateChecker
-  config.hosts << "ams.test"
+  # config.file_watcher = ActiveSupport::EventedFileUpdateChecker
+  # config.hosts << "ams.test"
 end
