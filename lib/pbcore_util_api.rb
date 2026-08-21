@@ -13,11 +13,6 @@ module PBCoreUtilAPI
     # The configuration can be provided directly as a hash or loaded from a YAML file.
     # 
     def initialize(config_file=nil, **config_params)
-    
-
-
-      # raise "config_file = #{config_file.inspect}, config_params = #{config_params.inspect}"
-
       config_from_file = config_file ? YAML.load_file(config_file).with_indifferent_access : {}
       @config = config_from_file.merge(config_params).with_indifferent_access
 
