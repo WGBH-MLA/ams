@@ -1,10 +1,11 @@
 class PublishedAsset < ApplicationRecord
   belongs_to :push
 
-  # Available values for `status` field.
-  # Happy path for a PublishedAsset is:
-  # initiated => queued => uploading => finished
-  # NOTE: A PublishedAsset record can have a status of 'finished' with also a value for 'error'.
+  # Available values for `status` field. Happy path for a PublishedAsset is:
+  # initiated => queued => uploading => finished NOTE: A PublishedAsset record
+  # can have a status of `finished`` with either a value for `location` or
+  # `error`, but probably not both. If we end up with both, that's an edge case
+  # we need to handle.
   enum status: {
     initiated: "initiated",
     queued: "queued",
@@ -12,27 +13,33 @@ class PublishedAsset < ApplicationRecord
     finished: "finished"
   }
 
-  # Removes the Asset ID from the parent push's asset_ids_queue and updates the
-  # push's status to 'finished' if the queue is empty.
-  def remove_from_parent_asset_id_queue!
-    # Wrap in a transaction because there a race condition can corrupt the
-    # asset_ids_queue.
+  # After ever time a PublishedAsset is create or updated (i.e. saved)...
+  after_save do
+    # If the status was just changed to "finished"...
+    if status == "finished" && saved_change_to_status?
+      # Remove the asset_id from the parent Push's asset_ids_queue.
+      push.remove_asset_id_from_queue!(asset_id)
+    end
+
+    # Update the parent Push's status based on the state of its PublishedAssets.
+    push.update_status!
+  end
+
+  def finish_with_error!(error:)
     ActiveRecord::Base.transaction do
-      updated_asset_ids_queue = push.reload.asset_ids_queue - [asset_id]
-      push.update!(
-        asset_ids_queue: updated_asset_ids_queue,
-        # Set to 'finished' if the asset_ids_queue field is now empty; otherwise
-        # keep current status.
-        status: updated_asset_ids_queue.empty? ? 'finished' : push.status
+      update!(
+        status: 'finished',
+        location: nil,
+        error: "#{error.class}: #{error.message}"
       )
     end
   end
 
-  def update_with_error!(error)
+  def finish_with_location!(location:)
     update!(
       status: 'finished',
-      location: nil,
-      error: "#{error.class}: #{error.message}"
+      location: location,
+      error: nil
     )
   end
 end
