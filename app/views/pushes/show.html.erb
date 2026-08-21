@@ -1,21 +1,62 @@
-<h3>Push #<%= @push.id %></h3>
+<div id="push-show">
+  <div class="key-val-box">
+    <h3>Summary for Push #<%= @push_summary.id %></h3>
 
-<h5>Initiated by: <%= @push.user.email %> at <%= @push.created_at.strftime('%m-%e-%y %H:%M') %></h5>
-<% status = @push.status %>
-<% if status.present? %>
-  <h5>Status: <%= status %></h5>
-<% end %>
-<% @ids = Array(@push.pushed_id_csv&.split(',')) %>
-<% if @ids.blank? && @push.status == 'pending' %>
-  <p>IDs are being saved to this record, refresh periodically.</p>
-<% else %>
-  <h5>Total: <%= @ids.count %></h5>
-  <ol>
-    <% @ids.each do |id| %>
-      <li>
-        <%= id %>
-      </li>
-    <% end %>
-  </ol>
-<% end %>
-<%= link_to "Back To Pushes", pushes_path %>
+    <dl>
+      <dt>User</dt>
+      <dd><%= @push_summary.user %></dd>
+
+      <dt>Date</dt>
+      <dd><%= @push_summary.date %></dd>
+
+      <dt>Status</dt>
+      <dd><%= @push_summary.status %></dd>
+    </dl>
+
+    <h5>Asset Stats</h5>
+
+    <dl>
+      <dt>Total Assets</dt>
+      <dd><%= @push_summary.asset_count %></dd>
+
+      <% @push_summary.asset_counts_by_status.each do |status, count| %>
+        <dt><%= status.titleize %></dt>
+        <dd><%= count %></dd>
+      <% end %>
+
+      <dt>
+        <span class="valid">Succeeded</span> /
+        <span class="invalid">Failed</span>
+      </dt>
+
+      <dd>
+        <span class="valid"><%= @push_summary.succeeded %></span> /
+        <span class="invalid"><%= @push_summary.failed %></span>
+      </dd>
+    </dl>
+  </div>
+
+  <table class="published-assets">
+    <thead>
+      <tr>
+        <th>Asset ID</th>
+        <th>Status</th>
+        <th>Result</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <% @push_summary.published_assets.each do |asset| %>
+        <tr>
+          <td><a href="/concern/asset_resources/<%= asset.asset_id %>"><%= asset.asset_id %></a></td>
+          <td><%= asset.status.titleize %></td>
+          <td><%= (asset.error ? asset.error : "Success") %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+
+
+  <%= link_to "Back To Pushes", pushes_path %>
+</div>
+
