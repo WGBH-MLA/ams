@@ -1,13 +1,59 @@
-<h3>All Pushes</h3>
+<div id="pushes-index">
 
-<%= link_to "Start New Push", new_push_path %>
+  <h3>Pushes - Assets Published to AAPB</h3>
 
-<ul>
-    
-  <% @pushes.each do |push| %>
-    <li>
-      <%= link_to %(Push ##{push.id}), push %>
-    </li>  
-  <% end %>
+  <%= link_to "Start New Push", new_push_path %>
 
-</ul>
+
+  <table id="pushes-list">
+      
+    <thead>
+
+      <% if @pagination[:total_pages].to_i > 0 %>
+      <tr>
+        <th colspan="11">
+          <%= render 'pagination'  %>
+        </th>
+      </tr>
+      <% end %>
+      <tr>
+        <th>#</th>
+        <th>Size</th>
+        <th>Status</th>
+        <th>
+          <span class="valid">Pass</span> /
+          <span class="invalid">Fail</span>
+        </th>
+        <th>User</th>
+        <th>Date</th>
+      </tr>
+    </thead>
+
+    <% if @index_rows.count > 0 %>
+      <% @index_rows.each do |index_row| %>
+        <tr class="index_row-row" onClick='window.location.href="pushes/<%= index_row.id %>"'>
+          <td><%= link_to index_row.id, index_row %></td>
+          <td><%= index_row.asset_count %></td>
+          <% if !index_row.deprecated? %>
+            <td><%= index_row.status %></td>
+            <td>
+              <span class="valid"><%= index_row.succeeded %></span> /
+              <span class="invalid"><%= index_row.failed %></span>
+            </td>
+          <% else %>
+            <td colspan="3"><em>no status or success rate available for legacy push records</em></td>
+          <% end %>
+          <td><%= index_row.user %></td>
+          <td><%= index_row.date %></td>
+        </tr>
+      <% end %>
+    <% else %>
+      <tr class="index_row-row">
+        <td colspan="11">No assets have been published to AAPB yet. <%= link_to "Start New Push", new_push_path %></td>
+      <tr>
+    <% end %>
+
+
+  </table>
+
+</div>
