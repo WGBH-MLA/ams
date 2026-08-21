@@ -281,6 +281,8 @@ class SolrDocument
     self[solr_name('alternative_modes')]
   end
 
+  # @return [Array] A single-element array (to conform with typical Solr behavior)
+  #   of all titles concatenated with ';', empty oes removed.
   def title
     concatenated_titles = [series_title,
       program_title, episode_number, episode_title, segment_title, clip_title,
