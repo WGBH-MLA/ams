@@ -1,3 +1,4 @@
+require 'hyrax/forms/resource_form'
 require 'aapb/batch_ingest/batch_item_ingester'
 require 'aapb/batch_ingest/pbcore_xml_mapper'
 require 'aapb/batch_ingest/zipped_pbcore_digital_instantiation_mapper'
@@ -134,7 +135,11 @@ module AAPB
           lock_manager.lock!("add_ordered_member_to:#{parent.id}", 120000) do |locked|
             parent = Hyrax.query_service.find_by(id: parent.id)
             parent.member_ids += [child.id.to_s]
-            parent.set_validation_status
+            # NOTE: I think this should be happening in the
+            # ValidateAapbListener, but I think maybe  our overrides in ghe
+            # ingester are causing it not to work, or maybe it never did.
+            # Only run if the `parent`` has the method, e.g. AssetResource object.
+            parent.set_validation_status if parent.respond_to?(:set_validation_status)
             Hyrax.persister.save(resource: parent)
             Hyrax.index_adapter.save(resource: parent)
           end
