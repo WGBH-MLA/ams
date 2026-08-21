@@ -19,15 +19,15 @@ class PublishPbcoreJsonJob < ApplicationJob
   end
 
   after_perform do
-    published_asset.update!(
-      status: 'finished',
-      location: object.public_url
-    )
-    published_asset.remove_from_parent_asset_id_queue!
+    published_asset.finish_with_location!(location: object.public_url)
   end
 
+  # Overrides ApplicationJob#handle_error to update the PublishedAsset record
+  # and remove itself from the parent Push's asset_ids_queue before calling
+  # super to ensure that the error is properly logged and the job is marked as
+  # failed.
   def handle_error(error)
-    published_asset.update_with_error!(error)
+    published_asset.finish_with_error!(error: error)
     super(error)
   end
 
@@ -81,6 +81,7 @@ class PublishPbcoreJsonJob < ApplicationJob
       pbcore_identifier = pbcore_json_hash['pbcoreDescriptionDocument']['pbcoreIdentifier'].detect do |id|
         id['source'] == 'http://americanarchiveinventory.org'
       end
+      raise "Invalid Asset: no pbcoreIdentifier with source 'http://americanarchiveinventory.org' found in PBCore JSON" unless pbcore_identifier
       pbcore_identifier['text']
     end
 
