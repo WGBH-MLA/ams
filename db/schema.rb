@@ -469,7 +469,7 @@ ActiveRecord::Schema.define(version: 2026_04_28_165216) do
     t.string "job_id"
     t.string "asset_id"
     t.bigint "push_id", null: false
-    t.integer "status"
+    t.string "status"
     t.string "location"
     t.string "error"
     t.datetime "created_at", precision: 6, null: false

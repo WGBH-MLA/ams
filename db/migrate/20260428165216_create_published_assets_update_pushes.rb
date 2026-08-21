@@ -21,7 +21,7 @@ class CreatePublishedAssetsUpdatePushes < ActiveRecord::Migration[6.1]
       t.string :job_id
       t.string :asset_id
       t.references :push, null: false, foreign_key: true
-      t.integer :status
+      t.string :status
       t.string :location
       t.text :error
 
