@@ -145,25 +145,25 @@ services:
     networks:
       internal:
 
-  fcrepo:
-    image: ghcr.io/samvera/fcrepo4:4.7.5
-    volumes:
-      - fcrepo:/data:cached
-    env_file:
-      - .env
-    expose:
-      - 8080
-    environment:
-      - VIRTUAL_PORT=8080
-      - VIRTUAL_HOST=fcrepo.ams.test
-      - JAVA_OPTIONS=-Dfcrepo.object.directory="/data/objects" -Dfcrepo.binary.directory="/data/binaries" -Dfcrepo.mysql.host=db -Dfcrepo.mysql.username=root -Dfcrepo.mysql.password=DatabaseFTW
-      - MODESHAPE_CONFIG=classpath:/config/jdbc-mysql/repository.json
-      - DATABASE_PASSWORD=${DATABASE_PASSWORD}
-    networks:
-      internal:
-    depends_on:
-      db:
-        condition: service_started
+  # fcrepo:
+  #   image: ghcr.io/samvera/fcrepo4:4.7.5
+  #   volumes:
+  #     - fcrepo:/data:cached
+  #   env_file:
+  #     - .env
+  #   expose:
+  #     - 8080
+  #   environment:
+  #     - VIRTUAL_PORT=8080
+  #     - VIRTUAL_HOST=fcrepo.ams.test
+  #     - JAVA_OPTIONS=-Dfcrepo.object.directory="/data/objects" -Dfcrepo.binary.directory="/data/binaries" -Dfcrepo.mysql.host=db -Dfcrepo.mysql.username=root -Dfcrepo.mysql.password=DatabaseFTW
+  #     - MODESHAPE_CONFIG=classpath:/config/jdbc-mysql/repository.json
+  #     - DATABASE_PASSWORD=${DATABASE_PASSWORD}
+  #   networks:
+  #     internal:
+  #   depends_on:
+  #     db:
+  #       condition: service_started
 
   # Do not recurse through all of tmp. derivitives will make booting
   # very slow and eventually just time out as data grows
@@ -203,8 +203,8 @@ services:
         condition: service_started
       solr:
         condition: service_healthy
-      fcrepo:
-        condition: service_started
+      # fcrepo:
+      #   condition: service_started
       redis:
         condition: service_started
 
@@ -223,8 +223,8 @@ services:
         condition: service_started
       solr:
         condition: service_started
-      fcrepo:
-        condition: service_started
+      # fcrepo:
+      #   condition: service_started
       redis:
         condition: service_started
       zoo:
@@ -261,8 +261,8 @@ services:
         condition: service_started
       solr:
         condition: service_started
-      fcrepo:
-        condition: service_started
+      # fcrepo:
+      #   condition: service_started
       redis:
         condition: service_started
       zoo:
