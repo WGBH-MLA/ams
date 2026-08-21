@@ -1,67 +1,158 @@
+<div id="pushes-new">
+  <form action="/pushes" method="post">
+    <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
+    <h1>Publish Assets to AAPB</h1>
+    <h2>Count: <span id="asset_count"><%= params[:asset_ids_queue].to_s.split(/\s+/).count %></span></h2>
+    <textarea
+      style="width:100%; height: 12vw;"
+      id="asset_ids_queue"
+      type="text"
+      name="asset_ids_queue"
+      placeholder="GUIDs (separated by space, tab, or newline)"><%= params[:asset_ids_queue] %>
+    </textarea>
+    <input id="push-submit" class="aapb-push-button" type="submit" value="Send To AAPB" name="">
+  </form>
 
-<form action="/pushes" method="post">
-  <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
-  <textarea style="width:100%; height: 12vw;" id="asset_ids_queue" type="text" name="asset_ids_queue" placeholder="GUIDs (one per line)">
-    <%= params[:asset_ids_queue] %>
-  </textarea>
-  <input id="push-submit" class="aapb-push-button" type="submit" value="Send To AAPB" name="">
-</form>
+  <div id="feedback">
+    <ul></ul>
+  </div>
 
-<div id="valid-box">
+  <div id="loader">
+    <span>Validating...</span>
+    <img src="/pbcore-logo.gif">
+  </div>
 </div>
 
-<div id="loader">
-  <img src="/pbcore-logo.gif">
-</div>
 
 <script type="text/javascript">
-
   $(document).on('turbolinks:load', function() {
     $('#loader').hide();
 
-    var timeout = Date.now();
-    var inputActive = false;
-    var init = true;
-
-    $('#asset_ids_queue').on('change textInput input', function() {
-      $('#loader').show();
-      timeout = Date.now();
-      inputActive = true;
+    $('#asset_ids_queue').on('change input', function(e) {
+      e.preventDefault();
+      $('#asset_count').text(getCurrentIds().length);
+      validateAssetIdsQueue();
     });
 
-    setInterval(function(){
-      if(init || (inputActive && Date.now() - timeout > 400)){
-        validate( $('#asset_ids_queue').val() );
-        inputActive = false;
-        init = false;
-      }
-    }, 400);
-
-    var boxval = $('#asset_ids_queue').val();
-    if( boxval && boxval.length > 0 ){
-      // validate if page loaded with ids
-      $('#asset_ids_queue').trigger('change textInput input');
-    }
+    validateAssetIdsQueue();
   });
 
-  function validate(asset_ids_queue_val){
-    $.post('/pushes/validate_ids', { asset_ids_queue: asset_ids_queue_val }, function(resp) {
+  function getCurrentIds(){
+    return $('#asset_ids_queue').val().split(/\s+/).filter(id => id.trim() !== '');
+  }
+
+  function validateAssetIdsQueue(){
+    $('#loader').show()
+    $feedback = $('#feedback');
+    $.post('/pushes/validate_ids', { asset_ids_queue: $('#asset_ids_queue').val() }, function(resp) {
       $('#loader').hide();
-      $('#valid-box').empty();
+      $feedback
+        .empty()
+        .addClass("valid")
+        .removeClass("invalid")
+        .append('<p>All GUIDs are valid!</p>');
+    }).fail(function(resp) {
+      displayErrors(resp);
+    });
+  }
 
-      var message;
-      if(resp.error) {
-        message = resp.error;
-        $('#valid-box').addClass("red").removeClass("green");
-      } else {
-        message = "All GUIDs are valid!";
-        $('#valid-box').addClass("green").removeClass("red");
-      }
 
-      messages_array = message.split("\n\n")
-      messages_array.forEach(msg => {
-        $('#valid-box').append('<p>' + msg + '</p>')
+  function displayErrors(resp) {
+    // Validations errors may be numerous, so we use <ul> for grouping each error, and <ol> for
+    // listing the invalid IDs.
+    $errorsList = $('<ul>');
+    if (resp.status === 422) {
+      // NOTE: currently there is only one field on the Push form, asset_ids_queue, so we can handle
+      // it here exclusively. But if we end up with more fields, then we'll have to display validations
+      // errors for those as well.
+      const validationErrors = resp?.responseJSON?.validation_errors?.asset_ids_queue || [];
+      let allInvalidAssetIds = [];
+      validationErrors.forEach(err => {
+        const $errorItem = $('<li>')
+        $('<span class="error-msg">').text(err.error).appendTo($errorItem);
+        if (err.invalid_asset_ids && err.invalid_asset_ids.length > 0) {
+          $('<span class="error-msg">').text(' (' + err.invalid_asset_ids.length + ')').appendTo($errorItem);
+          const $invalidIdList = $('<ol>');
+          $removeBtn = $('<span>').text("Remove").addClass('invalid-asset-ids-btn').on('click', function(e) {
+            e.preventDefault();
+            removeFromAssetIdsQueue(err.invalid_asset_ids);
+          }).appendTo($errorItem);
+
+          $copyToClipboardBtn = $('<span>').text("Copy").addClass('invalid-asset-ids-btn').on('click', function(e) {
+            e.preventDefault();
+            copyIdsToClipboard(err.invalid_asset_ids);
+          }).appendTo($errorItem);
+
+          // Collect all invalid IDs into a single array for Remove and Copy buttons for all of them
+          // prepended to the array display at the end.
+          err.invalid_asset_ids.forEach(id => {
+            $('<li>').text(id).appendTo($invalidIdList);
+            allInvalidAssetIds.push(id);
+          });
+          $invalidIdList.appendTo($errorItem);
+        }
+        $errorItem.appendTo($errorsList);
       });
+
+      // Prepend buttons to the error display for "Remove All" and "Copy All" to clipboard.
+      $errorsHeader = $('<div>').append(
+        $('<span>').text('Vaidation Errors (' + allInvalidAssetIds.length + ' total)').addClass('error-msg')
+      ).append(
+        $('<span>').text("Remove All").addClass('invalid-asset-ids-btn').on('click', function (e) {
+          e.preventDefault();
+          removeFromAssetIdsQueue(allInvalidAssetIds);
+        })
+      ).append(
+        $('<span>').text("Copy All").addClass('invalid-asset-ids-btn').on('click', function (e) {
+          e.preventDefault();
+          copyIdsToClipboard(allInvalidAssetIds);
+        })
+      ).append(
+        $('<p>').text('(NOTE: Asset IDs may be listed under multiple errors)')
+      )
+
+      
+
+      // Change display: hide the loader, add the $errorsList
+      $('#loader').hide();
+      $feedback
+        .empty()
+        .removeClass("valid")
+        .addClass("invalid")
+        .append($errorsHeader)
+        .append($errorsList);
+    } else {
+      // For non-422 responses (i.e. not validation errors) expect the error
+      // to be on the top level 'error' property of the response JSON (See
+      // PushesController#validate_ids). If not, default to generic message.
+      // Hide the loader, display the error with HTTP response status and a
+      // msg letting the user know they may not be able to fix this on their
+      // own.
+      const error = resp?.responseJSON?.error || 'An unexpected error occurred. Please try again later.';
+      $('#loader').hide();
+      $feedback
+        .empty()
+        .removeClass("valid")
+        .addClass("invalid")
+        .append('<p>System Error: ' + error + '</p>')
+        .append('<p>Response Code: ' + resp.status + '</p>')
+        .append('<p>Please contact the system administrator if the problem persists.</p>');
+    }
+  }
+
+  function removeFromAssetIdsQueue(idsToRemove) {
+    const currentIds = getCurrentIds();
+    const updatedIds = currentIds.filter(id => !idsToRemove.includes(id));
+    $('#asset_ids_queue').val(updatedIds.join('\n')).trigger('change');
+  }
+
+  function copyIdsToClipboard(idsToCopy) {
+    // Uniquify the IDs to copy to avoid duplicates in the clipboard if the same ID has multiple validation errors.
+    uniqueIds = Array.from(new Set(idsToCopy))
+    navigator.clipboard.writeText(uniqueIds.join("\n")).then(function() {
+      alert(uniqueIds.length + ' unique Asset IDs copied to clipboard');
+    }, function(err) {
+      alert('Could not copy invalid IDs: ', err);
     });
   }
 </script>
