@@ -144,6 +144,11 @@ services:
       - redis:/data
     networks:
       internal:
+  pbcore_util:
+    # TODO: Use tagged vesion, we need reliable semver version
+    image: ghcr.io/wgbh-mla/pbcore-util:main
+    ports:
+    - "8000:8000"
 
   # fcrepo:
   #   image: ghcr.io/samvera/fcrepo4:4.7.5
@@ -206,6 +211,8 @@ services:
       # fcrepo:
       #   condition: service_started
       redis:
+        condition: service_started
+      pbcore_util:
         condition: service_started
 
   web:
