@@ -31,7 +31,6 @@ We recommend committing .env to your repo with good defaults. .env.development, 
 5) Load and seed the database
     ``` bash
     sc be rake db:migrate
-    sc be rake ams:reset_data
     sc be rake db:seed
     ```
 

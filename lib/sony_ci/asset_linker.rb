@@ -8,7 +8,7 @@ module SonyCi
     attr_accessor :successes, :failures
 
     # Initializes a new instance of the AssetLinker class.
-    # @param [Array] asset_ids The path to the file containing newline delimited list of Asset IDs.
+    # @param [Array] asset_ids The list of Asset IDs to link to Sony Ci media.
     def initialize(asset_ids: [])
       @asset_ids = asset_ids
       # Create a hash to store the results of the linking process, with Asset
