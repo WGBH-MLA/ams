@@ -11,6 +11,33 @@ module AMS
       end
     end
 
+    def reset_data!
+      time = Benchmark.realtime do
+        run_migrations!
+        logger.info 'Cleaning the database...'
+        clean_database!
+        logger.info 'Flushing Redis cache...'
+        flush_redis_cache!
+        logger.info 'Loading seed data...'
+        Seed.all
+      end
+      logger.info "Data reset complete in #{time.round(3)} seconds"
+    end
+
+
+    def clean_database!
+      require 'database_cleaner'
+      DatabaseCleaner.clean_with :truncation
+    end
+
+    def run_migrations!
+      ActiveRecord::Migration.migrate(:up) if ActiveRecord::Migration.check_pending!
+    end
+
+    def flush_redis_cache!
+      Redis.new(host: ENV.fetch('REDIS_HOST', 'localhost'), port: '6379').flushall
+    end
+
     def seeds; Seed; end
 
     module Seed
