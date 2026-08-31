@@ -32,6 +32,7 @@ then
 fi
 
 helm upgrade \
+    --debug \
     --install \
     --atomic \
     --timeout 15m0s \
