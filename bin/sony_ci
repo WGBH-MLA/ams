@@ -2,7 +2,7 @@
 require "thor"
 
 class SonyCiCli < Thor
-  desc "link_assets ASSET_IDS_FILE", "Links AMS Assets to Sony Ci Assets using a newline delimited list of Asset IDs."
+  desc "link_assets", "Links AMS Assets to Sony Ci Assets using a newline delimited list of Asset IDs."
   option :file, type: :string, required: true, desc: "Path to the file containing the list of Asset IDs."
   def link_assets(*asset_ids)
     # Combine asset IDs from command line arguments and the file specified in options
