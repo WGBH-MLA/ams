@@ -1,0 +1,45 @@
+#!/usr/local/bin/ruby
+require "thor"
+
+class SonyCiCli < Thor
+  desc "link_assets ASSET_IDS_FILE", "Links AMS Assets to Sony Ci Assets using a newline delimited list of Asset IDs."
+  option :file, type: :string, required: true, desc: "Path to the file containing the list of Asset IDs."
+  def link_assets(*asset_ids)
+    # Combine asset IDs from command line arguments and the file specified in options
+    asset_ids += File.readlines(options[:file]).map(&:strip) if options[:file]
+    asset_ids = asset_ids.uniq
+
+    require_relative "../config/environment"
+    require_relative "../lib/sony_ci/asset_linker"
+
+    linker = SonyCi::AssetLinker.new(asset_ids: asset_ids)
+    linker.link_assets!
+    print_linker_results(linker)
+  end
+
+
+  private
+
+  def print_linker_results(linker)
+    puts "\n\nSony Ci - Link Assets Results"
+    puts "Attempted: #{linker.asset_ids.count}"
+    puts "Successful: #{linker.successes.count}"
+    puts "Failed: #{linker.failures.count}"
+
+    if linker.successes.any?
+      puts "\nSuccessfully Linked Asset IDs:"
+      linker.successes.each do |asset_id, sony_ci_ids|
+        puts "#{asset_id} => #{sony_ci_ids.join(', ')}"
+      end
+    end
+
+    if linker.failures.any?
+      puts "\nFailed Asset IDs:"
+      linker.failures.each do |asset_id, error|
+        puts "#{asset_id} => #{error.class}: #{error.message}"
+      end
+    end
+  end
+end
+
+SonyCiCli.start(ARGV)
