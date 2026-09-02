@@ -16,6 +16,8 @@ module AMS
         run_migrations!
         logger.info 'Cleaning the database...'
         clean_database!
+        logger.info 'Deleting all Solr documents...'
+        clean_solr!
         logger.info 'Flushing Redis cache...'
         flush_redis_cache!
         logger.info 'Loading seed data...'
@@ -24,6 +26,9 @@ module AMS
       logger.info "Data reset complete in #{time.round(3)} seconds"
     end
 
+    def clean_solr!
+      Blacklight.default_index.connection.delete_by_query('*:*')
+    end
 
     def clean_database!
       require 'database_cleaner'
