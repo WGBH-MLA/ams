@@ -32,13 +32,14 @@ then
 fi
 
 helm upgrade \
+    --debug \
     --install \
     --atomic \
     --timeout 15m0s \
     --set image.repository="$DEPLOY_IMAGE" \
     --set image.tag="$DEPLOY_TAG" \
     --set worker.image.repository="$WORKER_IMAGE" \
-    --set worker.image.tag="$DEPLOY_TAG" \
+    --set worker.image.tag="$WORKER_TAG" \
     $HELM_EXTRA_ARGS \
     --namespace="$namespace" \
     --create-namespace \
