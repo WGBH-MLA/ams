@@ -9,12 +9,15 @@ ingest_types:
     ingester: "AAPB::BatchIngest::CSVItemIngester"
     reader_options:
       schema:
-      - object_class: Asset
+      - object_class: AssetResource
+        column_header: Asset
         ingest_type: new
         children:
-        - object_class: Contribution
+        - object_class: ContributionResource
+          column_header: "Contribution"
           ingest_type: new
-        - object_class: PhysicalInstantiation
+        - object_class: PhysicalInstantiationResource
+          column_header: PhysicalInstantiation
           ingest_type: new
 
   aapb_csv_reader_2:
