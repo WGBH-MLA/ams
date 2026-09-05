@@ -8,8 +8,8 @@ class ExportRecordsJob < ApplicationJob
 
   rescue_from StandardError do |error|
     Rails.logger.error "#{error.class}: #{error.message}\n\nBacktrace:\n#{error.backtrace.join("\n")}"
-    notification.send_failure(error_message: error.message)
-  rescue => secondary_error
+    failure_notification.send_failure(error_message: error.message)
+  rescue StandardError => secondary_error
     # Double rescue!! Sometimes the rescue_from block throws an error.
     # NOTE: Unrescued errors will be retried by Sidekiq, which we don't want to
     # do if there is no chance of success.
@@ -21,9 +21,8 @@ class ExportRecordsJob < ApplicationJob
   #   #named_arguments (see ApplicationJob#named_arguments).
   def perform(export_type:, user:, search_params: {})
     delivery.deliver
+    notification.send_success
   end
-
-  after_perform { notification.send_success }
 
   private
 
@@ -41,5 +40,11 @@ class ExportRecordsJob < ApplicationJob
 
     def notification
       @notification ||= AMS::Export::Notification.for_export_type(named_arguments[:export_type]).new(user: named_arguments[:user], delivery: delivery)
+    end
+
+    # Notification without delivery dependency, used for failure notifications
+    # that may occur before the delivery object can be created.
+    def failure_notification
+      @failure_notification ||= AMS::Export::Notification.for_export_type(named_arguments[:export_type]).new(user: named_arguments[:user])
     end
 end

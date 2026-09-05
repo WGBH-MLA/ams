@@ -6,7 +6,7 @@ module AMS
 
         attr_reader :user, :delivery
 
-        def initialize(user:, delivery:)
+        def initialize(user:, delivery: nil)
           @user = user
           @delivery = delivery
         end
@@ -27,9 +27,14 @@ module AMS
 
           # Returns a hash of params passed to the mailer. By default, this
           # includes the user and any mail data from the Delivery instance.
-          # Subclasses may add additional data to the mail_params
+          # Subclasses may add additional data to the mail_params.
+          # NOTE: delivery may be nil for failure notifications that occur
+          # before the delivery object can be created.
           def mail_params
-            @mail_params ||= delivery.notification_data.merge(user: user)
+            @mail_params ||= begin
+              base_params = { user: user }
+              delivery ? base_params.merge(delivery.notification_data) : base_params
+            end
           end
       end
     end
