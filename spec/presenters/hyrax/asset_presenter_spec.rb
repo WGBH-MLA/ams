@@ -141,7 +141,7 @@ RSpec.describe Hyrax::AssetPresenter do
       :clip_title, :program_description, :episode_description,
       :segment_description, :raw_footage_description, :promo_description,
       :clip_description, :rundown_description, :copyright_date, :level_of_user_access, :outside_url,
-      :special_collections, :transcript_status, :sonyci_id, :licensing_info,
+      :special_collections, :exhibit, :transcript_status, :sonyci_id, :licensing_info,
       :cataloging_status, :canonical_meta_tag, :special_collection_category,
       :playlist_group, :playlist_order, :organization
     ] }

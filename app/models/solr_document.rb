@@ -432,6 +432,10 @@ class SolrDocument
     self[solr_name('special_collections', :symbol)]
   end
 
+  def exhibit
+    self[solr_name('exhibit', :symbol)]
+  end
+
   def transcript_status
     self[solr_name('transcript_status', :symbol)]
   end

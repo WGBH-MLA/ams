@@ -45,7 +45,7 @@ class AssetResourceForm < Hyrax::Forms::ResourceForm(AssetResource)
   end
 
   def multiple?(field)
-    if [:child_contributors, :child_annotations, :special_collection, :sonyci_id, :special_collection_category].include?(field.to_sym)
+    if [:child_contributors, :child_annotations, :special_collection, :exhibit, :sonyci_id, :special_collection_category].include?(field.to_sym)
       true
     else
       super

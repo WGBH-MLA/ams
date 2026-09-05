@@ -74,7 +74,7 @@ RSpec.describe AAPB::BatchIngest::PBCoreXMLItemIngester, reset_data: false do
       end
 
       it 'ingests Annotations' do
-        expect(@admin_data.annotations.length).to eq(11)
+        expect(@admin_data.annotations.length).to eq(12)
       end
 
       it 'propagates additional batch items as part of the batch' do
