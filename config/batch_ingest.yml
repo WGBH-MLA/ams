@@ -13,7 +13,6 @@ ingest_types:
         column_header: Asset
         ingest_type: new
         attributes:
-        - id
         - asset_types
         - genre
         - date
