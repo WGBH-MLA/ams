@@ -12,39 +12,44 @@ module AAPB
         if klass = model.constantize
           children = hash.fetch("children").map { |k| CSVConfigTree.new_from_hash(k) } || {} if hash.keys.include?("children")
 
-          attr = (hash["attributes"] || [])
-          attr.each do |attr|
+          # Whitelisted properties are those that are defined on the model and
+          # thus have a place to be saved once ingested. Valkyrie::Resource
+          # models properties are in klass.fields, while ActiveFedora models
+          # properties are in klass.properties.keys
+          if klass.ancestors.map(&:to_s).include?("ActiveFedora::Base")
+            whitelisted_properties = klass.properties.keys
+          elsif klass.ancestors.map(&:to_s).include?("Valkyrie::Resource")
+            whitelisted_properties = klass.fields
+          else
+            raise("Invalid object class #{model}. Must be a subclass of ActiveFedora::Base or Valkyrie::Resource")
+          end
 
-            # Whitelisted properties are those that are defined on the model and
-            # thus have a place to be saved once ingested.
-            # Valkyrie::Resource models properties are in klass.fields, while ActiveFedora models properties are in klass.properties.keys
-            if klass.ancestors.map(&:to_s).include?("ActiveFedora::Base")
-              whitelisted_properties = klass.properties.keys
-            elsif klass.ancestors.map(&:to_s).include?("Valkyrie::Resource")
-              whitelisted_properties = klass.fields
-            else
-              raise("Invalid object class #{model}. Must be a subclass of ActiveFedora::Base or Valkyrie::Resource")
-            end
-
-            # Look for admin_data accessors from assets or physical_nstantiations.
-            # If one of them is there, add their attribute names to the whitelisted properties.
-            if klass.instance_methods.include?(:admin_data)
-              whitelisted_properties += AdminData.attribute_names
-              whitelisted_properties += Annotation.ingestable_attributes
-            elsif klass.instance_methods.include?(:instantiation_admin_data)
-              whitelisted_properties += InstantiationAdminData.attribute_names
-            end
-
-            # Convert whitelisted properties to strings for comparison, since
+          # If no attributes are specified the batch_ingest.yml configuration
+          # for model specified in the ingest type's schema then default to the
+          # attributes on the destination model. This allows for a more concise
+          # configuration file, since the default is to ingest all attributes on
+          # the model.
+          attr = if hash["attributes"]
+            hash["attributes"]
+          else
+            #Convert whitelisted properties to strings for comparison, since
             # that's how they are comming in from the CSV config yaml and in the
             # case of Valkyrie models, the properties are symbols.
             whitelisted_properties.map!(&:to_s)
+          end
 
+          # Loop through each attributes from the CSV loaded batch_ingest.yml
+          # config file and raise an error if any of them are not in the
+          # whitelisted properties for the model. This is to prevent typos in
+          # the config file and to make sure that the attributes specified in
+          # the config file are actually valid for the model.
+          attr.each do |attr|
             # Raise an error if we find a CSV config attribute that is not in the whitelisted properties for the model.
             if (attr != "id" && whitelisted_properties.exclude?(attr))
               raise("Attribute #{attr} is specified in CSV batch ingest confiuration, but '#{attr}' is not a property of the model #{model}")
             end
           end
+          
           children = [] if children.nil?
 
           ingest_type = hash.fetch("ingest_type")

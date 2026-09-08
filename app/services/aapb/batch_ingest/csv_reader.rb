@@ -16,13 +16,8 @@ module AAPB
           @workbook.default_sheet = @workbook.sheets[0]
           @header = @workbook.row(1)
           validate_options
-          require 'pry'; binding.pry
           validate_csv_header
-          require 'pry'; binding.pry
           read_and_create_batch_items
-
-          
-
         rescue StandardError => e
           raise Hyrax::BatchIngest::ReaderError, I18n.t('hyrax.batch_ingest.readers.errors.invalid_source_location', source_location: source_location + " \n" + e.message + "\n" +  e.backtrace.to_s, cause: e)
         end
