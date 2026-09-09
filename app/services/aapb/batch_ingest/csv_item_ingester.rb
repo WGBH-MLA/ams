@@ -36,7 +36,12 @@ module AAPB
           'PhysicalInstantiation' => PhysicalInstantiationResource,
           'DigitalInstantiation' => DigitalInstantiationResource,
           'EssenceTrack' => EssenceTrackResource,
-          'Contribution' => ContributionResource
+          'Contribution' => ContributionResource,
+          'AssetResource' => AssetResource,
+          'PhysicalInstantiationResource' => PhysicalInstantiationResource,
+          'DigitalInstantiationResource' => DigitalInstantiationResource,
+          'EssenceTrackResource' => EssenceTrackResource,
+          'ContributionResource' => ContributionResource
         }
       end
 
@@ -84,15 +89,16 @@ module AAPB
           ingest_type = node.ingest_type
 
           attributes = if !with_parent
-                         with_data[node.object_class]
+                         with_data[node.object_column_header]
                        else
                          solr_doc = SolrDocument.new(with_parent.to_solr)
                          with_data.merge(title: solr_doc.title)
                        end
 
+
           attributes["admin_set_id"] = @batch_item.batch.admin_set_id
 
-          unless %w[Asset DigitalInstantiation EssenceTrack].include?(node.object_class)
+          unless %w[Asset DigitalInstantiation EssenceTrack].include?(node.object_column_header)
             attributes["format"] = attributes["format"].presence || 'Unavailable' if with_data.key?("format")
           end
 
@@ -144,10 +150,10 @@ module AAPB
               node.children.each do |c_node|
                 # We won't always have data from the CSV for the children, so don't
                 # fail if it is not included with the with_data
-                with_data[c_node.object_class].each do |c_data|
+                with_data[c_node.object_column_header].each do |c_data|
                   result = ingest_object_at(c_node,c_data,parent_node)
                   parent_node.member_ids += [result.id.to_s] if result
-                end unless with_data[c_node.object_class].nil?
+                end unless with_data[c_node.object_column_header].nil?
               end
               parent_node.save if parent_node.member_ids.present?
             else

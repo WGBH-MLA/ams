@@ -1,5 +1,3 @@
-version: '3.8'
-
 x-app: &app
   build:
     context: .
@@ -182,19 +180,18 @@ services:
     environment:
       - CONFDIR=/app/samvera/hyrax-webapp/solr/config
     entrypoint: ["sh", "-c"]
-    # we need to do seed seperate because activerecord doesn't reload properly otherwise
     command:
       - >
-        if [ -v DEPENDENCIES_NEXT ]; then
-          export BUNDLE_GEMFILE=Gemfile_next;
-          export BUNDLER_VERSION=2.0.1
-        else
-          export BUNDLE_GEMFILE=Gemfile;
-        fi;
+        export BUNDLE_GEMFILE=Gemfile;
         solrcloud-upload-configset.sh /app/samvera/hyrax-webapp/solr/config &&
         solrcloud-assign-configset.sh &&
         SOLR_COLLECTION_NAME=hydra-test solrcloud-assign-configset.sh &&
-        rails db:create db:schema:load db:migrate &&
+        rails db:create &&
+        rails db:environment:set &&
+        if [ -n "$RESET_DATA" ]; then
+          rails db:reset
+        fi &&
+        rails db:migrate &&
         rails db:seed
     depends_on:
       postgres:
@@ -237,8 +234,10 @@ services:
         condition: service_started
       initialize_app:
         condition: service_completed_successfully
-    expose:
-      - 3000
+    ports:
+      - "3000:3000"
+    stdin_open: true
+    tty: true
 
   worker:
     <<: *app
@@ -265,6 +264,8 @@ services:
         condition: service_started
       initialize_app:
         condition: service_completed_successfully
+    stdin_open: true
+    tty: true
 
   chrome:
     # password is 'secret'

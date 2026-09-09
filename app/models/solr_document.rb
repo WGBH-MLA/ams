@@ -232,6 +232,10 @@ class SolrDocument
     self[solr_name('contributor_role')]
   end
 
+  def contributor_role_annotation
+    self[solr_name('contributor_role_annotation')]
+  end
+
   def contributor
     self[solr_name('contributor')]
   end
@@ -414,6 +418,24 @@ class SolrDocument
 
   def affiliation
     self[solr_name('affiliation')]
+  end
+
+  # Only applies to SolrDocuments representing ContributionResource objects
+  def affiliation_annotation
+    self[solr_name('affiliation_annotation')]
+  end
+
+  # Only applies to SolrDocuments representing ContributionResource objects
+  def start_time
+    self[solr_name('start_time')]
+  end
+
+  def end_time
+    self[solr_name('end_time')]
+  end
+
+  def time_annotation
+    self[solr_name('time_annotation')]
   end
 
   def producing_organization

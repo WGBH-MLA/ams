@@ -18,9 +18,8 @@ module AAPB
           validate_options
           validate_csv_header
           read_and_create_batch_items
-
         rescue StandardError => e
-          raise Hyrax::BatchIngest::ReaderError, I18n.t('hyrax.batch_ingest.readers.errors.invalid_source_location', source_location: source_location + " \n" + e.message + "\n" +  e.backtrace.to_s)
+          raise Hyrax::BatchIngest::ReaderError, I18n.t('hyrax.batch_ingest.readers.errors.invalid_source_location', source_location: source_location + " \n" + e.message + "\n" +  e.backtrace.to_s, cause: e)
         end
       end
 
@@ -132,21 +131,21 @@ module AAPB
         false
       end
 
-      def validate_row_data row, node, child_node = nil
+      def validate_row_data(row, node, child_node = nil)
         fail_row = false
         if node.ingest_type == "update" || node.ingest_type == "add"
           # When we update a contribution, we get rid of the old contributions and create new ones
-          return row if node.object_class == "Contribution"
+          return row if node.object_column_header == "Contribution"
 
           if child_node
-            row[node.object_class].each do |c_data|
+            row[node.object_column_header].each do |c_data|
               if c_data.to_a.flatten.exclude?("id")
-                raise("Must contain column `id` for #{node.object_class} for updating object.")
+                raise("Must contain column `id` for #{node.object_column_header} for updating object.")
               end
             end
           else
-            if row[node.object_class].to_a.flatten.exclude?("id")
-              raise("Must contain column `id` for #{node.object_class} for updating object.")
+            if row[node.object_column_header].to_a.flatten.exclude?("id")
+              raise("Must contain column `id` for #{node.object_column_header} for updating object.")
             end
           end
 

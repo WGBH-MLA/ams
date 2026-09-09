@@ -9,13 +9,95 @@ ingest_types:
     ingester: "AAPB::BatchIngest::CSVItemIngester"
     reader_options:
       schema:
-      - object_class: Asset
+      - object_class: AssetResource
+        column_header: Asset
         ingest_type: new
+        attributes:
+        - asset_types
+        - genre
+        - date
+        - broadcast_date
+        - created_date
+        - copyright_date
+        - episode_number
+        - spatial_coverage
+        - temporal_coverage
+        - audience_level
+        - audience_rating
+        - annotation
+        - rights_summary
+        - rights_link
+        - local_identifier
+        - pbs_nola_code
+        - eidr_id
+        - topics
+        - subject
+        - title
+        - program_title
+        - episode_title
+        - segment_title
+        - raw_footage_title
+        - promo_title
+        - clip_title
+        - description
+        - program_description
+        - episode_description
+        - segment_description
+        - raw_footage_description
+        - promo_description
+        - clip_description
+        - rundown_description
+        - series_title
+        - series_description
+        - producing_organization
+        - level_of_user_access
+        - cataloging_status
+        - outside_url
+        - special_collections
+        - transcript_status
+        - sonyci_id
+        - licensing_info
+        - playlist_group
+        - playlist_order
+        - organization
+        - proxy_start_time
         children:
-        - object_class: Contribution
+        - object_class: ContributionResource
+          column_header: "Contribution"
           ingest_type: new
-        - object_class: PhysicalInstantiation
+          attributes:
+          - contributor
+          - contributor_role
+          - contributor_role_annotation
+          - portrayal
+          - affiliation
+          - affiliation_annotation
+          - annotation
+          - start_time
+          - end_time
+          - time_annotation
+        - object_class: PhysicalInstantiationResource
+          column_header: PhysicalInstantiation
           ingest_type: new
+          attributes:
+          - date
+          - digitization_date
+          - dimensions
+          - format
+          - standard
+          - location
+          - media_type
+          - generations
+          - time_start
+          - duration
+          - colors
+          - rights_summary
+          - rights_link:annotation
+          - local_instantiation_identifier
+          - tracks
+          - channel_configuration
+          - alternative_modes
+          - holding_organization
 
   aapb_csv_reader_2:
     label: "AAPB CSV Physical Instantiation Ingester"
@@ -23,20 +105,91 @@ ingest_types:
     ingester: "AAPB::BatchIngest::CSVItemIngester"
     reader_options:
       schema:
-      - object_class: Asset
+      - object_class: AssetResource
+        column_header: Asset
         ingest_type: update
         attributes:
         - id
+        - asset_types
+        - genre
+        - date
+        - broadcast_date
+        - created_date
+        - copyright_date
+        - episode_number
+        - spatial_coverage
+        - temporal_coverage
+        - audience_level
+        - audience_rating
+        - annotation
+        - rights_summary
+        - rights_link
+        - local_identifier
+        - pbs_nola_code
+        - eidr_id
+        - topics
+        - subject
+        - title
+        - program_title
+        - episode_title
+        - segment_title
+        - raw_footage_title
+        - promo_title
+        - clip_title
+        - description
+        - program_description
+        - episode_description
+        - segment_description
+        - raw_footage_description
+        - promo_description
+        - clip_description
+        - rundown_description
+        - series_title
+        - series_description
+        - producing_organization
+        - level_of_user_access
+        - cataloging_status
+        - outside_url
+        - special_collections
+        - transcript_status
+        - sonyci_id
+        - licensing_info
+        - playlist_group
+        - playlist_order
+        - organization
+        - proxy_start_time
         children:
-        - object_class: PhysicalInstantiation
+        - object_class: PhysicalInstantiationResource
+          column_header: PhysicalInstantiation
           ingest_type: new
+          attributes:
+          - date
+          - digitization_date
+          - dimensions
+          - format
+          - standard
+          - location
+          - media_type
+          - generations
+          - time_start
+          - duration
+          - colors
+          - rights_summary
+          - rights_link:annotation
+          - local_instantiation_identifier
+          - tracks
+          - channel_configuration
+          - alternative_modes
+          - holding_organization
+
   aapb_csv_reader_3:
     label: "AAPB CSV Asset Attribute Update Ingester"
     reader: "AAPB::BatchIngest::CSVReader"
     ingester: "AAPB::BatchIngest::CSVItemIngester"
     reader_options:
       schema:
-      - object_class: Asset
+      - object_class: AssetResource
+        column_header: Asset
         ingest_type: update
         attributes:
           - id
@@ -89,21 +242,28 @@ ingest_types:
           - organization
           - proxy_start_time
         children:
-        - object_class: Contribution
+        - object_class: ContributionResource
+          column_header: Contribution
           ingest_type: update
           attributes:
             - contributor
             - contributor_role
+            - contributor_role_annotation
             - portrayal
             - affiliation
+            - affiliation_annotation
             - annotation
+            - start_time
+            - end_time
+            - time_annotation
   aapb_csv_reader_4:
     label: "AAPB CSV Asset Multivalue Attribute Addition Ingester"
     reader: "AAPB::BatchIngest::CSVReader"
     ingester: "AAPB::BatchIngest::CSVItemIngester"
     reader_options:
       schema:
-      - object_class: Asset
+      - object_class: AssetResource
+        column_header: Asset
         ingest_type: add
         attributes:
           - id
@@ -147,14 +307,20 @@ ingest_types:
           - sonyci_id
           - special_collections
         children:
-        - object_class: Contribution
+        - object_class: ContributionResource
+          column_header: Contribution
           ingest_type: update
           attributes:
             - contributor
             - contributor_role
+            - contributor_role_annotation
             - portrayal
             - affiliation
+            - affiliation_annotation
             - annotation
+            - start_time
+            - end_time
+            - time_annotation
   zipped_pbcore_digital_instantiation:
     label: "AAPB Digital Instantiation PBCore - Zipped"
     reader: "AAPB::BatchIngest::ZippedPBCoreDigitalInstantiationReader"
