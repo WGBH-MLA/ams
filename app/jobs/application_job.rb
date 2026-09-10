@@ -14,7 +14,7 @@ class ApplicationJob < ActiveJob::Base
   # can be overidden in subclasses while still being able to call `super` to get
   # consistent error logging behavior.
   rescue_from(StandardError) do |error|
-    handle_error(error)
+    handle_error(error: error)
   end
 
   # Error handler method called in rescue_from block in base
@@ -26,7 +26,7 @@ class ApplicationJob < ActiveJob::Base
   #   Default is false, since failed jobs typically will just fail again.
   # @return [void]
   # @raises [StandardError] re-raises the error if reraise is true.
-  def handle_error(error, reraise: false)
+  def handle_error(error:, reraise: false)
     log_error(error)
     raise error if reraise
   end

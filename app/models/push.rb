@@ -52,6 +52,14 @@ class Push < ApplicationRecord
     end
   end
 
+  def finish_with_error!(error:)
+    raise ArgumentError, "error must be an Exception" unless error.is_a?(Exception)
+    update!(
+      status: 'finished',
+      error: "#{error.class}: #{error.message}"
+    )
+  end
+
   # TODO: use scopes?
 
   def all_published_assets_present?
@@ -61,21 +69,7 @@ class Push < ApplicationRecord
   end
 
   def all_published_assets_finished?
-    published_assets.all? do |published_asset|
-      published_asset.status == "finished"
-    end
-  end
-
-  def published_assets_failed
-    published_assets.select do |published_asset|
-      !published_asset.error.nil?
-    end
-  end
-
-  def published_assets_succeeded
-    published_assets.select do |published_asset|
-      published_asset.error.nil?
-    end
+    published_assets.all?(&:finished?)
   end
 
 
@@ -248,6 +242,13 @@ class Push < ApplicationRecord
     end
   end
 
+  # This is a presentation object that is used in the pushes#show view.
+  # It is instantiated in the PushesController#show action as Push::Summary.new(push).
+  # By extending SimpleDelegator, the Push::Summary instance has all the properties of
+  # the Push model instance passed to it, and we can then add custom methods for
+  # presentation logic as needed (i.e. formatting, combining, conditionals, etc).
+  # This is effectively a 'presenter' pattern, but the presenter is defined here in the
+  # model's namespace rather than someplace else in the code, which I like :).
   class Summary < SimpleDelegator
     
     def date
@@ -271,10 +272,13 @@ class Push < ApplicationRecord
       end
     end
 
+    # Returns the number of child PublishedAsset that have "succeeded",
+    # meaning a a status of "finished" with no errors.
     def succeeded
-      published_assets.count { |published_asset| published_asset.error.nil? }
+      published_assets.count(&:succeeded?)
     end
 
+    # Returns the number of child PublishedAsset objects that have errors.
     def failed
       published_assets.count(&:error)
     end
@@ -293,5 +297,5 @@ class Push < ApplicationRecord
         [ result, published_assets.count ]
       end.to_h
     end
-  end
+  end # END class Push::Summary
 end

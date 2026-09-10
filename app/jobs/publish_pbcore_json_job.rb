@@ -26,9 +26,9 @@ class PublishPbcoreJsonJob < ApplicationJob
   # and remove itself from the parent Push's asset_ids_queue before calling
   # super to ensure that the error is properly logged and the job is marked as
   # failed.
-  def handle_error(error)
+  def handle_error(error:)
     published_asset.finish_with_error!(error: error)
-    super(error)
+    super(error: error)
   end
 
   # 

@@ -26,13 +26,11 @@ class PublishedAsset < ApplicationRecord
   end
 
   def finish_with_error!(error:)
-    ActiveRecord::Base.transaction do
-      update!(
-        status: 'finished',
-        location: nil,
-        error: "#{error.class}: #{error.message}"
-      )
-    end
+    update!(
+      status: 'finished',
+      location: nil,
+      error: "#{error.class}: #{error.message}"
+    )
   end
 
   def finish_with_location!(location:)
@@ -41,5 +39,34 @@ class PublishedAsset < ApplicationRecord
       location: location,
       error: nil
     )
+  end
+
+  # @return True if the status is "finished" AND there are no errors; false
+  # otherwise.
+  def succeeded?
+    error.nil? && status == "finished"
+  end
+
+  def result
+    reload
+    if error.nil? && status == "finished"
+      return "succeded"
+    elsif error
+      return "failed"
+    elsif sidekiq_job
+      return "running"
+    else
+      return "unknown"
+    end
+  end
+
+  def sidekiq_job
+    reload
+    return unless job_id
+    Sidekiq::Queue.new(job_queue_name).find_job(job_id)
+  end
+
+  def job_queue_name
+    PublishPbcoreJsonJob.queue_name
   end
 end

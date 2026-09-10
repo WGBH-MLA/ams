@@ -50,7 +50,7 @@
         <tr>
           <td><a href="/concern/asset_resources/<%= asset.asset_id %>"><%= asset.asset_id %></a></td>
           <td><%= asset.status.titleize %></td>
-          <td><%= (asset.error ? asset.error : "Success") %></td>
+          <td><%= asset.result.titleize %></td>
         </tr>
       <% end %>
     </tbody>
