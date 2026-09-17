@@ -11,7 +11,7 @@ RSpec.describe AMS::CsvExportExtension do
   end
   let!(:physical_instantiation) { create(:physical_instantiation) }
   let!(:asset) do
-    create(:asset,
+    create(:asset_resource,
            ordered_members:         [ digital_instantiation, physical_instantiation ],
            date:                    ['2023-01-01'],
            producing_organization:  ['WGBH Productions'],
