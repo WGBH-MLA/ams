@@ -11,9 +11,9 @@ RSpec.describe AssetIndexer do
   let(:work) { build(:asset, with_admin_data: admin_data.gid, date:["2010"], broadcast_date:['2011-05'], copyright_date:['2011-05'], created_date:['2011-05-11'], ) }
   let(:work_no_sony_ci_id) { build(:asset_no_sonyci_id, with_admin_data: admin_data_no_sony_ci_id.gid, date:["2010"], broadcast_date:['2011-05'], copyright_date:['2011-05'], created_date:['2011-05-11'], ) }
 
-  let(:asset) { create(:asset) }
-  let(:asset_no_sonyci_id) { create(:asset, with_admin_data: admin_data_no_sony_ci_id.gid) }
-  let(:asset_with_annotation) { create(:asset, with_admin_data: admin_data_with_annotation.gid ) }
+  let(:asset) { create(:asset_resource) }
+  let(:asset_no_sonyci_id) { create(:asset_resource, with_admin_data: admin_data_no_sony_ci_id.gid) }
+  let(:asset_with_annotation) { create(:asset_resource, with_admin_data: admin_data_with_annotation.gid ) }
 
   let(:asset_solr_doc) { described_class.new(asset) }
   let(:asset_solr_doc_no_sony_ci_id) { described_class.new(asset_no_sonyci_id) }

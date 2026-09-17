@@ -6,8 +6,8 @@ RSpec.describe AMS::PbcoreXmlExportExtension, :pbcore_xpath_helper, skip: 'TODO:
   let(:digital_instantiation) { create(:digital_instantiation, :aapb_moving_image) }
   let(:physical_instantiation) { create(:physical_instantiation) }
 
-  let(:asset_1) { create(:asset, admin_data: admin_data_with_annotation, ordered_members: [ digital_instantiation ]) }
-  let(:asset_2) { create(:asset, ordered_members: [ physical_instantiation ]) }
+  let(:asset_1) { create(:asset_resource, admin_data: admin_data_with_annotation, ordered_members: [ digital_instantiation ]) }
+  let(:asset_2) { create(:asset_resource, ordered_members: [ physical_instantiation ]) }
 
   let(:solr_document_1) { SolrDocument.find(asset_1.id) }
   let(:solr_document_2) { SolrDocument.find(asset_2.id) }

@@ -2,7 +2,7 @@
 #  `rails generate hyrax:work Asset`
 require 'rails_helper'
 
-RSpec.describe Hyrax::AssetPresenter do
+RSpec.describe Hyrax::AssetResourcePresenter do
   let(:request) { double(host: 'example.org', base_url: 'http://example.org') }
   let(:ability) { Ability.new(build(:user)) }
   let(:rows) { 10 }
