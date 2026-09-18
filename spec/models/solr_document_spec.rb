@@ -172,7 +172,7 @@ describe SolrDocument do
   end
 
   describe '#validation_status_for_aapb' do
-    let(:asset) { create(:asset, :with_physical_digital_and_essence_track, validation_status_for_aapb: ['test']) }
+    let(:asset) { create(:asset_resource, :with_physical_digital_and_essence_track, validation_status_for_aapb: ['test']) }
 
     it 'indexes the value as an Array' do
       # Use #to_a since asset.validation_status_for_aapb is an ActiveTriples::Relation, which causes the
