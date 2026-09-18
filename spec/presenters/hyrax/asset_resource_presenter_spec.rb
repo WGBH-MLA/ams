@@ -11,7 +11,7 @@ RSpec.describe Hyrax::AssetResourcePresenter do
   let(:digital_instantiation) { create(:digital_instantiation) }
   let(:physical_instantiation) { create(:physical_instantiation) }
   let(:instantiation_ids) { [digital_instantiation.id, physical_instantiation.id] }
-  let(:contribution) { create(:contribution) }
+  let(:contribution) { create(:contribution_resource) }
   let(:contribution_ids) { [contribution.id] }
   let(:admin_data_attr) { attributes_for(:admin_data) }
 
