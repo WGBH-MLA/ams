@@ -5,8 +5,8 @@ require 'rails_helper'
 RSpec.describe AAPB::AttributeIndexedToParentPresenter do
   let(:request) { double(host: 'example.org', base_url: 'http://example.org') }
   let(:ability) { Ability.new(build(:user)) }
-  let(:physical_instantiation) { create(:physical_instantiation) }
-  let(:digital_instantiation) { create(:digital_instantiation) }
+  let(:physical_instantiation) { create(:physical_instantiation_resource) }
+  let(:digital_instantiation) { create(:digital_instantiation_resource) }
 
   let(:pi_presenter) { Hyrax::PhysicalInstantiationPresenter.new(SolrDocument.new(physical_instantiation.to_solr), ability, request) }
   let(:di_presenter) { Hyrax::DigitalInstantiationPresenter.new(SolrDocument.new(digital_instantiation.to_solr), ability, request) }
