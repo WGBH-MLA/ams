@@ -3,7 +3,7 @@
 module Hyrax
   class ContributionResourcePresenter < Hyrax::WorkShowPresenter
     delegate :contributor_role,
-             contributor_role_annotation,
+             :contributor_role_annotation,
              :affiliation,
              :affiliation_annotation,
              :portrayal,
