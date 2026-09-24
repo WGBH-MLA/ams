@@ -41,8 +41,6 @@ FactoryBot.define do
     transient do
       # Pass in AdminData.gid or it will create one for you!
       with_admin_data { false }
-      # Pass in an AdminSet instance, or an admin set id, for example
-      # create(:asset, admin_set: create(:admin_set))
       admin_set { false }
       needs_update { false }
 

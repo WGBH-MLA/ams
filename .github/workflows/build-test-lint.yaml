@@ -4,9 +4,11 @@ on:
   pull_request:
     branches:
       - develop
+      - main-v3
   push:
     branches:
       - develop
+      - main-v3
   workflow_dispatch:
     inputs:
       debug_enabled:
@@ -178,7 +180,18 @@ jobs:
         with:
           limit-access-to-actor: true
       - name: Start containers
-        run: docker compose up -d web
+        run: RESET_DATA=true docker compose up -d web
+      - name: Print Container Failures
+        if: failure()
+        run: >-
+          docker compose logs initialize_app;
+          docker compose logs web;
+          docker compose logs worker;
+          docker compose logs solr;
+          docker compose logs redis;
+          docker compose logs db;
+          docker compose logs check_volumes;
+          docker compose logs chrome;
       - name: Setup solr
         run: >-
           docker compose exec -T web bash -c

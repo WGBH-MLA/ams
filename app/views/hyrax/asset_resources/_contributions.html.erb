@@ -10,21 +10,31 @@
       <table class="table table-striped">
         <thead>
         <tr>
+          <th><%= t('.contributor') %></th>
           <th><%= t('.role') %></th>
-          <th><%= t('.name') %></th>
+          <th><%= t('.contributor_role_annotation') %></th>
           <th><%= t('.affiliation') %></th>
+          <th><%= t('.affiliation_annotation') %></th>
           <th><%= t('.portrayal') %></th>
           <th><%= t('.annotation') %></th>
+          <th><%= t('.start_time') %></th>
+          <th><%= t('.end_time') %></th>
+          <th><%= t('.time_annotation') %></th>
         </tr>
         </thead>
         <tbody>
         <% contributions.each  do |contribution|  %>
         <tr>
-          <td><%= contribution.solr_document.try(:contributor_role).try(:first) %></td>
           <td><%= contribution.solr_document.try(:contributor).try(:first) %></td>
+          <td><%= contribution.solr_document.try(:contributor_role).try(:first) %></td>
+          <td><%= contribution.solr_document.try(:contributor_role_annotation).try(:first) %></td>
           <td><%= contribution.solr_document.try(:affiliation).try(:first) %></td>
+          <td><%= contribution.solr_document.try(:affiliation_annotation).try(:first) %></td>
           <td><%= contribution.solr_document.try(:portrayal).try(:first) %></td>
           <td><%= contribution.solr_document.try(:annotation).try(:first) %></td>
+          <td><%= contribution.solr_document.try(:start_time).try(:first) %></td>
+          <td><%= contribution.solr_document.try(:end_time).try(:first) %></td>
+          <td><%= contribution.solr_document.try(:time_annotation).try(:first) %></td>
         </tr>
         <% end %>
         </tbody>

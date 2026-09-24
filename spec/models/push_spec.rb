@@ -38,8 +38,8 @@ RSpec.describe Push do
     end
 
     context 'when the IDs exists, but some are missing children' do
-      let(:asset_missing_children_1) { create(:asset, validation_status_for_aapb: [Asset::VALIDATION_STATUSES[:missing_children]]) }
-      let(:asset_missing_children_2) { create(:asset, validation_status_for_aapb: [Asset::VALIDATION_STATUSES[:missing_children]]) }
+      let(:asset_missing_children_1) { create(:asset_resource, validation_status_for_aapb: [Asset::VALIDATION_STATUSES[:missing_children]]) }
+      let(:asset_missing_children_2) { create(:asset_resource, validation_status_for_aapb: [Asset::VALIDATION_STATUSES[:missing_children]]) }
       let(:pushed_ids) { [asset_missing_children_1.id, asset_missing_children_2.id] + asset_ids }
 
       it { is_expected.to be_invalid }
@@ -54,8 +54,8 @@ RSpec.describe Push do
     end
 
     context 'when asset has not been validated' do
-      let(:asset_status_not_validated) { create(:asset, validation_status_for_aapb: [Asset::VALIDATION_STATUSES[:status_not_validated]]) }
-      let(:asset_empty_status) { create(:asset, validation_status_for_aapb: []) }
+      let(:asset_status_not_validated) { create(:asset_resource, validation_status_for_aapb: [Asset::VALIDATION_STATUSES[:status_not_validated]]) }
+      let(:asset_empty_status) { create(:asset_resource, validation_status_for_aapb: []) }
       let(:pushed_ids) { [asset_empty_status.id, asset_status_not_validated.id] + asset_ids }
 
       it { is_expected.to be_invalid }

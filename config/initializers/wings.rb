@@ -1,49 +1,53 @@
 # frozen_string_literal: true
 Rails.application.config.after_initialize do
-  # converts from new class (v) to old class (af)
-  [
-    Asset,
-    PhysicalInstantiation,
-    DigitalInstantiation,
-    EssenceTrack,
-    Contribution
-  ].each do |klass|
-    Wings::ModelRegistry.register("#{klass}Resource".constantize, klass)
-    # we register itself so we can pre-translate the class in Freyja instead of having to translate in each query_service
-    Wings::ModelRegistry.register(klass, klass)
-  end
-  Wings::ModelRegistry.register(Collection, Collection)
-  Wings::ModelRegistry.register(Hyrax::PcdmCollection, Collection)
+  # # converts from new class (v) to old class (af)
+  # [
+  #   Asset,
+  #   PhysicalInstantiation,
+  #   DigitalInstantiation,
+  #   EssenceTrack,
+  #   Contribution
+  # ].each do |klass|
+  #   Wings::ModelRegistry.register("#{klass}Resource".constantize, klass)
+  #   # we register itself so we can pre-translate the class in Freyja instead of having to translate in each query_service
+  #   # Wings::ModelRegistry.register(klass, klass)
+  # end
+
+  # Wings::ModelRegistry.register("#{klass}Resource".constantize, klass)
+
+
+  # Wings::ModelRegistry.register(Collection, Collection)
+  # Wings::ModelRegistry.register(Hyrax::PcdmCollection, Collection)
   Wings::ModelRegistry.register(Hyrax::AdministrativeSet, AdminSet)
   Wings::ModelRegistry.register(AdminSet, AdminSet)
-  Wings::ModelRegistry.register(Hydra::AccessControls::Embargo, Hyrax::Embargo)
-  Wings::ModelRegistry.register(Hydra::AccessControls::Embargo, Hydra::AccessControls::Embargo)
-  Wings::ModelRegistry.register(Hydra::AccessControls::Lease, Hyrax::Lease)
-  Wings::ModelRegistry.register(Hydra::AccessControls::Lease, Hydra::AccessControls::Lease)
+  # Wings::ModelRegistry.register(Hydra::AccessControls::Embargo, Hyrax::Embargo)
+  # Wings::ModelRegistry.register(Hydra::AccessControls::Embargo, Hydra::AccessControls::Embargo)
+  # Wings::ModelRegistry.register(Hydra::AccessControls::Lease, Hyrax::Lease)
+  # Wings::ModelRegistry.register(Hydra::AccessControls::Lease, Hydra::AccessControls::Lease)
 
   # converts from old class (af) to new class (v)
-  Valkyrie.config.resource_class_resolver = lambda do |resource_klass_name|
-    klass_name = resource_klass_name.gsub(/Resource$/, '')
-    if %w[
-      Asset
-      PhysicalInstantiation
-      DigitalInstantiation
-      EssenceTrack
-      Contribution
-    ].include?(klass_name)
-      "#{klass_name}Resource".constantize
-    elsif 'Collection' == klass_name
-      Hyrax::PcdmCollection
-    elsif 'AdminSet' == klass_name
-      Hyrax::AdministrativeSet
-    elsif 'Hydra::AccessControls::Embargo' == klass_name
-      Hyrax::Embargo
-    elsif 'Hydra::AccessControls::Lease' == klass_name
-      Hyrax::Lease
-    else
-      klass_name.constantize
-    end
-  end
+  # Valkyrie.config.resource_class_resolver = lambda do |resource_klass_name|
+  #   klass_name = resource_klass_name.gsub(/Resource$/, '')
+  #   if %w[
+  #     Asset
+  #     PhysicalInstantiation
+  #     DigitalInstantiation
+  #     EssenceTrack
+  #     Contribution
+  #   ].include?(klass_name)
+  #     "#{klass_name}Resource".constantize
+  #   elsif 'Collection' == klass_name
+  #     Hyrax::PcdmCollection
+  #   elsif 'AdminSet' == klass_name
+  #     Hyrax::AdministrativeSet
+  #   elsif 'Hydra::AccessControls::Embargo' == klass_name
+  #     Hyrax::Embargo
+  #   elsif 'Hydra::AccessControls::Lease' == klass_name
+  #     Hyrax::Lease
+  #   else
+  #     klass_name.constantize
+  #   end
+  # end
 
   Valkyrie::MetadataAdapter.register(
     Valkyrie::Persistence::Postgres::MetadataAdapter.new,

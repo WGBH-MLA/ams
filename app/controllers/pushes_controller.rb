@@ -2,19 +2,24 @@ class PushesController < ApplicationController
   before_action :authenticate_user!
 
   def index
-    # show all previous pushes
-    @pushes = Push.all
+    @pagination = pagination_params
+    offset = ( @pagination[:page] - 1 ) * @pagination[:per_page]
+    @index_rows = Push.all.limit(@pagination[:per_page]).offset(offset).order(created_at: :desc).map do |push|
+      Push::Summary.new(push)
+    end
+    @pagination[:total_pages] = (Push.count / @pagination[:per_page].to_f).ceil
   end
 
   def show
     # view results of push
-    @push = Push.find(params[:id])
+    push = Push.eager_load(:published_assets).find(params[:id])
+    @push_summary = Push::Summary.new(push)
   end
 
   def create
-    @push = Push.create(user_id: current_user.id, status: 'pending')
+    @push = Push.create(user_id: current_user.id, status: 'initiated', asset_ids_queue: submitted_ids)
     if @push.valid?
-      SavePushJob.perform_later(push: @push, pushed_id_csv: pushed_id_csv_from_id_field, user: current_user)
+      SavePushJob.perform_later(push: @push)
       redirect_to @push
     else
       render :new
@@ -24,16 +29,25 @@ class PushesController < ApplicationController
   # #validate_ids aynchronous validation of IDs to be pushed to AAPB.
   def validate_ids
     response = {}
-    @push = Push.new(user: current_user, pushed_id_csv: pushed_id_csv_from_id_field)
-    response[:error] = @push.errors.values.flatten.join("\n\n") if @push.invalid?
-    render json: response
+    push = Push.new(user: current_user, asset_ids_queue: submitted_ids)
+    if push.invalid?
+      response[:validation_errors] = push.errors.details
+      http_status = :unprocessable_entity
+    else
+      http_status = :ok
+    end
+    render json: response, status: http_status
+  rescue => e
+    render(
+      json: { error: "#{e.class}: #{e.message}" }, status: :internal_server_error
+    )
   end
 
   def new
-    # If we have search params but no explicitly passed IDs in :id_field, then
-    # do the search and set the :id_field to the found IDs.
-    if (search_params[:q] || search_params[:fq] && !params[:id_field])
-      params[:id_field] = assets_search.solr_documents.map(&:id).join("\n")
+    # If we have search params but no explicitly passed IDs in :asset_ids_queue, then
+    # do the search and set the :asset_ids_queue to the found IDs.
+    if (search_params[:q] || search_params[:fq] && !params[:asset_ids_queue])
+      params[:asset_ids_queue] = assets_search.solr_documents.map(&:id).join("\n")
     end
   end
 
@@ -45,10 +59,13 @@ class PushesController < ApplicationController
 
   private
 
-    # Converting a list of values from the id_field (a texteara in the #new
+    # Converting a list of values from the asset_ids_queue (a texteara in the #new
     # view) to a comma-separated list of IDs.
-    def pushed_id_csv_from_id_field
-      params.fetch(:id_field, '').split(/\s+/).reject(&:empty?).uniq.join(',')
+    def submitted_ids
+      params.fetch(:asset_ids_queue, '').split(/\s+/).reject do |v|
+        v.to_s.empty?
+      end
+      
     end
 
     def assets_search
@@ -60,5 +77,12 @@ class PushesController < ApplicationController
                                 permit!.
                                 except(:page, :per_page, :action, :controller, :locale).
                                 merge(rows: AMS::Export::Search::Base::MAX_LIMIT)
+    end
+
+    def pagination_params
+      {
+        page: params.fetch(:page, 1).to_i,
+        per_page: params.fetch(:per_page, 50).to_i
+      }
     end
 end

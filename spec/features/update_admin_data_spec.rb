@@ -10,7 +10,7 @@ RSpec.feature 'Update AdminData', asset_form_helpers: true, clean: true do
     let(:permission_template) { Hyrax::PermissionTemplate.find_or_create_by!(source_id: admin_set_id) }
     let!(:workflow) { Sipity::Workflow.create!(active: true, name: 'test-workflow', permission_template: permission_template) }
     let!(:admindata) { create(:admin_data, :empty)}
-    let!(:asset) { FactoryBot.create(:asset, with_admin_data: admindata.gid) }
+    let!(:asset) { FactoryBot.create(:asset_resource, with_admin_data: admindata.gid) }
     let(:fake_sonyci_id) { rand(999999) }
     let(:fake_sonyci_records) {
       { fake_sonyci_id: { 'id' => fake_sonyci_id, 'name' => 'foo' } }
