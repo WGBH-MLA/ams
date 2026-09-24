@@ -181,6 +181,16 @@ jobs:
           limit-access-to-actor: true
       - name: Start containers
         run: RESET_DATA=true docker compose up -d web
+      - name: Print Container Failures
+        if: failure()
+        run: >-
+          docker compose logs web;
+          docker compose logs worker;
+          docker compose logs solr;
+          docker compose logs redis;
+          docker compose logs db;
+          docker compose logs check_volumes;
+          docker compose logs chrome;
       - name: Setup solr
         run: >-
           docker compose exec -T web bash -c
