@@ -184,6 +184,7 @@ jobs:
       - name: Print Container Failures
         if: failure()
         run: >-
+          docker compose logs initialize_app;
           docker compose logs web;
           docker compose logs worker;
           docker compose logs solr;
