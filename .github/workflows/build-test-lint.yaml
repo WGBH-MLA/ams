@@ -179,7 +179,7 @@ jobs:
         with:
           limit-access-to-actor: true
       - name: Start containers
-        run: RESET_DATA=true docker compose up -d web
+        run: docker compose up -d -e RAILS_ENV=test -e RESET_DATA=true web
       - name: Print Container Failures
         if: failure()
         run: >-
@@ -193,13 +193,13 @@ jobs:
           docker compose logs chrome;
       - name: Setup solr
         run: >-
-          docker compose exec -T web bash -c
+          docker compose exec -T -e RAILS_ENV=test web bash -c
           "solrcloud-upload-configset.sh /app/samvera/hyrax-webapp/solr/config &&
           SOLR_COLLECTION_NAME=hydra-test solrcloud-assign-configset.sh &&
           solrcloud-assign-configset.sh"
       - name: Setup db
         run: >-
-          docker compose exec -T web bash -c
+          docker compose exec -T -e RAILS_ENV=test -e RESET_DATA=true web bash -c
           "RAILS_ENV=test bundle exec rake db:environment:set db:schema:load db:migrate db:seed"
       - name: Run Specs
         id: run-specs
@@ -211,7 +211,7 @@ jobs:
           CI_NODE_INDEX: ${{ matrix.ci_node_index }}
         continue-on-error: true
         run: >-
-          docker compose exec -T -e RAILS_ENV=testweb bash -c
+          docker compose exec -T -e RAILS_ENV=test web bash -c
           "gem install semaphore_test_boosters &&
           rspec_booster --job $CI_NODE_INDEX/$CI_NODE_TOTAL &&
           ls -l $PWD"
