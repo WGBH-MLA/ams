@@ -185,12 +185,11 @@ services:
     environment:
       - CONFDIR=/app/samvera/hyrax-webapp/solr/config
       - RAILS_ENV=${RAILS_ENV}
-      - RESET_DATA=${RESET_DATA}
+      # - RESET_DATA=${RESET_DATA}
     entrypoint: ["sh", "-c"]
     command:
       - >
         export BUNDLE_GEMFILE=Gemfile;
-        echo "\n\n\nRAILS_ENV=$RAILS_ENV\n\n\n";
         solrcloud-upload-configset.sh /app/samvera/hyrax-webapp/solr/config &&
         solrcloud-assign-configset.sh &&
         SOLR_COLLECTION_NAME=hydra-test solrcloud-assign-configset.sh &&
