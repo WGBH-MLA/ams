@@ -195,10 +195,10 @@ services:
         SOLR_COLLECTION_NAME=hydra-test solrcloud-assign-configset.sh &&
         rails db:create &&
         rails db:environment:set &&
+        rails db:migrate &&
         if [ -n "$RESET_DATA" ]; then
           rails db:reset
         fi &&
-        rails db:migrate &&
         rails db:seed
     depends_on:
       postgres:
