@@ -210,12 +210,11 @@ jobs:
           CI_NODE_TOTAL: ${{ matrix.ci_node_total }}
           # Use the index from matrix as an environment variable
           CI_NODE_INDEX: ${{ matrix.ci_node_index }}
-          RAILS_ENV: test
         continue-on-error: true
         run: >-
           docker compose exec -T web bash -c
           "gem install semaphore_test_boosters &&
-          rspec_booster --job $CI_NODE_INDEX/$CI_NODE_TOTAL &&
+          RAILS_ENV=test bundle exec rspec_booster --job $CI_NODE_INDEX/$CI_NODE_TOTAL &&
           ls -l $PWD"
       - name: Publish Test Report
         uses: mikepenz/action-junit-report@v3
