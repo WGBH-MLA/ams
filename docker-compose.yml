@@ -184,6 +184,8 @@ services:
     <<: *app
     environment:
       - CONFDIR=/app/samvera/hyrax-webapp/solr/config
+      - RAILS_ENV=${RAILS_ENV}
+      - RESET_DATA=${RESET_DATA}
     entrypoint: ["sh", "-c"]
     command:
       - >
