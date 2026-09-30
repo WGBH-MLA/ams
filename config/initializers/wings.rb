@@ -18,36 +18,36 @@ Rails.application.config.after_initialize do
 
   # Wings::ModelRegistry.register(Collection, Collection)
   # Wings::ModelRegistry.register(Hyrax::PcdmCollection, Collection)
-  Wings::ModelRegistry.register(Hyrax::AdministrativeSet, AdminSet)
-  Wings::ModelRegistry.register(AdminSet, AdminSet)
+  # Wings::ModelRegistry.register(Hyrax::AdministrativeSet, AdminSet)
+  # Wings::ModelRegistry.register(AdminSet, AdminSet)
   # Wings::ModelRegistry.register(Hydra::AccessControls::Embargo, Hyrax::Embargo)
   # Wings::ModelRegistry.register(Hydra::AccessControls::Embargo, Hydra::AccessControls::Embargo)
   # Wings::ModelRegistry.register(Hydra::AccessControls::Lease, Hyrax::Lease)
   # Wings::ModelRegistry.register(Hydra::AccessControls::Lease, Hydra::AccessControls::Lease)
 
   # converts from old class (af) to new class (v)
-  # Valkyrie.config.resource_class_resolver = lambda do |resource_klass_name|
-  #   klass_name = resource_klass_name.gsub(/Resource$/, '')
-  #   if %w[
-  #     Asset
-  #     PhysicalInstantiation
-  #     DigitalInstantiation
-  #     EssenceTrack
-  #     Contribution
-  #   ].include?(klass_name)
-  #     "#{klass_name}Resource".constantize
-  #   elsif 'Collection' == klass_name
-  #     Hyrax::PcdmCollection
-  #   elsif 'AdminSet' == klass_name
-  #     Hyrax::AdministrativeSet
-  #   elsif 'Hydra::AccessControls::Embargo' == klass_name
-  #     Hyrax::Embargo
-  #   elsif 'Hydra::AccessControls::Lease' == klass_name
-  #     Hyrax::Lease
-  #   else
-  #     klass_name.constantize
-  #   end
-  # end
+  Valkyrie.config.resource_class_resolver = lambda do |resource_klass_name|
+    klass_name = resource_klass_name.gsub(/Resource$/, '')
+    if %w[
+      Asset
+      PhysicalInstantiation
+      DigitalInstantiation
+      EssenceTrack
+      Contribution
+    ].include?(klass_name)
+      "#{klass_name}Resource".constantize
+    elsif 'Collection' == klass_name
+      Hyrax::PcdmCollection
+    elsif 'AdminSet' == klass_name
+      Hyrax::AdministrativeSet
+    elsif 'Hydra::AccessControls::Embargo' == klass_name
+      Hyrax::Embargo
+    elsif 'Hydra::AccessControls::Lease' == klass_name
+      Hyrax::Lease
+    else
+      klass_name.constantize
+    end
+  end
 
   Valkyrie::MetadataAdapter.register(
     Valkyrie::Persistence::Postgres::MetadataAdapter.new,
