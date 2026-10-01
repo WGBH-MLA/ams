@@ -1,3 +1,8 @@
+require 'dry/container'
+require 'bulkrax/transactions/steps/add_files'
+require_relative '../ams/work_create'
+require_relative '../ams/work_update'
+
 module Bulkrax
   class Container
     extend Dry::Container::Mixin

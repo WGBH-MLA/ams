@@ -18,6 +18,7 @@ class SolrDocument
 
   SolrDocument.use_extension(AMS::CsvExportExtension)
   SolrDocument.use_extension(AMS::PbcoreXmlExportExtension)
+  SolrDocument.use_extension(AMS::PbcoreJSONExportExtension)
 
   attribute :intended_children_count, Solr::String, 'intended_children_count_isi'
   attribute :validation_status_for_aapb, Solr::Array, 'validation_status_for_aapb_tesim'
@@ -232,6 +233,10 @@ class SolrDocument
     self[solr_name('contributor_role')]
   end
 
+  def contributor_role_annotation
+    self[solr_name('contributor_role_annotation')]
+  end
+
   def contributor
     self[solr_name('contributor')]
   end
@@ -284,6 +289,8 @@ class SolrDocument
     self[solr_name('alternative_modes')]
   end
 
+  # @return [Array] A single-element array (to conform with typical Solr behavior)
+  #   of all titles concatenated with ';', empty oes removed.
   def title
     concatenated_titles = [series_title,
       program_title, episode_number, episode_title, segment_title, clip_title,
@@ -414,6 +421,24 @@ class SolrDocument
 
   def affiliation
     self[solr_name('affiliation')]
+  end
+
+  # Only applies to SolrDocuments representing ContributionResource objects
+  def affiliation_annotation
+    self[solr_name('affiliation_annotation')]
+  end
+
+  # Only applies to SolrDocuments representing ContributionResource objects
+  def start_time
+    self[solr_name('start_time')]
+  end
+
+  def end_time
+    self[solr_name('end_time')]
+  end
+
+  def time_annotation
+    self[solr_name('time_annotation')]
   end
 
   def producing_organization

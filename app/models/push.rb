@@ -1,63 +1,315 @@
 class Push < ApplicationRecord
   # push to aapb
   belongs_to :user
+  has_many :published_assets
 
-  validate do
-    errors.add(:user, "is required") unless user.is_a? User
-    missing_ids = ids_not_found
-    errors.add(:pushed_id_csv, "The following IDs are not found in the repository: #{missing_ids.join(', ')}") unless missing_ids.empty?
-    validate_status
+  serialize :asset_ids_queue, type: Array, coder: JSON
+
+  S3_PUBLISH_ASSET_BUCKET = ENV.fetch("S3_PUBLISH_ASSET_BUCKET", "REPLACE_WITH_DESTINATION_BUCKET_NAME")
+
+  enum status: {
+    initiated: "initiated",
+    queueing: "queueing",
+    uploading: "uploading",
+    finished: "finished"
+  }
+
+  after_create do
+    asset_ids_queue.each do |asset_id|
+      published_assets.create!(
+        asset_id: asset_id,
+        status: 'initiated'
+      )
+    end
   end
 
-  # NOTE: do not memoize
-  # TODO: we could just use a serialized field for push_ids rather than manually
-  # converting it to CSV and back again. Would require migration of course.
-  def push_ids
-    Array(pushed_id_csv&.to_s&.split(','))
+  # Run custom validations in a single method. This is to allow skipping
+  # validation for existing Push records where the status="finished", which
+  # should be considered valid without re-running validations, and to allow all
+  # validations to run and collect errors before returning a final result.
+  validate :run_validations!
+
+  def update_status!
+    ActiveRecord::Base.transaction do
+      self.reload
+      if all_published_assets_present?
+        if all_published_assets_finished?
+          update!(status: 'finished')
+        else
+          update!(status: 'uploading')
+        end
+      else
+        update!(status: 'queueing')
+      end
+    end
+  end
+
+  def remove_asset_id_from_queue!(asset_id)
+    # Wrap in a transaction because this is called from background jobs that may
+    # be running concurrently
+    ActiveRecord::Base.transaction do
+      updated_asset_ids_queue = reload.asset_ids_queue - [asset_id]
+      update!(asset_ids_queue: updated_asset_ids_queue)
+      update_status!
+    end
+  end
+
+  def finish_with_error!(error:)
+    raise ArgumentError, "error must be an Exception" unless error.is_a?(Exception)
+    update!(
+      status: 'finished',
+      error: "#{error.class}: #{error.message}"
+    )
+  end
+
+  # TODO: use scopes?
+
+  def all_published_assets_present?
+    asset_ids_queue.all? do |asset_id|
+      published_assets.exists?(asset_id: asset_id)
+    end
+  end
+
+  def all_published_assets_finished?
+    published_assets.all?(&:finished?)
+  end
+
+
+  # For backward compatibility with existing Push records that have
+  # asset_ids_queue stored as a comma-separated string instead of an array,
+  # split the string on commas and strip whitespace to get an array of IDs. If
+  # asset_ids_queue is already an array, this will return the same array.
+  def asset_ids_deprecated
+    pushed_id_csv.to_s.split(',').map(&:strip) 
   end
 
   private
 
-    # NOTE: do not memoize
-    def found_ids
-      export_search.solr_documents.map(&:id)
+  # Memoize the found_docs to avoid performing multiple Solr queries during validation.
+  def found_docs
+    @found_docs ||= export_search.solr_documents
+  end
+
+  # NOTE: do not memoize
+  # @return [AMS::Export::Search::CombinedIDSearch] instance used for performing
+  #   search and returning solr document results.
+  def export_search
+    asset_ids = (asset_ids_queue ?  asset_ids_queue : asset_ids_deprecated).to_a
+    AMS::Export::Search::CombinedIDSearch.new(ids: asset_ids, user: user)
+  end
+
+  def run_validations!
+    # If the status is already "finished", skip validations and return true.
+    # This allows existing Push records that have already been processed to be
+    # considered valid without re-running validations, which could potentially
+    # cause errors if the underlying data has changed since the push was
+    # processed.
+    return true if status == "finished"
+      
+    # Run all the validation methods. Each validation method will add errors to
+    # the model if it finds any issues, but we don't need to check for errors
+    # after each validation method because we want to run all validations and
+    # collect all errors before returning a final result.
+    validate_user
+    validate_asset_ids_queue_presesnt
+    validate_assets_exist
+    validate_assets_have_titles
+    validate_assets_have_descriptions
+    validate_lua_no_sonyci_id
+    validate_sonyci_id_no_lua
+    validate_one_lua
+    validate_assets_chilren_validation_status
+
+    # Return true if there are no errors, false otherwise.
+    errors.empty?
+  end
+
+  # Check that the user is present and is an instance of User. If not, adds an
+  # error message indicating that a valid user is required.
+  def validate_user
+    errors.add(:user, "is required") unless user.is_a? User
+  end
+
+  def validate_asset_ids_queue_presesnt
+    if (initiated? || queueing?) && asset_ids_queue.to_a.empty?
+      errors.add(
+        :asset_ids_queue,
+        "One or more Asset IDs is required",
+      )
+    end
+  end
+
+  # Check that all IDs in asset_ids_queue correspond to existing documents in the
+  # repository. If any are not found, adds an error message with the IDs that
+  # are not found.
+  def validate_assets_exist
+    invalid_asset_ids = asset_ids_queue.to_a - found_docs.map(&:id)
+    errors.add(
+      :asset_ids_queue,
+      "Not found in AMS",
+      invalid_asset_ids: invalid_asset_ids
+    ) if invalid_asset_ids.present?
+  end
+
+  # Check for missing titles. SolrDocument#title returns an array of a single
+  # element, so call .first to get the title string before checking .empty?. Add
+  # an error message any IDs missing titles.
+  def validate_assets_have_titles
+    # Check for missing titles. See also SolrDocument#title.
+    invalid_asset_ids = found_docs.select { |doc| doc.title.empty? }.map(&:id)
+    errors.add(
+      :asset_ids_queue,
+      "No title metadata",
+      invalid_asset_ids: invalid_asset_ids
+    ) if invalid_asset_ids.present?
+  end
+
+  # Check for missing descriptions. SolrDocument#display_description returns a
+  # string or nil, so call .to_s before checking .empty?. Add an error message
+  # any IDs missing descriptions.
+  def validate_assets_have_descriptions
+    # Check for missing titles. Unlike title, display_description is a string or nil, so need to call .to_s before checking .empty?
+    invalid_asset_ids = found_docs.select { |doc| doc.display_description.to_s.empty? }.map(&:id)
+    errors.add(
+      :asset_ids_queue,
+      "No description metadata",
+      invalid_asset_ids: invalid_asset_ids
+    ) if invalid_asset_ids.present?
+  end
+
+  # Check for any assets with children that have a validation status other than
+  # "valid". If any are found, adds an error message for each invalid status and
+  # the IDs of the assets with that status.
+  def validate_assets_chilren_validation_status
+    assets_with_invalid_children_status.each do |status, invalid_asset_ids|
+      errors.add(
+        :asset_ids_queue,
+        status,
+        invalid_asset_ids: invalid_asset_ids
+      )
+    end
+  end
+
+  # Checks for any assets that have a Level of User Access but no Sony CI ID, or
+  # a Sony CI ID but no Level of User Access. If any are found, adds an error
+  # message for each case and the IDs of the assets that violate the rule.
+  def validate_lua_no_sonyci_id
+    invalid_asset_ids = found_docs.select do |doc|
+      doc.level_of_user_access.to_a.present? && doc.sonyci_id.to_a.empty?
+    end.map(&:id)
+
+    errors.add(
+      :asset_ids_queue,
+      "Level of User Access but no Sony Ci ID",
+      invalid_asset_ids: invalid_asset_ids
+    ) if invalid_asset_ids.present?
+  end
+
+  def validate_sonyci_id_no_lua
+    invalid_asset_ids = found_docs.select do |doc|
+      doc.sonyci_id.present? && doc.level_of_user_access.to_a.empty?
     end
 
-    # NOTE: do not memoize
-    def ids_not_found
-      push_ids - found_ids
-    end
+    errors.add(
+      :asset_ids_queue,
+      "Sony Ci ID but no Level of User Access",
+      invalid_asset_ids: invalid_asset_ids
+    ) if invalid_asset_ids.present?
+  end
 
-    def validate_status
-      invalid_docs = export_search.solr_documents.reject do |doc|
+  def validate_one_lua
+    invalid_asset_ids = found_docs.select do |doc|
+      doc.level_of_user_access && doc.level_of_user_access.to_a.size > 1
+    end.map(&:id)
+
+    errors.add(
+      :asset_ids_queue,
+      "More than one Level of User Access",
+      invalid_asset_ids: invalid_asset_ids
+    ) if invalid_asset_ids.present?
+  end
+
+  # Checks for any assets with children that have a validation status other than
+  # "valid". If any are found, adds an error message for each invalid status and
+  # the IDs of the assets with that status.
+  # @return [Hash] of validation status to array of asset ids with that status.
+  #   Only includes assets whose validation status is not "valid".
+  def assets_with_invalid_children_status
+    {}.tap do |hash|
+      found_docs.reject do |doc|
         doc.validation_status_for_aapb == [AssetResource::VALIDATION_STATUSES[:valid]]
-      end
-      return if invalid_docs.blank?
-
-      AssetResource::VALIDATION_STATUSES.each_pair do |status_key, status_value|
-        next if status_key == :valid
-        add_status_error(invalid_docs, status_value)
+      end.each do |doc|
+        status = doc.validation_status_for_aapb.first
+        hash[status] ||= []
+        hash[status] << doc.id
       end
     end
+  end
 
-    def add_status_error(invalid_docs, status)
-      ids_matching_status = if status == AssetResource::VALIDATION_STATUSES[:empty]
-                              invalid_docs.select { |doc| doc.validation_status_for_aapb.blank? }.map(&:id)
-                            else
-                              invalid_docs.select { |doc| doc.validation_status_for_aapb.include?(status) }.map(&:id)
-                            end
-
-      # Prevents adding errors to docs that don't have a value
-      # in :validation_status_for_aapb, including all non-AssetResources.
-      return if ids_matching_status.blank?
-
-      errors.add(:pushed_id_csv, "The following IDs are #{status}: #{ids_matching_status.join(', ')}")
+  # This is a presentation object that is used in the pushes#show view.
+  # It is instantiated in the PushesController#show action as Push::Summary.new(push).
+  # By extending SimpleDelegator, the Push::Summary instance has all the properties of
+  # the Push model instance passed to it, and we can then add custom methods for
+  # presentation logic as needed (i.e. formatting, combining, conditionals, etc).
+  # This is effectively a 'presenter' pattern, but the presenter is defined here in the
+  # model's namespace rather than someplace else in the code, which I like :).
+  class Summary < SimpleDelegator
+    
+    def date
+      created_at.strftime("%_m/%-d/%Y %l:%M %p")
+    end
+    
+    def status
+      # Deprecated records are finished by default
+      ( deprecated? ? "finished" : super.to_s ).titleize
     end
 
-    # NOTE: do not memoize
-    # @return [AMS::Export::Search::CombinedIDSearch] instance used for performing
-    #   search and returning solr document results.
-    def export_search
-      AMS::Export::Search::CombinedIDSearch.new(ids: push_ids, user: user)
+    def deprecated?
+      pushed_id_csv.to_s.present?
     end
+
+    def asset_count
+      if deprecated?
+        pushed_id_csv.to_s.split(',').size
+      else
+        (published_assets.map(&:asset_id) + asset_ids_queue.to_a).uniq.size
+      end
+    end
+
+    # Returns the number of child PublishedAsset that have "succeeded",
+    # meaning a a status of "finished" with no errors.
+    def succeeded
+      published_assets.count(&:succeeded?)
+    end
+
+    # Returns the number of child PublishedAsset objects that have errors.
+    def failed
+      published_assets.count(&:error)
+    end
+
+    def success_rate
+      return 0.0 if asset_count == 0
+      (succeeded.to_f / asset_count * 100).round(2)
+    end
+
+    def fail_rate
+      return 0.0 if asset_count == 0
+      (failed.to_f / asset_count * 100).round(2)
+    end
+
+    # @return [Hash] a hash of PublishedAsset record counts
+    def asset_counts_by_status
+      published_assets.group_by(&:status).map do |status, published_assets|
+        [ status, published_assets.count ]
+      end.to_h
+    end
+
+    def asset_counts_by_result
+      published_assets.group_by do |published_asset|
+        published_asset.error? ? "failed" : "succeeded"
+      end.map do |result, published_assets|
+        [ result, published_assets.count ]
+      end.to_h
+    end
+  end # END class Push::Summary
 end

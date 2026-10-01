@@ -5,6 +5,7 @@
 module Hyrax
   # Generated controller for AssetResource
   class AssetResourcesController < ApplicationController
+
     # Adds Hyrax behaviors to the controller.
     include Hyrax::WorksControllerBehavior
     include Hyrax::BreadcrumbsForWorks
@@ -23,6 +24,7 @@ module Hyrax
     # response for a ".xml" extension, returning the PBCore XML.
     def additional_response_formats(format)
       format.xml { render(plain: presenter.solr_document.export_as_pbcore) }
+      format.pbcore_json { render(plain: presenter.solr_document.export_as_pbcore_json.to_json) }
       super
     end
   end

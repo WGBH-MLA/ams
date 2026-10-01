@@ -18,7 +18,6 @@
 #
 # Generated via
 #  `rails generate hyrax:work_resource ContributionResource`
-
 attributes:
   bulkrax_identifier:
     type: string
@@ -29,8 +28,19 @@ attributes:
   contributor_role:
     type: string
     multiple: false
+    index_to_parent: false
     index_keys:
       - "contributor_role_tesim"
+    form:
+      required: false
+      primary: false
+      multiple: false
+  contributor_role_annotation:
+    type: string
+    multiple: false
+    index_to_parent: false
+    index_keys:
+      - "contributor_role_annotation_tesim"
     form:
       required: false
       primary: false
@@ -38,7 +48,7 @@ attributes:
   portrayal:
     type: string
     multiple: false
-    index_to_parent: true
+    index_to_parent: false
     index_keys:
       - "portrayal_tesim"
     form:
@@ -48,9 +58,19 @@ attributes:
   affiliation:
     type: string
     multiple: false
-    index_to_parent: true
+    index_to_parent: false
     index_keys:
       - "affiliation_tesim"
+    form:
+      required: false
+      primary: false
+      multiple: false
+  affiliation_annotation:
+    type: string
+    multiple: false
+    index_to_parent: false
+    index_keys:
+      - "affiliation_annotation_tesim"
     form:
       required: false
       primary: false
@@ -65,3 +85,33 @@ attributes:
       required: false
       primary: false
       multiple: false
+  start_time:
+      type: string
+      multiple: false
+      index_to_parent: false
+      index_keys:
+        - "start_time_tesim"
+      form:
+        required: false
+        primary: false
+        multiple: false
+  end_time:
+      type: string
+      multiple: false
+      index_to_parent: false
+      index_keys:
+        - "end_time_tesim"
+      form:
+        required: false
+        primary: false
+        multiple: false
+  time_annotation:
+      type: string
+      multiple: false
+      index_to_parent: false
+      index_keys:
+        - "time_annotation_tesim"
+      form:
+        required: false
+        primary: false
+        multiple: false

@@ -8,29 +8,29 @@ RSpec.describe Ability do
   context 'for any user (no group)' do
     let!(:user) { create(:user) }
 
-    it { is_expected.to be_able_to(:show, Asset) }
+    it { is_expected.to be_able_to(:show, AssetResource) }
     [:create, :update, :destroy].each do |action|
-      it { is_expected.not_to be_able_to(action, Asset) }
+      it { is_expected.not_to be_able_to(action, AssetResource) }
     end
 
-    it { is_expected.to be_able_to(:show, DigitalInstantiation) }
+    it { is_expected.to be_able_to(:show, DigitalInstantiationResource) }
     [:create, :update, :destroy].each do |action|
-      it { is_expected.not_to be_able_to(action, DigitalInstantiation) }
+      it { is_expected.not_to be_able_to(action, DigitalInstantiationResource) }
     end
 
-    it { is_expected.to be_able_to(:show, PhysicalInstantiation) }
+    it { is_expected.to be_able_to(:show, PhysicalInstantiationResource) }
     [:create, :update, :destroy].each do |action|
-      it { is_expected.not_to be_able_to(action, PhysicalInstantiation) }
+      it { is_expected.not_to be_able_to(action, PhysicalInstantiationResource) }
     end
 
-    it { is_expected.to be_able_to(:show, EssenceTrack) }
+    it { is_expected.to be_able_to(:show, EssenceTrackResource) }
     [:create, :update, :destroy].each do |action|
-      it { is_expected.not_to be_able_to(action, EssenceTrack) }
+      it { is_expected.not_to be_able_to(action, EssenceTrackResource) }
     end
 
-    it { is_expected.to be_able_to(:show, Contribution) }
+    it { is_expected.to be_able_to(:show, ContributionResource) }
     [:create, :update, :destroy].each do |action|
-      it { is_expected.not_to be_able_to(action, Contribution) }
+      it { is_expected.not_to be_able_to(action, ContributionResource) }
     end
 
     it { is_expected.to be_able_to(:show, Collection) }
@@ -56,12 +56,12 @@ RSpec.describe Ability do
 
     # An 'ingester' user may create and update the following object types.
     [:create, :update].each do |action|
-      it { is_expected.to be_able_to(action, Asset) }
-      it { is_expected.to be_able_to(action, DigitalInstantiation) }
-      it { is_expected.to be_able_to(action, PhysicalInstantiation) }
+      it { is_expected.to be_able_to(action, AssetResource) }
+      it { is_expected.to be_able_to(action, DigitalInstantiationResource) }
+      it { is_expected.to be_able_to(action, PhysicalInstantiationResource) }
       it { is_expected.to be_able_to(action, Collection) }
-      it { is_expected.to be_able_to(action, EssenceTrack) }
-      it { is_expected.to be_able_to(action, Contribution) }
+      it { is_expected.to be_able_to(action, EssenceTrackResource) }
+      it { is_expected.to be_able_to(action, ContributionResource) }
     end
 
     # An 'ingester' user may create AdminData, but not update all fields.

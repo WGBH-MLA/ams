@@ -5,6 +5,8 @@
 #
 # @see https://github.com/samvera/hyrax/wiki/Hyrax-Valkyrie-Usage-Guide#forms
 # @see https://github.com/samvera/valkyrie/wiki/ChangeSets-and-Dirty-Tracking
+
+
 class AssetResourceForm < Hyrax::Forms::ResourceForm(AssetResource)
   include Hyrax::FormFields(:basic_metadata)
   include Hyrax::FormFields(:asset_resource)
@@ -15,6 +17,12 @@ class AssetResourceForm < Hyrax::Forms::ResourceForm(AssetResource)
   validates :date, date: { allow_blank: true }
   validates :broadcast_date, date: { allow_blank: true }
   validates :copyright_date, date: { allow_blank: true }
+
+  # NOTE: the `child_contributors: true` tells Rails to use the
+  # ChildContributorsValidator class to validate the child_contributors
+  # property. See app/validators/child_contributors_validator.rb.
+  # TODO - REMOVE IF STILL NOT WORKIN BY PR REVIEW TIME
+  # validates :child_contributors, contributors_metadata: true
 
   attr_accessor :controller, :current_ability
 
@@ -89,7 +97,18 @@ class AssetResourceForm < Hyrax::Forms::ResourceForm(AssetResource)
     child_contributions = []
     model.members.to_a.each do |member|
       if( member.internal_resource == 'Contribution' )
-        child_contributions << [member.id, member.contributor_role, member.contributor.first , member.portrayal, member.affiliation, member.annotation]
+        child_contributions << [
+          member.id,
+          member.contributor_role,
+          member.contributor.first ,
+          member.contributor_role_annotation,
+          member.affiliation,
+          member.affiliation_annotation,
+          member.portrayal,
+          member.annotation,
+          member.start_time,
+          member.end_time,
+          member.time_annotation]
       end
     end
     child_contributions

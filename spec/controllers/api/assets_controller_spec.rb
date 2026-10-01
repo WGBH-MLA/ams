@@ -35,8 +35,8 @@ RSpec.describe API::AssetsController, controller: true do
       let(:request_password) { password }
 
       context 'when an Asset exists' do
-        let(:asset) { create(:asset) }
-        let(:asset_id) { asset.id }
+        let(:asset) { create(:asset_resource) }
+        let(:asset_id) { asset.id.to_s }
         let(:pbcore_xml) { SolrDocument.find(asset_id).export_as_pbcore }
 
         context 'when the format is .json' do

@@ -1,15 +1,4 @@
 Hyrax.config do |config|
-  # Injected via `rails g hyrax:work Asset`
-  config.register_curation_concern :asset
-  # Injected via `rails g hyrax:work PhysicalInstantiation`
-  config.register_curation_concern :physical_instantiation
-  # Injected via `rails g hyrax:work DigitalInstantiation`
-  config.register_curation_concern :digital_instantiation
-  # Injected via `rails g hyrax:work EssenceTrack`
-  config.register_curation_concern :essence_track
-  # Injected via `rails g hyrax:work Contribution`
-  config.register_curation_concern :contribution
-
   # Injected via `rails g hyrax:work_resource AssetResource`
   config.register_curation_concern :asset_resource
   # Injected via `rails g hyrax:work_resource PhysicalInstantiationResource`
@@ -255,11 +244,6 @@ Hyrax.config do |config|
 
   # Disable BrowseEverything, we're not using it atm.
   config.browse_everything = nil
-
-  #Register custom Actor
-  #
-  Hyrax::CurationConcern.actor_factory.insert_after Hyrax::Actors::ApplyPermissionTemplateActor, Hyrax::Actors::EnforceParentTitle
-  # Hyrax::CurationConcern.actor_factory.insert_after Hyrax::Actors::InitializeWorkflowActor, Hyrax::Actors::UpdateAssetDate
 
 
   ## Whitelist all directories which can be used to ingest from the local file

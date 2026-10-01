@@ -6,12 +6,7 @@ en:
       metadata:
         details:  'Details'
       contributions:
-        role:      'Role'
-        affiliation:      'Affiliation'
-        portrayal:      'portrayal'
-        annotation:      'Annotation'
-        name:      'name'
-        credits:    'Credits'
+        credits: 'Credits'
       instantiations:
         actions: Actions
         date_uploaded: Date Uploaded
