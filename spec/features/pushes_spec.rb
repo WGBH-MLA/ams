@@ -52,17 +52,22 @@ RSpec.describe "Pushes features", type: :controller, js: true do
     end
 
     it 'can submit a push successfully' do
-      allow(PushToAAPBJob).to receive(:perform_later)
+      allow(SavePushJob).to receive(:perform_later)
       visit '/pushes/new'
       fill_in('asset_ids_queue', with: asset_resource.id )
       click_button(id: 'push-submit')
 
       # this will have the output mail
       # output_mail = ActionMailer::Base.deliveries.last
-      expect(PushToAAPBJob).to have_received(:perform_later)
+      expect(SavePushJob).to have_received(:perform_later)
       push = Push.last
       expect(push.user_id).to eq(user.id)
-      expect(push.pushed_id_csv).to eq(asset_resource.id)
+
+      
+      # Expect the one Pubslihed Asset's asset_id to be that of the
+      # asset_resource we submitted.
+      published_asset_ids = push.published_assets.map(&:asset_id)
+      expect(published_asset_ids).to eq [ asset_resource.id ]
     end
   end
 end
