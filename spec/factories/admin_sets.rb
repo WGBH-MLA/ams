@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 FactoryBot.define do
-  factory :admin_set do
+  factory :admin_set, class: Hyrax::AdministrativeSet do
     sequence(:title) { |n| ["Title #{n}"] }
 
     # Given the relationship between permission template and admin set, when
