@@ -72,6 +72,23 @@ module AAPB
           "#{object_column_header}.#{attribute}"
         end
       end
+
+      # Maps a a configured column header (e.g. "Asset") back to
+      # the object class name (e.g. "AssetResource"), looking at child configs recursively.
+      # This recursively 
+      # @param column_header [String] the column header to search for
+      # @return [String, nil] the object class name corresponding
+      # to the column header, or nil if not found.
+      def column_header_to_object_class(csv_full_column_header)
+        csv_obj_column_header = csv_full_column_header.split(".").first.strip
+        if csv_obj_column_header == object_column_header
+          object_class.constantize
+        else
+          children.detect do |child|
+            child.column_header_to_object_class(csv_full_column_header)
+          end
+        end
+      end
     end
 
     class CSVConfigParser
