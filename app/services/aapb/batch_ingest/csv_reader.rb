@@ -144,7 +144,6 @@ module AAPB
       end
 
       def valkyrie_multivalue_attribute?(attribute, model)
-        require 'pry'; binding.pry
         model.schema.key(attribute.to_sym).meta.fetch('multiple', false)
       end
 
