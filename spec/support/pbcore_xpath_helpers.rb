@@ -68,6 +68,7 @@ module PBCoreXPathHelper
         cataloging_status:              '//pbcoreAnnotation[@annotationType="cataloging status"]',
         outside_url:                    '//pbcoreAnnotation[@annotationType="Outside URL"]',
         special_collections:            '//pbcoreAnnotation[@annotationType="special_collections"]',
+        exhibit:                        '//pbcoreAnnotation[@annotationType="exhibit"]',
         transcript_status:              '//pbcoreAnnotation[@annotationType="Transcript Status"]',
         licensing_info:                 '//pbcoreAnnotation[@annotationType="Licensing Info"]',
         playlist_group:                 '//pbcoreAnnotation[@annotationType="Playlist Group"]',
@@ -191,6 +192,7 @@ module PBCoreXPathHelper
                    values_from_xpath(:cataloging_status) +
                    values_from_xpath(:outside_url) +
                    values_from_xpath(:special_collections) +
+                   values_from_xpath(:exhibit) +
                    values_from_xpath(:transcript_status) +
                    values_from_xpath(:proxy_start_time) +
                    values_from_xpath(:licensing_info) +

@@ -25,6 +25,7 @@ FactoryBot.define do
           build(:pbcore_annotation, type: "cataloging status", value: "Minimally Cataloged"),
           build(:pbcore_annotation, type: "Outside URL", value: Faker::Internet.url),
           build(:pbcore_annotation, type: "special_collections" , value: Faker::TvShows::Simpsons.character),
+          build(:pbcore_annotation, type: "exhibit" , value: Faker::Lorem.word),
           build(:pbcore_annotation, type: "Licensing Info" , value: Faker::Lorem.paragraph),
           build(:pbcore_annotation, type: "Playlist Group" , value: Faker::Lorem.word),
           build(:pbcore_annotation, type: "Playlist Order" , value: rand(1..5)),

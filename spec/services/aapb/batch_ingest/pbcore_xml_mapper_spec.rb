@@ -59,7 +59,7 @@ RSpec.describe AAPB::BatchIngest::PBCoreXMLMapper, :pbcore_xpath_helper do
         ENV['SETTINGS__BULKRAX__ENABLED'] = bulkrax_setting
 
         expect(attrs).to have_key :annotations
-        expect(attrs[:annotations].length).to eq (11)
+        expect(attrs[:annotations].length).to eq (12)
 
         # Every Annotation in the attrs should have a value from the PBCore
         attrs[:annotations].each do |anno|
