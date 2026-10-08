@@ -18,8 +18,8 @@ RSpec.describe AAPB::AttributeIndexedToParentPresenter do
     end
 
     it "#attribute_facetable?" do
-      expect(pi_presenter.attribute_facetable?(:alternative_modes, physical_instantiation.class)).to be false
-      expect(pi_presenter.attribute_facetable?(:holding_organization, physical_instantiation.class)).to be true
+      expect(pi_presenter.attribute_facetable?(:alternative_modes)).to be false
+      expect(pi_presenter.attribute_facetable?(:holding_organization)).to be true
     end
   end
 
@@ -30,8 +30,8 @@ RSpec.describe AAPB::AttributeIndexedToParentPresenter do
     end
 
     it "#attribute_facetable?" do
-      expect(di_presenter.attribute_facetable?(:alternative_modes, physical_instantiation.class)).to be false
-      expect(di_presenter.attribute_facetable?(:holding_organization, physical_instantiation.class)).to be true
+      expect(di_presenter.attribute_facetable?(:alternative_modes)).to be false
+      expect(di_presenter.attribute_facetable?(:holding_organization)).to be true
     end
   end
 end
