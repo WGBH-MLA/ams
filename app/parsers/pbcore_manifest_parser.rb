@@ -42,7 +42,8 @@ class PbcoreManifestParser < Bulkrax::XmlParser
             csv_data = Bulkrax::CsvEntry.read_data(md)
             @manifest_hash = {}
             csv_data.each do |row|
-              @manifest_hash[row["DigitalInstantiation.filename"]] = row.to_h
+              row_hash_string_vals = row.to_h.transform_values(&:to_s)
+              @manifest_hash[row["DigitalInstantiation.filename"]] = row_hash_string_vals
             end
             next
           else
@@ -132,7 +133,6 @@ class PbcoreManifestParser < Bulkrax::XmlParser
     records.sort_by! do |record|
       csv_row = manifest_hash[record[:filename]]
       asset_id = csv_row['Asset.id'].strip if csv_row.keys.include?('Asset.id')
-
       asset_id
     end
 
