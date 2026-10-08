@@ -19,7 +19,7 @@ module AAPB
         work_class = work_class.constantize
         work_class =  Wings::ModelRegistry.reverse_lookup(work_class) || work_class
 
-        if attribute_indexed_to_parent?(field, work_class) && attribute_facetable?(field, work_class)
+        if attribute_indexed_to_parent?(field, work_class) && attribute_facetable?(field)
           # Use :symbol for field_name since all attributes indexed to parent are indexed as symbols.
           field_name = solr_name(field, :symbol)
 
