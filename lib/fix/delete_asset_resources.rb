@@ -32,23 +32,12 @@ module Fix
       log.info "DELETING #{resource.class} #{resource.id.id}..."
       work_destroy_transaction.call(resource)
       log.info "DELETED #{resource.class} #{resource.id.id}."
-      delete_from_fedora(resource)
       result[:error] = false
       results << result
     rescue => e
       result[:error] = e
       results << result
       log_error e
-    end
-
-    def delete_from_fedora(resource)
-      log.info "SEARCHING FEDORA: #{resource.class} #{resource.id}..."
-      af_object = ActiveFedora::Base.find(resource.id.to_s)
-      af_object.destroy!
-      log.info "DELETED: #{af_object.class} #{af_object.id} from Fedora."
-    rescue ActiveFedora::ObjectNotFoundError
-      # Not a real error, just means it's not in Fedora. Carry on.
-      log.info "NOT FOUND."
     end
 
     def report

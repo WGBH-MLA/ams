@@ -153,11 +153,15 @@ module AMS::PbcoreXmlExportExtension
   end
 
   def add_contributions(xml)
-    members(only: Contribution).each do |contribution|
+    members(only: ContributionResource).each do |contribution|
       xml.pbcoreContributor do |contributor_node|
         contributor_attrs = {}
         contributor_attrs[:annotation] = contribution.annotation.first if contribution.annotation.present? && contribution.annotation.first.present?
         contributor_attrs[:affiliation] = contribution.affiliation.first if contribution.affiliation.present? && contribution.affiliation.first.present?
+        contributor_attrs[:affiliation_annotation] = contribution.affiliation_annotation.first if contribution.affiliation_annotation.present? && contribution.affiliation_annotation.first.present?
+        contributor_attrs[:start_time] = contribution.start_time.first if contribution.start_time.present? && contribution.start_time.first.present?
+        contributor_attrs[:end_time] = contribution.end_time.first if contribution.end_time.present? && contribution.end_time.first.present?
+        contributor_attrs[:time_annotation] = contribution.time_annotation.first if contribution.time_annotation.present? && contribution.time_annotation.first.present?
 
         contributor_node.contributor(contributor_attrs) do
           contributor_node.text(contribution&.contributor&.first)
@@ -165,6 +169,7 @@ module AMS::PbcoreXmlExportExtension
 
         if contribution.contributor_role.present?
           role_attrs = {}
+          role_attrs[:annotation] = contribution.contributor_role_annotation.first if contribution.contributor_role_annotation.present? && contribution.contributor_role_annotation.first.present?
           role_attrs[:portrayal] = contribution.portrayal.first if contribution.portrayal.present? && contribution.portrayal.first.present?
 
           contributor_node.contributorRole(role_attrs) do
@@ -188,11 +193,11 @@ module AMS::PbcoreXmlExportExtension
   end
 
   def prepare_instantiations(xml)
-    members(only: PhysicalInstantiation).each do |instantiation|
+    members(only: PhysicalInstantiationResource).each do |instantiation|
       prepare_instantiation(xml, instantiation, :physical)
     end
 
-    members(only: DigitalInstantiation).each do |instantiation|
+    members(only: DigitalInstantiationResource).each do |instantiation|
       prepare_instantiation(xml, instantiation, :digital)
     end
   end
@@ -261,7 +266,7 @@ module AMS::PbcoreXmlExportExtension
       end
 
       # Essence Tracks
-      instantiation.members(only: EssenceTrack).each do |essence_track|
+      instantiation.members(only: EssenceTrackResource).each do |essence_track|
         prepare_essence_track(instantiation_node, essence_track)
       end
 

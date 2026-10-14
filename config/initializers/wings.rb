@@ -1,25 +1,29 @@
 # frozen_string_literal: true
 Rails.application.config.after_initialize do
-  # converts from new class (v) to old class (af)
-  [
-    Asset,
-    PhysicalInstantiation,
-    DigitalInstantiation,
-    EssenceTrack,
-    Contribution
-  ].each do |klass|
-    Wings::ModelRegistry.register("#{klass}Resource".constantize, klass)
-    # we register itself so we can pre-translate the class in Freyja instead of having to translate in each query_service
-    Wings::ModelRegistry.register(klass, klass)
-  end
-  Wings::ModelRegistry.register(Collection, Collection)
-  Wings::ModelRegistry.register(Hyrax::PcdmCollection, Collection)
-  Wings::ModelRegistry.register(Hyrax::AdministrativeSet, AdminSet)
-  Wings::ModelRegistry.register(AdminSet, AdminSet)
-  Wings::ModelRegistry.register(Hydra::AccessControls::Embargo, Hyrax::Embargo)
-  Wings::ModelRegistry.register(Hydra::AccessControls::Embargo, Hydra::AccessControls::Embargo)
-  Wings::ModelRegistry.register(Hydra::AccessControls::Lease, Hyrax::Lease)
-  Wings::ModelRegistry.register(Hydra::AccessControls::Lease, Hydra::AccessControls::Lease)
+  # # converts from new class (v) to old class (af)
+  # [
+  #   Asset,
+  #   PhysicalInstantiation,
+  #   DigitalInstantiation,
+  #   EssenceTrack,
+  #   Contribution
+  # ].each do |klass|
+  #   Wings::ModelRegistry.register("#{klass}Resource".constantize, klass)
+  #   # we register itself so we can pre-translate the class in Freyja instead of having to translate in each query_service
+  #   # Wings::ModelRegistry.register(klass, klass)
+  # end
+
+  # Wings::ModelRegistry.register("#{klass}Resource".constantize, klass)
+
+
+  # Wings::ModelRegistry.register(Collection, Collection)
+  # Wings::ModelRegistry.register(Hyrax::PcdmCollection, Collection)
+  # Wings::ModelRegistry.register(Hyrax::AdministrativeSet, AdminSet)
+  # Wings::ModelRegistry.register(AdminSet, AdminSet)
+  # Wings::ModelRegistry.register(Hydra::AccessControls::Embargo, Hyrax::Embargo)
+  # Wings::ModelRegistry.register(Hydra::AccessControls::Embargo, Hydra::AccessControls::Embargo)
+  # Wings::ModelRegistry.register(Hydra::AccessControls::Lease, Hyrax::Lease)
+  # Wings::ModelRegistry.register(Hydra::AccessControls::Lease, Hydra::AccessControls::Lease)
 
   # converts from old class (af) to new class (v)
   Valkyrie.config.resource_class_resolver = lambda do |resource_klass_name|

@@ -58,7 +58,7 @@
             </ul>
         </div>
       <% end %>
-      <% if can? :destroy, Asset %>
+      <% if can? :destroy, AssetResource %>
         <%= link_to t('.delete'), [main_app, presenter], class: 'btn btn-danger', data: { confirm: t('.confirm_delete', work_type: presenter.human_readable_type) }, method: :delete %>
       <% end %>
     <% end %>

@@ -1,3 +1,7 @@
+require_relative './steps/handle_contributors'
+require_relative './steps/add_data_from_pbcore'
+require_relative './steps/create_aapb_admin_data'
+
 module Ams
   class Container
     extend Dry::Container::Mixin

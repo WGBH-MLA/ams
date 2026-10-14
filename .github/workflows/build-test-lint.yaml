@@ -4,9 +4,11 @@ on:
   pull_request:
     branches:
       - develop
+      - main-v3
   push:
     branches:
       - develop
+      - main-v3
   workflow_dispatch:
     inputs:
       debug_enabled:
@@ -151,6 +153,7 @@ jobs:
       SE_NODE_SESSION_TIMEOUT: 999999
       TB_RSPEC_FORMATTER: progress
       TB_RSPEC_OPTIONS: --format RspecJunitFormatter --out rspec.xml
+      RESET_DATA: "true"
     steps:
       - name: Set env
         run: >-
@@ -179,6 +182,17 @@ jobs:
           limit-access-to-actor: true
       - name: Start containers
         run: docker compose up -d web
+      - name: Print Container Failures
+        if: failure()
+        run: >-
+          docker compose logs initialize_app;
+          docker compose logs web;
+          docker compose logs worker;
+          docker compose logs solr;
+          docker compose logs redis;
+          docker compose logs db;
+          docker compose logs check_volumes;
+          docker compose logs chrome;
       - name: Setup solr
         run: >-
           docker compose exec -T web bash -c

@@ -1,21 +1,77 @@
-<h3>Push #<%= @push.id %></h3>
+<div id="push-show">
+  <div class="key-val-box">
+    <h3>Summary for Push #<%= @push_summary.id %></h3>
 
-<h5>Initiated by: <%= @push.user.email %> at <%= @push.created_at.strftime('%m-%e-%y %H:%M') %></h5>
-<% status = @push.status %>
-<% if status.present? %>
-  <h5>Status: <%= status %></h5>
-<% end %>
-<% @ids = Array(@push.pushed_id_csv&.split(',')) %>
-<% if @ids.blank? && @push.status == 'pending' %>
-  <p>IDs are being saved to this record, refresh periodically.</p>
-<% else %>
-  <h5>Total: <%= @ids.count %></h5>
-  <ol>
-    <% @ids.each do |id| %>
-      <li>
-        <%= id %>
-      </li>
-    <% end %>
-  </ol>
-<% end %>
-<%= link_to "Back To Pushes", pushes_path %>
+    <dl>
+      <dt>User</dt>
+      <dd><%= @push_summary.user %></dd>
+
+      <dt>Date</dt>
+      <dd><%= @push_summary.date %></dd>
+
+      <dt>Status</dt>
+      <dd><%= @push_summary.status %></dd>
+    </dl>
+
+    <h5>Asset Stats</h5>
+
+    <dl>
+      <dt>Total Assets</dt>
+      <dd><%= @push_summary.asset_count %></dd>
+
+      <% @push_summary.asset_counts_by_status.each do |status, count| %>
+        <dt><%= status.titleize %></dt>
+        <dd><%= count %></dd>
+      <% end %>
+
+      <dt>
+        <span>Succeeded</span>
+      </dt>
+
+      <dd>
+        <%= @push_summary.succeeded %> / <%= @push_summary.asset_count %> (<%= @push_summary.success_rate %>%)
+      </dd>
+
+      <dt>
+        <span>Failed</span>
+      </dt>
+
+      <dd>
+        <%= @push_summary.failed %> / <%= @push_summary.asset_count %> (<%= @push_summary.fail_rate %>%)
+      </dd>
+    </dl>
+  </div>
+
+  <table class="published-assets">
+    <thead>
+      <tr>
+        <th>Asset ID</th>
+        <th>Status</th>
+        <th>Result</th>
+        <th>Details</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <% @push_summary.published_assets.each do |asset| %>
+        <tr>
+          <td><a href="/concern/asset_resources/<%= asset.asset_id %>"><%= asset.asset_id %></a></td>
+          <td><%= asset.status.titleize %></td>
+          <td><%= asset.result.titleize %></td>
+          <td>
+          <% if asset.succeeded? %>
+            <% # TODO: Move this (or a more useful verification link) to a helper. %>
+            <a href="https://us-east-1.console.aws.amazon.com/s3/object/<%= Push::S3_PUBLISH_ASSET_BUCKET %>?region=us-east-1&prefix=<%= File.basename(asset.location.to_s)%>"><%= File.basename(asset.location.to_s)%></a>
+          <% else %>
+            <span class="error-msg"><%= asset.error %></span>
+          <% end %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+
+
+  <%= link_to "Back To Pushes", pushes_path %>
+</div>
+

@@ -4,7 +4,7 @@ RSpec.describe AMS::AllMembers, reset_data: false  do
   before(:all) do
     # Creating an @asset family is slow, so let's not do it for every example
     # using a `let'; use instance var instead.
-    @asset = create(:asset, :family)
+    @asset = create(:asset_resource, :family)
 
     # Use the complimentary recursive method SolrDocument#all_members to check
     # the values.
@@ -22,7 +22,7 @@ RSpec.describe AMS::AllMembers, reset_data: false  do
 
       context 'with the :only param passed' do
         it 'only returns classes specified by :only param' do
-          expect(@asset.all_members(only: DigitalInstantiation).to_set).to all( be_a DigitalInstantiation )
+          expect(@asset.all_members(only: DigitalInstantiationResource).to_set).to all( be_a DigitalInstantiationResource )
         end
       end
     end

@@ -4,9 +4,9 @@ RSpec.describe AMS::Export::Results::DigitalInstantiationsCSVResults do
   describe '#filepath' do
     let(:assets) do
       Array.new(rand(1..3)) do
-        create(:asset,
-          ordered_members: Array.new(rand(1..3)) do
-            create(:digital_instantiation)
+        create(:asset_resource,
+          members: Array.new(rand(1..3)) do
+            create(:digital_instantiation_resource)
           end
         )
       end
