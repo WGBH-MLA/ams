@@ -29,38 +29,7 @@ class CatalogController < ApplicationController
     ## Default parameters to send to solr for all search-like requests. See also SolrHelper#solr_search_params
     config.default_solr_params = {
       qt: "search",
-      rows: 10,
-      qf: %w[
-        title_tesim
-        series_title_tesim
-        program_title_tesim
-        episode_title_tesim
-        segment_title_tesim
-        raw_footage_title_tesim
-        promo_title_tesim
-        clip_title_tesim
-        local_identifier_tesim
-        local_instantiation_identifier_tesim
-        holding_organization_tesim
-        producing_organization_tesim
-        description_tesim
-        series_description_tesim
-        program_description_tesim
-        episode_description_tesim
-        segment_description_tesim
-        raw_footage_description_tesim
-        promo_description_tesim
-        clip_description_tesim
-        rundown_description_tesim
-        topics_tesim
-        subject_tesim
-        genre_tesim
-        contributor_tesim
-        creator_tesim
-        annotation_tesim
-        keyword_tesim
-        id
-      ].join(' ')
+      rows: 10
     }
 
     # Solr field configuration for document/show views
