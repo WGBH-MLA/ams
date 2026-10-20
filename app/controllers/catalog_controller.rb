@@ -4,11 +4,10 @@ class CatalogController < ApplicationController
 
   # This filter applies the hydra access controls
   before_action :enforce_show_permissions, only: :show
-
+  
   configure_blacklight do |config|
     # default advanced config values
     config.advanced_search ||= Blacklight::OpenStructWithHashAccess.new
-    # config.advanced_search[:qt] ||= 'advanced'
     config.advanced_search[:url_key] ||= 'advanced'
     config.advanced_search[:query_parser] ||= 'dismax'
     config.advanced_search[:form_solr_parameters] ||= {}
@@ -30,16 +29,13 @@ class CatalogController < ApplicationController
     ## Default parameters to send to solr for all search-like requests. See also SolrHelper#solr_search_params
     config.default_solr_params = {
       qt: "search",
-      rows: 10,
-      qf: "title_tesim description_tesim creator_tesim keyword_tesim",
+      rows: 10
     }
 
-    # solr field configuration for document/show views
-    config.index.title_field = solr_name("title", :stored_searchable)
-    config.index.display_type_field = solr_name("has_model", :symbol)
+    # Solr field configuration for document/show views
+    config.index.title_field = 'title_tesim'
+    config.index.display_type_field = 'has_model_ssim'
     config.index.thumbnail_field = 'thumbnail_path_ss'
-
-    # override default thumbnail method to handle 'cpb-aacip-' id vs 'cpb-aacip_' in S3 filename
     config.index.thumbnail_method = :render_thumbnail
 
     config.add_results_document_tool(:bookmark, partial: 'bookmark_control', if: :render_bookmarks_control?)
@@ -55,432 +51,381 @@ class CatalogController < ApplicationController
 
     config.add_results_collection_tool :export_search_results
 
-    # solr fields that will be treated as facets by the blacklight application
-    #   The ordering of the field names is the order of the display
-    config.add_facet_field solr_name("asset_types", :facetable), label: "Asset Type", limit: 5, collapse: true
-    config.add_facet_field solr_name("topics", :facetable), label: "Topic", limit: 5, collapse: true
-    config.add_facet_field solr_name("genre", :facetable), label: "Genre", limit: 5, collapse: true
-    config.add_facet_field solr_name("producing_organization", :facetable), label: "Producing Organization", limit: 5, collapse: true
-    config.add_facet_field "media_type_ssim", label: "Media Type", limit: 5, collapse: true
-    config.add_facet_field "format_ssim", label: "Physical Format", limit: 5, collapse: true
-    config.add_facet_field "holding_organization_ssim", label: "Holding Organization", limit: 5, collapse: true
-    config.add_facet_field "language_ssim", label: "Language", limit: 5, collapse: true
+    # =========================================================================
+    # FACETS (Configured with Valkyrie Solr suffixes)
+    # =========================================================================
+    config.add_facet_field "asset_types_sim", label: "Asset Type", limit: 5, collapse: true
+    config.add_facet_field "topics_sim", label: "Topic", limit: 5, collapse: true
+    config.add_facet_field "genre_sim", label: "Genre", limit: 5, collapse: true
+    config.add_facet_field "producing_organization_sim", label: "Producing Organization", limit: 5, collapse: true
+    config.add_facet_field "media_type_sim", label: "Media Type", limit: 5, collapse: true
+    config.add_facet_field "format_sim", label: "Physical Format", limit: 5, collapse: true
+    config.add_facet_field "holding_organization_sim", label: "Holding Organization", limit: 5, collapse: true
+    config.add_facet_field "language_sim", label: "Language", limit: 5, collapse: true
     config.add_facet_field "level_of_user_access_ssim", label: "Level of user access", limit: 5, collapse: true
     config.add_facet_field "transcript_status_ssim", label: "Transcript Status", limit: 5, collapse: true
     config.add_facet_field "hyrax_batch_ingest_batch_id_tesim"
 
     config.add_facet_field 'cataloging_status_ssim', query: {
-        yes: { label: 'Yes', fq: 'cataloging_status_ssim:Yes' },
-        no: { label: 'No', fq: '-cataloging_status_ssim:[* TO *]' }
-     }, label:"Minimally Cataloged", collapse: true
+      yes: { label: 'Yes', fq: 'cataloging_status_ssim:Yes' },
+      no:  { label: 'No',  fq: '-cataloging_status_ssim:[* TO *]' }
+    }, label: "Minimally Cataloged", collapse: true
 
     config.add_facet_field 'outside_url_ssim', query: {
-        yes: { label: 'Yes', fq: 'outside_url_ssim:[* TO *]' },
-        no: { label: 'No', fq: '-outside_url_ssim:[* TO *]' }
-    }, label:"Outside URL", collapse: true
+      yes: { label: 'Yes', fq: 'outside_url_ssim:[* TO *]' },
+      no:  { label: 'No',  fq: '-outside_url_ssim:[* TO *]' }
+    }, label: "Outside URL", collapse: true
 
     config.add_facet_field 'sonyci_id_ssim', query: {
-        yes: { label: 'Yes', fq: 'sonyci_id_ssim:[* TO *]' },
-        no: { label: 'No', fq: '-sonyci_id_ssim:[* TO *]' }
-    }, label:"Digitized Copy in AAPB", collapse: true
+      yes: { label: 'Yes', fq: 'sonyci_id_ssim:[* TO *]' },
+      no:  { label: 'No',  fq: '-sonyci_id_ssim:[* TO *]' }
+    }, label: "Digitized Copy in AAPB", collapse: true
 
-    # The generic_type isn't displayed on the facet list
-    # It's used to give a label to the filter that comes from the user profile
-    config.add_facet_field solr_name("generic_type", :facetable), if: false
+    config.add_facet_field "generic_type_sim", if: false
 
-
-    # Have BL send all facet field names to Solr, which has been the default
-    # previously. Simply remove these lines if you'd rather use Solr request
-    # handler defaults, or have no facets.
     config.add_facet_fields_to_solr_request!
 
-
-    # solr fields to be displayed in the index (search results) view
-    #   The ordering of the field names is the order of the display
-    config.add_index_field solr_name("title", :stored_searchable), label: "Title", itemprop: 'name', if: false
-
-    config.add_index_field solr_name('admin_set'), label: 'Admin Set'
-    config.add_index_field solr_name("created_date", :stored_searchable), label: 'Created Date', itemprop: 'created_date', helper_method: :iconify_auto_link
-    config.add_index_field solr_name("copyright_date", :stored_searchable), itemprop: 'copyright_date', helper_method: :iconify_auto_link
-    config.add_index_field solr_name("broadcast_date", :stored_searchable), label: 'Broadcast Date', itemprop: 'broadcast_date', helper_method: :iconify_auto_link
+    # =========================================================================
+    # SEARCH RESULTS (INDEX) FIELDS
+    # =========================================================================
     config.add_index_field 'id', label: 'GUID'
-
-    # Uses a Blacklight model accessor for description decision logic
+    config.add_index_field 'title_tesim', label: "Title", itemprop: 'name', if: false
     config.add_index_field "description", accessor: "display_description"
-
-    # solr fields to be displayed in the show (single result) view
-    #   The ordering of the field names is the order of the display
+    config.add_index_field 'created_date_tesim', label: 'Created Date', itemprop: 'created_date', helper_method: :iconify_auto_link
+    config.add_index_field 'copyright_date_tesim', itemprop: 'copyright_date', helper_method: :iconify_auto_link
+    config.add_index_field 'broadcast_date_tesim', label: 'Broadcast Date', itemprop: 'broadcast_date', helper_method: :iconify_auto_link
+    config.add_index_field 'holding_organization_tesim', label: 'Holding Organization'
+    config.add_index_field 'local_instantiation_identifier_tesim', label: 'Local Instantiation ID'
+   
+    # =========================================================================
+    # SHOW (DETAIL) FIELDS
+    # =========================================================================
     config.add_show_field "id"
-    config.add_show_field solr_name("title", :stored_searchable)
-    config.add_show_field solr_name("series_title", :stored_searchable)
-    config.add_show_field solr_name("raw_footage_title", :stored_searchable)
-    config.add_show_field solr_name("segment_title", :stored_searchable)
-    config.add_show_field solr_name("program_title", :stored_searchable)
-    config.add_show_field solr_name("episode_title", :stored_searchable)
-    config.add_show_field solr_name("clip_title", :stored_searchable)
-    config.add_show_field solr_name("promo_title", :stored_searchable)
+    config.add_show_field "title_tesim"
+    config.add_show_field "series_title_tesim"
+    config.add_show_field "raw_footage_title_tesim"
+    config.add_show_field "segment_title_tesim"
+    config.add_show_field "program_title_tesim"
+    config.add_show_field "episode_title_tesim"
+    config.add_show_field "clip_title_tesim"
+    config.add_show_field "promo_title_tesim"
 
+    config.add_show_field "date_tesim"
+    config.add_show_field "broadcast_date_tesim"
+    config.add_show_field "created_date_tesim"
+    config.add_show_field "copyright_date_tesim"
 
-    config.add_show_field solr_name("date", :stored_searchable)
-    config.add_show_field solr_name("broadcast_date", :stored_searchable)
-    config.add_show_field solr_name("created_date", :stored_searchable)
-    config.add_show_field solr_name("copyright_date", :stored_searchable)
+    config.add_show_field "description_tesim"
+    config.add_show_field "series_description_tesim"
+    config.add_show_field "raw_footage_description_tesim"
+    config.add_show_field "segment_description_tesim"
+    config.add_show_field "program_description_tesim"
+    config.add_show_field "episode_description_tesim"
+    config.add_show_field "clip_description_tesim"
+    config.add_show_field "promo_description_tesim"
+    config.add_show_field "rundown_description_tesim"
 
-    config.add_show_field solr_name("description", :stored_searchable)
-    config.add_show_field solr_name("series_description", :stored_searchable)
-    config.add_show_field solr_name("raw_footage_description", :stored_searchable)
-    config.add_show_field solr_name("segment_description", :stored_searchable)
-    config.add_show_field solr_name("program_description", :stored_searchable)
-    config.add_show_field solr_name("episode_description", :stored_searchable)
-    config.add_show_field solr_name("clip_description", :stored_searchable)
-    config.add_show_field solr_name("promo_description", :stored_searchable)
-    config.add_show_field solr_name("rundown_description", :stored_searchable)
+    config.add_show_field "producing_organization_tesim"
+    config.add_show_field "episode_number_tesim"
+    config.add_show_field "genre_tesim"
+    config.add_show_field "spatial_coverage_tesim"
+    config.add_show_field "temporal_coverage_tesim"
+    config.add_show_field "audience_level_tesim"
+    config.add_show_field "audience_rating_tesim"
+    config.add_show_field "annotation_tesim"
+    config.add_show_field "rights_summary_tesim"
+    config.add_show_field "rights_link_tesim"
+    config.add_show_field "local_identifier_tesim"
+    config.add_show_field "pbs_nola_code_tesim"
+    config.add_show_field "eidr_id_tesim"
+    config.add_show_field "topics_tesim"
+    config.add_show_field "subject_tesim"
 
-    config.add_show_field solr_name("producing_organization", :stored_searchable)
-    config.add_show_field solr_name("episode_number", :stored_searchable)
-    config.add_show_field solr_name("genre", :stored_searchable)
-    config.add_show_field solr_name("spatial_coverage", :stored_searchable)
-    config.add_show_field solr_name("temporal_coverage", :stored_searchable)
-    config.add_show_field solr_name("audience_level", :stored_searchable)
-    config.add_show_field solr_name("audience_rating", :stored_searchable)
-    config.add_show_field solr_name("annotation", :stored_searchable)
-    config.add_show_field solr_name("rights_summary", :stored_searchable)
-    config.add_show_field solr_name("rights_link", :stored_searchable)
-    config.add_show_field solr_name("local_identifier", :stored_searchable)
-    config.add_show_field solr_name("pbs_nola_code", :stored_searchable)
-    config.add_show_field solr_name("eidr_id", :stored_searchable)
-    config.add_show_field solr_name("topic", :stored_searchable)
-    config.add_show_field solr_name("subject", :stored_searchable)
+    # From Instantiations
+    config.add_show_field "local_instantiation_identifier_tesim"
+    config.add_show_field "holding_organization_tesim"
 
-    #from instantiation model
-    config.add_show_field solr_name("local_instantiation_identifier", :stored_searchable)
-    config.add_show_field solr_name("holding_organization", :stored_searchable)
+    # From Contributions
+    config.add_show_field "contributor_tesim"
+    config.add_show_field "affiliation_tesim"
+    config.add_show_field "portrayal_tesim"
 
-    #from contribution
-    config.add_show_field solr_name("contributor", :stored_searchable)
-    config.add_show_field solr_name("affiliation", :stored_searchable)
-    config.add_show_field solr_name("portrayal", :stored_searchable)
-
-    # "fielded" search configuration. Used by pulldown among other places.
-    # For supported keys in hash, see rdoc for Blacklight::SearchFields
-    #
-    # Search fields will inherit the :qt solr request handler from
-    # config[:default_solr_parameters], OR can specify a different one
-    # with a :qt key/value. Below examples inherit, except for subject
-    # that specifies the same :qt as default for our own internal
-    # testing purposes.
-    #
-    # The :key is what will be used to identify this BL search field internally,
-    # as well as in URLs -- so changing it after deployment may break bookmarked
-    # urls.  A display label will be automatically calculated from the :key,
-    # or can be specified manually to be different.
-    #
-    # This one uses all the defaults set by the solr request handler. Which
-    # solr request handler? The one set in config[:default_solr_parameters][:qt],
-    # since we aren't specifying it otherwise.
+    # =========================================================================
+    # SEARCH FIELDS & ADVANCED SEARCH
+    # =========================================================================
     config.add_search_field('all_fields', label: 'All Fields') do |field|
       all_names = config.show_fields.values.map(&:field).join(" ")
-      title_name = solr_name("title", :stored_searchable)
       field.include_in_advanced_search = false
       field.solr_parameters = {
         qf: "#{all_names} file_format_tesim all_text_timv",
-        pf: title_name.to_s
+        pf: 'title_tesim'
       }
     end
 
     config.add_search_field('all_titles') do |field|
       field.label = "Titles (All)"
-      title_type_service = TitleTypesService.new
-      title_fields = title_type_service.all_ids
-      titles_qf = title_fields.map{|t| solr_name(title_type_service.model_field(t), :stored_searchable)}
+      titles_qf = 'title_tesim series_title_tesim program_title_tesim episode_title_tesim segment_title_tesim raw_footage_title_tesim promo_title_tesim clip_title_tesim'
       field.solr_parameters = {
-          qf: titles_qf.join(" "),
-          pf: titles_qf.join(" ")
+        qf: titles_qf,
+        pf: titles_qf
       }
     end
 
     config.add_search_field('series_title') do |field|
+      field.label = "Series Title"
       field.solr_parameters = {
-          qf: solr_name("series_title", :stored_searchable),
-          pf: solr_name("series_title", :stored_searchable)
+        qf: 'series_title_tesim',
+        pf: 'series_title_tesim'
       }
     end
 
     config.add_search_field('all_descriptions') do |field|
       field.label = "Descriptions (All)"
-      description_type_service = DescriptionTypesService.new
-      description_fields = description_type_service.all_ids
-      description_qf = description_fields.map{|t| solr_name(description_type_service.model_field(t), :stored_searchable)}
+      descriptions_qf = 'description_tesim series_description_tesim raw_footage_description_tesim segment_description_tesim program_description_tesim episode_description_tesim clip_description_tesim promo_description_tesim rundown_description_tesim'
       field.solr_parameters = {
-          qf: description_qf.join(" "),
-          pf: description_qf.join(" ")
+        qf: descriptions_qf,
+        pf: descriptions_qf
       }
     end
 
-    # Now we see how to over-ride Solr request handler defaults, in this
-    # case for a BL "search field", which is really a dismax aggregate
-    # of Solr search fields.
-    # creator, title, description, publisher, date_created,
-    # subject, language, resource_type, format, identifier, based_near,
     config.add_search_field('contributor') do |field|
-      # solr_parameters hash are sent to Solr as ordinary url query params.
-
-      # :solr_local_parameters will be sent using Solr LocalParams
-      # syntax, as eg {! qf=$title_qf }. This is neccesary to use
-      # Solr parameter de-referencing like $title_qf.
-      # See: http://wiki.apache.org/solr/LocalParams
-      solr_name = solr_name("contributor", :stored_searchable)
-      field.solr_local_parameters = {
-        qf: solr_name,
-        pf: solr_name
+      field.label = "Contributor"
+      field.solr_parameters = {
+        qf: 'contributor_tesim portrayal_tesim affiliation_tesim',
+        pf: 'contributor_tesim'
       }
     end
 
     config.add_search_field('creator') do |field|
       field.include_in_advanced_search = false
-      solr_name = solr_name("creator", :stored_searchable)
-      field.solr_local_parameters = {
-        qf: solr_name,
-        pf: solr_name
+      field.solr_parameters = {
+        qf: 'creator_tesim',
+        pf: 'creator_tesim'
       }
     end
 
     config.add_search_field('title') do |field|
-      solr_name = solr_name("title", :stored_searchable)
       field.include_in_advanced_search = false
-      field.solr_local_parameters = {
-        qf: solr_name,
-        pf: solr_name
+      field.solr_parameters = {
+        qf: 'title_tesim',
+        pf: 'title_tesim'
       }
     end
 
     config.add_search_field('description') do |field|
       field.label = "Abstract or Summary"
       field.include_in_advanced_search = false
-      solr_name = solr_name("description", :stored_searchable)
-      field.solr_local_parameters = {
-        qf: solr_name,
-        pf: solr_name
+      field.solr_parameters = {
+        qf: 'description_tesim',
+        pf: 'description_tesim'
       }
     end
 
     config.add_search_field('publisher') do |field|
       field.include_in_advanced_search = false
-      solr_name = solr_name("publisher", :stored_searchable)
-      field.solr_local_parameters = {
-        qf: solr_name,
-        pf: solr_name
+      field.solr_parameters = {
+        qf: 'publisher_tesim',
+        pf: 'publisher_tesim'
       }
     end
 
     config.add_search_field('date_created') do |field|
       field.include_in_advanced_search = false
-      solr_name = solr_name("created", :stored_searchable)
-      field.solr_local_parameters = {
-        qf: solr_name,
-        pf: solr_name
+      field.solr_parameters = {
+        qf: 'created_date_tesim',
+        pf: 'created_date_tesim'
       }
     end
 
     config.add_search_field('subject') do |field|
-      solr_name = solr_name("subject", :stored_searchable)
-      field.solr_local_parameters = {
-        qf: solr_name,
-        pf: solr_name
+      field.label = "Subject"
+      field.solr_parameters = {
+        qf: 'subject_tesim topics_tesim',
+        pf: 'subject_tesim'
       }
     end
 
     config.add_search_field('language') do |field|
       field.include_in_advanced_search = false
-      solr_name = solr_name("language", :stored_searchable)
-      field.solr_local_parameters = {
-        qf: solr_name,
-        pf: solr_name
+      field.solr_parameters = {
+        qf: 'language_tesim',
+        pf: 'language_tesim'
       }
     end
 
     config.add_search_field('resource_type') do |field|
       field.include_in_advanced_search = false
-      solr_name = solr_name("resource_type", :stored_searchable)
-      field.solr_local_parameters = {
-        qf: solr_name,
-        pf: solr_name
+      field.solr_parameters = {
+        qf: 'resource_type_tesim',
+        pf: 'resource_type_tesim'
       }
     end
-
+    
     config.add_search_field('instantiation_format') do |field|
       field.include_in_advanced_search = false
-      solr_name = solr_name("format", :stored_searchable)
-      field.solr_local_parameters = {
-        qf: solr_name,
-        pf: solr_name
+      field.solr_parameters = {
+        qf: 'format_tesim digital_format_tesim',
+        pf: 'format_tesim'
       }
     end
 
-    config.add_search_field('Local ID') do |field|
-      solr_name = solr_name("id", :stored_searchable)
-      field.solr_local_parameters = {
-        qf: solr_name,
-        pf: solr_name
+    config.add_search_field('local_identifier') do |field|
+      field.label = 'Local ID'
+      field.solr_parameters = {
+        qf: 'local_identifier_tesim id',
+        pf: 'local_identifier_tesim'
+      }
+    end
+
+    config.add_search_field('local_instantiation_identifier') do |field|
+      field.label = 'Local Instantiation Identifier'
+      field.solr_parameters = {
+        qf: 'local_instantiation_identifier_tesim',
+        pf: 'local_instantiation_identifier_tesim'
+      }
+    end
+
+    config.add_search_field('holding_organization') do |field|
+      field.label = 'Holding Organization'
+      field.solr_parameters = {
+        qf: 'holding_organization_tesim',
+        pf: 'holding_organization_tesim'
       }
     end
 
     config.add_search_field('depositor') do |field|
       field.include_in_advanced_search = false
-      solr_name = solr_name("depositor", :symbol)
-      field.solr_local_parameters = {
-        qf: solr_name,
-        pf: solr_name
+      field.solr_parameters = {
+        qf: 'depositor_ssim',
+        pf: 'depositor_ssim'
       }
     end
 
     config.add_search_field('rights_statement') do |field|
       field.include_in_advanced_search = false
-      solr_name = solr_name("rights_statement", :stored_searchable)
-      field.solr_local_parameters = {
-        qf: solr_name,
-        pf: solr_name
+      field.solr_parameters = {
+        qf: 'rights_statement_tesim',
+        pf: 'rights_statement_tesim'
       }
     end
 
     config.add_search_field('license') do |field|
       field.include_in_advanced_search = false
-      solr_name = solr_name("license", :stored_searchable)
-      field.solr_local_parameters = {
-        qf: solr_name,
-        pf: solr_name
+      field.solr_parameters = {
+        qf: 'license_tesim',
+        pf: 'license_tesim'
       }
     end
+
     config.add_search_field('broadcast') do |field|
       field.include_in_advanced_search = false
-      solr_name = solr_name("broadcast", :stored_searchable)
-      field.solr_local_parameters = {
-        qf: solr_name,
-        pf: solr_name
+      field.solr_parameters = {
+        qf: 'broadcast_date_tesim',
+        pf: 'broadcast_date_tesim'
       }
     end
+
     config.add_search_field('created') do |field|
       field.include_in_advanced_search = false
-      solr_name = solr_name("created", :stored_searchable)
-      field.solr_local_parameters = {
-        qf: solr_name,
-        pf: solr_name
+      field.solr_parameters = {
+        qf: 'created_date_tesim',
+        pf: 'created_date_tesim'
       }
     end
+
     config.add_search_field('date') do |field|
       field.include_in_advanced_search = false
-      solr_name = solr_name("date", :stored_searchable)
-      field.solr_local_parameters = {
-        qf: solr_name,
-        pf: solr_name
+      field.solr_parameters = {
+        qf: 'date_tesim',
+        pf: 'date_tesim'
       }
     end
+
     config.add_search_field('copyright_date') do |field|
       field.include_in_advanced_search = false
-      solr_name = solr_name("copyright_date", :stored_searchable)
-      field.solr_local_parameters = {
-        qf: solr_name,
-        pf: solr_name
+      field.solr_parameters = {
+        qf: 'copyright_date_tesim',
+        pf: 'copyright_date_tesim'
       }
     end
 
     config.add_search_field('spatial_coverage') do |field|
-      solr_name = solr_name("spatial_coverage", :stored_searchable)
-      field.solr_local_parameters = {
-          qf: solr_name,
-          pf: solr_name
+      field.solr_parameters = {
+        qf: 'spatial_coverage_tesim',
+        pf: 'spatial_coverage_tesim'
       }
     end
 
     config.add_search_field('temporal_coverage') do |field|
-      solr_name = solr_name("temporal_coverage", :stored_searchable)
-      field.solr_local_parameters = {
-          qf: solr_name,
-          pf: solr_name
+      field.solr_parameters = {
+        qf: 'temporal_coverage_tesim',
+        pf: 'temporal_coverage_tesim'
       }
     end
 
     config.add_search_field('audience_level') do |field|
-      solr_name = solr_name("audience_level", :stored_searchable)
-      field.solr_local_parameters = {
-          qf: solr_name,
-          pf: solr_name
+      field.solr_parameters = {
+        qf: 'audience_level_tesim',
+        pf: 'audience_level_tesim'
       }
     end
 
     config.add_search_field('audience_rating') do |field|
-      solr_name = solr_name("audience_rating", :stored_searchable)
-      field.solr_local_parameters = {
-          qf: solr_name,
-          pf: solr_name
+      field.solr_parameters = {
+        qf: 'audience_rating_tesim',
+        pf: 'audience_rating_tesim'
       }
     end
 
     config.add_search_field('rights_summary') do |field|
-      solr_name = solr_name("rights_summary", :stored_searchable)
-      field.solr_local_parameters = {
-          qf: solr_name,
-          pf: solr_name
+      field.solr_parameters = {
+        qf: 'rights_summary_tesim',
+        pf: 'rights_summary_tesim'
       }
     end
 
     config.add_search_field('pbs_nola_code') do |field|
-      solr_name = solr_name("pbs_nola_code", :stored_searchable)
-      field.solr_local_parameters = {
-          qf: solr_name,
-          pf: solr_name
+      field.solr_parameters = {
+        qf: 'pbs_nola_code_tesim',
+        pf: 'pbs_nola_code_tesim'
       }
     end
 
     config.add_search_field('eidr_id') do |field|
-      solr_name = solr_name("eidr_id", :stored_searchable)
-      field.solr_local_parameters = {
-          qf: solr_name,
-          pf: solr_name
-      }
-    end
-
-    config.add_search_field('local_instantiation_identifier') do |field|
-      solr_name = solr_name("local_instantiation_identifier", :stored_searchable)
-      field.solr_local_parameters = {
-          qf: solr_name,
-          pf: solr_name
+      field.solr_parameters = {
+        qf: 'eidr_id_tesim',
+        pf: 'eidr_id_tesim'
       }
     end
 
     config.add_search_field('portrayal') do |field|
-      solr_name = solr_name("portrayal", :stored_searchable)
-      field.solr_local_parameters = {
-          qf: solr_name,
-          pf: solr_name
+      field.solr_parameters = {
+        qf: 'portrayal_tesim',
+        pf: 'portrayal_tesim'
       }
     end
 
-    # "sort results by" select (pulldown)
-    # label in pulldown is followed by the name of the SOLR field to sort by and
-    # whether the sort is ascending or descending (it must be asc or desc
-    # except in the relevancy case).
-    # label is key, solr field is value
-    config.add_sort_field "score desc, #{solr_name('system_create', :stored_sortable, type: :date)} desc", label: "relevance"
-    config.add_sort_field "#{solr_name('system_create', :stored_sortable, type: :date)} desc", label: "date uploaded \u25BC"
-    config.add_sort_field "#{solr_name('system_create', :stored_sortable, type: :date)} asc", label: "date uploaded \u25B2"
-    config.add_sort_field "#{solr_name('system_modified', :stored_sortable, type: :date)} desc", label: "date modified \u25BC"
-    config.add_sort_field "#{solr_name('system_modified', :stored_sortable, type: :date)} asc", label: "date modified \u25B2"
-    config.add_sort_field "#{solr_name('broadcast', :stored_sortable)} desc", label: "broadcast \u25BC"
-    config.add_sort_field "#{solr_name('broadcast', :stored_sortable)} asc", label: "broadcast \u25B2"
-    config.add_sort_field "#{solr_name('created', :stored_sortable, type: :date)} desc", label: "created  \u25BC"
-    config.add_sort_field "#{solr_name('created', :stored_sortable, type: :date)} asc", label: "created  \u25B2"
-    config.add_sort_field "#{solr_name('copyright_date', :stored_sortable, type: :date)} desc", label: "copyright date  \u25BC"
-    config.add_sort_field "#{solr_name('copyright_date', :stored_sortable, type: :date)} asc", label: "copyright date  \u25B2"
-    config.add_sort_field "#{solr_name('date', :stored_sortable, type: :date)} desc", label: "date  \u25BC"
-    config.add_sort_field "#{solr_name('date', :stored_sortable, type: :date)} asc", label: "date  \u25B2"
-    config.add_sort_field "#{solr_name('title', :stored_sortable)} desc", label: "title  \u25BC"
-    config.add_sort_field "#{solr_name('title', :stored_sortable)} asc", label: "title  \u25B2"
-    config.add_sort_field "#{solr_name('episode_number', :stored_sortable)} desc", label: "Episode Number  \u25BC"
-    config.add_sort_field "#{solr_name('episode_number', :stored_sortable)} asc", label: "Episode Number  \u25B2"
+    # =========================================================================
+    # SORT FIELDS (Decoupled from Solrizer)
+    # =========================================================================
+    config.add_sort_field "score desc, system_create_dtsi desc", label: "relevance"
+    config.add_sort_field "system_create_dtsi desc", label: "date uploaded \u25BC"
+    config.add_sort_field "system_create_dtsi asc", label: "date uploaded \u25B2"
+    config.add_sort_field "system_modified_dtsi desc", label: "date modified \u25BC"
+    config.add_sort_field "system_modified_dtsi asc", label: "date modified \u25B2"
+    config.add_sort_field "broadcast_date_drsim desc", label: "broadcast \u25BC"
+    config.add_sort_field "broadcast_date_drsim asc", label: "broadcast \u25B2"
+    config.add_sort_field "created_date_drsim desc", label: "created  \u25BC"
+    config.add_sort_field "created_date_drsim asc", label: "created  \u25B2"
+    config.add_sort_field "copyright_date_drsim desc", label: "copyright date  \u25BC"
+    config.add_sort_field "copyright_date_drsim asc", label: "copyright date  \u25B2"
+    config.add_sort_field "date_drsim desc", label: "date  \u25BC"
+    config.add_sort_field "date_drsim asc", label: "date  \u25B2"
+    config.add_sort_field "title_si desc", label: "title  \u25BC"
+    config.add_sort_field "title_si asc", label: "title  \u25B2"
+    config.add_sort_field "episode_number_tesim desc", label: "Episode Number  \u25BC"
+    config.add_sort_field "episode_number_tesim asc", label: "Episode Number  \u25B2"
 
-    # If there are more than this many search results, no spelling ("did you
-    # mean") suggestion is offered.
     config.spell_max = 5
   end
 
